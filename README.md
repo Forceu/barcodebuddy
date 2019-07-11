@@ -26,7 +26,7 @@ or pass it from the CLI
 php index.php 123456789
 ```
 
-If everything worked, you will see a blank page / no result from the command line. Otherwise an error will be shown. I you would like to add a barcode and see the Web UI, add "&showui" to the URL like this:
+If everything worked, you will see a blank page / no result from the command line. Otherwise an error will be shown. If you would like to add a barcode via GET and see the Web UI, add "&showui" to the URL like this:
 
 
 ```

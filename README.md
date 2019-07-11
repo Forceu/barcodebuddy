@@ -30,13 +30,14 @@ If everything worked, you will see a blank page / no result from the command lin
 
 If the barcode is already associated with a Grocy product, one unit will now be consumed. If it was not associated, the name will be looked up through openfoodfacts.org. It is then listed on the main page, where you can select a corresponding product. Click on "Add" to add the units to the grocy inventory, "Consume" to remove then and "Delete" to remove the barcode from the list.
 
+![Screenshot of the web ui](https://bulling.mobi/barcodebuddy.png)
+
 To the right there are also checkboxes for every word in the name of the product. If you tick them, Barcode Buddy will automatically preselect the chosen Grocy product in the list, if another barcode is added with the chosen word in it's name.
 
 
 To tell Barcode Buddy to add a product to the inventory instead of consuming it, scan a barcode first with the value "BBUDDY_P" (values can be changed in the config.php). It will then add all following products to the stock.
 
-To open a product or to consume a spoiled item, scan "BBUDDY_O" (open) or "BBUDDY_CS" (spoiled). After an item is scanned, Barcode Buddy will revert back to "Consuming" by default.
-
+To open a product or to consume a spoiled item, scan "BBUDDY_O" (open) or "BBUDDY_CS" (spoiled). After an item is scanned, Barcode Buddy will revert back to "Consuming" by default. A copy of the barcodes can be found in the folder "defaultBarcodes"
 
 ## Comments
 

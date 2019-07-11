@@ -1,0 +1,5 @@
+# Prevent viewing of database file.
+<Files .barcodebuddy.db>
+    order allow,deny
+    deny from all
+</Files>

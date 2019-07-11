@@ -26,7 +26,12 @@ or pass it from the CLI
 php index.php 123456789
 ```
 
-If everything worked, you will see a blank page / no result from the command line. Otherwise an error will be shown.
+If everything worked, you will see a blank page / no result from the command line. Otherwise an error will be shown. I you would like to add a barcode and see the Web UI, add "&showui" to the URL like this:
+
+
+```
+https://your.webhost.com/barcodebuddy/index.php?add=123456789&showui
+```
 
 If the barcode is already associated with a Grocy product, one unit will now be consumed. If it was not associated, the name will be looked up through openfoodfacts.org. It is then listed on the main page, where you can select a corresponding product. Click on "Add" to add the units to the grocy inventory, "Consume" to remove then and "Delete" to remove the barcode from the list.
 

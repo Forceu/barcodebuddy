@@ -146,7 +146,7 @@ function explodeWords($words, $id) {
     $selections = "";
     $ary        = explode(' ', $words);
     $i          = 0;
-    if ($productname == "N/A") {
+    if ($words == "N/A") {
         return "";
     }
     foreach ($ary as $str) {

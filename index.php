@@ -27,7 +27,8 @@
  * @license    https://www.gnu.org/licenses/gpl-3.0.en.html  GNU GPL v3.0
  * @since      File available since Release 1.0
  *
- * TODO: Disable button on web ui if "none" is selected
+ * TODO:  - Disable button on web ui if "none" is selected
+ *        - Refactor SQL code in this file to db.inc.php
  */
 
 
@@ -101,7 +102,7 @@ tr:nth-child(even) {
 if (isset($_POST["button_delete"])) {
     $id = $_POST["button_delete"];
     checkIfNumeric($id);
-    $db->exec("DELETE FROM Barcodes WHERE id='$id'");
+    deleteBarcode($id);
 } else {
     if (isset($_POST["button_add"]) || isset($_POST["button_consume"])) {
         if (isset($_POST["button_consume"])) {
@@ -125,7 +126,6 @@ if (isset($_POST["button_delete"])) {
                 $i++;
             }
             foreach ($tagArray as $tag) {
-                echo "INSERT INTO Tags(tag, itemId) VALUES('$tag', $gidSelected);";
                 $db->exec("INSERT INTO Tags(tag, itemId) VALUES('$tag', $gidSelected);");
             }
             $previousBarcodes = getProductInfo(sanitizeString($gidSelected)["barcode"]);
@@ -134,7 +134,7 @@ if (isset($_POST["button_delete"])) {
             } else {
                 setBarcode($gidSelected, $previousBarcodes . "," . $barcode);
             }
-            $db->exec("DELETE FROM Barcodes WHERE id='$id'");
+            deleteBarcode($id);
             if ($isConsume) {
                 consumeProduct($gidSelected, $amount);
             } else {

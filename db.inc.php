@@ -93,6 +93,16 @@ function checkNameForTags($name) {
 }
 
 
+
+
+//Delete barcode from local db
+function deleteBarcode($id) {
+    global $db;
+    $db->exec("DELETE FROM Barcodes WHERE id='$id'");
+}
+
+
+
 //Generates the SQL for word search
 function generateQueryFromName($name) {
     $words = explode(" ", $name);

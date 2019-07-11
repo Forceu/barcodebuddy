@@ -146,6 +146,9 @@ function explodeWords($words, $id) {
     $selections = "";
     $ary        = explode(' ', $words);
     $i          = 0;
+    if ($productname == "N/A") {
+        return "";
+    }
     foreach ($ary as $str) {
         $count = $db->querySingle("SELECT COUNT(*) as count FROM Tags WHERE tag='" . $str . "'");
         if ($count == 0) {

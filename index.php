@@ -49,7 +49,9 @@ if (isset($argv[1])) {
 }
 if (isset($_GET["add"])) {
     processNewBarcode(sanitizeString($_GET["add"], true));
-    die;
+    if (!isset($_GET["showui"])) {
+       die("OK");
+    }
 }
 
 

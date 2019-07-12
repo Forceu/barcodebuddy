@@ -1,6 +1,6 @@
 # Barcode Buddy for Grocy
 
-Pass barcodes to Barcode Buddy. If already in Grocy's system, it will consume/add/open the product in Grocy. If an unknown barcode is passed, the product name will be looked up and a corresponding product can be chosen in the Web UI. Tags can be saved - if a new product contains the tag in the name, the product will be already preselected in the drop-down list.
+Pass barcodes to Barcode Buddy. If already in [Grocys](https://github.com/grocy/grocy) system, it will consume/add/open the product in Grocy. If an unknown barcode is passed, the product name will be looked up and a corresponding product can be chosen in the Web UI. Tags can be saved - if a new product contains the tag in the name, the product will be already preselected in the drop-down list.
 
 ## Getting Started
 
@@ -59,5 +59,5 @@ This project is licensed under the GNU GPL3 - see the [LICENSE.md](LICENSE.md) f
 
 ## Acknowledgments
 
-* Thanks to Bernd Bestel for creating the amazing Grocy Project!
+* Thanks to Bernd Bestel for creating the amazing [Grocy](https://github.com/grocy/grocy) Project!
 * openfoodfacts.org for providing the barcode lookup API

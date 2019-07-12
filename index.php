@@ -154,8 +154,13 @@ $res = $db->query('SELECT * FROM Barcodes');
 
 
 while ($row = $res->fetchArray()) {
-    $id = $row['id'];
-    echo "<tr><td>" . $row['name'] . "</td><td>" . $row['barcode'] . "</td><td>" . $row['amount'] . "</td><td><select name=\"select_$id\">" . printSelections($row['possibleMatch']) . "</select>" . "</td><td><button name=\"button_add\" type=\"submit\" value=\"$id\">Add</button> <button name=\"button_consume\" type=\"submit\" value=\"$id\">Consume</button> <button name=\"button_delete\" type=\"submit\" value=\"$id\">Delete</button></td><td>" . explodeWords($row['name'], $id) . "</td></tr>";
+    $id                = $row['id'];
+    $barcode           = $row['barcode'];
+    $displayedName     = $row['name'];
+    if ($displayedName == "N/A") {
+        $displayedName = 'Not found. <a href="http://google.com/search?q='.$barcode.'" target="_blank">Search for barcode</a>';
+    }
+    echo "<tr><td>" . $displayedName . "</td><td>" . $barcode . "</td><td>" . $row['amount'] . "</td><td><select name=\"select_$id\">" . printSelections($row['possibleMatch']) . "</select>" . "</td><td><button name=\"button_add\" type=\"submit\" value=\"$id\">Add</button> <button name=\"button_consume\" type=\"submit\" value=\"$id\">Consume</button> <button name=\"button_delete\" type=\"submit\" value=\"$id\">Delete</button></td><td>" . explodeWords($row['name'], $id) . "</td></tr>";
 }
 
 ?>

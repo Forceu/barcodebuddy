@@ -42,6 +42,8 @@ require_once "./processing.inc.php";
 initDb();
 
 
+testIfApiIsSet();
+
 //If barcodes are passed through CLI or GET, process them and do not do anything else
 if (isset($argv[1])) {
     processNewBarcode(sanitizeString($argv[1], true));

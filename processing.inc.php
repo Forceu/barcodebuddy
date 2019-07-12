@@ -159,4 +159,11 @@ function explodeWords($words, $id) {
     return $selections;
 }
 
+//Stop script if default API details still set
+function testIfApiIsSet() {
+    if (API_URL == 'https://your.grocy.site/api/') {
+       die("Please set the API details in config.php");
+    }
+}
+
 ?>

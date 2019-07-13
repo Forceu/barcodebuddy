@@ -13,11 +13,10 @@ Webserver that supports PHP (eg. NGINX, Apache), php-sqlite3, php-curl, ideally 
 
 ### Usage
 
-Edit the config.php file and fill in your Grocy API details. Then open the path in your browser. You should now see an empty table.
-To add a barcode (in the following example "123456789"), either pass it to the script as a GET variable eg
+Edit the config.php file and fill in your Grocy API details. You can find the api key in Grocy by clicking on "Settings/Manage API Keys". Then open the path in your browser. To add a barcode (in the following example "123456789"), either pass it to the script as a GET variable eg
 
 ```
-https://your.webhost.com/barcodebuddy/index.php?add=123456789
+https://your.webhost.com/barcodebuddy/index.php?showui&add=123456789
 ```
 
 or pass it from the CLI
@@ -26,16 +25,16 @@ or pass it from the CLI
 php index.php 123456789
 ```
 
-If everything worked, you will see a blank page / no result from the command line. Otherwise an error will be shown. If you would like to add a barcode via GET and see the Web UI, add "&showui" to the URL like this:
+If you pass the argument from the console, you will not see any output if no errors occurred. To achieve the same result with the GUI, do not pass the "showui" parameter, like so:
 
 
 ```
-https://your.webhost.com/barcodebuddy/index.php?add=123456789&showui
+https://your.webhost.com/barcodebuddy/index.php?add=123456789
 ```
 
 If the barcode is already associated with a Grocy product, one unit will now be consumed. If it was not associated, the name will be looked up through openfoodfacts.org. It is then listed on the main page, where you can select a corresponding product. Click on "Add" to add the units to the grocy inventory, "Consume" to remove then and "Delete" to remove the barcode from the list.
 
-![Screenshot of the web ui](https://bulling.mobi/bbuddy.png)
+![Screenshot of the web ui](https://raw.githubusercontent.com/Forceu/barcodebuddy/master/screenshots/FullSite_small.png)
 
 To the right there are also checkboxes for every word in the name of the product. If you tick them, Barcode Buddy will automatically preselect the chosen Grocy product in the list, if another barcode is added with the chosen word in it's name.
 

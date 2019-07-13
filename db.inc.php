@@ -1,10 +1,6 @@
 <?php
-
-
 /**
  * Barcode Buddy for Grocy
- *
- * Long description for file (if any)...
  *
  * PHP version 7
  *
@@ -36,6 +32,7 @@ function initDb() {
     $db->exec("CREATE TABLE IF NOT EXISTS Barcodes(id INTEGER PRIMARY KEY, barcode TEXT NOT NULL, name TEXT NOT NULL, possibleMatch INTEGER, amount INTEGER NOT NULL)");
     $db->exec("CREATE TABLE IF NOT EXISTS Tags(id INTEGER PRIMARY KEY, tag TEXT NOT NULL, itemId INTEGER NOT NULL)");
     $db->exec("CREATE TABLE IF NOT EXISTS TransactionState(id INTEGER PRIMARY KEY, currentState TINYINT NOT NULL, since INTEGER NOT NULL)");
+    $db->exec("CREATE TABLE IF NOT EXISTS BarcodeLogs(id INTEGER PRIMARY KEY, log TEXT NOT NULL)");
     $db->exec("INSERT INTO TransactionState(id,currentState,since) SELECT 1, 0, datetime('now','localtime') WHERE NOT EXISTS(SELECT 1 FROM TransactionState WHERE id = 1)");
 }
 
@@ -79,6 +76,28 @@ function setTransactionState($state) {
     $db->exec("UPDATE TransactionState SET currentState=$state, since=datetime('now','localtime')");
 }
 
+//Gets an array of locally stored barcodes
+function getStoredBarcodes() {
+    global $db;
+$res = $db->query('SELECT * FROM Barcodes');
+$barcodes=array();
+$barcodes["known"]=array();
+$barcodes["unknown"]=array();
+ while ($row = $res->fetchArray()) {
+    $item = array();
+    $item['id']        = $row['id'];
+    $item['barcode']   = $row['barcode'];
+    $item['amount']   = $row['amount'];
+    $item['name']     = $row['name'];
+    $item['match']     = $row['possibleMatch'];
+    if ($row['name'] != "N/A") {
+    array_push($barcodes["known"],$item);
+} else {
+    array_push($barcodes["unknown"],$item);
+}
+    }
+return $barcodes;
+}
 
 
 //Check if the given name includes any words that are associated with a product
@@ -93,6 +112,26 @@ function checkNameForTags($name) {
 }
 
 
+//Get all stored logs
+function getLogs() {
+    global $db;
+$res = $db->query('SELECT * FROM BarcodeLogs ORDER BY id DESC');
+$logs=array();
+ while ($row = $res->fetchArray()) {
+    array_push($logs,$row['log']);
+    }
+return $logs;
+}
+
+
+//Save a log
+function saveLog($log, $isVerbose = false) {
+global $db;
+if ($isVerbose == false || MORE_VERBOSE_LOG == true) {
+$date = date('Y-m-d H:i:s');
+$db->exec("INSERT INTO BarcodeLogs(log) VALUES('".$date.": " . sanitizeString($log)."')");
+}
+}
 
 
 //Delete barcode from local db

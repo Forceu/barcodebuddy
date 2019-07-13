@@ -1,11 +1,6 @@
 <?php
-
-
-
 /**
  * Barcode Buddy for Grocy
- *
- * Long description for file (if any)...
  *
  * PHP version 7
  *
@@ -68,8 +63,7 @@ function openProduct($id) {
     $apiurl = API_STOCK . "/" . $id . "/open";
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $apiurl);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. APIKEY));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','Content-Length: '.strlen($data_json)));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. APIKEY,'Content-Type: application/json','Content-Length: '.strlen($data_json)));
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
     curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -102,8 +96,7 @@ function purchaseProduct($id, $amount, $bestbefore = null, $price = null) {
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $apiurl);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. APIKEY));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','Content-Length: '.strlen($data_json)));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. APIKEY,'Content-Type: application/json','Content-Length: '.strlen($data_json)));
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
     curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -128,8 +121,7 @@ function consumeProduct($id, $amount, $spoiled = "false") {
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $apiurl);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. APIKEY));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','Content-Length: '.strlen($data_json)));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. APIKEY,'Content-Type: application/json','Content-Length: '.strlen($data_json)));
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
     curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -151,8 +143,7 @@ function setBarcode($id, $barcode) {
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $apiurl);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. APIKEY));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','Content-Length: '.strlen($data_json)));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. APIKEY,'Content-Type: application/json','Content-Length: '.strlen($data_json)));
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
     curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -198,10 +189,10 @@ function lookupNameByBarcode($barcode) {
         if (isset($decoded1->response->status) && $decoded1->response->status == 'ERROR') {
             die('Error occured: ' . $decoded1->response->errormessage);
         }
-        if (isset($decoded1["product"]["generic_name"])) {
+        if (isset($decoded1["product"]["generic_name"]) && $decoded1["product"]["generic_name"]!="") {
             return sanitizeString($decoded1["product"]["generic_name"]);
         }
-        if (isset($decoded1["product"]["product_name"])) {
+        if (isset($decoded1["product"]["product_name"])&& $decoded1["product"]["product_name"]!="") {
             return sanitizeString($decoded1["product"]["product_name"]);
         }
         return "N/A";
@@ -231,7 +222,11 @@ function getProductByBardcode($barcode) {
     }
     if (isset($decoded1["product"]["id"])) {
         checkIfNumeric($decoded1["product"]["id"]);
-        return $decoded1["product"]["id"];
+        $resultArray = array();
+	$resultArray["id"]=$decoded1["product"]["id"];
+	$resultArray["name"]=sanitizeString($decoded1["product"]["name"]);
+	$resultArray["unit"]=sanitizeString($decoded1["quantity_unit_stock"]["name"]);
+	return $resultArray;
     } else {
         return null;
     }

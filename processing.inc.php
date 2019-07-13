@@ -1,10 +1,6 @@
 <?php
-
-
 /**
  * Barcode Buddy for Grocy
- *
- * Long description for file (if any)...
  *
  * PHP version 7
  *
@@ -33,30 +29,35 @@ function processNewBarcode($barcode) {
     
     if ($barcode == BARCODE_SET_CONSUME) {
         setTransactionState(STATE_CONSUME);
+        saveLog("Set state to consume",true);
         die;
     }
     if ($barcode == BARCODE_SET_CONSUME_SPOILED) {
         setTransactionState(STATE_CONSUME_SPOILED);
+        saveLog("Set state to consume (spoiled)",true);
         die;
     }
     if ($barcode == BARCODE_SET_PURCHASE) {
         setTransactionState(STATE_CONSUME_PURCHASE);
+        saveLog("Set state to purchase",true);
         die;
     }
     if ($barcode == BARCODE_SET_OPEN) {
         setTransactionState(STATE_CONSUME_OPEN);
+        saveLog("Set state to open",true);
         die;
     }
     
     if (trim($barcode) == "") {
+        saveLog("Invalid barcode found",true);
         die;
     }
 
-    $foundId = getProductByBardcode($barcode);
-    if ($foundId == null) {
+    $productInfo = getProductByBardcode($barcode);
+    if ($productInfo == null) {
         processUnknownBarcode($barcode);
     } else {
-        processKnownBarcode($foundId);
+        processKnownBarcode($productInfo, $barcode);
     }
 }
 
@@ -66,12 +67,15 @@ function processUnknownBarcode($barcode) {
     $count = $db->querySingle("SELECT COUNT(*) as count FROM Barcodes WHERE barcode='$barcode'");
     if ($count != 0) {
         //Unknown barcode already in local database
+        saveLog("Unknown product already scanned. Increasing quantitiy. Barcode: ".$barcode);
         $db->exec("UPDATE Barcodes SET amount = amount + 1 WHERE barcode = '$barcode'");
     } else {
         $productname = lookupNameByBarcode($barcode);
         if ($productname != "N/A") {
+            saveLog("Unknown barcode looked up, found name: ".$productname.". Barcode: ".$barcode);
             $db->exec("INSERT INTO Barcodes(barcode, name, amount, possibleMatch) VALUES('$barcode', '$productname', 1," . checkNameForTags($productname) . ")");
-        } else {
+        } else {     
+            saveLog("Unknown barcode could not be looked up. Barcode: ".$barcode);
             $db->exec("INSERT INTO Barcodes(barcode, name, amount) VALUES('$barcode', 'N/A', 1)");
         }
         
@@ -79,27 +83,33 @@ function processUnknownBarcode($barcode) {
 }
 
 //Process a barcode that Grocy already knows
-function processKnownBarcode($id) {
+function processKnownBarcode($productInfo, $barcode) {
     $state = getTransactionState();
     
     switch ($state) {
         case STATE_CONSUME:
-            consumeProduct($id, 1, false);
+            consumeProduct($productInfo["id"], 1, false);
+            saveLog("Product found. Consuming 1 ".$productInfo["unit"]." of ".$productInfo["name"].". Barcode: ".$barcode);
             break;
         case STATE_CONSUME_SPOILED:
-            consumeProduct($id, 1, true);
+            consumeProduct($productInfo["id"], 1, true);
+            saveLog("Product found. Consuming 1 spoiled ".$productInfo["unit"]." of ".$productInfo["name"].". Barcode: ".$barcode);
             if (REVERT_TO_CONSUME) {
+            saveLog("Reverting back to Consume",true);
                 setTransactionState(STATE_CONSUME);
             }
             break;
         case STATE_CONSUME_PURCHASE:
-            purchaseProduct($id, 1);
+            saveLog("Product found. Adding 1 ".$productInfo["unit"]." of ".$productInfo["name"].". Barcode: ".$barcode);
+            purchaseProduct($productInfo["id"], 1);
             break;
         case STATE_CONSUME_OPEN:
+            saveLog("Product found. Opening 1 ".$productInfo["unit"]." of ".$productInfo["name"].". Barcode: ".$barcode);
+            openProduct($productInfo["id"]);
             if (REVERT_TO_CONSUME) {
+            saveLog("Reverting back to Consume",true);
                 setTransactionState(STATE_CONSUME);
             }
-            openProduct($id);
             break;
     }
 }
@@ -107,10 +117,10 @@ function processKnownBarcode($id) {
 
 
 //Function for generating the <select> elements in the web ui
-function printSelections($selected) {
+function printSelections($selected, $productinfo) {
     
     $selections = array();
-    foreach (getProductInfo() as $product) {
+    foreach ($productinfo as $product) {
         $selections[$product["id"]] = $product["name"];
     }
     asort($selections);
@@ -152,7 +162,10 @@ function explodeWords($words, $id) {
     foreach ($ary as $str) {
         $count = $db->querySingle("SELECT COUNT(*) as count FROM Tags WHERE tag='" . $str . "'");
         if ($count == 0) {
-            $selections = $selections . "<input type=\"checkbox\" name=\"tags_" . $id . "_" . $i . "\" value=\"$str\"> $str";
+	     $selections = $selections .'<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-'.$id.'_'.$i.'">
+  <input type="checkbox"  value="'.$str.'" name="tags[' . $id . '][' . $i . ']" id="checkbox-'.$id.'_'.$i.'" class="mdl-checkbox__input">
+  <span class="mdl-checkbox__label">'.$str.'</span>
+</label>';
             $i++;
         }
     }
@@ -163,6 +176,9 @@ function explodeWords($words, $id) {
 function testIfApiIsSet() {
     if (API_URL == 'https://your.grocy.site/api/') {
        die("Please set the API details in config.php");
+    }
+    if (API_URL != (rtrim(API_URL, '/') . '/')) {
+       die("API_URL in config.php must contain a trailing slash");
     }
 }
 

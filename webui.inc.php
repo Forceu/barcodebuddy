@@ -135,7 +135,7 @@ function processButtons() {
                 foreach ($_POST["tags"][$id] as $tag) {
                     $db->exec("INSERT INTO Tags(tag, itemId) VALUES('" . sanitizeString($tag) . "', $gidSelected);");
                 }
-                $previousBarcodes = getProductInfo(sanitizeString($gidSelected)["barcode"]);
+                $previousBarcodes = getProductInfo(sanitizeString($gidSelected))["barcode"];
                 if ($previousBarcodes == NULL) {
                     setBarcode($gidSelected, $barcode);
                 } else {

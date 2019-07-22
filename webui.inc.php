@@ -109,15 +109,18 @@ function generateTableRow($barcodes, $isKnown) {
 }
 
 
-//If a button on the web ui was pressed
+//Check if a button on the web ui was pressed and process
 function processButtons() {
     global $db;
-    if (isset($_POST["button_delete"])) {
-        $id = $_POST["button_delete"];
-        checkIfNumeric($id);
-        deleteBarcode($id);
-    } else {
-        if (isset($_POST["button_add"]) || isset($_POST["button_consume"])) {
+    if (isset($_POST["button_delete"]) || isset($_POST["button_add"]) || isset($_POST["button_consume"])) {
+        if (isset($_POST["button_delete"])) {
+            $id = $_POST["button_delete"];
+            checkIfNumeric($id);
+            deleteBarcode($id);
+            //Hide POST, so we can refresh
+            header("Location: " . $_SERVER["PHP_SELF"]);
+            die();
+        } else {
             if (isset($_POST["button_consume"])) {
                 $isConsume = true;
                 $id        = $_POST["button_consume"];
@@ -149,10 +152,13 @@ function processButtons() {
                 }
             }
         }
+        //Hide POST, so we can refresh
+        header("Location: " . $_SERVER["PHP_SELF"]);
+        die();
     }
-    
-    
 }
+
+
 
 function printFooter() {
     echo '

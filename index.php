@@ -71,15 +71,18 @@ if (isset($_GET["delete"])) {
 }
     //Hide get
     header("Location: " . $_SERVER["PHP_SELF"]);
+    die();
 }
 
 
 
-printHeader();
 
 // If a button was pressed, we are processing everything here.
 // Only one row can be processed at a time
-        processButtons();
+processButtons();
+
+
+printHeader();
 
 $barcodes =  getStoredBarcodes();
 if (sizeof($barcodes['known'])>0 || sizeof($barcodes['unknown'])>0) {

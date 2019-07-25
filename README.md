@@ -34,7 +34,7 @@ https://your.webhost.com/barcodebuddy/index.php?add=123456789
 
 If the barcode is already associated with a Grocy product, one unit will now be consumed. If it was not associated, the name will be looked up through openfoodfacts.org. It is then listed on the main page, where you can select a corresponding product. Click on "Add" to add the units to the grocy inventory, "Consume" to remove then and "Delete" to remove the barcode from the list.
 
-![Screenshot of the web ui](https://raw.githubusercontent.com/Forceu/barcodebuddy/master/screenshots/FullSite_small.png)
+![Screenshot of the web ui](https://raw.githubusercontent.com/Forceu/barcodebuddy/master/example/screenshots/FullSite_small.png)
 
 To the right there are also checkboxes for every word in the name of the product. If you tick them, Barcode Buddy will automatically preselect the chosen Grocy product in the list, if another barcode is added with the chosen word in it's name.
 

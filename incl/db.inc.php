@@ -44,6 +44,10 @@ const STATE_CONSUME_SPOILED = 1;
 const STATE_CONSUME_PURCHASE = 2;
 const STATE_CONSUME_OPEN = 3;
 
+const SECTION_KNOWN_BARCODES = "known";
+const SECTION_UNKNOWN_BARCODES = "unknown";
+const SECTION_LOGS = "log";
+
 //Getting the state
 function getTransactionState() {
     global $db;
@@ -80,24 +84,24 @@ function setTransactionState($state) {
 //Gets an array of locally stored barcodes
 function getStoredBarcodes() {
     global $db;
-$res = $db->query('SELECT * FROM Barcodes');
-$barcodes=array();
-$barcodes["known"]=array();
-$barcodes["unknown"]=array();
- while ($row = $res->fetchArray()) {
-    $item = array();
-    $item['id']        = $row['id'];
-    $item['barcode']   = $row['barcode'];
-    $item['amount']   = $row['amount'];
-    $item['name']     = $row['name'];
-    $item['match']     = $row['possibleMatch'];
-    if ($row['name'] != "N/A") {
-    array_push($barcodes["known"],$item);
-} else {
-    array_push($barcodes["unknown"],$item);
-}
+    $res                 = $db->query('SELECT * FROM Barcodes');
+    $barcodes            = array();
+    $barcodes["known"]   = array();
+    $barcodes["unknown"] = array();
+    while ($row = $res->fetchArray()) {
+        $item            = array();
+        $item['id']      = $row['id'];
+        $item['barcode'] = $row['barcode'];
+        $item['amount']  = $row['amount'];
+        $item['name']    = $row['name'];
+        $item['match']   = $row['possibleMatch'];
+        if ($row['name'] != "N/A") {
+            array_push($barcodes["known"], $item);
+        } else {
+            array_push($barcodes["unknown"], $item);
+        }
     }
-return $barcodes;
+    return $barcodes;
 }
 
 
@@ -116,22 +120,22 @@ function checkNameForTags($name) {
 //Get all stored logs
 function getLogs() {
     global $db;
-$res = $db->query('SELECT * FROM BarcodeLogs ORDER BY id DESC');
-$logs=array();
- while ($row = $res->fetchArray()) {
-    array_push($logs,$row['log']);
+    $res  = $db->query('SELECT * FROM BarcodeLogs ORDER BY id DESC');
+    $logs = array();
+    while ($row = $res->fetchArray()) {
+        array_push($logs, $row['log']);
     }
-return $logs;
+    return $logs;
 }
 
 
 //Save a log
 function saveLog($log, $isVerbose = false) {
-global $db;
-if ($isVerbose == false || MORE_VERBOSE_LOG == true) {
-$date = date('Y-m-d H:i:s');
-$db->exec("INSERT INTO BarcodeLogs(log) VALUES('".$date.": " . sanitizeString($log)."')");
-}
+    global $db;
+    if ($isVerbose == false || MORE_VERBOSE_LOG == true) {
+        $date = date('Y-m-d H:i:s');
+        $db->exec("INSERT INTO BarcodeLogs(log) VALUES('" . $date . ": " . sanitizeString($log) . "')");
+    }
 }
 
 
@@ -141,6 +145,20 @@ function deleteBarcode($id) {
     $db->exec("DELETE FROM Barcodes WHERE id='$id'");
 }
 
+function deleteAll($section) {
+    global $db;
+    switch ($section) {
+        case SECTION_KNOWN_BARCODES:
+            $db->exec("DELETE FROM Barcodes WHERE name IS NOT 'N/A'");
+            break;
+        case SECTION_UNKNOWN_BARCODES:
+            $db->exec("DELETE FROM Barcodes WHERE name='N/A'");
+            break;
+        case SECTION_LOGS:
+            $db->exec("DELETE FROM BarcodeLogs");
+            break;
+    }
+}
 
 
 //Generates the SQL for word search
@@ -164,7 +182,5 @@ function generateQueryFromName($name) {
 if (!isset($db)) {
     $db = null;
 }
-
-
 
 ?>

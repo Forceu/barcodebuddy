@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Barcode Buddy for Grocy
  *
@@ -112,44 +111,78 @@ function generateTableRow($barcodes, $isKnown) {
 //Check if a button on the web ui was pressed and process
 function processButtons() {
     global $db;
-    if (isset($_POST["button_delete"]) || isset($_POST["button_add"]) || isset($_POST["button_consume"])) {
-        if (isset($_POST["button_delete"])) {
-            $id = $_POST["button_delete"];
-            checkIfNumeric($id);
-            deleteBarcode($id);
-            //Hide POST, so we can refresh
-            header("Location: " . $_SERVER["PHP_SELF"]);
-            die();
-        } else {
-            if (isset($_POST["button_consume"])) {
-                $isConsume = true;
-                $id        = $_POST["button_consume"];
-            } else {
-                $isConsume = false;
-                $id        = $_POST["button_add"];
+    
+    if (isset($_GET["delete"])) {
+        deleteAll($_GET["delete"]);
+        //Hide get
+        header("Location: " . $_SERVER["PHP_SELF"]);
+        die();
+    }
+    
+    if (isset($_POST["button_delete"])) {
+        $id = $_POST["button_delete"];
+        checkIfNumeric($id);
+        deleteBarcode($id);
+        //Hide POST, so we can refresh
+        header("Location: " . $_SERVER["PHP_SELF"]);
+        die();
+    }
+    
+    
+    if (isset($_POST["button_delete"])) {
+        $id = $_POST["button_delete"];
+        checkIfNumeric($id);
+        deleteBarcode($id);
+        //Hide POST, so we can refresh
+        header("Location: " . $_SERVER["PHP_SELF"]);
+        die();
+    }
+    
+    if (isset($_POST["button_add_manual"])) {
+        if (isset($_POST["newbarcodes"]) && strlen(trim($_POST["newbarcodes"])) > 0) {
+            $barcodes = explode("\n", trim($_POST['newbarcodes']));
+            foreach ($barcodes as $barcode) {
+		$trimmedBarcode = trim(sanitizeString($barcode));
+		if (strlen($trimmedBarcode)>0) {
+                	processNewBarcode($trimmedBarcode, false);
+		}
             }
-            checkIfNumeric($id);
-            $gidSelected = $_POST["select_" . $id];
-            $res         = $db->query("SELECT * FROM Barcodes WHERE id='$id'");
-            if ($gidSelected != 0 && ($row = $res->fetchArray())) {
-                $barcode = sanitizeString($row["barcode"], true);
-                $amount  = $row["amount"];
-                checkIfNumeric($amount);
-                foreach ($_POST["tags"][$id] as $tag) {
-                    $db->exec("INSERT INTO Tags(tag, itemId) VALUES('" . sanitizeString($tag) . "', $gidSelected);");
-                }
-                $previousBarcodes = getProductInfo(sanitizeString($gidSelected))["barcode"];
-                if ($previousBarcodes == NULL) {
-                    setBarcode($gidSelected, $barcode);
-                } else {
-                    setBarcode($gidSelected, $previousBarcodes . "," . $barcode);
-                }
-                deleteBarcode($id);
-                if ($isConsume) {
-                    consumeProduct($gidSelected, $amount);
-                } else {
-                    purchaseProduct($gidSelected, $amount);
-                }
+        }
+        
+        //Hide POST, so we can refresh
+        header("Location: " . $_SERVER["PHP_SELF"]);
+        die();
+    }
+    
+    if (isset($_POST["button_add"]) || isset($_POST["button_consume"])) {
+        if (isset($_POST["button_consume"])) {
+            $isConsume = true;
+            $id        = $_POST["button_consume"];
+        } else {
+            $isConsume = false;
+            $id        = $_POST["button_add"];
+        }
+        checkIfNumeric($id);
+        $gidSelected = $_POST["select_" . $id];
+        $res         = $db->query("SELECT * FROM Barcodes WHERE id='$id'");
+        if ($gidSelected != 0 && ($row = $res->fetchArray())) {
+            $barcode = sanitizeString($row["barcode"], true);
+            $amount  = $row["amount"];
+            checkIfNumeric($amount);
+            foreach ($_POST["tags"][$id] as $tag) {
+                $db->exec("INSERT INTO Tags(tag, itemId) VALUES('" . sanitizeString($tag) . "', $gidSelected);");
+            }
+            $previousBarcodes = getProductInfo(sanitizeString($gidSelected))["barcode"];
+            if ($previousBarcodes == NULL) {
+                setBarcode($gidSelected, $barcode);
+            } else {
+                setBarcode($gidSelected, $previousBarcodes . "," . $barcode);
+            }
+            deleteBarcode($id);
+            if ($isConsume) {
+                consumeProduct($gidSelected, $amount);
+            } else {
+                purchaseProduct($gidSelected, $amount);
             }
         }
         //Hide POST, so we can refresh
@@ -161,6 +194,7 @@ function processButtons() {
 
 
 function printFooter() {
+    global $WEBSOCKET_PROXY_URL;
     echo '
           </section>
           <section class="section--footer mdl-grid">
@@ -182,9 +216,75 @@ function printFooter() {
         </footer>
       </main>
     </div>
- <!-- Maybe use in future <a href="#" target="_blank" id="add-barcode" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast">Add barcode</a> -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Add barcode</h2>
+
+Enter your barcodes below, one each line.&nbsp;<br><br>
+<form name="form" method="post" action="' . $_SERVER['PHP_SELF'] . '" >
+<textarea name="newbarcodes" id="newbarcodes" class="mdl-textfield__input" rows="15"></textarea>
+<span style="font-size: 9px;">It is recommended to use a script that grabs the barcode scanner input, instead of doing it manually. See the <a href="https://github.com/Forceu/barcodebuddy" rel="noopener noreferrer" target="_blank">project website</a> on how to do this.</span><br><br><br>
+
+
+<button  class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast" name="button_add_manual" type="submit" value="Add">Add</button>​
+</form>
+  </div>
+
+</div>
+
+ <button id="add-barcode" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast">Add barcode</button> 
     <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-  </body>
+<script>
+// Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the button that opens the modal
+var btn = document.getElementById("add-barcode");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the modal 
+btn.onclick = function() {
+  modal.style.display = "block";
+document.getElementById("newbarcodes").focus();
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+</script>';
+    if (USE_WEBSOCKET) {
+        echo '<script>
+      var ws = new WebSocket(';
+        if (!USE_SSL_PROXY) {
+            echo "'ws://" . $_SERVER["SERVER_NAME"] . ":" . WEBSOCKET_PUBLIC_PORT . "/screen');";
+        } else {
+            echo "'" . $WEBSOCKET_PROXY_URL . "');";
+        }
+        echo ' 
+      ws.onopen = function() {
+      };
+      ws.onclose = function() {
+      };
+      ws.onmessage = function(event) {
+        window.location.reload(true); 
+      };
+
+    </script>';
+    }
+    echo '</body>
 </html>';
 }
 ;
@@ -225,6 +325,44 @@ function printHeader() {
       margin-bottom: 40px;
       z-index: 900;
     }
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
     </style>
 
   </head>

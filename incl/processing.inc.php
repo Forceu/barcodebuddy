@@ -25,57 +25,60 @@
 
 
 // Function that is called when a barcode is passed on
-function processNewBarcode($barcode) {
+function processNewBarcode($barcode, $websocketEnabled = true) {
     
     if ($barcode == BARCODE_SET_CONSUME) {
         setTransactionState(STATE_CONSUME);
-        saveLog("Set state to consume",true);
-        die;
+        saveLog("Set state to consume", true);
+        sendWebsocketMessage("Set state to consume", $websocketEnabled);
     }
     if ($barcode == BARCODE_SET_CONSUME_SPOILED) {
         setTransactionState(STATE_CONSUME_SPOILED);
-        saveLog("Set state to consume (spoiled)",true);
-        die;
+        saveLog("Set state to consume (spoiled)", true);
+        sendWebsocketMessage("Set state to consume (spoiled)", $websocketEnabled);
     }
     if ($barcode == BARCODE_SET_PURCHASE) {
         setTransactionState(STATE_CONSUME_PURCHASE);
-        saveLog("Set state to purchase",true);
-        die;
+        saveLog("Set state to purchase", true);
+        sendWebsocketMessage("Set state to purchase", $websocketEnabled);
     }
     if ($barcode == BARCODE_SET_OPEN) {
         setTransactionState(STATE_CONSUME_OPEN);
-        saveLog("Set state to open",true);
-        die;
+        saveLog("Set state to open", true);
+        sendWebsocketMessage("Set state to open", $websocketEnabled);
     }
     
     if (trim($barcode) == "") {
-        saveLog("Invalid barcode found",true);
-        die;
+        saveLog("Invalid barcode found", true);
+        sendWebsocketMessage("Invalid barcode found", $websocketEnabled, 2);
     }
-
+    
     $productInfo = getProductByBardcode($barcode);
     if ($productInfo == null) {
-        processUnknownBarcode($barcode);
+        processUnknownBarcode($barcode, $websocketEnabled);
     } else {
-        processKnownBarcode($productInfo, $barcode);
+        processKnownBarcode($productInfo, $barcode, $websocketEnabled);
     }
 }
 
 //If grocy does not know this barcode
-function processUnknownBarcode($barcode) {
+function processUnknownBarcode($barcode, $websocketEnabled) {
     global $db;
     $count = $db->querySingle("SELECT COUNT(*) as count FROM Barcodes WHERE barcode='$barcode'");
     if ($count != 0) {
         //Unknown barcode already in local database
-        saveLog("Unknown product already scanned. Increasing quantitiy. Barcode: ".$barcode);
+        saveLog("Unknown product already scanned. Increasing quantitiy. Barcode: " . $barcode);
+        sendWebsocketMessage("Unknown product already scanned. Increasing quantitiy", $websocketEnabled, 1);
         $db->exec("UPDATE Barcodes SET amount = amount + 1 WHERE barcode = '$barcode'");
     } else {
         $productname = lookupNameByBarcode($barcode);
         if ($productname != "N/A") {
-            saveLog("Unknown barcode looked up, found name: ".$productname.". Barcode: ".$barcode);
+            saveLog("Unknown barcode looked up, found name: " . $productname . ". Barcode: " . $barcode);
+            sendWebsocketMessage($productname, $websocketEnabled, 1);
             $db->exec("INSERT INTO Barcodes(barcode, name, amount, possibleMatch) VALUES('$barcode', '$productname', 1," . checkNameForTags($productname) . ")");
-        } else {     
-            saveLog("Unknown barcode could not be looked up. Barcode: ".$barcode);
+        } else {
+            saveLog("Unknown barcode could not be looked up. Barcode: " . $barcode);
+            sendWebsocketMessage($barcode, $websocketEnabled, 2);
             $db->exec("INSERT INTO Barcodes(barcode, name, amount) VALUES('$barcode', 'N/A', 1)");
         }
         
@@ -83,31 +86,35 @@ function processUnknownBarcode($barcode) {
 }
 
 //Process a barcode that Grocy already knows
-function processKnownBarcode($productInfo, $barcode) {
+function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
     $state = getTransactionState();
     
     switch ($state) {
         case STATE_CONSUME:
             consumeProduct($productInfo["id"], 1, false);
-            saveLog("Product found. Consuming 1 ".$productInfo["unit"]." of ".$productInfo["name"].". Barcode: ".$barcode);
+            saveLog("Product found. Consuming 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode);
+            sendWebsocketMessage("Consuming 1 " . $productInfo["unit"] . " of " . $productInfo["name"], $websocketEnabled);
             break;
         case STATE_CONSUME_SPOILED:
             consumeProduct($productInfo["id"], 1, true);
-            saveLog("Product found. Consuming 1 spoiled ".$productInfo["unit"]." of ".$productInfo["name"].". Barcode: ".$barcode);
+            saveLog("Product found. Consuming 1 spoiled " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode);
+            sendWebsocketMessage("Consuming 1 spoiled " . $productInfo["unit"] . " of " . $productInfo["name"], $websocketEnabled);
             if (REVERT_TO_CONSUME) {
-            saveLog("Reverting back to Consume",true);
+                saveLog("Reverting back to Consume", true);
                 setTransactionState(STATE_CONSUME);
             }
             break;
         case STATE_CONSUME_PURCHASE:
-            saveLog("Product found. Adding 1 ".$productInfo["unit"]." of ".$productInfo["name"].". Barcode: ".$barcode);
+            saveLog("Product found. Adding 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode);
+            sendWebsocketMessage("Adding 1 " . $productInfo["unit"] . " of " . $productInfo["name"], $websocketEnabled);
             purchaseProduct($productInfo["id"], 1);
             break;
         case STATE_CONSUME_OPEN:
-            saveLog("Product found. Opening 1 ".$productInfo["unit"]." of ".$productInfo["name"].". Barcode: ".$barcode);
+            saveLog("Product found. Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode);
+            sendWebsocketMessage("Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"], $websocketEnabled);
             openProduct($productInfo["id"]);
             if (REVERT_TO_CONSUME) {
-            saveLog("Reverting back to Consume",true);
+                saveLog("Reverting back to Consume", true);
                 setTransactionState(STATE_CONSUME);
             }
             break;
@@ -160,11 +167,12 @@ function explodeWords($words, $id) {
         return "";
     }
     foreach ($ary as $str) {
-        $count = $db->querySingle("SELECT COUNT(*) as count FROM Tags WHERE tag='" . $str . "'");
+        $sanitizedWord = str_replace(array( '(', ')' ), '', $str);
+        $count = $db->querySingle("SELECT COUNT(*) as count FROM Tags WHERE tag='" . $sanitizedWord . "'");
         if ($count == 0) {
-	     $selections = $selections .'<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-'.$id.'_'.$i.'">
-  <input type="checkbox"  value="'.$str.'" name="tags[' . $id . '][' . $i . ']" id="checkbox-'.$id.'_'.$i.'" class="mdl-checkbox__input">
-  <span class="mdl-checkbox__label">'.$str.'</span>
+            $selections = $selections . '<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-' . $id . '_' . $i . '">
+  <input type="checkbox"  value="' . $sanitizedWord . '" name="tags[' . $id . '][' . $i . ']" id="checkbox-' . $id . '_' . $i . '" class="mdl-checkbox__input">
+  <span class="mdl-checkbox__label">' . $sanitizedWord . '</span>
 </label>';
             $i++;
         }
@@ -175,10 +183,10 @@ function explodeWords($words, $id) {
 //Stop script if default API details still set
 function testIfApiIsSet() {
     if (API_URL == 'https://your.grocy.site/api/') {
-       die("Please set the API details in config.php");
+        die("Please set the API details in config.php");
     }
     if (API_URL != (rtrim(API_URL, '/') . '/')) {
-       die("API_URL in config.php must contain a trailing slash");
+        die("API_URL in config.php must contain a trailing slash");
     }
 }
 

@@ -60,3 +60,4 @@ This project is licensed under the GNU GPL3 - see the [LICENSE.md](LICENSE.md) f
 
 * Thanks to Bernd Bestel for creating the amazing [Grocy](https://github.com/grocy/grocy) Project!
 * openfoodfacts.org for providing the barcode lookup API
+* [PHP-Websocket](https://github.com/bloatless/php-websocket)

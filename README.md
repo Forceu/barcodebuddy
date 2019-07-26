@@ -18,9 +18,9 @@ Refer to the [wiki](https://github.com/Forceu/barcodebuddy/wiki), on how to use 
 
 
 ### Screenshots
-![Screenshot of the web ui](https://raw.githubusercontent.com/Forceu/barcodebuddy/master/example/screenshots/FullSite_small.png)
-
+![Screenshot of the web ui](https://raw.githubusercontent.com/Forceu/barcodebuddy/master/example/screenshots/FullSite_small.png)     
 ![Screenshot of the screen module](https://github.com/Forceu/barcodebuddy/raw/master/example/screenshots/Screen.gif)
+
 
 
 ## Comments

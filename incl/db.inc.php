@@ -23,6 +23,7 @@
  * @since      File available since Release 1.0
  */
 
+const BB_VERSION = "1100";
 
 //Initiate database and create if not existent
 function initDb() {
@@ -35,8 +36,27 @@ function initDb() {
     $db->exec("CREATE TABLE IF NOT EXISTS TransactionState(id INTEGER PRIMARY KEY, currentState TINYINT NOT NULL, since INTEGER NOT NULL)");
     $db->exec("CREATE TABLE IF NOT EXISTS BarcodeLogs(id INTEGER PRIMARY KEY, log TEXT NOT NULL)");
     $db->exec("INSERT INTO TransactionState(id,currentState,since) SELECT 1, 0, datetime('now','localtime') WHERE NOT EXISTS(SELECT 1 FROM TransactionState WHERE id = 1)");
+    $db->exec("CREATE TABLE IF NOT EXISTS BBConfig(id INTEGER PRIMARY KEY, data TEXT NOT NULL, value TEXT NOT NULL)");
+    $db->exec("INSERT INTO BBConfig(id,data,value) SELECT 1, \"version\", \"" . BB_VERSION . "\" WHERE NOT EXISTS(SELECT 1 FROM BBLogs WHERE id = 1)");
+    
+    $previousVersion = getInstalledVersion();
+    if (previousVersion < BB_VERSION) {
+        upgradeBarcodeBuddy($previousVersion);
+    }
 }
 
+function getInstalledVersion() {
+    global $db;
+    $res = $db->query("SELECT * FROM BBConfig WHERE data='version'");
+    if ($row = $res->fetchArray()) {
+        return $row["value"];
+    } else {
+        die("DB Error");
+    }
+}
+
+function upgradeBarcodeBuddy($previousVersion) {
+}
 
 //States to tell the script what to do with the barcodes that were scanned
 const STATE_CONSUME = 0;

@@ -27,7 +27,7 @@
 
 function printMainTables() {
 echo '
-      <main class="mdl-layout__content">
+      <main class="mdl-layout__content" style="flex: 1 0 auto;">
         <div class="mdl-layout__tab-panel is-active" id="overview">
        <section class="section--center mdl-grid--no-spacing mdl-grid mdl-shadow--2dp">
             <div class="mdl-card mdl-cell  mdl-cell--12-col">
@@ -279,7 +279,7 @@ if ($isMain) {
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-blue.min.css">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="'.$folder.'styles.css">
 
     <style>
     #add-barcode {
@@ -290,6 +290,13 @@ if ($isMain) {
       margin-right: 40px;
       margin-bottom: 40px;
       z-index: 900;
+}
+.mdl-mini-footer {
+
+position: absolute !important;
+bottom: 0 !important;
+left: 0 !important;
+right: 0 !important;
     }
 /* The Modal (background) */
 .modal {
@@ -374,8 +381,7 @@ function printFooter($isMain=false) {
     </ul>
   </div>
 </footer>
-      </main>
-    </div>';
+      </main></div>';
 if ($isMain) {
 echo '<div id="myModal" class="modal">
 

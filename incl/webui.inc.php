@@ -161,6 +161,7 @@ bottom: 0 !important;
 left: 0 !important;
 right: 0 !important;
     }
+
 /* The Modal (background) */
 .modal {
   display: none; /* Hidden by default */

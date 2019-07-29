@@ -28,7 +28,8 @@ const BB_VERSION = "1120";
 //Initiate database and create if not existent
 function initDb() {
     global $db;
-    
+     
+    checkPermissions();
     $db = new SQLite3(DATABASE_PATH);
     $db->busyTimeout(5000);
     $db->exec("CREATE TABLE IF NOT EXISTS Barcodes(id INTEGER PRIMARY KEY, barcode TEXT NOT NULL, name TEXT NOT NULL, possibleMatch INTEGER, amount INTEGER NOT NULL)");
@@ -39,7 +40,7 @@ function initDb() {
     $db->exec("CREATE TABLE IF NOT EXISTS BBConfig(id INTEGER PRIMARY KEY, data TEXT NOT NULL, value TEXT NOT NULL)");
     $db->exec("INSERT INTO BBConfig(id,data,value) SELECT 1, \"version\", \"" . BB_VERSION . "\" WHERE NOT EXISTS(SELECT 1 FROM BBConfig WHERE id = 1)");
     $previousVersion = getInstalledVersion();
-    if (previousVersion < BB_VERSION) {
+    if ($previousVersion < BB_VERSION) {
         upgradeBarcodeBuddy($previousVersion);
     }
 }
@@ -54,7 +55,25 @@ function getInstalledVersion() {
     }
 }
 
+function checkPermissions() {
+    if (file_exists(DATABASE_PATH)) {
+        if (!is_writable(DATABASE_PATH)) {
+            die("DB Error: Database file is not writable");
+        }
+    } else {
+        if (!is_writable(dirname(DATABASE_PATH))) {
+            die("DB Error: Database file cannot be created, as folder is not writable. Please check your permissions.<br>
+                 Have a look at this link to find out how to do this:
+                 <a href='https://github.com/olab/Open-Labyrinth/wiki/How-do-I-make-files-and-folders-writable-for-the-web-server%3F'>".
+                 "How do I make files and folders writable for the web server?</a>");
+        }
+    }
+}
+
 function upgradeBarcodeBuddy($previousVersion) {
+    global $db;
+    //Place for future update protocols
+    $db->exec("UPDATE BBConfig SET value='" . BB_VERSION . "' WHERE data='version'");
 }
 
 //States to tell the script what to do with the barcodes that were scanned
@@ -225,7 +244,7 @@ function generateQueryFromName($name) {
 
 // Initiates the database variable
 if (!isset($db)) {
-    $db = null;
+    initDb();
 }
 
 ?>

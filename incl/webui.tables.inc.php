@@ -28,6 +28,7 @@
 
 
 function printMainTables() {
+global $productinfo;
 echo '
       <main class="mdl-layout__content" style="flex: 1 0 auto;">
         <div class="mdl-layout__tab-panel is-active" id="overview">

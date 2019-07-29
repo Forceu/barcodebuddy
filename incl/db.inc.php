@@ -23,7 +23,7 @@
  * @since      File available since Release 1.0
  */
 
-const BB_VERSION = "1100";
+const BB_VERSION = "1120";
 
 //Initiate database and create if not existent
 function initDb() {

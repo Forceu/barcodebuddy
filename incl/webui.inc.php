@@ -74,7 +74,12 @@ echo'              </div>
             </button>
             <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="btn3">
               <li class="mdl-menu__item" onclick="window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=log\'">Clear log</li>
-            </ul>';
+            </ul>
+
+          </section>
+          <section class="section--footer mdl-grid">
+          </section>
+        </div>';
 }
 
 //Generate the table with barcodes
@@ -245,7 +250,12 @@ function processButtons() {
 
 
 
-function printHeader() {
+function printHeader($isMain=false) {
+if ($isMain) {
+    $folder="./";
+} else {
+    $folder="../";
+}
     echo '<!doctype html>
 <html lang="en">
   <head>
@@ -329,7 +339,7 @@ function printHeader() {
   <header class="mdl-layout__header">
     <div class="mdl-layout__header-row">
       <!-- Title -->
-      <span class="mdl-layout-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Barcode Buddy</span>
+      <span class="mdl-layout-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style="color: white; text-decoration: none;" href="'.$folder.'index.php">Barcode Buddy</a></span>
       <!-- Add spacer, to align navigation to the right -->
       <div class="mdl-layout-spacer"></div>';
       if (USE_WEBSOCKET) {
@@ -342,24 +352,18 @@ function printHeader() {
   <div class="mdl-layout__drawer">
     <span class="mdl-layout-title">Settings</span>
     <nav class="mdl-navigation">
-      <a class="mdl-navigation__link" href="">General</a>
-      <a class="mdl-navigation__link" href="">Tags</a>
-      <a class="mdl-navigation__link" href="">Quantities</a>
-      <a class="mdl-navigation__link" href="">Chores</a>
+      <a class="mdl-navigation__link" href="'.$folder.'menu/general.php">General</a>
+      <a class="mdl-navigation__link" href="'.$folder.'menu/tags.php">Tags</a>
+      <a class="mdl-navigation__link" href="'.$folder.'menu/quantities.php">Quantities</a>
+      <a class="mdl-navigation__link" href="'.$folder.'menu/chores.php">Chores</a>
     </nav>
   </div>';
 }
 
 
-function printFooter() {
+function printFooter($isMain=false) {
     global $WEBSOCKET_PROXY_URL;
-    echo '
-          </section>
-          <section class="section--footer mdl-grid">
-          </section>
-        </div>
-       
-        <footer class="mdl-mega-footer">
+    echo '<footer class="mdl-mega-footer">
           <div class="mdl-mega-footer--bottom-section">
             <div class="mdl-logo">
               More Information
@@ -373,8 +377,9 @@ function printFooter() {
           </div>
         </footer>
       </main>
-    </div>
-<div id="myModal" class="modal">
+    </div>';
+if ($isMain) {
+echo '<div id="myModal" class="modal">
 
   <!-- Modal content -->
   <div class="modal-content">
@@ -390,33 +395,23 @@ Enter your barcodes below, one each line.&nbsp;<br><br>
 <button  class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast" name="button_add_manual" type="submit" value="Add">Add</button>​
 </form>
   </div>
-
 </div>
-
- <button id="add-barcode" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast">Add barcode</button> 
-    <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+ <button id="add-barcode" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast">Add barcode</button> ';
+} else {
+echo '</div>';
+}
+echo '<script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 <script>
-// Get the modal
 var modal = document.getElementById("myModal");
-
-// Get the button that opens the modal
 var btn = document.getElementById("add-barcode");
-
-// Get the <span> element that closes the modal
 var span = document.getElementsByClassName("close")[0];
-
-// When the user clicks the button, open the modal 
 btn.onclick = function() {
   modal.style.display = "block";
 document.getElementById("newbarcodes").focus();
 }
-
-// When the user clicks on <span> (x), close the modal
 span.onclick = function() {
   modal.style.display = "none";
 }
-
-// When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
   if (event.target == modal) {
     modal.style.display = "none";

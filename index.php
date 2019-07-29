@@ -37,9 +37,6 @@ require_once __DIR__ . "/incl/websocketconnection.inc.php";
 require_once __DIR__ . "/incl/webui.inc.php";
 initDb();
 
-
-testIfApiIsSet();
-
 //If barcodes or parameters are passed through CLI or GET, process them and do not do anything else
 if (isset($argv[1])) {
     processNewBarcode(sanitizeString($argv[1], true));
@@ -59,7 +56,7 @@ if (isset($_GET["add"])) {
 processButtons();
 
 
-printHeader();
+printHeader(true);
 printMainTables();
-printFooter();
+printFooter(true);
 ?>

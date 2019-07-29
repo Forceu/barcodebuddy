@@ -26,38 +26,45 @@
 
 // Function that is called when a barcode is passed on
 function processNewBarcode($barcode, $websocketEnabled = true) {
-    
+    $isProcessed = false;
     if ($barcode == BARCODE_SET_CONSUME) {
         setTransactionState(STATE_CONSUME);
         saveLog("Set state to consume", true);
         sendWebsocketMessage("Set state to consume", $websocketEnabled);
+        $isProcessed = true;
     }
     if ($barcode == BARCODE_SET_CONSUME_SPOILED) {
         setTransactionState(STATE_CONSUME_SPOILED);
         saveLog("Set state to consume (spoiled)", true);
         sendWebsocketMessage("Set state to consume (spoiled)", $websocketEnabled);
+        $isProcessed = true;
     }
     if ($barcode == BARCODE_SET_PURCHASE) {
         setTransactionState(STATE_CONSUME_PURCHASE);
         saveLog("Set state to purchase", true);
         sendWebsocketMessage("Set state to purchase", $websocketEnabled);
+        $isProcessed = true;
     }
     if ($barcode == BARCODE_SET_OPEN) {
         setTransactionState(STATE_CONSUME_OPEN);
         saveLog("Set state to open", true);
         sendWebsocketMessage("Set state to open", $websocketEnabled);
+        $isProcessed = true;
     }
     
     if (trim($barcode) == "") {
         saveLog("Invalid barcode found", true);
         sendWebsocketMessage("Invalid barcode found", $websocketEnabled, 2);
+        $isProcessed = true;
     }
     
-    $productInfo = getProductByBardcode($barcode);
-    if ($productInfo == null) {
-        processUnknownBarcode($barcode, $websocketEnabled);
-    } else {
-        processKnownBarcode($productInfo, $barcode, $websocketEnabled);
+    if (!$isProcessed) {
+        $productInfo = getProductByBardcode($barcode);
+        if ($productInfo == null) {
+            processUnknownBarcode($barcode, $websocketEnabled);
+        } else {
+            processKnownBarcode($productInfo, $barcode, $websocketEnabled);
+        }
     }
 }
 

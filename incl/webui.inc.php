@@ -221,11 +221,11 @@ right: 0 !important;
   </header>
   <div class="mdl-layout__drawer">
     <span class="mdl-layout-title">Settings</span>
-    <nav class="mdl-navigation">
+    <nav class="mdl-navigation"><!--
       <a class="mdl-navigation__link" href="'.$folder.'menu/general.php">General</a>
-      <a class="mdl-navigation__link" href="'.$folder.'menu/tags.php">Tags</a>
       <a class="mdl-navigation__link" href="'.$folder.'menu/quantities.php">Quantities</a>
-      <a class="mdl-navigation__link" href="'.$folder.'menu/chores.php">Chores</a>
+      <a class="mdl-navigation__link" href="'.$folder.'menu/chores.php">Chores</a> -->
+      <a class="mdl-navigation__link" href="'.$folder.'menu/tags.php">Tags</a>
     </nav>
   </div>';
 }

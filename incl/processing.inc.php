@@ -187,6 +187,26 @@ function explodeWords($words, $id) {
     return $selections;
 }
 
+
+
+function getAllTags() {
+    $tags       = getStoredTags();
+    $products   = getProductInfo();
+    $returnTags = array();
+    
+    foreach ($tags as $tag) {
+        foreach ($products as $product) {
+            if ($product["id"] == $tag["itemId"]) {
+                $tag["item"] = $product["name"];
+                array_push($returnTags, $tag);
+		break;
+            }
+        }
+    }
+    return $returnTags;
+}
+
+
 //Stop script if default API details still set
 function testIfApiIsSet() {
     if (API_URL == 'https://your.grocy.site/api/') {

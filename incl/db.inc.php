@@ -124,6 +124,25 @@ function getStoredBarcodes() {
 }
 
 
+
+//Gets an array of locally stored tags
+function getStoredTags() {
+    global $db;
+    $res                 = $db->query('SELECT * FROM Tags');
+    $tags                = array();
+    while ($row = $res->fetchArray()) {
+        $item            = array();
+        $item['id']      = $row['id'];
+        $item['name']    = $row['tag'];
+        $item['itemId']  = $row['itemId'];
+        $item['item']    = "";
+        array_push($tags, $item);
+    }
+    return $tags;
+}
+
+
+
 //Check if the given name includes any words that are associated with a product
 function checkNameForTags($name) {
     global $db;
@@ -162,6 +181,13 @@ function saveLog($log, $isVerbose = false) {
 function deleteBarcode($id) {
     global $db;
     $db->exec("DELETE FROM Barcodes WHERE id='$id'");
+}
+
+
+//Delete tag from local db
+function deleteTag($id) {
+    global $db;
+    $db->exec("DELETE FROM Tags WHERE id='$id'");
 }
 
 function deleteAll($section) {

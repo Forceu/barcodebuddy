@@ -270,6 +270,18 @@ echo '</div>';
 }
 echo '<script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 <script>
+
+function enableButton(idSelect, idButtonAdd, idButtonConsume)
+{
+
+    var oSelect = document.getElementById(idSelect);
+    var oButtonAdd = document.getElementById(idButtonAdd);
+    var oButtonConsume = document.getElementById(idButtonConsume);
+    oButtonAdd.disabled = oSelect.value == "0";
+    oButtonConsume.disabled = oSelect.value == "0";
+}
+
+
 var modal = document.getElementById("myModal");
 var btn = document.getElementById("add-barcode");
 var span = document.getElementsByClassName("close")[0];

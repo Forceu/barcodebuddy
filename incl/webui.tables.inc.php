@@ -143,24 +143,30 @@ function generateTableRowMain($barcodes, $isKnown) {
     $returnString = "";
     if ($isKnown) {
         foreach ($barcodes['known'] as $item) {
+            $isDisabled="disabled";
+	    if ($item['match']!=0) {
+		$isDisabled="";
+	    }
+            $itemId=$item['id'];
             $returnString = $returnString . '<tr>
         <td class="mdl-data-table__cell--non-numeric">' . $item['name'] . '</td>
               <td class="mdl-data-table__cell--non-numeric">' . $item['barcode'] . '</td>
               <td>' . $item['amount'] . '</td>
-              <td class="mdl-data-table__cell--non-numeric"><select name="select_' . $item['id'] . '">' . printSelections($item['match'], $productinfo) . '</select></td>
-        <td><button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" name="button_add" type="submit"  value="' . $item['id'] . '">Add</button> <button             class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" name="button_consume" type="submit" value="' . $item['id'] . '">Consume</button> </td>
-        <td>' . explodeWords($item['name'], $item['id']) . '</td>
-        <td><button name="button_delete" type="submit" class="mdl-button mdl-js-button mdl-js-ripple-effect" value="' . $item['id'] . '">Delete</button></td></tr>';
+              <td class="mdl-data-table__cell--non-numeric"><select  onchange=\'enableButton("select_' . $itemId . '", "button_add_'.$item['id'].'", "button_consume_'.$item['id'].'")\'  name="select_' . $itemId . '")" id="select_' . $itemId . '" name="select_' . $itemId . '">' . printSelections($item['match'], $productinfo) . '</select></td>
+        <td><button '.$isDisabled.' class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="button_add_'.$item['id'].'" name="button_add" type="submit"  value="' . $itemId . '">Add</button> <button '.$isDisabled.' class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="button_consume_'.$item['id'].'" name="button_consume" type="submit" value="' . $itemId . '">Consume</button> </td>
+        <td>' . explodeWords($item['name'], $itemId) . '</td>
+        <td><button name="button_delete" type="submit" class="mdl-button mdl-js-button mdl-js-ripple-effect" value="' . $itemId . '">Delete</button></td></tr>';
         }
     } else {
         foreach ($barcodes['unknown'] as $item) {
+            $itemId=$item['id'];
             $returnString = $returnString . '<tr>
     <td class="mdl-data-table__cell--non-numeric">' . $item['barcode'] . '</td>
           <td class="mdl-data-table__cell--non-numeric"><a href="http://google.com/search?q=' . $item['barcode'] . '" target="_blank">Search for barcode</a></td>
           <td>' . $item['amount'] . '</td>
-          <td class="mdl-data-table__cell--non-numeric"><select name="select_' . $item['id'] . '">' . printSelections($item['match'], $productinfo) . '</select></td>
-        <td><button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" name="button_add" type="submit"  value="' . $item['id'] . '">Add</button> <button             class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" name="button_consume" type="submit" value="' . $item['id'] . '">Consume</button> </td>
-        <td><button name="button_delete" type="submit" class="mdl-button mdl-js-button mdl-js-ripple-effect" value="' . $item['id'] . '">Delete</button></td></tr>';
+          <td class="mdl-data-table__cell--non-numeric"><select onchange=\'enableButton("select_' . $itemId . '", "button_add_'.$item['id'].'", "button_consume_'.$item['id'].'")\' id="select_' . $itemId . '" name="select_' . $itemId . '">' . printSelections($item['match'], $productinfo) . '</select></td>
+        <td><button disabled class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="button_add_'.$item['id'].'" name="button_add" type="submit"  value="' . $itemId . '">Add</button> <button disabled class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="button_consume_'.$item['id'].'" name="button_consume" type="submit" value="' . $itemId . '">Consume</button> </td>
+        <td><button name="button_delete" type="submit" class="mdl-button mdl-js-button mdl-js-ripple-effect" value="' . $itemId . '">Delete</button></td></tr>';
         }
     }
     return $returnString;

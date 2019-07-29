@@ -203,8 +203,13 @@ function getAllTags() {
             }
         }
     }
+    usort($returnTags, "sortTags");
     return $returnTags;
 }
+
+function sortTags($a,$b) {
+          return $a['item']>$b['item'];
+     }
 
 
 //Stop script if default API details still set

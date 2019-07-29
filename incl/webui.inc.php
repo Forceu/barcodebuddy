@@ -363,19 +363,17 @@ if ($isMain) {
 
 function printFooter($isMain=false) {
     global $WEBSOCKET_PROXY_URL;
-    echo '<footer class="mdl-mega-footer">
-          <div class="mdl-mega-footer--bottom-section">
-            <div class="mdl-logo">
-              More Information
-            </div>
-            <ul class="mdl-mega-footer--link-list">
+    echo '<footer class="mdl-mini-footer">
+  <div class="mdl-mini-footer__left-section">
+    <div class="mdl-logo">Barcode Buddy</div>
+    <ul class="mdl-mini-footer__link-list">
               <li><a href="https://github.com/Forceu/barcodebuddy/">Help</a></li>
               <li><a href="https://github.com/Forceu/barcodebuddy/">Source Code</a></li>
               <li><a href="https://github.com/Forceu/barcodebuddy/blob/master/LICENSE">License</a></li>
               <li>by Marc Ole Bulling</li>
-            </ul>
-          </div>
-        </footer>
+    </ul>
+  </div>
+</footer>
       </main>
     </div>';
 if ($isMain) {

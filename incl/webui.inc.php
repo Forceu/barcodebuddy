@@ -25,6 +25,58 @@
  */
 
 
+function printMainTables() {
+echo '
+      <main class="mdl-layout__content">
+        <div class="mdl-layout__tab-panel is-active" id="overview">
+       <section class="section--center mdl-grid--no-spacing mdl-grid mdl-shadow--2dp">
+            <div class="mdl-card mdl-cell  mdl-cell--12-col">
+              <div class="mdl-card__supporting-text" style="overflow-x: auto; ">
+                <h4>New Barcodes</h4><br>';
+$barcodes = getStoredBarcodes();
+if (sizeof($barcodes['known']) > 0 || sizeof($barcodes['unknown']) > 0) {
+    $productinfo = getProductInfo();
+}
+echo generateTable($barcodes, true);
+echo '
+ </div>
+            </div>
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="btn1">
+              <i class="material-icons">more_vert</i>
+            </button>
+            <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="btn1">
+              <li class="mdl-menu__item" onclick="window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=known\'">Delete all</li>
+            </ul>
+          </section>
+       <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+            <div class="mdl-card mdl-cell mdl-cell--12-col">
+              <div class="mdl-card__supporting-text">
+                <h4>Unknown Barcodes</h4>';
+echo generateTable($barcodes, false);
+echo '              </div>
+            </div>
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="btn2">
+              <i class="material-icons">more_vert</i>
+            </button>
+            <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="btn2">
+              <li class="mdl-menu__item" onclick="window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=unknown\'">Delete all</li>
+            </ul>
+          </section>
+          <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+            <div class="mdl-card mdl-cell mdl-cell--12-col">
+              <div class="mdl-card__supporting-text">
+                <h4>Processed Barcodes</h4>';
+printLog();
+echo'              </div>
+            </div>
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="btn3">
+              <i class="material-icons">more_vert</i>
+            </button>
+            <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="btn3">
+              <li class="mdl-menu__item" onclick="window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=log\'">Clear log</li>
+            </ul>';
+}
+
 //Generate the table with barcodes
 function generateTable($barcodes, $isKnown) {
     if ($isKnown) {
@@ -295,15 +347,7 @@ function printHeader() {
       <a class="mdl-navigation__link" href="">Quantities</a>
       <a class="mdl-navigation__link" href="">Chores</a>
     </nav>
-  </div>
-
-
-      <main class="mdl-layout__content">
-        <div class="mdl-layout__tab-panel is-active" id="overview">
-       <section class="section--center mdl-grid--no-spacing mdl-grid mdl-shadow--2dp">
-            <div class="mdl-card mdl-cell  mdl-cell--12-col">
-              <div class="mdl-card__supporting-text" style="overflow-x: auto; ">
-                <h4>New Barcodes</h4><br>';
+  </div>';
 }
 
 

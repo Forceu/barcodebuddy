@@ -60,63 +60,6 @@ processButtons();
 
 
 printHeader();
-
-$barcodes = getStoredBarcodes();
-if (sizeof($barcodes['known']) > 0 || sizeof($barcodes['unknown']) > 0) {
-    $productinfo = getProductInfo();
-}
-
-echo generateTable($barcodes, true);
-
-?>
-
- </div>
-            </div>
-            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="btn1">
-              <i class="material-icons">more_vert</i>
-            </button>
-            <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="btn1">
-              <li class="mdl-menu__item" onclick="window.location.href='<?php
-echo $_SERVER['PHP_SELF'];
-?>?delete=known'">Delete all</li>
-            </ul>
-          </section>
-       <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
-            <div class="mdl-card mdl-cell mdl-cell--12-col">
-              <div class="mdl-card__supporting-text">
-                <h4>Unknown Barcodes</h4>
-                <?php
-echo generateTable($barcodes, false);
-?>
-              </div>
-            </div>
-            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="btn2">
-              <i class="material-icons">more_vert</i>
-            </button>
-            <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="btn2">
-              <li class="mdl-menu__item" onclick="window.location.href='<?php
-echo $_SERVER['PHP_SELF'];
-?>?delete=unknown'">Delete all</li>
-            </ul>
-          </section>
-          <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
-            <div class="mdl-card mdl-cell mdl-cell--12-col">
-              <div class="mdl-card__supporting-text">
-                <h4>Processed Barcodes</h4>
-               <?php
-printLog();
-?>
-              </div>
-            </div>
-            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="btn3">
-              <i class="material-icons">more_vert</i>
-            </button>
-            <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="btn3">
-              <li class="mdl-menu__item" onclick="window.location.href='<?php
-echo $_SERVER['PHP_SELF'];
-?>?delete=log'">Clear log</li>
-            </ul>
-
-<?php
+printMainTables();
 printFooter();
 ?>

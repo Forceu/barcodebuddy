@@ -224,8 +224,8 @@ right: 0 !important;
     <span class="mdl-layout-title">Settings</span>
     <nav class="mdl-navigation"><!--
       <a class="mdl-navigation__link" href="'.$folder.'menu/general.php">General</a>
-      <a class="mdl-navigation__link" href="'.$folder.'menu/quantities.php">Quantities</a>
-      <a class="mdl-navigation__link" href="'.$folder.'menu/chores.php">Chores</a> -->
+      <a class="mdl-navigation__link" href="'.$folder.'menu/quantities.php">Quantities</a> -->
+      <a class="mdl-navigation__link" href="'.$folder.'menu/chores.php">Chores</a>
       <a class="mdl-navigation__link" href="'.$folder.'menu/tags.php">Tags</a>
     </nav>
   </div>';
@@ -297,6 +297,13 @@ window.onclick = function(event) {
     modal.style.display = "none";
   }
 }
+
+function enableButtonGen(buttonId, textId, previousInput)
+{
+    var text=document.getElementById(textId).value;
+    document.getElementById(buttonId).disabled=(text===previousInput);
+}
+
 </script>';
     if (USE_WEBSOCKET) {
         echo '<script>

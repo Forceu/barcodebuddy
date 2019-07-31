@@ -37,5 +37,22 @@ initDb();
 
 
 printHeader();
+
+if (isset($_POST["button_edit"])) {
+        $id = $_POST["button_edit"];
+        checkIfNumeric($id);
+        $barcode = $_POST["barcode_".$id];
+        if ($barcode=="") {
+              deleteChoreBarcode($id);
+        } else {
+              updateChoreBarcode($id, $barcode);
+        }
+        //Hide POST, so we can refresh
+        header("Location: " . $_SERVER["PHP_SELF"]);
+        die();
+    }
+
+printSettingsChoresTable();
+
 printFooter(false);
 ?>

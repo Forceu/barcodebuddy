@@ -25,7 +25,9 @@
 
 
 const API_PRODUCTS = API_URL . 'objects/products';
+const API_CHORES = API_URL . 'objects/chores';
 const API_STOCK    = API_URL . 'stock/products';
+const API_CHORE_EXECUTE    = API_URL . 'chores/';
 
 // Getting info of a Grocy product. If no argument is passed, all products are requested
 function getProductInfo($productId = "") {
@@ -36,11 +38,12 @@ function getProductInfo($productId = "") {
         $apiurl = API_PRODUCTS . "/" . $productId;
     }
     
-    $curl = curl_init($apiurl);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. APIKEY));
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    $curl_response = curl_exec($curl);
-    curl_close($curl);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $apiurl);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. APIKEY));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $curl_response = curl_exec($ch);
+    curl_close($ch);
     if ($curl_response === false) {
         die("Error getting product info");
     }
@@ -231,5 +234,61 @@ function getProductByBardcode($barcode) {
         return null;
     }
 }
+
+
+
+// Getting info of a Grocy chore. If no argument is passed, all products are requested
+function getChoresInfo($choreId = "") {
+    
+    if ($choreId == "") {
+        $apiurl = API_CHORES;
+    } else {
+        $apiurl = API_CHORES . "/" . $choreId;
+    }
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $apiurl);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. APIKEY));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $curl_response = curl_exec($ch);
+    curl_close($ch);
+    if ($curl_response === false) {
+        die("Error getting chore info");
+    }
+    
+    $decoded1 = json_decode($curl_response, true);
+    if (isset($decoded1->response->status) && $decoded1->response->status == 'ERROR') {
+        die('Error occured: ' . $decoded1->response->errormessage);
+    }
+    return $decoded1;
+}
+
+
+// Getting info of a Grocy chore. If no argument is passed, all products are requested
+function executeChore($choreId) {
+    
+    $apiurl = API_CHORE_EXECUTE . $choreId. "/execute" ;
+    $data      = array('tracked_time' => "", 'done_by' => "");
+    $data_json = json_encode($data);
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $apiurl);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. APIKEY,'Content-Type: application/json','Content-Length: '.strlen($data_json)));
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $curl_response = curl_exec($ch);
+    curl_close($ch);
+    if ($curl_response === false) {
+        die("Error getting chore info");
+    }
+    
+    $decoded1 = json_decode($curl_response, true);
+    if (isset($decoded1->response->status) && $decoded1->response->status == 'ERROR') {
+        die('Error occured: ' . $decoded1->response->errormessage);
+    }
+    return $decoded1;
+}
+
 
 ?>

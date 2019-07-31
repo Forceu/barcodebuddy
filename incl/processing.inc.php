@@ -57,6 +57,13 @@ function processNewBarcode($barcode, $websocketEnabled = true) {
         sendWebsocketMessage("Invalid barcode found", $websocketEnabled, 2);
         $isProcessed = true;
     }
+
+    if (isChoreBarcode($barcode)==true) {
+        $choreText = processChoreBarcode($barcode);
+         saveLog("Executed chore: ".$choreText, true);
+        sendWebsocketMessage("Executed chore: ".$choreText, $websocketEnabled);
+        $isProcessed = true;
+    }
     
     if (!$isProcessed) {
         $productInfo = getProductByBardcode($barcode);
@@ -68,7 +75,15 @@ function processNewBarcode($barcode, $websocketEnabled = true) {
     }
 }
 
-//If grocy does not know this barcode
+
+function processChoreBarcode($barcode) {
+   $id = getChoreBarcode($barcode)['choreId'];
+   checkIfNumeric($id);
+   executeChore( $id);
+   return sanitizeString(getChoresInfo($id)["name"]);
+};
+
+//If grocy does not know this barcode #TODO refactor into db.php
 function processUnknownBarcode($barcode, $websocketEnabled) {
     global $db;
     $count = $db->querySingle("SELECT COUNT(*) as count FROM Barcodes WHERE barcode='$barcode'");
@@ -210,6 +225,31 @@ function getAllTags() {
 function sortTags($a,$b) {
           return $a['item']>$b['item'];
      }
+
+
+function sortChores($a,$b) {
+          return $a['name']>$b['name'];
+     }
+
+
+function getAllChores() {
+    $chores     = getChoresInfo();
+    $barcodes   = getStoredChoreBarcodes();
+    $returnChores = array();
+    
+    foreach ($chores as $chore) {
+        $chore["barcode"]=null;
+        foreach ($barcodes as $barcode) {
+            if ($chore["id"] == $barcode["choreId"]) {
+                $chore["barcode"] =$barcode["barcode"];
+		break;
+            }
+        }
+                array_push($returnChores, $chore);
+    }
+    usort($returnChores, "sortChores");
+    return $returnChores;
+}
 
 
 //Stop script if default API details still set

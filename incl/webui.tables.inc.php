@@ -231,4 +231,76 @@ function generateTableRowSettingsTag($tags) {
 
 
 
+##############
+
+
+
+function printSettingsChoresTable() {
+echo ' <main class="mdl-layout__content" style="flex: 1 0 auto;">
+        <div class="mdl-layout__tab-panel is-active" id="overview">
+       <section class="section--center mdl-grid--no-spacing mdl-grid mdl-shadow--2dp">
+            <div class="mdl-card mdl-cell  mdl-cell--12-col">
+              <div class="mdl-card__supporting-text" style="overflow-x: auto; ">
+                <h4>Chores</h4><br>';
+
+$chores = getAllChores();
+		 echo  generateTableSettingsChores($chores);
+
+echo'            </div>
+        </div>
+          </section>
+          <section class="section--footer mdl-grid">
+          </section>
+        </div>';
+}
+
+
+function generateTableSettingsChores($chores) {
+ if (sizeof($chores) == 0) {
+            return "No chores yet.";
+        } else {
+            $returnString = '<form name="form" method="post" action="' . $_SERVER['PHP_SELF'] . '" >
+                <table class="mdl-data-table mdl-js-data-table mdl-cell " >
+                 <thead>
+                    <tr>
+                      <th class="mdl-data-table__cell--non-numeric">Chore</th>
+                      <th class="mdl-data-table__cell--non-numeric">Barcode</th>
+                      <th class="mdl-data-table__cell--non-numeric">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>';
+            
+            $returnString = $returnString . generateTableRowSettingsChores($chores) . '</tbody>
+                </table>
+                </form>';
+            return $returnString;
+}
+}
+
+
+//generate each row for the table
+function generateTableRowSettingsChores($chores) {
+    $returnString = "";
+        foreach ($chores as $tag) {
+            $editText = "Enter new barcode";
+	    $editValue= "";
+	    $buttonText= "Add";
+            $labelId = "barcode_".$tag['id'];
+            $buttonId = "button_".$tag['id'];
+            if ($tag['barcode']!=null) {
+               $editText = "Barcode will be deleted";
+	       $buttonText= "Edit";
+               $editValue=$tag['barcode'];
+	    }
+            $returnString = $returnString . '<tr>
+              <td class="mdl-data-table__cell--non-numeric">' . $tag['name'] . '</td>
+              <td class="mdl-data-table__cell--non-numeric"> <div class="mdl-textfield mdl-js-textfield"> 
+               <input class="mdl-textfield__input"  onKeyUp="enableButtonGen(\''.$buttonId.'\', \''.$labelId.'\', \''.$editValue.'\')" type="text" value="'.$editValue.'" name="'.$labelId.'" id="'.$labelId.'">
+               <label class="mdl-textfield__label" for="'.$labelId.'">'. $editText .'</label></div></td>
+        <td><button name="button_edit" id="'.$buttonId.'" disabled type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" value="' . $tag['id'] . '">'.$buttonText.'</button></td></tr>';
+        }
+    return $returnString;
+}
+
+
 ?>

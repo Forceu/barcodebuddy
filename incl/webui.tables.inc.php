@@ -231,9 +231,6 @@ function generateTableRowSettingsTag($tags) {
 
 
 
-##############
-
-
 
 function printSettingsChoresTable() {
 echo ' <main class="mdl-layout__content" style="flex: 1 0 auto;">
@@ -300,6 +297,105 @@ function generateTableRowSettingsChores($chores) {
         <td><button name="button_edit" id="'.$buttonId.'" disabled type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" value="' . $tag['id'] . '">'.$buttonText.'</button></td></tr>';
         }
     return $returnString;
+}
+
+
+function setCheckedIfConfigTrue($value) {
+    if ($value=="true") {
+        return "checked";
+    }
+    return "";
+}
+
+function printSettingsGeneralSettingsTable() {
+    global $BBCONFIG;
+    echo'<main class="mdl-layout__content" style="flex: 1 0 auto;">
+        <div class="mdl-layout__tab-panel is-active" id="overview">
+	<form name="settingsform" onsubmit="return integerCheck(this)" id="settingsform" method="post" action="' . $_SERVER['PHP_SELF'] . '" >
+        <section class="section--center mdl-grid--no-spacing mdl-grid mdl-shadow--2dp">
+            <div class="mdl-card mdl-cell  mdl-cell--12-col">
+              <div class="mdl-card__supporting-text" style="overflow-x: auto; ">
+                <h4>General Settings</h4><br>
+		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+		    <input class="mdl-textfield__input" value="'.$BBCONFIG["BARCODE_C"].'" type="text" name="BARCODE_C" id="barcode_c">
+		    <label class="mdl-textfield__label" for="barcode_c">Barcode: Consume</label>
+		  </div>
+		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+		    <input class="mdl-textfield__input" value="'.$BBCONFIG["BARCODE_CS"].'" type="text" name="BARCODE_CS" id="barcode_cs">
+		    <label class="mdl-textfield__label" for="barcode_cs">Barcode: Consume (spoiled)</label>
+		  </div><br>
+		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+		    <input class="mdl-textfield__input" value="'.$BBCONFIG["BARCODE_P"].'" type="text" name="BARCODE_P" id="barcode_p">
+		    <label class="mdl-textfield__label" for="barcode_p">Barcode: Purchase</label>
+		  </div>
+		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+		    <input class="mdl-textfield__input" value="'.$BBCONFIG["BARCODE_O"].'" type="text" name="BARCODE_O" id="barcode_o">
+		    <label class="mdl-textfield__label" for="barcode_o">Barcode: Open</label>
+		  </div><br>
+<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+    <input class="mdl-textfield__input" type="text" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57" pattern="-?[0-9]*(\.[0-9]+)?" value="'.$BBCONFIG["REVERT_TIME"].'" id="general_revert_min"  name="REVERT_TIME">
+    <label class="mdl-textfield__label" for="general_revert_min">Revert state after time passed in minutes</label>
+  </div><br>
+  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="general_revert">
+		  <input type="checkbox" value="true" name="REVERT_SINGLE" id="general_revert" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["REVERT_SINGLE"]).'>
+		  <span class="mdl-checkbox__label">Revert after single item</span>
+		</label><br>
+  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="general_verbose">
+		  <input type="checkbox" value="true" name="MORE_VERBOSE" id="general_verbose" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["MORE_VERBOSE"]).'>
+		  <span class="mdl-checkbox__label">More verbose logs</span>
+		</label>
+		</div>
+            </div>
+          </section>
+          <section class="section--center mdl-grid--no-spacing mdl-grid mdl-shadow--2dp">
+            <div class="mdl-card mdl-cell  mdl-cell--12-col">
+              <div class="mdl-card__supporting-text" style="overflow-x: auto; ">
+                <h4>Grocy API</h4><br>
+		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+		    <input class="mdl-textfield__input" size="60" value="'.$BBCONFIG["GROCY_API_URL"].'" name="GROCY_API_URL" type="text" id="grocy_url">
+		    <label class="mdl-textfield__label" for="grocy_url">Grocy API URL</label>
+		  </div><br>
+		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+		    <input class="mdl-textfield__input"  size="60" value="'.$BBCONFIG["GROCY_API_KEY"].'" name="GROCY_API_KEY"  type="text" id="grocy_api_key">
+		    <label class="mdl-textfield__label" for="grocy_api_key">Grocy API Key</label>
+		  </div>
+		</div>
+            </div>
+          </section>
+          <section class="section--center mdl-grid--no-spacing mdl-grid mdl-shadow--2dp">
+            <div class="mdl-card mdl-cell  mdl-cell--12-col">
+              <div class="mdl-card__supporting-text" style="overflow-x: auto; ">
+                <h4>Websockets</h4><br>
+                   <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="websocket_use">
+		  <input type="checkbox" value="true" name="WS_USE"  id="websocket_use" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["WS_USE"]).'>
+		  <span class="mdl-checkbox__label">Use websockets</span>
+		</label><br>
+ <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+    <input class="mdl-textfield__input" type="text" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57" pattern="-?[0-9]*(\.[0-9]+)?" value="'.$BBCONFIG["WS_PORT"].'" id="websocket_port_internal" name="WS_PORT">
+    <label class="mdl-textfield__label" for="websocket_port_internal">Websocket Port</label>
+  </div>
+ <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+    <input class="mdl-textfield__input" type="text" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57" pattern="-?[0-9]*(\.[0-9]+)?" value="'.$BBCONFIG["WS_PORT_EXT"].'" id="websocket_port_external" name="WS_PORT_EXT">
+    <label class="mdl-textfield__label" for="websocket_port_external">Websocket Port External</label>
+  </div><br><br>
+  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="websocket_ssl_use">
+		  <input type="checkbox" value="true" name="WS_SSL_USE" id="websocket_ssl_use" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["WS_SSL_USE"]).'>
+		  <span class="mdl-checkbox__label">Use SSL proxy</span>
+		</label><br>
+ <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+    <input class="mdl-textfield__input" type="text" value="'.$BBCONFIG["WS_SSL_URL"].'" name="WS_SSL_URL" id="websocket_ssl_url">
+    <label class="mdl-textfield__label" for="websocket_ssl_url">External websocket port</label>
+  </div>
+<input type="hidden" value="false" name="REVERT_SINGLE_hidden"/>
+<input type="hidden" value="false" name="MORE_VERBOSE_hidden"/>
+<input type="hidden" value="false" name="WS_USE_hidden"/>
+<input type="hidden" value="false" name="WS_SSL_USE_hidden"/>
+		</div>
+            </div>
+          </section></form>
+          <section class="section--footer mdl-grid">
+          </section>
+        </div>';
 }
 
 

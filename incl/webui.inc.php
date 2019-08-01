@@ -113,7 +113,7 @@ function processButtons() {
 
 
 
-function printHeader($isMain=false) {
+function printHeader($isMain=false, $isSettings=false) {
 if ($isMain) {
     $folder="./";
 } else {
@@ -152,6 +152,15 @@ if ($isMain) {
       bottom: 0;
       margin-right: 40px;
       margin-bottom: 40px;
+      z-index: 900;
+}
+    #save-settings {
+      position: fixed;
+      display: block;
+      right: 0;
+      bottom: 0;
+      margin-right: 60px;
+      margin-bottom: 60px;
       z-index: 900;
 }
 .mdl-mini-footer {
@@ -221,10 +230,11 @@ right: 0 !important;
   echo'  </div>
   </header>
   <div class="mdl-layout__drawer">
-    <span class="mdl-layout-title">Settings</span>
-    <nav class="mdl-navigation"><!--
-      <a class="mdl-navigation__link" href="'.$folder.'menu/general.php">General</a>
-      <a class="mdl-navigation__link" href="'.$folder.'menu/quantities.php">Quantities</a> -->
+    <span class="mdl-layout-title">Menu</span>
+    <nav class="mdl-navigation">
+      <a class="mdl-navigation__link" href="'.$folder.'index.php">Overview</a>
+      <a class="mdl-navigation__link" href="'.$folder.'menu/settings.php">Settings</a>
+   <!--   <a class="mdl-navigation__link" href="'.$folder.'menu/quantities.php">Quantities</a> -->
       <a class="mdl-navigation__link" href="'.$folder.'menu/chores.php">Chores</a>
       <a class="mdl-navigation__link" href="'.$folder.'menu/tags.php">Tags</a>
     </nav>
@@ -232,7 +242,7 @@ right: 0 !important;
 }
 
 
-function printFooter($isMain=false) {
+function printFooter($isMain=false, $isSettings=false) {
     global $WEBSOCKET_PROXY_URL;
     echo '<footer class="mdl-mini-footer">
   <div class="mdl-mini-footer__left-section">
@@ -266,7 +276,11 @@ Enter your barcodes below, one each line.&nbsp;<br><br>
 </div>
  <button id="add-barcode" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast">Add barcode</button> ';
 } else {
+if ($isSettings) {
+echo '<button id="save-settings" onclick="document.getElementById(\'settingsform\').submit();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast">Save</button>';
+} else {
 echo '</div>';
+}
 }
 echo '<script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 <script>
@@ -281,7 +295,9 @@ function enableButton(idSelect, idButtonAdd, idButtonConsume)
     oButtonConsume.disabled = oSelect.value == "0";
 }
 
-
+';
+if ($isMain) {
+echo '
 var modal = document.getElementById("myModal");
 var btn = document.getElementById("add-barcode");
 var span = document.getElementsByClassName("close")[0];
@@ -296,8 +312,9 @@ window.onclick = function(event) {
   if (event.target == modal) {
     modal.style.display = "none";
   }
+}';
 }
-
+echo '
 function enableButtonGen(buttonId, textId, previousInput)
 {
     var text=document.getElementById(textId).value;

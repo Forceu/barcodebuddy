@@ -175,7 +175,7 @@ function sanitizeString($input, $strongFilter = false) {
 
 function checkIfNumeric($input) {
     if (!is_numeric($input)) {
-        die("Illegal input");
+        die("Illegal input! $input needs to be a number");
     }
 }
 
@@ -249,6 +249,23 @@ function getAllChores() {
     }
     usort($returnChores, "sortChores");
     return $returnChores;
+}
+
+
+
+function saveSettings() {
+    global $BBCONFIG;
+    foreach ($BBCONFIG as $key => $value) {
+        if (isset($_POST[$key])) {
+            if ($_POST[$key] != $value) {
+                updateConfig($key, $_POST[$key]);
+            }
+        } else {
+            if (isset($_POST[$key . "_hidden"]) && $_POST[$key . "_hidden"] != $value) {
+                updateConfig($key, $_POST[$key]);
+            }
+        }
+    }
 }
 
 

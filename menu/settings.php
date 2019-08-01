@@ -34,6 +34,15 @@ require_once __DIR__ . "/../incl/processing.inc.php";
 require_once __DIR__ . "/../incl/websocketconnection.inc.php";
 require_once __DIR__ . "/../incl/webui.inc.php";
 
+if (isset($_POST["BARCODE_C"])) {
+        saveSettings(); 
+        //Hide POST, so we can refresh
+        header("Location: " . $_SERVER["PHP_SELF"]);
+        die();
+    }
+
+
 printHeader();
-printFooter(false);
+printSettingsGeneralSettingsTable();
+printFooter(false,true);
 ?>

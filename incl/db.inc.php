@@ -25,9 +25,30 @@
 
 const BB_VERSION = "1120";
 
+
+const DEFAULT_VALUES      = array("DEFAULT_BARCODE_C" => "BBUDDY-C",
+				 "DEFAULT_BARCODE_CS" => "BBUDDY-CS",
+				 "DEFAULT_BARCODE_P" => "BBUDDY-P",
+				 "DEFAULT_BARCODE_O" => "BBUDDY-O",
+				 "DEFAULT_REVERT_TIME" => "10",
+				 "DEFAULT_REVERT_SINGLE" => "true",
+				 "DEFAULT_MORE_VERBOSE" => "true",
+				 "DEFAULT_GROCY_API_URL" => null,
+				 "DEFAULT_GROCY_API_KEY" => null,
+				 "DEFAULT_WS_USE" => "false",
+				 "DEFAULT_WS_PORT" => "47631",
+				 "DEFAULT_WS_PORT_EXT" => "47631",
+				 "DEFAULT_WS_SSL_USE" => "false",
+				 "DEFAULT_WS_SSL_URL" => null);
+
+
+const DB_INT_VALUES      = array("REVERT_TIME", "WS_PORT", "WS_PORT_EXT");
+
+
 //Initiate database and create if not existent
 function initDb() {
     global $db;
+    global $BBCONFIG;
      
     checkPermissions();
     $db = new SQLite3(DATABASE_PATH);
@@ -36,25 +57,49 @@ function initDb() {
     $db->exec("CREATE TABLE IF NOT EXISTS Tags(id INTEGER PRIMARY KEY, tag TEXT NOT NULL, itemId INTEGER NOT NULL)");
     $db->exec("CREATE TABLE IF NOT EXISTS TransactionState(id INTEGER PRIMARY KEY, currentState TINYINT NOT NULL, since INTEGER NOT NULL)");
     $db->exec("CREATE TABLE IF NOT EXISTS BarcodeLogs(id INTEGER PRIMARY KEY, log TEXT NOT NULL)");
-    $db->exec("CREATE TABLE IF NOT EXISTS BBConfig(id INTEGER PRIMARY KEY, data TEXT NOT NULL, value TEXT NOT NULL)");
+    $db->exec("CREATE TABLE IF NOT EXISTS BBConfig(id INTEGER PRIMARY KEY, data TEXT UNIQUE NOT NULL, value TEXT NOT NULL)");
     $db->exec("CREATE TABLE IF NOT EXISTS ChoreBarcodes(id INTEGER PRIMARY KEY, choreId INTEGER UNIQUE, barcode TEXT NOT NULL )");
-    $db->exec("INSERT INTO TransactionState(id,currentState,since) SELECT 1, 0, datetime('now','localtime') WHERE NOT EXISTS(SELECT 1 FROM TransactionState WHERE id = 1)");
-    $db->exec("INSERT INTO BBConfig(id,data,value) SELECT 1, \"version\", \"" . BB_VERSION . "\" WHERE NOT EXISTS(SELECT 1 FROM BBConfig WHERE id = 1)");
-    $previousVersion = getInstalledVersion();
+    insertDefaultValues();
+    getConfig();
+    $previousVersion = $BBCONFIG["version"];
     if ($previousVersion < BB_VERSION) {
         upgradeBarcodeBuddy($previousVersion);
     }
 }
 
-function getInstalledVersion() {
+
+function insertDefaultValues() {
     global $db;
-    $res = $db->query("SELECT * FROM BBConfig WHERE data='version'");
-    if ($row = $res->fetchArray()) {
-        return $row["value"];
-    } else {
-        die("DB Error: Could not get installed version");
+    $db->exec("INSERT INTO TransactionState(id,currentState,since) SELECT 1, 0, datetime('now','localtime') WHERE NOT EXISTS(SELECT 1 FROM TransactionState WHERE id = 1)");
+    $db->exec("INSERT INTO BBConfig(id,data,value) SELECT 1, \"version\", \"" . BB_VERSION . "\" WHERE NOT EXISTS(SELECT 1 FROM BBConfig WHERE id = 1)");
+    foreach (DEFAULT_VALUES as $key => $value) {
+       $name=str_replace("DEFAULT_","",$key);
+       $db->exec("INSERT INTO BBConfig(data,value) SELECT \"".$name."\", \"" . $value . "\" WHERE NOT EXISTS(SELECT 1 FROM BBConfig WHERE data = '$name')");
+} 
+}
+
+
+function getConfig() {
+    global $db;
+    global $BBCONFIG;
+    $BBCONFIG            = array();
+    $res = $db->query("SELECT * FROM BBConfig");
+    while ($row = $res->fetchArray()) {
+        $BBCONFIG[$row['data']]      = $row['value'];
+    }
+    if (sizeof($BBCONFIG)==0) {
+        die("DB Error: Could not get configuration");
     }
 }
+
+function updateConfig($key,$value) {
+    global $db;
+    if (in_array($key,DB_INT_VALUES)) {
+        checkIfNumeric($value);
+}
+    $db->exec("UPDATE BBConfig SET value='".sanitizeString($value)."' WHERE data='$key'");
+}
+
 
 function checkPermissions() {
     if (file_exists(DATABASE_PATH)) {

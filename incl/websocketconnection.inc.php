@@ -25,7 +25,8 @@
  */
 
 function sendWebsocketMessage($resultText, $websocketEnabled, $resultCode = "0") {
-    if (USE_WEBSOCKET && $websocketEnabled) {
+global $BBCONFIG;
+    if ($BBCONFIG["WS_USE"] && $websocketEnabled) {
         require_once __DIR__ . "/websocket/client_internal.php";
         sendWSResult($resultCode, $resultText);
     }

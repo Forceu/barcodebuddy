@@ -301,7 +301,7 @@ function generateTableRowSettingsChores($chores) {
 
 
 function setCheckedIfConfigTrue($value) {
-    if ($value=="true") {
+    if ($value=="1") {
         return "checked";
     }
     return "";
@@ -338,11 +338,11 @@ function printSettingsGeneralSettingsTable() {
     <label class="mdl-textfield__label" for="general_revert_min">Revert state after time passed in minutes</label>
   </div><br>
   <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="general_revert">
-		  <input type="checkbox" value="true" name="REVERT_SINGLE" id="general_revert" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["REVERT_SINGLE"]).'>
+		  <input type="checkbox" value="1" name="REVERT_SINGLE" id="general_revert" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["REVERT_SINGLE"]).'>
 		  <span class="mdl-checkbox__label">Revert after single item</span>
 		</label><br>
   <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="general_verbose">
-		  <input type="checkbox" value="true" name="MORE_VERBOSE" id="general_verbose" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["MORE_VERBOSE"]).'>
+		  <input type="checkbox" value="1" name="MORE_VERBOSE" id="general_verbose" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["MORE_VERBOSE"]).'>
 		  <span class="mdl-checkbox__label">More verbose logs</span>
 		</label>
 		</div>
@@ -368,7 +368,7 @@ function printSettingsGeneralSettingsTable() {
               <div class="mdl-card__supporting-text" style="overflow-x: auto; ">
                 <h4>Websockets</h4><br>
                    <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="websocket_use">
-		  <input type="checkbox" value="true" name="WS_USE" onChange="switchElements()"  id="websocket_use" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["WS_USE"]).'>
+		  <input type="checkbox" value="1" name="WS_USE" onChange="switchElements()"  id="websocket_use" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["WS_USE"]).'>
 		  <span class="mdl-checkbox__label">Use websockets</span>
 		</label><br>
  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -380,17 +380,17 @@ function printSettingsGeneralSettingsTable() {
     <label class="mdl-textfield__label" for="websocket_port_external">Websocket Port External</label>
   </div><br><br>
   <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="websocket_ssl_use">
-		  <input type="checkbox" value="true" name="WS_SSL_USE" onChange="switchElements()" id="websocket_ssl_use" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["WS_SSL_USE"]).'>
+		  <input type="checkbox" value="1" name="WS_SSL_USE" onChange="switchElements()" id="websocket_ssl_use" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["WS_SSL_USE"]).'>
 		  <span class="mdl-checkbox__label">Use SSL proxy</span>
 		</label><br>
  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
     <input class="mdl-textfield__input" type="text" value="'.$BBCONFIG["WS_SSL_URL"].'" name="WS_SSL_URL" id="websocket_ssl_url">
     <label class="mdl-textfield__label" for="websocket_ssl_url">External websocket URL</label>
   </div>
-<input type="hidden" value="false" name="REVERT_SINGLE_hidden"/>
-<input type="hidden" value="false" name="MORE_VERBOSE_hidden"/>
-<input type="hidden" value="false" name="WS_USE_hidden"/>
-<input type="hidden" value="false" name="WS_SSL_USE_hidden"/>
+<input type="hidden" value="0" name="REVERT_SINGLE_hidden"/>
+<input type="hidden" value="0" name="MORE_VERBOSE_hidden"/>
+<input type="hidden" value="0" name="WS_USE_hidden"/>
+<input type="hidden" value="0" name="WS_SSL_USE_hidden"/>
 		</div>
             </div>
           </section></form>

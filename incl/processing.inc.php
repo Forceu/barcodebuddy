@@ -26,26 +26,28 @@
 
 // Function that is called when a barcode is passed on
 function processNewBarcode($barcode, $websocketEnabled = true) {
+    global $BBCONFIG;
+
     $isProcessed = false;
-    if ($barcode == BARCODE_SET_CONSUME) {
+    if ($barcode == $BBCONFIG["BARCODE_C"]) {
         setTransactionState(STATE_CONSUME);
         saveLog("Set state to consume", true);
         sendWebsocketMessage("Set state to consume", $websocketEnabled);
         $isProcessed = true;
     }
-    if ($barcode == BARCODE_SET_CONSUME_SPOILED) {
+    if ($barcode == $BBCONFIG["BARCODE_CS"]) {
         setTransactionState(STATE_CONSUME_SPOILED);
         saveLog("Set state to consume (spoiled)", true);
         sendWebsocketMessage("Set state to consume (spoiled)", $websocketEnabled);
         $isProcessed = true;
     }
-    if ($barcode == BARCODE_SET_PURCHASE) {
+    if ($barcode == $BBCONFIG["BARCODE_P"]) {
         setTransactionState(STATE_CONSUME_PURCHASE);
         saveLog("Set state to purchase", true);
         sendWebsocketMessage("Set state to purchase", $websocketEnabled);
         $isProcessed = true;
     }
-    if ($barcode == BARCODE_SET_OPEN) {
+    if ($barcode == $BBCONFIG["BARCODE_O"]) {
         setTransactionState(STATE_CONSUME_OPEN);
         saveLog("Set state to open", true);
         sendWebsocketMessage("Set state to open", $websocketEnabled);
@@ -109,6 +111,7 @@ function processUnknownBarcode($barcode, $websocketEnabled) {
 
 //Process a barcode that Grocy already knows
 function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
+    global $BBCONFIG;
     $state = getTransactionState();
     
     switch ($state) {
@@ -121,7 +124,7 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
             consumeProduct($productInfo["id"], 1, true);
             saveLog("Product found. Consuming 1 spoiled " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode);
             sendWebsocketMessage("Consuming 1 spoiled " . $productInfo["unit"] . " of " . $productInfo["name"], $websocketEnabled);
-            if (REVERT_TO_CONSUME) {
+            if ($BBCONFIG["REVERT_SINGLE"]) {
                 saveLog("Reverting back to Consume", true);
                 setTransactionState(STATE_CONSUME);
             }
@@ -135,7 +138,7 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
             saveLog("Product found. Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode);
             sendWebsocketMessage("Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"], $websocketEnabled);
             openProduct($productInfo["id"]);
-            if (REVERT_TO_CONSUME) {
+            if ($BBCONFIG["REVERT_SINGLE"]) {
                 saveLog("Reverting back to Consume", true);
                 setTransactionState(STATE_CONSUME);
             }
@@ -262,7 +265,7 @@ function saveSettings() {
             }
         } else {
             if (isset($_POST[$key . "_hidden"]) && $_POST[$key . "_hidden"] != $value) {
-                updateConfig($key, $_POST[$key]);
+                updateConfig($key, $_POST[$key . "_hidden"]);
             }
         }
     }

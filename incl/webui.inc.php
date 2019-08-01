@@ -114,6 +114,7 @@ function processButtons() {
 
 
 function printHeader($isMain=false, $isSettings=false) {
+global $BBCONFIG;
 if ($isMain) {
     $folder="./";
 } else {
@@ -222,9 +223,9 @@ right: 0 !important;
       <span class="mdl-layout-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style="color: white; text-decoration: none;" href="'.$folder.'index.php">Barcode Buddy</a></span>
       <!-- Add spacer, to align navigation to the right -->
       <div class="mdl-layout-spacer"></div>';
-      if (USE_WEBSOCKET) {
+      if ($BBCONFIG["WS_USE"]) {
       echo '      <nav class="mdl-navigation mdl-layout--always">
-        <a class="mdl-navigation__link" target="_blank" href="./screen.php">Screen</a>
+        <a class="mdl-navigation__link" target="_blank" href="'.$folder.'screen.php">Screen</a>
       </nav>';
       }
   echo'  </div>
@@ -243,7 +244,7 @@ right: 0 !important;
 
 
 function printFooter($isMain=false, $isSettings=false) {
-    global $WEBSOCKET_PROXY_URL;
+    global $BBCONFIG;
     echo '<footer class="mdl-mini-footer">
   <div class="mdl-mini-footer__left-section">
     <div class="mdl-logo">Barcode Buddy</div>
@@ -366,13 +367,13 @@ function enableButtonGen(buttonId, textId, previousInput)
 }
 
 </script>';
-    if (USE_WEBSOCKET) {
+    if ($BBCONFIG["WS_USE"]) {
         echo '<script>
       var ws = new WebSocket(';
-        if (!USE_SSL_PROXY) {
-            echo "'ws://" . $_SERVER["SERVER_NAME"] . ":" . WEBSOCKET_PUBLIC_PORT . "/screen');";
+        if (!$BBCONFIG["WS_SSL_USE"]) {
+            echo "'ws://" . $_SERVER["SERVER_NAME"] . ":" . $BBCONFIG["WS_PORT_EXT"] . "/screen');";
         } else {
-            echo "'" . $WEBSOCKET_PROXY_URL . "');";
+            echo "'" . $BBCONFIG["WS_SSL_URL"] . "');";
         }
         echo ' 
       ws.onopen = function() {

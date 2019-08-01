@@ -24,23 +24,24 @@
  */
 
 
-const API_PRODUCTS = API_URL . 'objects/products';
-const API_CHORES = API_URL . 'objects/chores';
-const API_STOCK    = API_URL . 'stock/products';
-const API_CHORE_EXECUTE    = API_URL . 'chores/';
+const API_PRODUCTS = 'objects/products';
+const API_CHORES = 'objects/chores';
+const API_STOCK    = 'stock/products';
+const API_CHORE_EXECUTE    = 'chores/';
 
 // Getting info of a Grocy product. If no argument is passed, all products are requested
 function getProductInfo($productId = "") {
-    
+    global $BBCONFIG;
+
     if ($productId == "") {
-        $apiurl = API_PRODUCTS;
+        $apiurl = $BBCONFIG["GROCY_API_URL"].API_PRODUCTS;
     } else {
-        $apiurl = API_PRODUCTS . "/" . $productId;
+        $apiurl = $BBCONFIG["GROCY_API_URL"].API_PRODUCTS . "/" . $productId;
     }
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $apiurl);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. APIKEY));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. $BBCONFIG["GROCY_API_KEY"]));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $curl_response = curl_exec($ch);
     curl_close($ch);
@@ -58,15 +59,16 @@ function getProductInfo($productId = "") {
 
 // Set a Grocy product to "opened"
 function openProduct($id) {
+    global $BBCONFIG;
     $data = array(
         'amount' => "1"
     );
     $data_json = json_encode($data);
     
-    $apiurl = API_STOCK . "/" . $id . "/open";
+    $apiurl = $BBCONFIG["GROCY_API_URL"].API_STOCK . "/" . $id . "/open";
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $apiurl);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. APIKEY,'Content-Type: application/json','Content-Length: '.strlen($data_json)));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. $BBCONFIG["GROCY_API_KEY"],'Content-Type: application/json','Content-Length: '.strlen($data_json)));
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
     curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -80,6 +82,7 @@ function openProduct($id) {
 
 // Add a Grocy product
 function purchaseProduct($id, $amount, $bestbefore = null, $price = null) {
+    global $BBCONFIG;
     $data = array(
         'amount' => $amount,
         'transaction_type' => 'purchase'
@@ -95,11 +98,11 @@ function purchaseProduct($id, $amount, $bestbefore = null, $price = null) {
     $data_json = json_encode($data);
     
     
-    $apiurl = API_STOCK . "/" . $id . "/add";
+    $apiurl = $BBCONFIG["GROCY_API_URL"].API_STOCK . "/" . $id . "/add";
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $apiurl);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. APIKEY,'Content-Type: application/json','Content-Length: '.strlen($data_json)));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. $BBCONFIG["GROCY_API_KEY"],'Content-Type: application/json','Content-Length: '.strlen($data_json)));
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
     curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -113,6 +116,7 @@ function purchaseProduct($id, $amount, $bestbefore = null, $price = null) {
 
 // Consume a Grocy product
 function consumeProduct($id, $amount, $spoiled = "false") {
+    global $BBCONFIG;
     $data      = array(
         'amount' => $amount,
         'transaction_type' => 'consume',
@@ -120,11 +124,11 @@ function consumeProduct($id, $amount, $spoiled = "false") {
     );
     $data_json = json_encode($data);
     
-    $apiurl = API_STOCK . "/" . $id . "/consume";
+    $apiurl = $BBCONFIG["GROCY_API_URL"].API_STOCK . "/" . $id . "/consume";
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $apiurl);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. APIKEY,'Content-Type: application/json','Content-Length: '.strlen($data_json)));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. $BBCONFIG["GROCY_API_KEY"],'Content-Type: application/json','Content-Length: '.strlen($data_json)));
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
     curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -139,14 +143,16 @@ function consumeProduct($id, $amount, $spoiled = "false") {
 
 // Add a barcode number to a Grocy product
 function setBarcode($id, $barcode) {
+    global $BBCONFIG;
+global $db;
     
     $data      = array('barcode' => $barcode);
     $data_json = json_encode($data);
-    $apiurl = API_PRODUCTS . "/" . $id;
+    $apiurl = $BBCONFIG["GROCY_API_URL"].API_PRODUCTS . "/" . $id;
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $apiurl);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. APIKEY,'Content-Type: application/json','Content-Length: '.strlen($data_json)));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. $BBCONFIG["GROCY_API_KEY"],'Content-Type: application/json','Content-Length: '.strlen($data_json)));
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
     curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -205,12 +211,13 @@ function lookupNameByBarcode($barcode) {
 
 // Get a Grocy product by barcode
 function getProductByBardcode($barcode) {
+    global $BBCONFIG;
     
-    $apiurl = API_STOCK . "/by-barcode/" . $barcode;
+    $apiurl = $BBCONFIG["GROCY_API_URL"].API_STOCK . "/by-barcode/" . $barcode;
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $apiurl);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. APIKEY));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. $BBCONFIG["GROCY_API_KEY"]));
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $response = curl_exec($ch);
@@ -239,16 +246,17 @@ function getProductByBardcode($barcode) {
 
 // Getting info of a Grocy chore. If no argument is passed, all products are requested
 function getChoresInfo($choreId = "") {
+    global $BBCONFIG;
     
     if ($choreId == "") {
-        $apiurl = API_CHORES;
+        $apiurl = $BBCONFIG["GROCY_API_URL"].API_CHORES;
     } else {
-        $apiurl = API_CHORES . "/" . $choreId;
+        $apiurl = $BBCONFIG["GROCY_API_URL"].API_CHORES . "/" . $choreId;
     }
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $apiurl);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. APIKEY));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. $BBCONFIG["GROCY_API_KEY"]));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $curl_response = curl_exec($ch);
     curl_close($ch);
@@ -266,14 +274,15 @@ function getChoresInfo($choreId = "") {
 
 // Getting info of a Grocy chore. If no argument is passed, all products are requested
 function executeChore($choreId) {
+    global $BBCONFIG;
     
-    $apiurl = API_CHORE_EXECUTE . $choreId. "/execute" ;
+    $apiurl = $BBCONFIG["GROCY_API_URL"].API_CHORE_EXECUTE . $choreId. "/execute" ;
     $data      = array('tracked_time' => "", 'done_by' => "");
     $data_json = json_encode($data);
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $apiurl);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. APIKEY,'Content-Type: application/json','Content-Length: '.strlen($data_json)));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. $BBCONFIG["GROCY_API_KEY"],'Content-Type: application/json','Content-Length: '.strlen($data_json)));
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
     curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

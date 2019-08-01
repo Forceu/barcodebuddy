@@ -132,9 +132,11 @@ const SECTION_KNOWN_BARCODES = "known";
 const SECTION_UNKNOWN_BARCODES = "unknown";
 const SECTION_LOGS = "log";
 
-//Getting the state
+//Getting the state TODO change date
 function getTransactionState() {
     global $db;
+    global $BBCONFIG;
+
     $res = $db->query("SELECT * FROM TransactionState");
     if ($row = $res->fetchArray()) {
         $state = $row["currentState"];
@@ -145,7 +147,7 @@ function getTransactionState() {
             $stateSet            = strtotime($since);
             $now                 = strtotime('now');
             $differenceInMinutes = round(abs($now - $stateSet) / 60, 0);
-            if ($differenceInMinutes > RESET_STATE_AFTER_MINUTES) {
+            if ($differenceInMinutes > $BBCONFIG["REVERT_TIME"]) {
                 setTransactionState(STATE_CONSUME);
                 return STATE_CONSUME;
             } else {
@@ -282,7 +284,8 @@ function getLogs() {
 //Save a log
 function saveLog($log, $isVerbose = false) {
     global $db;
-    if ($isVerbose == false || MORE_VERBOSE_LOG == true) {
+    global $BBCONFIG;
+    if ($isVerbose == false || $BBCONFIG["MORE_VERBOSE"] == true) {
         $date = date('Y-m-d H:i:s');
         $db->exec("INSERT INTO BarcodeLogs(log) VALUES('" . $date . ": " . sanitizeString($log) . "')");
     }

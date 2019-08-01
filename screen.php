@@ -29,8 +29,10 @@
 
 
 require_once "./config.php";
-if (!USE_WEBSOCKET) {
-   die("Please enable websockets in config.php");
+require_once "./incl/db.inc.php";
+
+if (!$BBCONFIG["WS_USE"]) {
+   die("Please enable websockets in the settings first!");
 }
 ?>
 
@@ -64,10 +66,10 @@ if (!USE_WEBSOCKET) {
     
     <script>
       var ws = new WebSocket( <?php
-	 if (!USE_SSL_PROXY) {
-             echo "'ws://".$_SERVER["SERVER_NAME"].":".WEBSOCKET_PUBLIC_PORT."/screen');";
+	 if (!$BBCONFIG["WS_SSL_USE"]) {
+             echo "'ws://".$_SERVER["SERVER_NAME"].":".$BBCONFIG["WS_PORT_EXT"]."/screen');";
 	 } else {
-             echo "'".$WEBSOCKET_PROXY_URL."');";
+             echo "'".$BBCONFIG["WS_SSL_URL"]."');";
 	 }
       ?> 
       var beep_success = new Audio('beep.ogg');

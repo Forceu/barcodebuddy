@@ -295,7 +295,51 @@ function enableButton(idSelect, idButtonAdd, idButtonConsume)
     oButtonConsume.disabled = oSelect.value == "0";
 }
 
+' ;
+
+if ($isSettings) {
+
+echo 'function switchElements()
+{
+    var wsuse = document.getElementById("websocket_use");
+    var wspint = document.getElementById("websocket_port_internal");
+    var wspext = document.getElementById("websocket_port_external");
+    var wsssluse = document.getElementById("websocket_ssl_use");
+    var wssslurl = document.getElementById("websocket_ssl_url");
+
+      wspint.disabled = !wsuse.checked;
+      wspint.disabled = !wsuse.checked;
+      wspext.disabled = !(wsuse.checked && !wsssluse.checked);
+      wsssluse.disabled = !wsuse.checked;
+      wssslurl.disabled = !(wsuse.checked && wsssluse.checked);
+
+   if (wspint.disabled) {
+      wspint.parentElement.MaterialTextfield.disable()
+   } else {
+      wspint.parentElement.MaterialTextfield.enable()
+   }
+   if (wspext.disabled) {
+      wspext.parentElement.MaterialTextfield.disable()
+   } else {
+      wspext.parentElement.MaterialTextfield.enable()
+   }
+   if (wsssluse.disabled) {
+      wsssluse.parentElement.MaterialCheckbox.disable()
+   } else {
+      wsssluse.parentElement.MaterialCheckbox.enable()
+   }
+   if (wssslurl.disabled) {
+      wssslurl.parentElement.MaterialTextfield.disable()
+   } else {
+      wssslurl.parentElement.MaterialTextfield.enable()
+   }
+}
+
+switchElements();
+
 ';
+
+};
 if ($isMain) {
 echo '
 var modal = document.getElementById("myModal");

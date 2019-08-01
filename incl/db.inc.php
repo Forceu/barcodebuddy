@@ -31,14 +31,14 @@ const DEFAULT_VALUES      = array("DEFAULT_BARCODE_C" => "BBUDDY-C",
 				 "DEFAULT_BARCODE_P" => "BBUDDY-P",
 				 "DEFAULT_BARCODE_O" => "BBUDDY-O",
 				 "DEFAULT_REVERT_TIME" => "10",
-				 "DEFAULT_REVERT_SINGLE" => "true",
-				 "DEFAULT_MORE_VERBOSE" => "true",
+				 "DEFAULT_REVERT_SINGLE" => "1",
+				 "DEFAULT_MORE_VERBOSE" => "1",
 				 "DEFAULT_GROCY_API_URL" => null,
 				 "DEFAULT_GROCY_API_KEY" => null,
 				 "DEFAULT_WS_USE" => "false",
 				 "DEFAULT_WS_PORT" => "47631",
 				 "DEFAULT_WS_PORT_EXT" => "47631",
-				 "DEFAULT_WS_SSL_USE" => "false",
+				 "DEFAULT_WS_SSL_USE" => "0",
 				 "DEFAULT_WS_SSL_URL" => null);
 
 

@@ -353,11 +353,11 @@ function printSettingsGeneralSettingsTable() {
               <div class="mdl-card__supporting-text" style="overflow-x: auto; ">
                 <h4>Grocy API</h4><br>
 		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-		    <input class="mdl-textfield__input" size="60" value="'.$BBCONFIG["GROCY_API_URL"].'" name="GROCY_API_URL" type="text" id="grocy_url">
+		    <input class="mdl-textfield__input" pattern="https://.*/api/|http://.*/api/|https://.*/api|http://.*/api" size="60" value="'.$BBCONFIG["GROCY_API_URL"].'" name="GROCY_API_URL" type="text" id="grocy_url">
 		    <label class="mdl-textfield__label" for="grocy_url">Grocy API URL</label>
 		  </div><br>
 		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-		    <input class="mdl-textfield__input"  size="60" value="'.$BBCONFIG["GROCY_API_KEY"].'" name="GROCY_API_KEY"  type="text" id="grocy_api_key">
+		    <input class="mdl-textfield__input" pattern="[A-Za-z0-9]{50}"   size="60" value="'.$BBCONFIG["GROCY_API_KEY"].'" name="GROCY_API_KEY"  type="text" id="grocy_api_key">
 		    <label class="mdl-textfield__label" for="grocy_api_key">Grocy API Key</label>
 		  </div>
 		</div>
@@ -394,6 +394,43 @@ function printSettingsGeneralSettingsTable() {
 		</div>
             </div>
           </section></form>
+          <section class="section--footer mdl-grid">
+          </section>
+        </div>';
+}
+
+
+function printSetupTable($failed) {
+
+    echo'<main class="mdl-layout__content" style="flex: 1 0 auto;">
+        <div class="mdl-layout__tab-panel is-active" id="overview">
+	<form name="settingsform" id="settingsform" method="post" action="' . $_SERVER['PHP_SELF'] . '" >
+        <section class="section--center mdl-grid--no-spacing mdl-grid mdl-shadow--2dp">
+            <div class="mdl-card mdl-cell  mdl-cell--12-col">
+              <div class="mdl-card__supporting-text" style="overflow-x: auto; ">
+                <h3>Setup</h3>
+                Welcome to Barcode Buddy! Please enter your Grocy API details below. For more information, please visit the <a target="_blank" href="https://github.com/Forceu/barcodebuddy/wiki/2.0-Installation">wiki</a>.<br><br><br>
+		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+		    <input pattern="https://.*/api/|http://.*/api/|https://.*/api|http://.*/api" class="mdl-textfield__input" size="60" ';
+if (isset($_POST["GROCY_API_URL"])) { echo 'value="'.$_POST["GROCY_API_URL"].'" '; } echo' placeholder="e.g. https://your.grocy.com/api/" name="GROCY_API_URL" type="text" id="grocy_url">
+		    <label class="mdl-textfield__label" for="grocy_url">Grocy API URL</label>
+		  </div><br>
+		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+		    <input pattern="[A-Za-z0-9]{50}" class="mdl-textfield__input"  size="60" ';
+if (isset($_POST["GROCY_API_KEY"])) { echo 'value="'.$_POST["GROCY_API_KEY"].'" '; } echo'name="GROCY_API_KEY"  type="text" id="grocy_api_key">
+		    <label class="mdl-textfield__label" for="grocy_api_key">Grocy API Key</label>
+		  </div><br>';
+if ($failed) {
+	echo '<font color="red">Unable to connect to API! Please double check input and try again.</font>';
+}
+echo'<br>
+<button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+  Save
+</button>
+		</div>
+            </div>
+          </section>
+         </form>
           <section class="section--footer mdl-grid">
           </section>
         </div>';

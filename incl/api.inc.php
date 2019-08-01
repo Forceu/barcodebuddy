@@ -28,6 +28,7 @@ const API_PRODUCTS = 'objects/products';
 const API_CHORES = 'objects/chores';
 const API_STOCK    = 'stock/products';
 const API_CHORE_EXECUTE    = 'chores/';
+const API_SYTEM_INFO    = 'system/info';
 
 // Getting info of a Grocy product. If no argument is passed, all products are requested
 function getProductInfo($productId = "") {
@@ -77,6 +78,28 @@ function openProduct($id) {
     if ($response === false) {
        die("Error opening product");
     }
+}
+
+
+
+// Check if API details are correct
+function checkApiConnection($givenurl, $apikey) {
+    $apiurl = $givenurl.API_SYTEM_INFO;
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $apiurl);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. $apikey));
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    if ($response === false) {
+       return false;
+    }
+    $decoded1 = json_decode($response, true);
+    if (isset($decoded1->response->status) && $decoded1->response->status == 'ERROR') {
+        die('Error occured: ' . $decoded1->response->errormessage);
+    }
+    return (isset($decoded1["grocy_version"]["Version"]));
 }
 
 

@@ -113,12 +113,17 @@ function processButtons() {
 
 
 
-function printHeader($isMain=false, $isSettings=false) {
+function printHeader($isMain=false, $isSettings=false, $isSetup=false) {
 global $BBCONFIG;
 if ($isMain) {
     $folder="./";
 } else {
     $folder="../";
+}
+if ($isSetup) {
+    $indexfile="setup.php";
+} else {
+    $indexfile="index.php";
 }
     echo '<!doctype html>
 <html lang="en">
@@ -220,17 +225,20 @@ right: 0 !important;
   <header class="mdl-layout__header">
     <div class="mdl-layout__header-row">
       <!-- Title -->
-      <span class="mdl-layout-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style="color: white; text-decoration: none;" href="'.$folder.'index.php">Barcode Buddy</a></span>
+      <span class="mdl-layout-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style="color: white; text-decoration: none;" href="'.$folder.$indexfile.'">Barcode Buddy</a></span>
       <!-- Add spacer, to align navigation to the right -->
       <div class="mdl-layout-spacer"></div>';
+      if (!$isSetup) {
+ echo '      <nav class="mdl-navigation mdl-layout--always"><a class="mdl-navigation__link" target="_blank" href="'.str_replace("api/","",$BBCONFIG["GROCY_API_URL"]).'">Grocy</a>';
       if ($BBCONFIG["WS_USE"]) {
-      echo '      <nav class="mdl-navigation mdl-layout--always">
-        <a class="mdl-navigation__link" target="_blank" href="'.$folder.'screen.php">Screen</a>
-      </nav>';
+     echo '<a class="mdl-navigation__link" target="_blank" href="'.$folder.'screen.php">Screen</a>';
+}
+echo'</nav>';
       }
   echo'  </div>
-  </header>
-  <div class="mdl-layout__drawer">
+  </header>';
+  if (!$isSetup) {
+  echo'<div class="mdl-layout__drawer">
     <span class="mdl-layout-title">Menu</span>
     <nav class="mdl-navigation">
       <a class="mdl-navigation__link" href="'.$folder.'index.php">Overview</a>
@@ -240,6 +248,7 @@ right: 0 !important;
       <a class="mdl-navigation__link" href="'.$folder.'menu/tags.php">Tags</a>
     </nav>
   </div>';
+}
 }
 
 

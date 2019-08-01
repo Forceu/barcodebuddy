@@ -36,6 +36,12 @@ require_once __DIR__ . "/incl/processing.inc.php";
 require_once __DIR__ . "/incl/websocketconnection.inc.php";
 require_once __DIR__ . "/incl/webui.inc.php";
 
+
+if ($BBCONFIG["GROCY_API_URL"]==null || $BBCONFIG["GROCY_API_KEY"]==null) {
+    header("Location: setup.php");
+    die();
+}
+
 //If barcodes or parameters are passed through CLI or GET, process them and do not do anything else
 if (isset($argv[1])) {
     processNewBarcode(sanitizeString($argv[1], true));
@@ -48,6 +54,7 @@ if (isset($_GET["add"])) {
     }
     //Hide get
     header("Location: " . $_SERVER["PHP_SELF"]);
+    die();
 }
 
 // If a button was pressed, we are processing everything here.

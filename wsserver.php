@@ -25,7 +25,7 @@
  */
 
 
-require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/incl/config.php';
 require_once __DIR__ . '/incl/db.inc.php';
 
 const ENABLE_STATISTICS = false;

@@ -271,15 +271,4 @@ function saveSettings() {
     }
 }
 
-
-//Stop script if default API details still set
-function testIfApiIsSet() {
-    if (API_URL == 'https://your.grocy.site/api/') {
-        die("Please set the API details in config.php");
-    }
-    if (API_URL != (rtrim(API_URL, '/') . '/')) {
-        die("API_URL in config.php must contain a trailing slash");
-    }
-}
-
 ?>

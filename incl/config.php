@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Barcode Buddy for Grocy
  *
@@ -13,7 +14,6 @@
  * @since      File available since Release 1.0
  */
 
-
 /**
  * Config file
  *
@@ -23,8 +23,18 @@
  * @since      File available since Release 1.0
  */
 
-//This script requires php-sqlite3 and php-curl
-
 // It highly recommended to disallow downloads of this file
-const DATABASE_PATH               = __DIR__ .'/barcodebuddy.db';
+const DATABASE_PATH = __DIR__ . '/../barcodebuddy.db';
+
+
+//Enable debug output
+const IS_DEBUG      = false;
+
+if (IS_DEBUG || file_exists("debug")) {
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+}
+
 ?>
+

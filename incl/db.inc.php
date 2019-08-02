@@ -23,7 +23,7 @@
  * @since      File available since Release 1.0
  */
 
-const BB_VERSION = "1120";
+const BB_VERSION = "1210";
 
 
 const DEFAULT_VALUES      = array("DEFAULT_BARCODE_C" => "BBUDDY-C",

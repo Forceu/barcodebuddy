@@ -335,11 +335,11 @@ function printSettingsGeneralSettingsTable() {
 		  </div><br>
 <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
     <input class="mdl-textfield__input" type="text" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57" pattern="-?[0-9]*(\.[0-9]+)?" value="'.$BBCONFIG["REVERT_TIME"].'" id="general_revert_min"  name="REVERT_TIME">
-    <label class="mdl-textfield__label" for="general_revert_min">Revert state after time passed in minutes</label>
+    <label class="mdl-textfield__label" for="general_revert_min">Revert state to &quot;Purchase&quot; after time passed in minutes</label>
   </div><br>
   <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="general_revert">
 		  <input type="checkbox" value="1" name="REVERT_SINGLE" id="general_revert" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["REVERT_SINGLE"]).'>
-		  <span class="mdl-checkbox__label">Revert after single item</span>
+		  <span class="mdl-checkbox__label">Revert after single item scan in &quot;Open&quot; or &quot;Spoiled&quot; mode</span>
 		</label><br>
   <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="general_verbose">
 		  <input type="checkbox" value="1" name="MORE_VERBOSE" id="general_verbose" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["MORE_VERBOSE"]).'>

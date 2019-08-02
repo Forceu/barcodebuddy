@@ -45,7 +45,7 @@ if (isNewServerSupported()) {
         require __DIR__ . '/php-websocket/src/Application/StatusApplication.php';
     }
     
-    $server = new \Bloatless\WebSocket\Server('127.0.0.1', $BBCONFIG["WS_PORT"]);
+    $server = new \Bloatless\WebSocket\Server('127.0.0.1', (int)$BBCONFIG["WS_PORT"]);
     
     // server settings:
     $server->setMaxClients(100);
@@ -70,7 +70,7 @@ if (isNewServerSupported()) {
     $classLoader = new SplClassLoader('WebSocket', __DIR__ . '/incl/websocket/php-websocket-1.0/server/lib');
     $classLoader->register();
     
-    $server = new \WebSocket\Server('127.0.0.1', $BBCONFIG["WS_PORT"], false);
+    $server = new \WebSocket\Server('127.0.0.1', (int)$BBCONFIG["WS_PORT"], false);
     
     // server settings:
     $server->setMaxClients(100);

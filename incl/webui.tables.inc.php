@@ -312,7 +312,7 @@ function printSettingsGeneralSettingsTable() {
 
     echo'<main class="mdl-layout__content" style="flex: 1 0 auto;">
         <div class="mdl-layout__tab-panel is-active" id="overview">
-	<form name="settingsform" onsubmit="return integerCheck(this)" id="settingsform" method="post" action="' . $_SERVER['PHP_SELF'] . '" >
+	<form name="settingsform" id="settingsform" method="post" action="' . $_SERVER['PHP_SELF'] . '" >
         <section class="section--center mdl-grid--no-spacing mdl-grid mdl-shadow--2dp">
             <div class="mdl-card mdl-cell  mdl-cell--12-col">
               <div class="mdl-card__supporting-text" style="overflow-x: auto; ">

@@ -287,7 +287,7 @@ Enter your barcodes below, one each line.&nbsp;<br><br>
  <button id="add-barcode" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast">Add barcode</button> ';
 } else {
 if ($isSettings) {
-echo '<button id="save-settings" onclick="document.getElementById(\'settingsform\').submit();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast">Save</button>';
+echo '<button id="save-settings" onclick="checkAndReturn()" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast">Save</button>';
 } else {
 echo '</div>';
 }
@@ -309,8 +309,7 @@ function enableButton(idSelect, idButtonAdd, idButtonConsume)
 
 if ($isSettings) {
 
-echo 'function switchElements()
-{
+echo 'function switchElements() {
     var wsuse = document.getElementById("websocket_use");
     var wspint = document.getElementById("websocket_port_internal");
     var wspext = document.getElementById("websocket_port_external");
@@ -346,6 +345,19 @@ echo 'function switchElements()
 }
 
 switchElements();
+
+function checkAndReturn() {
+    var wspint = document.getElementById("websocket_port_internal").value;
+    var wspint = document.getElementById("websocket_port_internal").value;
+    var crevert = document.getElementById("general_revert_min").value;
+
+    if (Number.isInteger(+wspint) && Number.isInteger(+wspint) && Number.isInteger(+crevert)) {
+       document.getElementById(\'settingsform\').submit();
+    } else {
+       alert("Please only enter digits for port and minutes.");
+    }
+}
+
 
 ';
 

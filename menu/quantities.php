@@ -36,5 +36,6 @@ require_once __DIR__ . "/../incl/webui.inc.php";
 
 
 printHeader();
+printSettingsQuantity();
 printFooter(false);
 ?>

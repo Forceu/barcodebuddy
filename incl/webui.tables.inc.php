@@ -437,4 +437,28 @@ echo'<br>
 }
 
 
+
+function printSettingsQuantity() {
+
+    echo'<main class="mdl-layout__content" style="flex: 1 0 auto;">
+        <div class="mdl-layout__tab-panel is-active" id="overview">
+	<form name="settingsform" id="settingsform" method="post" action="' . $_SERVER['PHP_SELF'] . '" >
+        <section class="section--center mdl-grid--no-spacing mdl-grid mdl-shadow--2dp">
+            <div class="mdl-card mdl-cell  mdl-cell--12-col">
+              <div class="mdl-card__supporting-text" style="overflow-x: auto; ">
+                <h4>Quantities</h4>';
+              printSettingsQuantityTable();
+		echo '</div>
+            </div>
+          </section>
+         </form>
+          <section class="section--footer mdl-grid">
+          </section>
+        </div>';
+}
+
+function printSettingsQuantityTable(){
+}
+
+
 ?>

@@ -68,7 +68,10 @@ function processNewBarcode($barcode, $websocketEnabled = true) {
     }
     
     if (!$isProcessed) {
-        $productInfo = getProductByBardcode($barcode);
+        $productInfo = null;
+        if (is_numeric($barcode)) {
+            $productInfo = getProductByBardcode($barcode);
+        }
         if ($productInfo == null) {
             processUnknownBarcode($barcode, $websocketEnabled);
         } else {

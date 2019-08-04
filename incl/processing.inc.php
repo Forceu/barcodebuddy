@@ -261,6 +261,10 @@ function getAllChores() {
     return $returnChores;
 }
 
+function stringStartsWith ($string, $startString) { 
+    $len = strlen($startString); 
+    return (substr($string, 0, $len) === $startString); 
+} 
 
 
 function saveSettings() {
@@ -268,7 +272,11 @@ function saveSettings() {
     foreach ($BBCONFIG as $key => $value) {
         if (isset($_POST[$key])) {
             if ($_POST[$key] != $value) {
-                updateConfig($key, $_POST[$key]);
+                if (stringStartsWith($key,"BARCODE_")) {
+                    updateConfig($key, strtoupper($_POST[$key]));
+                } else {
+		    updateConfig($key, $_POST[$key]);
+	        }
             }
         } else {
             if (isset($_POST[$key . "_hidden"]) && $_POST[$key . "_hidden"] != $value) {

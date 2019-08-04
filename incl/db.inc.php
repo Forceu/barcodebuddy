@@ -22,8 +22,10 @@
  * @license    https://www.gnu.org/licenses/gpl-3.0.en.html  GNU GPL v3.0
  * @since      File available since Release 1.0
  */
+require_once __DIR__ . "/processing.inc.php";
 
-const BB_VERSION = "1210";
+
+const BB_VERSION = "1211";
 
 
 const DEFAULT_VALUES      = array("DEFAULT_BARCODE_C" => "BBUDDY-C",
@@ -64,6 +66,7 @@ function initDb() {
     $previousVersion = $BBCONFIG["version"];
     if ($previousVersion < BB_VERSION) {
         upgradeBarcodeBuddy($previousVersion);
+        getConfig();
     }
 }
 
@@ -118,8 +121,16 @@ function checkPermissions() {
 
 function upgradeBarcodeBuddy($previousVersion) {
     global $db;
+    global $BBCONFIG;
     //Place for future update protocols
     $db->exec("UPDATE BBConfig SET value='" . BB_VERSION . "' WHERE data='version'");
+    if ($previousVersion < 1211) {
+        getConfig();
+        updateConfig("BARCODE_C", strtoupper($BBCONFIG["BARCODE_C"]));
+        updateConfig("BARCODE_O", strtoupper($BBCONFIG["BARCODE_O"]));
+        updateConfig("BARCODE_P", strtoupper($BBCONFIG["BARCODE_P"]));
+        updateConfig("BARCODE_CS", strtoupper($BBCONFIG["BARCODE_CS"]));
+    }
 }
 
 //States to tell the script what to do with the barcodes that were scanned

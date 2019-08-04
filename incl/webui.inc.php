@@ -243,7 +243,7 @@ echo'</nav>';
     <nav class="mdl-navigation">
       <a class="mdl-navigation__link" href="'.$folder.'index.php">Overview</a>
       <a class="mdl-navigation__link" href="'.$folder.'menu/settings.php">Settings</a>
-      <a class="mdl-navigation__link" href="'.$folder.'menu/quantities.php">Quantities</a>
+<!--      <a class="mdl-navigation__link" href="'.$folder.'menu/quantities.php">Quantities</a> -->
       <a class="mdl-navigation__link" href="'.$folder.'menu/chores.php">Chores</a>
       <a class="mdl-navigation__link" href="'.$folder.'menu/tags.php">Tags</a>
     </nav>

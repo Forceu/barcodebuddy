@@ -96,7 +96,7 @@ function processUnknownBarcode($barcode, $websocketEnabled) {
         sendWebsocketMessage("Unknown product already scanned. Increasing quantitiy", $websocketEnabled, 1);
         $db->exec("UPDATE Barcodes SET amount = amount + 1 WHERE barcode = '$barcode'");
     } else {
-        $productname == "N/A";
+        $productname = "N/A";
         if (is_numeric($barcode)) {
             $productname = lookupNameByBarcode($barcode);
         }

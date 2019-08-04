@@ -25,9 +25,10 @@
 
 
 // Function that is called when a barcode is passed on
-function processNewBarcode($barcode, $websocketEnabled = true) {
+function processNewBarcode($barcodeInput, $websocketEnabled = true) {
     global $BBCONFIG;
 
+    $barcode = strtoupper($barcodeInput);
     $isProcessed = false;
     if ($barcode == $BBCONFIG["BARCODE_C"]) {
         setTransactionState(STATE_CONSUME);
@@ -68,10 +69,7 @@ function processNewBarcode($barcode, $websocketEnabled = true) {
     }
     
     if (!$isProcessed) {
-        $productInfo = null;
-        if (is_numeric($barcode)) {
-            $productInfo = getProductByBardcode($barcode);
-        }
+        $productInfo = getProductByBardcode($barcode);
         if ($productInfo == null) {
             processUnknownBarcode($barcode, $websocketEnabled);
         } else {
@@ -98,7 +96,10 @@ function processUnknownBarcode($barcode, $websocketEnabled) {
         sendWebsocketMessage("Unknown product already scanned. Increasing quantitiy", $websocketEnabled, 1);
         $db->exec("UPDATE Barcodes SET amount = amount + 1 WHERE barcode = '$barcode'");
     } else {
-        $productname = lookupNameByBarcode($barcode);
+        $productname == "N/A";
+        if (is_numeric($barcode)) {
+            $productname = lookupNameByBarcode($barcode);
+        }
         if ($productname != "N/A") {
             saveLog("Unknown barcode looked up, found name: " . $productname . ". Barcode: " . $barcode);
             sendWebsocketMessage($productname, $websocketEnabled, 1);

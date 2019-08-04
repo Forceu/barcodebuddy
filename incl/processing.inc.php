@@ -133,9 +133,12 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
             }
             break;
         case STATE_CONSUME_PURCHASE:
-            saveLog("Product found. Adding 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode);
-            sendWebsocketMessage("Adding 1 " . $productInfo["unit"] . " of " . $productInfo["name"], $websocketEnabled);
-            purchaseProduct($productInfo["id"], 1);
+ 	    $additionalLog = "";
+            if (!purchaseProduct($productInfo["id"], 1)) {
+		$additionalLog = " WARNING: No default best before date set!";
+		}
+            saveLog("Product found. Adding 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode . $additionalLog);
+            sendWebsocketMessage("Adding 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . $additionalLog, $websocketEnabled);
             break;
         case STATE_CONSUME_OPEN:
             saveLog("Product found. Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode);

@@ -103,9 +103,11 @@ function checkApiConnection($givenurl, $apikey) {
 }
 
 
-// Add a Grocy product
+// Add a Grocy product. Return: false if default best before date not set
 function purchaseProduct($id, $amount, $bestbefore = null, $price = null) {
     global $BBCONFIG;
+
+    $daysBestBefore = 0;
     $data = array(
         'amount' => $amount,
         'transaction_type' => 'purchase'
@@ -114,9 +116,11 @@ function purchaseProduct($id, $amount, $bestbefore = null, $price = null) {
         $data['price'] = $price;
     }
     if ($bestbefore != null) {
+        $daysBestBefore           = $bestbefore;
         $data['best_before_date'] = $bestbefore;
     } else {
-        $data['best_before_date'] = getDefaultBestBefore($id);
+        $daysBestBefore           = getDefaultBestBeforeDays($id);
+        $data['best_before_date'] = formatBestBeforeDays($daysBestBefore);
     }
     $data_json = json_encode($data);
     
@@ -134,6 +138,7 @@ function purchaseProduct($id, $amount, $bestbefore = null, $price = null) {
     if ($response === false) {
        die("Error purchasing product");
     }
+    return ($daysBestBefore != 0);
 }
 
 
@@ -188,16 +193,22 @@ global $db;
 
 
 
-// Get default best before in days from a Grocy product
-function getDefaultBestBefore($id) {
-    $info      = getProductInfo($id);
-    $defaultBb = $info["default_best_before_days"];
-    if ($defaultBb == "-1") {
+// Formats the amount of days into future date
+function formatBestBeforeDays($days) {
+    if ($days == "-1") {
         return "2999-12-31";
     } else {
         $date = date("Y-m-d");
-        return date('Y-m-d', strtotime($date . " + $defaultBb days"));
+        return date('Y-m-d', strtotime($date . " + $days days"));
     }
+}
+
+// Get default best before in days from a Grocy product
+function getDefaultBestBeforeDays($id) {
+    $info      = getProductInfo($id);
+    $days      = $info["default_best_before_days"];
+    checkIfNumeric($days);
+    return $days;
 }
 
 

@@ -182,7 +182,7 @@ echo ' <main class="mdl-layout__content" style="flex: 1 0 auto;">
               <div class="mdl-card__supporting-text" style="overflow-x: auto; ">
                 <h4>Stored Tags</h4><br>';
 
-$tags = getAllTags();
+                 $tags = getAllTags();
 		 echo  generateTableSettingsTag($tags);
 
 echo'            </div>
@@ -344,6 +344,10 @@ function printSettingsGeneralSettingsTable() {
   <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="general_verbose">
 		  <input type="checkbox" value="1" name="MORE_VERBOSE" id="general_verbose" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["MORE_VERBOSE"]).'>
 		  <span class="mdl-checkbox__label">More verbose logs</span>
+		</label><br>
+<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="general_checkshoppinglist">
+		  <input type="checkbox" value="1" name="SHOPPINGLIST_REMOVE" id="general_checkshoppinglist" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["SHOPPINGLIST_REMOVE"]).'>
+		  <span class="mdl-checkbox__label">Remove purchased items from shoppinglist</span>
 		</label>
 		</div>
             </div>
@@ -391,6 +395,7 @@ function printSettingsGeneralSettingsTable() {
 <input type="hidden" value="0" name="MORE_VERBOSE_hidden"/>
 <input type="hidden" value="0" name="WS_USE_hidden"/>
 <input type="hidden" value="0" name="WS_SSL_USE_hidden"/>
+<input type="hidden" value="0" name="SHOPPINGLIST_REMOVE"/>
 		</div>
             </div>
           </section></form>

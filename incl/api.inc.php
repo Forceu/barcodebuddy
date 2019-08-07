@@ -138,9 +138,16 @@ function purchaseProduct($id, $amount, $bestbefore = null, $price = null) {
     if ($response === false) {
        die("Error purchasing product");
     }
+
+    if ($BBCONFIG["SHOPPINGLIST_REMOVE"]) {
+        removeFromShoppinglist($id);
+    }
     return ($daysBestBefore != 0);
 }
 
+
+function removeFromShoppinglist($id) {
+}
 
 // Consume a Grocy product
 function consumeProduct($id, $amount, $spoiled = "false") {

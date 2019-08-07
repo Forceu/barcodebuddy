@@ -41,7 +41,8 @@ const DEFAULT_VALUES      = array("DEFAULT_BARCODE_C" => "BBUDDY-C",
 				 "DEFAULT_WS_PORT" => "47631",
 				 "DEFAULT_WS_PORT_EXT" => "47631",
 				 "DEFAULT_WS_SSL_USE" => "0",
-				 "DEFAULT_WS_SSL_URL" => null);
+				 "DEFAULT_WS_SSL_URL" => null,
+				 "DEFAULT_SHOPPINGLIST_REMOVE" => "1");
 
 
 const DB_INT_VALUES      = array("REVERT_TIME", "WS_PORT", "WS_PORT_EXT");

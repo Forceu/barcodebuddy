@@ -61,7 +61,6 @@ if (isset($_GET["add"])) {
 // Only one row can be processed at a time
 processButtons();
 
-
 printHeader(true);
 printMainTables();
 printFooter(true);

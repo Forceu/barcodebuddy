@@ -30,7 +30,7 @@ const DATABASE_PATH = __DIR__ . '/../barcodebuddy.db';
 //Enable debug output
 const IS_DEBUG      = false;
 
-if (IS_DEBUG || file_exists("debug")) {
+if (IS_DEBUG || file_exists(__DIR__ ."debug")) {
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);

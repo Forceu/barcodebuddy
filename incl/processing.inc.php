@@ -136,7 +136,7 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
         case STATE_CONSUME_PURCHASE:
  	    $additionalLog = "";
             if (!purchaseProduct($productInfo["id"], 1)) {
-		$additionalLog = " WARNING: No default best before date set!";
+		$additionalLog = " [WARNING]: No default best before date set!";
 		}
             saveLog("Product found. Adding 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode . $additionalLog);
             sendWebsocketMessage("Adding 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . $additionalLog, $websocketEnabled);

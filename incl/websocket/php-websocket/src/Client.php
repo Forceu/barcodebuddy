@@ -107,20 +107,25 @@ class Client
         }
         $header .= "Sec-WebSocket-Version: 13\r\n\r\n";
 
+
         $this->socket = fsockopen($host, $port, $errno, $errstr, 2);
-        socket_set_timeout($this->socket, 0, 10000);
-        @fwrite($this->socket, $header);
-        $response = @fread($this->socket, 1500);
+	if ($this->socket === false) {
+	    return false;
+	} else {
+            socket_set_timeout($this->socket, 0, 10000);
+            @fwrite($this->socket, $header);
+            $response = @fread($this->socket, 1500);
 
-        preg_match('#Sec-WebSocket-Accept:\s(.*)$#mU', $response, $matches);
+            preg_match('#Sec-WebSocket-Accept:\s(.*)$#mU', $response, $matches);
 
-        if ($matches) {
-            $keyAccept = trim($matches[1]);
-            $expectedResponse = base64_encode(pack('H*', sha1($key . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11')));
-            $this->connected = ($keyAccept === $expectedResponse) ? true : false;
+            if ($matches) {
+                $keyAccept = trim($matches[1]);
+                $expectedResponse = base64_encode(pack('H*', sha1($key . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11')));
+                $this->connected = ($keyAccept === $expectedResponse) ? true : false;
+            }
+
+            return $this->connected;
         }
-
-        return $this->connected;
     }
 
     /**

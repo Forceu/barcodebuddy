@@ -24,9 +24,11 @@
  *
  */
 
+require_once __DIR__ . "/internalChecking.inc.php";
+
 function sendWebsocketMessage($resultText, $websocketEnabled, $resultCode = "0") {
 global $BBCONFIG;
-    if ($BBCONFIG["WS_USE"] && $websocketEnabled) {
+    if ($BBCONFIG["WS_USE"] && $websocketEnabled && isExtensionInstalled("sockets")) {
         require_once __DIR__ . "/websocket/client_internal.php";
         sendWSResult($resultCode, $resultText);
     }

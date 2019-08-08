@@ -442,6 +442,49 @@ echo'<br>
 }
 
 
+function printExtentioncolor($name, $installed, $req) {
+    if ($installed) {
+    echo 'Installed: <font color="green">' . $name . '</font><br>';
+    } else {
+        if ($req) {
+   	 echo '<b>Not installed: <font color="red">' . $name . ' (required)</font></b><br>';
+        } else {
+   	 echo 'Not installed: <font color="#d0a42c">' . $name . ' (optional)</font><br>';
+        }
+    }
+}
+
+function printSetupTableExtensionsMissing() {
+
+    echo'<main class="mdl-layout__content" style="flex: 1 0 auto;">
+        <div class="mdl-layout__tab-panel is-active" id="overview">
+	<form name="settingsform" id="settingsform" method="post" action="' . $_SERVER['PHP_SELF'] . '" >
+        <section class="section--center mdl-grid--no-spacing mdl-grid mdl-shadow--2dp">
+            <div class="mdl-card mdl-cell  mdl-cell--12-col">
+              <div class="mdl-card__supporting-text" style="overflow-x: auto; ">
+                <h3>Setup</h3>
+                Welcome to Barcode Buddy! Please make sure the following extensios are installed and enabled:<br><br>'; 
+		$extensions = checkExtensionsInstalled();
+		foreach ($extensions["req"] as $ext=>$installed) {
+			printExtentioncolor($ext,$installed,true);
+		}
+		foreach ($extensions["opt"] as $ext=>$installed) {
+			printExtentioncolor($ext,$installed,false);
+		}
+		echo'<br><br>
+<button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+  Refresh
+</button>
+		</div>
+            </div>
+          </section>
+         </form>
+          <section class="section--footer mdl-grid">
+          </section>
+        </div>';
+}
+
+
 
 function printSettingsQuantity() {
 

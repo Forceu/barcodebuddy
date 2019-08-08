@@ -32,12 +32,13 @@
 require_once __DIR__ . "/incl/config.php";
 require_once __DIR__ . "/incl/api.inc.php";
 require_once __DIR__ . "/incl/db.inc.php";
+require_once __DIR__ . "/incl/internalChecking.inc.php";
 require_once __DIR__ . "/incl/processing.inc.php";
 require_once __DIR__ . "/incl/websocketconnection.inc.php";
 require_once __DIR__ . "/incl/webui.inc.php";
 
 
-if ($BBCONFIG["GROCY_API_URL"]==null || $BBCONFIG["GROCY_API_KEY"]==null) {
+if (checkExtensionsInstalled()["result"] == RESULT_REQ_MISSING || !isGrocyApiSet()) {
     header("Location: setup.php");
     die();
 }

@@ -30,6 +30,7 @@ require_once __DIR__ . "/incl/db.inc.php";
 require_once __DIR__ . "/incl/webui.inc.php";
 require_once __DIR__ . "/incl/api.inc.php";
 require_once __DIR__ . "/incl/processing.inc.php";
+require_once __DIR__ . "/incl/internalChecking.inc.php";
 
 $failed=false;
 
@@ -46,7 +47,11 @@ if (isset($_POST["GROCY_API_URL"])) {
 }
 
 printHeader(false,false,true);
-printSetupTable($failed);
+if (checkExtensionsInstalled()["result"] == RESULT_REQ_MISSING) {
+    printSetupTableExtensionsMissing();
+} else {
+    printSetupTable($failed);
+}
 printFooter();
 
 ?>

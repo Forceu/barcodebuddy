@@ -32,26 +32,30 @@ require_once __DIR__ . "/incl/api.inc.php";
 require_once __DIR__ . "/incl/processing.inc.php";
 require_once __DIR__ . "/incl/internalChecking.inc.php";
 
-$failed=false;
+$failed = false;
 
 if (isset($_POST["GROCY_API_URL"])) {
-        $apiWithTrailingSlash=rtrim($_POST["GROCY_API_URL"], '/') . '/';
-        if (checkApiConnection($apiWithTrailingSlash,$_POST["GROCY_API_KEY"])) {
-          updateConfig("GROCY_API_URL",sanitizeString($apiWithTrailingSlash));
-          updateConfig("GROCY_API_KEY",sanitizeString($_POST["GROCY_API_KEY"]));
-   	  header("Location: index.php");
-        } else {
-          $failed=true;
-        }
-
+    $apiWithTrailingSlash = rtrim($_POST["GROCY_API_URL"], '/') . '/';
+    if (checkApiConnection($apiWithTrailingSlash, $_POST["GROCY_API_KEY"])) {
+        updateConfig("GROCY_API_URL", sanitizeString($apiWithTrailingSlash));
+        updateConfig("GROCY_API_KEY", sanitizeString($_POST["GROCY_API_KEY"]));
+        header("Location: index.php");
+    } else {
+        $failed = true;
+    }
+    
 }
 
-printHeader(false,false,true);
+
+
+$webUi = new WebUiGenerator(MENU_SETUP);
+$webUi->addHeader();
 if (checkExtensionsInstalled()["result"] == RESULT_REQ_MISSING) {
-    printSetupTableExtensionsMissing();
+    $webUi->addCard("Setup", getHtmlSetupExtMissing());
 } else {
-    printSetupTable($failed);
+    $webUi->addCard("Setup", getHtmlSetupTable($failed));
 }
-printFooter();
+$webUi->addFooter();
+$webUi->printHtml();
 
 ?>

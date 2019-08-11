@@ -34,8 +34,10 @@ require_once __DIR__ . "/../incl/processing.inc.php";
 require_once __DIR__ . "/../incl/websocketconnection.inc.php";
 require_once __DIR__ . "/../incl/webui.inc.php";
 
-
-printHeader();
-printSettingsQuantity();
-printFooter(false);
+$webUi = new WebUiGenerator(MENU_GENERIC);
+$webUi->addHeader();
+$webUi->addCard("TODO","TODO");
+//printMainTables();
+$webUi->addFooter();
+$webUi->printHtml();
 ?>

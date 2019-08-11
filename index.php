@@ -58,11 +58,30 @@ if (isset($_GET["add"])) {
     die();
 }
 
+
+
+//const MENU_GENERIC = 0;
+//const MENU_MAIN = 1;
+//const MENU_SETUP = 2;
+//const MENU_SETTINGS = 3;
+
 // If a button was pressed, we are processing everything here.
 // Only one row can be processed at a time
 processButtons();
 
-printHeader(true);
-printMainTables();
-printFooter(true);
+$barcodes = getStoredBarcodes();
+		if (sizeof($barcodes['known']) > 0 || sizeof($barcodes['unknown']) > 0) {
+		    $productinfo = getProductInfo();
+		}
+
+$webUi = new WebUiGenerator(MENU_MAIN);
+$webUi->addHeader();
+$webUi->addCard("New Barcodes",getHtmlMainMenuTableKnown($barcodes),"Delete all",$_SERVER['PHP_SELF'].'?delete=known');
+$webUi->addCard("Unknown Barcodes",getHtmlMainMenuTableUnknown($barcodes),"Delete all",$_SERVER['PHP_SELF'].'?delete=unknown');
+$webUi->addCard("Processed Barcodes",getHtmlLogTextArea(),"Clear log",$_SERVER['PHP_SELF'].'?delete=log');
+$webUi->addFooter();
+$webUi->printHtml();
+
+
+
 ?>

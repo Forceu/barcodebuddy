@@ -42,7 +42,15 @@ if (isset($_POST["BARCODE_C"])) {
     }
 
 
-printHeader();
-printSettingsGeneralSettingsTable();
-printFooter(false,true);
+
+$webUi = new WebUiGenerator(MENU_SETTINGS);
+$webUi->addHeader();
+$webUi->addHtml('<form name="settingsform" id="settingsform" method="post" action="' . $_SERVER['PHP_SELF'] . '" >');
+$webUi->addCard("General Settings",getHtmlSettingsGeneral());
+$webUi->addCard("Grocy API",getHtmlSettingsGrocyApi());
+$webUi->addCard("Websockets",getHtmlSettingsWebsockets());
+$webUi->addHtml(getHtmlSettingsHiddenValues());
+$webUi->addFooter();
+$webUi->printHtml();
+
 ?>

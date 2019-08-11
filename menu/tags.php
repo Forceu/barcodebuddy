@@ -45,8 +45,11 @@ if (isset($_POST["button_delete"])) {
     }
 
 
-printHeader();
-printSettingsTagTable();
 
-printFooter(false);
+
+$webUi = new WebUiGenerator(MENU_GENERIC);
+$webUi->addHeader();
+$webUi->addCard("Stored Tags",getHtmlTagTable());
+$webUi->addFooter();
+$webUi->printHtml();
 ?>

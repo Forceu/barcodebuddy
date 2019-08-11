@@ -21,6 +21,8 @@
  * @copyright  2019 Marc Ole Bulling
  * @license    https://www.gnu.org/licenses/gpl-3.0.en.html  GNU GPL v3.0
  * @since      File available since Release 1.0
+ *
+ * TODO: Versions newer than 2.4.4 have easier API for shoppinglist and add product (BB-date)
  */
 
 

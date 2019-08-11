@@ -34,8 +34,6 @@ require_once __DIR__ . "/../incl/processing.inc.php";
 require_once __DIR__ . "/../incl/websocketconnection.inc.php";
 require_once __DIR__ . "/../incl/webui.inc.php";
 
-printHeader();
-
 if (isset($_POST["button_edit"])) {
         $id = $_POST["button_edit"];
         checkIfNumeric($id);
@@ -50,7 +48,11 @@ if (isset($_POST["button_edit"])) {
         die();
     }
 
-printSettingsChoresTable();
 
-printFooter(false);
+$webUi = new WebUiGenerator(MENU_GENERIC);
+$webUi->addHeader();
+$webUi->addCard("Chores",getHtmlChoreTable());
+$webUi->addFooter();
+$webUi->printHtml();
+
 ?>

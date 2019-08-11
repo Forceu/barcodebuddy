@@ -19,6 +19,9 @@ html, body {
   margin: 0;
   padding: 0;
 }
+.mdl-cell {
+  margin: 0;
+}
 .mdl-demo .mdl-layout__header-row {
   padding-left: 40px;
 }
@@ -70,7 +73,7 @@ html, body {
   height: auto;
 }
 .mdl-demo .mdl-card .mdl-card__supporting-text {
-  margin: 40px;
+  margin: 15px;
   -webkit-flex-grow: 1;
       -ms-flex-positive: 1;
           flex-grow: 1;

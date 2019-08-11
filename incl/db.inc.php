@@ -26,7 +26,7 @@ require_once __DIR__ . "/processing.inc.php";
 
 
 const BB_VERSION = "1211";
-
+const BB_VERSION_READABLE = "1.2.1.1";
 
 const DEFAULT_VALUES      = array("DEFAULT_BARCODE_C" => "BBUDDY-C",
 				 "DEFAULT_BARCODE_CS" => "BBUDDY-CS",

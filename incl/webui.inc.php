@@ -256,11 +256,12 @@ function printFooter($isMain=false, $isSettings=false) {
     global $BBCONFIG;
     echo '<footer class="mdl-mini-footer">
   <div class="mdl-mini-footer__left-section">
-    <div class="mdl-logo">Barcode Buddy</div>
+    <div class="mdl-logo">Barcode Buddy </div>
     <ul class="mdl-mini-footer__link-list">
               <li><a href="https://github.com/Forceu/barcodebuddy/">Help</a></li>
               <li><a href="https://github.com/Forceu/barcodebuddy/">Source Code</a></li>
               <li><a href="https://github.com/Forceu/barcodebuddy/blob/master/LICENSE">License</a></li>
+	      <li>Version '.BB_VERSION_READABLE.'</li>
               <li>by Marc Ole Bulling</li>
     </ul>
   </div>

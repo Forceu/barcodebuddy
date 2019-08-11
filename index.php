@@ -60,11 +60,6 @@ if (isset($_GET["add"])) {
 
 
 
-//const MENU_GENERIC = 0;
-//const MENU_MAIN = 1;
-//const MENU_SETUP = 2;
-//const MENU_SETTINGS = 3;
-
 // If a button was pressed, we are processing everything here.
 // Only one row can be processed at a time
 processButtons();

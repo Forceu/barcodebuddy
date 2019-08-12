@@ -32,6 +32,7 @@ const DEFAULT_VALUES      = array("DEFAULT_BARCODE_C" => "BBUDDY-C",
 				 "DEFAULT_BARCODE_CS" => "BBUDDY-CS",
 				 "DEFAULT_BARCODE_P" => "BBUDDY-P",
 				 "DEFAULT_BARCODE_O" => "BBUDDY-O",
+				 "DEFAULT_BARCODE_GS" => "BBUDDY-I",
 				 "DEFAULT_REVERT_TIME" => "10",
 				 "DEFAULT_REVERT_SINGLE" => "1",
 				 "DEFAULT_MORE_VERBOSE" => "1",
@@ -137,8 +138,9 @@ function upgradeBarcodeBuddy($previousVersion) {
 //States to tell the script what to do with the barcodes that were scanned
 const STATE_CONSUME = 0;
 const STATE_CONSUME_SPOILED = 1;
-const STATE_CONSUME_PURCHASE = 2;
-const STATE_CONSUME_OPEN = 3;
+const STATE_PURCHASE = 2;
+const STATE_OPEN = 3;
+const STATE_GETSTOCK = 4;
 
 const SECTION_KNOWN_BARCODES = "known";
 const SECTION_UNKNOWN_BARCODES = "unknown";

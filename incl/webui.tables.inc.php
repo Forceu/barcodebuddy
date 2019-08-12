@@ -232,6 +232,10 @@ return '<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label
 		    <input class="mdl-textfield__input" value="'.$BBCONFIG["BARCODE_O"].'" type="text" name="BARCODE_O" id="barcode_o">
 		    <label class="mdl-textfield__label" for="barcode_o">Barcode: Open</label>
 		  </div><br>
+		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+		    <input class="mdl-textfield__input" value="'.$BBCONFIG["BARCODE_GS"].'" type="text" name="BARCODE_GS" id="barcode_gs">
+		    <label class="mdl-textfield__label" for="barcode_o">Barcode: Inventory</label>
+		  </div><br>
 <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
     <input class="mdl-textfield__input" type="text" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57" pattern="-?[0-9]*(\.[0-9]+)?" value="'.$BBCONFIG["REVERT_TIME"].'" id="general_revert_min"  name="REVERT_TIME">
     <label class="mdl-textfield__label" for="general_revert_min">Revert state to &quot;Purchase&quot; after time passed in minutes</label>

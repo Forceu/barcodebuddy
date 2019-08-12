@@ -32,26 +32,33 @@ function processNewBarcode($barcodeInput, $websocketEnabled = true) {
     $isProcessed = false;
     if ($barcode == $BBCONFIG["BARCODE_C"]) {
         setTransactionState(STATE_CONSUME);
-        saveLog("Set state to consume", true);
-        sendWebsocketMessage("Set state to consume", $websocketEnabled);
+        saveLog("Set state to Consume", true);
+        sendWebsocketMessage("Set state to Consume", $websocketEnabled);
         $isProcessed = true;
     }
     if ($barcode == $BBCONFIG["BARCODE_CS"]) {
         setTransactionState(STATE_CONSUME_SPOILED);
-        saveLog("Set state to consume (spoiled)", true);
-        sendWebsocketMessage("Set state to consume (spoiled)", $websocketEnabled);
+        saveLog("Set state to Consume (spoiled)", true);
+        sendWebsocketMessage("Set state to Consume (spoiled)", $websocketEnabled);
         $isProcessed = true;
     }
     if ($barcode == $BBCONFIG["BARCODE_P"]) {
-        setTransactionState(STATE_CONSUME_PURCHASE);
-        saveLog("Set state to purchase", true);
-        sendWebsocketMessage("Set state to purchase", $websocketEnabled);
+        setTransactionState(STATE_PURCHASE);
+        saveLog("Set state to Purchase", true);
+        sendWebsocketMessage("Set state to Purchase", $websocketEnabled);
         $isProcessed = true;
     }
     if ($barcode == $BBCONFIG["BARCODE_O"]) {
-        setTransactionState(STATE_CONSUME_OPEN);
-        saveLog("Set state to open", true);
-        sendWebsocketMessage("Set state to open", $websocketEnabled);
+        setTransactionState(STATE_OPEN);
+        saveLog("Set state to Open", true);
+        sendWebsocketMessage("Set state to Open", $websocketEnabled);
+        $isProcessed = true;
+    }
+    
+    if ($barcode == $BBCONFIG["BARCODE_GS"]) {
+        setTransactionState(STATE_GETSTOCK);
+        saveLog("Set state  to Inventory", true);
+        sendWebsocketMessage("Set state to Inventory", $websocketEnabled);
         $isProcessed = true;
     }
     
@@ -133,7 +140,7 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
                 setTransactionState(STATE_CONSUME);
             }
             break;
-        case STATE_CONSUME_PURCHASE:
+        case STATE_PURCHASE:
  	    $additionalLog = "";
             if (!purchaseProduct($productInfo["id"], 1)) {
 		$additionalLog = " [WARNING]: No default best before date set!";
@@ -141,7 +148,7 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
             saveLog("Product found. Adding 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode . $additionalLog);
             sendWebsocketMessage("Adding 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . $additionalLog, $websocketEnabled);
             break;
-        case STATE_CONSUME_OPEN:
+        case STATE_OPEN:
             saveLog("Product found. Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode);
             sendWebsocketMessage("Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"], $websocketEnabled);
             openProduct($productInfo["id"]);
@@ -149,6 +156,10 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
                 saveLog("Reverting back to Consume", true);
                 setTransactionState(STATE_CONSUME);
             }
+            break;
+        case STATE_GETSTOCK:
+            saveLog("Currently in stock: ".$productInfo["stockAmount"]. " " . $productInfo["unit"] . " of " . $productInfo["name"]);
+            sendWebsocketMessage("Currently in stock: ".$productInfo["stockAmount"]. " " . $productInfo["unit"] . " of " . $productInfo["name"], $websocketEnabled);
             break;
     }
 }

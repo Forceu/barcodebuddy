@@ -23,10 +23,11 @@
  * @since      File available since Release 1.0
  */
 require_once __DIR__ . "/processing.inc.php";
+require_once __DIR__ . "/PluginLoader.php";
 
 
-const BB_VERSION = "1211";
-const BB_VERSION_READABLE = "1.2.1.1";
+const BB_VERSION = "1220";
+const BB_VERSION_READABLE = "1.2.2.0";
 
 const DEFAULT_VALUES      = array("DEFAULT_BARCODE_C" => "BBUDDY-C",
 				 "DEFAULT_BARCODE_CS" => "BBUDDY-CS",
@@ -269,6 +270,21 @@ function getChoreBarcode($barcode) {
 }
 
 
+function isUnknownBarcodeAlreadyStored($barcode) {
+    global $db;
+    $count = $db->querySingle("SELECT COUNT(*) as count FROM Barcodes WHERE barcode='$barcode'");
+    return ($count != 0);
+}
+
+function addQuantitiyToUnknownBarcode($barcode, $amount) {
+    global $db;
+    $db->exec("UPDATE Barcodes SET amount = amount + $amount WHERE barcode = '$barcode'");
+}
+
+function insertUnrecognizedBarcode($barcode, $productname = "N/A", $amount = 1, $match = 0) {
+    global $db;
+    $db->exec("INSERT INTO Barcodes(barcode, name, amount, possibleMatch) VALUES('$barcode', '$productname', $amount, $match)");
+}
 
 
 //Check if the given name includes any words that are associated with a product

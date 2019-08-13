@@ -354,6 +354,9 @@ function getProductByBardcode($barcode) {
 	$resultArray["name"]=sanitizeString($decoded1["product"]["name"]);
 	$resultArray["unit"]=sanitizeString($decoded1["quantity_unit_stock"]["name"]);
 	$resultArray["stockAmount"]=sanitizeString($decoded1["stock_amount"]);
+	if ($resultArray["stockAmount"] == null) {
+	    $resultArray["stockAmount"] = "0";
+	}
 	return $resultArray;
     } else {
         return null;

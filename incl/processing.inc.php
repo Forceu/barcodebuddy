@@ -138,6 +138,27 @@ function processUnknownBarcode($barcode, $websocketEnabled) {
     }
 }
 
+
+function processModeChangeGetParameter($modeParameter) {
+    switch (trim($modeParameter)) {
+        case "consume":
+	    setTransactionState(STATE_CONSUME);
+            break;
+        case "consume_s":
+	    setTransactionState(STATE_CONSUME_SPOILED);
+            break;
+        case "purchase":
+	    setTransactionState(STATE_PURCHASE);
+            break;
+        case "open":
+	    setTransactionState(STATE_OPEN);
+            break;
+        case "inventory":
+	    setTransactionState(STATE_GETSTOCK);
+            break;
+    }
+}
+
 //Process a barcode that Grocy already knows
 function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
     global $BBCONFIG;

@@ -48,6 +48,9 @@ if (isset($argv[1])) {
     processNewBarcode(sanitizeString($argv[1], true));
     die;
 }
+if (isset($_GET["mode"])) {
+    processModeChangeGetParameter($_GET["mode"]);
+}
 if (isset($_GET["add"])) {
     processNewBarcode(sanitizeString($_GET["add"], true));
     if (!isset($_GET["showui"])) {

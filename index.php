@@ -44,22 +44,32 @@ if (checkExtensionsInstalled()["result"] == RESULT_REQ_MISSING || !isGrocyApiSet
 }
 
 //If barcodes or parameters are passed through CLI or GET, process them and do not do anything else
+if (isset($_GET["version"]) || (isset($argv[1]) && $argv[1]=="-v")) {
+   die("BarcodeBuddy ".BB_VERSION);
+}
+
 if (isset($argv[1])) {
     processNewBarcode(sanitizeString($argv[1], true));
     die;
 }
 if (isset($_GET["mode"])) {
     processModeChangeGetParameter($_GET["mode"]);
+    hideGetPostParameters();
 }
+if (isset($_GET["refreshbarcode"])) {
+    processRefreshedBarcode(sanitizeString($_GET["refreshbarcode"]));
+    hideGetPostParameters();
+}
+
 if (isset($_GET["add"])) {
     processNewBarcode(sanitizeString($_GET["add"], true));
     if (!isset($_GET["showui"])) {
         die("OK");
     }
-    //Hide get
-    header("Location: " . $_SERVER["PHP_SELF"]);
-    die();
+    hideGetPostParameters();
 }
+
+
 
 
 

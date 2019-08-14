@@ -279,7 +279,15 @@ class WebUiGenerator {
 		    var text=document.getElementById(textId).value;
 		    document.getElementById(buttonId).disabled=(text===previousInput);
 		}
-
+		function openNewTab(url, barcode) {
+		    var win = window.open(url,	"New Grocy product");
+		    var timer = setInterval(function() {
+			if (win.closed) {
+			    clearInterval(timer);
+			    window.location = "index.php?refreshbarcode="+barcode;
+			}
+		    }, 500);
+		}
 		</script>';
         if ($BBCONFIG["WS_USE"]) {
             $this->htmlOutput = $this->htmlOutput . '<script>
@@ -308,7 +316,10 @@ class WebUiGenerator {
 
 
 
-
+function hideGetPostParameters() {
+  header("Location: " . $_SERVER["PHP_SELF"]);
+  die();
+}
 
 
 

@@ -79,31 +79,46 @@ function insertDefaultValues() {
     $db->exec("INSERT INTO TransactionState(id,currentState,since) SELECT 1, 0, datetime('now','localtime') WHERE NOT EXISTS(SELECT 1 FROM TransactionState WHERE id = 1)");
     $db->exec("INSERT INTO BBConfig(id,data,value) SELECT 1, \"version\", \"" . BB_VERSION . "\" WHERE NOT EXISTS(SELECT 1 FROM BBConfig WHERE id = 1)");
     foreach (DEFAULT_VALUES as $key => $value) {
-       $name=str_replace("DEFAULT_","",$key);
-       $db->exec("INSERT INTO BBConfig(data,value) SELECT \"".$name."\", \"" . $value . "\" WHERE NOT EXISTS(SELECT 1 FROM BBConfig WHERE data = '$name')");
-} 
+        $name = str_replace("DEFAULT_", "", $key);
+        $db->exec("INSERT INTO BBConfig(data,value) SELECT \"" . $name . "\", \"" . $value . "\" WHERE NOT EXISTS(SELECT 1 FROM BBConfig WHERE data = '$name')");
+    }
 }
 
 
 function getConfig() {
     global $db;
     global $BBCONFIG;
-    $BBCONFIG            = array();
-    $res = $db->query("SELECT * FROM BBConfig");
+    $BBCONFIG = array();
+    $res      = $db->query("SELECT * FROM BBConfig");
     while ($row = $res->fetchArray()) {
-        $BBCONFIG[$row['data']]      = $row['value'];
+        $BBCONFIG[$row['data']] = $row['value'];
     }
-    if (sizeof($BBCONFIG)==0) {
+    if (sizeof($BBCONFIG) == 0) {
         die("DB Error: Could not get configuration");
     }
+    $BBCONFIG["GROCY_BASE_URL"] = strrtrim($BBCONFIG["GROCY_API_URL"],"api/");
 }
 
-function updateConfig($key,$value) {
+
+function strrtrim($message, $strip) { 
+    // break message apart by strip string 
+    $lines = explode($strip, $message); 
+    $last  = ''; 
+    // pop off empty strings at the end 
+    do { 
+        $last = array_pop($lines); 
+    } while (empty($last) && (count($lines))); 
+    // re-assemble what remains 
+    return implode($strip, array_merge($lines, array($last))); 
+} 
+
+
+function updateConfig($key, $value) {
     global $db;
-    if (in_array($key,DB_INT_VALUES)) {
+    if (in_array($key, DB_INT_VALUES)) {
         checkIfNumeric($value);
-}
-    $db->exec("UPDATE BBConfig SET value='".sanitizeString($value)."' WHERE data='$key'");
+    }
+    $db->exec("UPDATE BBConfig SET value='" . sanitizeString($value) . "' WHERE data='$key'");
 }
 
 
@@ -223,6 +238,12 @@ function getStoredTags() {
     return $tags;
 }
 
+
+function updateSavedBarcodeMatch($barcode, $productId) {
+    global $db;
+    checkIfNumeric($productId);
+    $db->exec("UPDATE Barcodes SET possibleMatch='$productId' WHERE barcode='".sanitizeString($barcode). "'");
+}
 
 
 //Gets an array of locally stored chore barcodes

@@ -159,6 +159,15 @@ function processModeChangeGetParameter($modeParameter) {
     }
 }
 
+
+//This will be called when a new grocy product is created from BB and the grocy tab is closed
+function processRefreshedBarcode($barcode) {
+    $productInfo = getProductByBardcode($barcode);
+    if ($productInfo != null) {
+        updateSavedBarcodeMatch($barcode, $productInfo["id"]);
+    }
+}
+
 //Process a barcode that Grocy already knows
 function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
     global $BBCONFIG;

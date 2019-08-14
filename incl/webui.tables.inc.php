@@ -79,6 +79,7 @@ function getHtmlLogTextArea() {
 //Generate the table with barcodes
 function getHtmlMainMenuTableKnown($barcodes) {
     global $productinfo;
+    global $BBCONFIG;
     if (sizeof($barcodes['known']) == 0) {
         return "No known barcodes yet.";
     } else {
@@ -89,7 +90,8 @@ function getHtmlMainMenuTableKnown($barcodes) {
             "Product",
             "Action",
             "Tags",
-            "Delete"
+            "Create",
+            "Remove"
         ));
         $returnString = '<form name="form" method="post" action="' . $_SERVER['PHP_SELF'] . '" >';
         foreach ($barcodes['known'] as $item) {
@@ -105,7 +107,8 @@ function getHtmlMainMenuTableKnown($barcodes) {
             $table->addCell('<select  onchange=\'enableButton("select_' . $itemId . '", "button_add_' . $item['id'] . '", "button_consume_' . $item['id'] . '")\' id="select_' . $itemId . '" name="select_' . $itemId . '">' . printSelections($item['match'], $productinfo) . '</select>');
             $table->addCell('<button ' . $isDisabled . ' class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="button_add_' . $item['id'] . '" name="button_add" type="submit"  value="' . $itemId . '">Add</button> <button ' . $isDisabled . ' class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="button_consume_' . $item['id'] . '" name="button_consume" type="submit" value="' . $itemId . '">Consume</button>');
             $table->addCell(explodeWords($item['name'], $itemId));
-            $table->addCell('<button name="button_delete" type="submit" class="mdl-button mdl-js-button mdl-js-ripple-effect" value="' . $itemId . '">Delete</button>');
+            $table->addCell('<input type="button" onclick="openNewTab(\''.$BBCONFIG["GROCY_BASE_URL"].'product/new?prefillname='.rawurlencode($item['name']).'&prefillbarcode='.$item['barcode'].'\', \''.$item['barcode'].'\')" name="button_createproduct" class="mdl-button mdl-js-button mdl-js-ripple-effect" value="Create Product"/>');
+            $table->addCell('<button name="button_delete" type="submit" class="mdl-button mdl-js-button mdl-js-ripple-effect" value="' . $itemId . '">Remove</button>');
             $table->endRow();
         }
         return $returnString . $table->getHtml() . "</form>";
@@ -115,6 +118,7 @@ function getHtmlMainMenuTableKnown($barcodes) {
 
 //Generate the table with barcodes
 function getHtmlMainMenuTableUnknown($barcodes) {
+    global $BBCONFIG;
     global $productinfo;
     if (sizeof($barcodes['unknown']) == 0) {
         return "No unknown barcodes yet.";
@@ -125,7 +129,8 @@ function getHtmlMainMenuTableUnknown($barcodes) {
             "Quantity",
             "Product",
             "Action",
-            "Delete"
+            "Create",
+            "Remove"
         ));
         $returnString = '<form name="form" method="post" action="' . $_SERVER['PHP_SELF'] . '" >';
         foreach ($barcodes['unknown'] as $item) {
@@ -140,7 +145,8 @@ function getHtmlMainMenuTableUnknown($barcodes) {
             $table->addCell($item['amount']);
             $table->addCell('<select onchange=\'enableButton("select_' . $itemId . '", "button_add_' . $item['id'] . '", "button_consume_' . $item['id'] . '")\' id="select_' . $itemId . '" name="select_' . $itemId . '">' . printSelections($item['match'], $productinfo) . '</select>');
             $table->addCell('<button disabled class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="button_add_' . $item['id'] . '" name="button_add" type="submit"  value="' . $itemId . '">Add</button> <button disabled class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="button_consume_' . $item['id'] . '" name="button_consume" type="submit" value="' . $itemId . '">Consume</button>');
-            $table->addCell('<button name="button_delete" type="submit" class="mdl-button mdl-js-button mdl-js-ripple-effect" value="' . $itemId . '">Delete</button>');
+            $table->addCell('<input type="button" onclick="openNewTab(\''.$BBCONFIG["GROCY_BASE_URL"].'product/new?prefillbarcode='.$item['barcode'].'\', \''.$item['barcode'].'\')" name="button_createproduct" class="mdl-button mdl-js-button mdl-js-ripple-effect" value="Create Product"/>');
+            $table->addCell('<button name="button_delete" type="submit" class="mdl-button mdl-js-button mdl-js-ripple-effect" value="' . $itemId . '">Remove</button>');
             $table->endRow();
         }
         return $returnString . $table->getHtml() . "</form>";

@@ -376,8 +376,31 @@ function printSettingsQuantity() {
 }
 
 function printSettingsQuantityTable(){
-//TODO
+    $quantities = getQuantities();
+     if (sizeof($quantities) == 0) {
+        return "No saved quantities yet.";
+    } else {
+        $returnString = '<form name="form" method="post" action="' . $_SERVER['PHP_SELF'] . '" >';
+        $table        = new TableGenerator(array(
+            "Product",
+            "Barcode",
+            "Quantitiy",
+            "Action"
+        ));
+        
+        foreach ($quantities as $quantity) {
+            $table->startRow();
+            $table->addCell($quantity['product']);
+            $table->addCell($quantity['barcode']);
+            $table->addCell($quantity['quantitiy']);
+            $table->addCell('<button name="button_delete" type="submit" class="mdl-button mdl-js-button mdl-js-ripple-effect" value="' . $quantity['id'] . '">Delete</button>');
+            $table->endRow();
+        }
+        return $returnString . $table->getHtml() . "</form>";
+    }
+
 }
+
 
 
 ?>

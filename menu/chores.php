@@ -37,7 +37,7 @@ require_once __DIR__ . "/../incl/webui.inc.php";
 if (isset($_POST["button_edit"])) {
         $id = $_POST["button_edit"];
         checkIfNumeric($id);
-        $barcode = $_POST["barcode_".$id];
+        $barcode = sanitizeString($_POST["barcode_".$id]);
         if ($barcode=="") {
               deleteChoreBarcode($id);
         } else {

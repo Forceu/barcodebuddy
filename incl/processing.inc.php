@@ -57,7 +57,13 @@ function processNewBarcode($barcodeInput, $websocketEnabled = true) {
         outputLog("Set state to Inventory", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
         $isProcessed = true;
     }
-    
+    if (stringStartsWith($barcode, $BBCONFIG["BARCODE_Q"])) {
+        $quantitiy = str_replace($BBCONFIG["BARCODE_Q"], "", $barcode);
+        checkIfNumeric($quantitiy);
+        outputLog("Set quantitiy to $quantitiy for barcode $barcode", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
+        changeQuantityAfterScan($quantitiy);
+        $isProcessed = true;
+    }
     if (trim($barcode) == "") {
         outputLog("Invalid barcode found", EVENT_TYPE_ERROR, true, $websocketEnabled, 2);
         $isProcessed = true;
@@ -70,11 +76,13 @@ function processNewBarcode($barcodeInput, $websocketEnabled = true) {
     }
     
     if (!$isProcessed) {
-        $productInfo = getProductByBardcode($barcode);
+        $sanitizedBarcode = sanitizeString($barcode);
+        saveLastBarcode($sanitizedBarcode);
+        $productInfo = getProductByBardcode($sanitizedBarcode);
         if ($productInfo == null) {
-            processUnknownBarcode($barcode, $websocketEnabled);
+            processUnknownBarcode($sanitizedBarcode, $websocketEnabled);
         } else {
-            processKnownBarcode($productInfo, $barcode, $websocketEnabled);
+            processKnownBarcode($productInfo, $sanitizedBarcode, $websocketEnabled);
         }
     }
 }
@@ -109,7 +117,7 @@ function outputLog($log, $eventType, $isVerbose = false, $websocketEnabled = tru
 }
 
 function processChoreBarcode($barcode) {
-   $id = getChoreBarcode($barcode)['choreId'];
+    $id = getChoreBarcode(sanitizeString($barcode))['choreId'];
    checkIfNumeric($id);
    executeChore( $id);
    return sanitizeString(getChoresInfo($id)["name"]);
@@ -118,10 +126,14 @@ function processChoreBarcode($barcode) {
 //If grocy does not know this barcode
 function processUnknownBarcode($barcode, $websocketEnabled) {
     global $db;
+    $amount = 1;
+    if (getTransactionState() == STATE_PURCHASE) {
+        $amount = getQuantityByBarcode($barcode);
+    }
     if (isUnknownBarcodeAlreadyStored($barcode)) {
         //Unknown barcode already in local database
         outputLog("Unknown product already scanned. Increasing quantitiy. Barcode: " . $barcode, EVENT_TYPE_ADD_NEW_BARCODE, false, $websocketEnabled, 1);
-        addQuantitiyToUnknownBarcode($barcode, 1);
+        addQuantitiyToUnknownBarcode($barcode, $amount);
     } else {
         $productname = "N/A";
         if (is_numeric($barcode)) {
@@ -129,10 +141,10 @@ function processUnknownBarcode($barcode, $websocketEnabled) {
         }
         if ($productname != "N/A") {
             outputLog("Unknown barcode looked up, found name: " . $productname . ". Barcode: " . $barcode, EVENT_TYPE_ADD_NEW_BARCODE, false, $websocketEnabled, 1, $productname);
-            insertUnrecognizedBarcode($barcode, $productname, 1, checkNameForTags($productname));
+            insertUnrecognizedBarcode($barcode,  $amount, $productname, checkNameForTags($productname));
         } else {
             outputLog("Unknown barcode could not be looked up. Barcode: " . $barcode, EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, 2, $barcode);
-            insertUnrecognizedBarcode($barcode);
+            insertUnrecognizedBarcode($barcode, $amount);
         }
         
     }
@@ -168,41 +180,42 @@ function processRefreshedBarcode($barcode) {
     }
 }
 
-//Process a barcode that Grocy already knows
+    // Process a barcode that Grocy already knows
 function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
     global $BBCONFIG;
     $state = getTransactionState();
-    
+
     switch ($state) {
-        case STATE_CONSUME:
-            consumeProduct($productInfo["id"], 1, false);
-            outputLog("Product found. Consuming 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, 0, "Consuming 1 " . $productInfo["unit"] . " of " . $productInfo["name"]);
+        case STATE_CONSUME :
+            consumeProduct($productInfo ["id"], 1, false);
+            outputLog("Product found. Consuming 1 " . $productInfo ["unit"] . " of " . $productInfo ["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, 0, "Consuming 1 " . $productInfo ["unit"] . " of " . $productInfo ["name"]);
             break;
-        case STATE_CONSUME_SPOILED:
-            consumeProduct($productInfo["id"], 1, true);
-            outputLog("Product found. Consuming 1 spoiled " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, 0, "Consuming 1 spoiled " . $productInfo["unit"] . " of " . $productInfo["name"]);
-            if ($BBCONFIG["REVERT_SINGLE"]) {
+        case STATE_CONSUME_SPOILED :
+            consumeProduct($productInfo ["id"], 1, true);
+            outputLog("Product found. Consuming 1 spoiled " . $productInfo ["unit"] . " of " . $productInfo ["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, 0, "Consuming 1 spoiled " . $productInfo ["unit"] . " of " . $productInfo ["name"]);
+            if ($BBCONFIG ["REVERT_SINGLE"]) {
                 saveLog("Reverting back to Consume", true);
                 setTransactionState(STATE_CONSUME);
             }
             break;
-        case STATE_PURCHASE:
- 	    $additionalLog = "";
-            if (!purchaseProduct($productInfo["id"], 1)) {
-		$additionalLog = " [WARNING]: No default best before date set!";
-		}
-            outputLog("Product found. Adding 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode . $additionalLog, EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, 0, "Adding 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . $additionalLog);
+        case STATE_PURCHASE :
+            $amount = getQuantityByBarcode($barcode);
+            $additionalLog = "";
+            if (!purchaseProduct($productInfo ["id"], $amount)) {
+                $additionalLog = " [WARNING]: No default best before date set!";
+            }
+            outputLog("Product found. Adding  $amount " . $productInfo ["unit"] . " of " . $productInfo ["name"] . ". Barcode: " . $barcode . $additionalLog, EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, 0, "Adding 1 " . $productInfo ["unit"] . " of " . $productInfo ["name"] . $additionalLog);
             break;
-        case STATE_OPEN:
-            outputLog("Product found. Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, 0, "Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"]);
-            openProduct($productInfo["id"]);
-            if ($BBCONFIG["REVERT_SINGLE"]) {
+        case STATE_OPEN :
+            outputLog("Product found. Opening 1 " . $productInfo ["unit"] . " of " . $productInfo ["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, 0, "Opening 1 " . $productInfo ["unit"] . " of " . $productInfo ["name"]);
+            openProduct($productInfo ["id"]);
+            if ($BBCONFIG ["REVERT_SINGLE"]) {
                 saveLog("Reverting back to Consume", true);
                 setTransactionState(STATE_CONSUME);
             }
             break;
-        case STATE_GETSTOCK:
-            outputLog("Currently in stock: ".$productInfo["stockAmount"]. " " . $productInfo["unit"] . " of " . $productInfo["name"], EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, 0);
+        case STATE_GETSTOCK :
+            outputLog("Currently in stock: " . $productInfo ["stockAmount"] . " " . $productInfo ["unit"] . " of " . $productInfo ["name"], EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, 0);
             break;
     }
 }
@@ -239,7 +252,7 @@ function sanitizeString($input, $strongFilter = false) {
 
 function checkIfNumeric($input) {
     if (!is_numeric($input)) {
-        die("Illegal input! $input needs to be a number");
+        die("Illegal input! " . sanitizeString($input) . " needs to be a number");
     }
 }
 
@@ -266,6 +279,20 @@ function explodeWords($words, $id) {
     return $selections;
 }
 
+
+function changeQuantityAfterScan($amount) {
+    global $BBCONFIG;
+    $barcode = sanitizeString($BBCONFIG["LAST_BARCODE"]);
+    $product = getProductByBardcode($barcode);
+    if ($product != null) {
+        addUpdateQuantitiy($barcode, $amount, $product["name"]);
+    } else {
+        addUpdateQuantitiy($barcode, $amount); 
+    }
+    if (getStoredBarcodeAmount($barcode) == 1) {
+        setQuantitiyToUnknownBarcode($barcode, $amount);
+    }
+}
 
 
 function getAllTags() {
@@ -297,44 +324,43 @@ function sortChores($a,$b) {
 
 
 function getAllChores() {
-    $chores     = getChoresInfo();
-    $barcodes   = getStoredChoreBarcodes();
+    $chores = getChoresInfo();
+    $barcodes = getStoredChoreBarcodes();
     $returnChores = array();
-    
+
     foreach ($chores as $chore) {
-        $chore["barcode"]=null;
+        $chore["barcode"] = null;
         foreach ($barcodes as $barcode) {
             if ($chore["id"] == $barcode["choreId"]) {
-                $chore["barcode"] =$barcode["barcode"];
-		break;
+                $chore["barcode"] = $barcode["barcode"];
+                break;
             }
         }
-                array_push($returnChores, $chore);
+        array_push($returnChores, $chore);
     }
     usort($returnChores, "sortChores");
     return $returnChores;
 }
 
-function stringStartsWith ($string, $startString) { 
-    $len = strlen($startString); 
-    return (substr($string, 0, $len) === $startString); 
-} 
-
-
+function stringStartsWith($string, $startString) {
+    $len = strlen($startString);
+    return (substr($string, 0, $len) === $startString);
+}
 function saveSettings() {
     global $BBCONFIG;
     foreach ($BBCONFIG as $key => $value) {
         if (isset($_POST[$key])) {
             if ($_POST[$key] != $value) {
-                if (stringStartsWith($key,"BARCODE_")) {
-                    updateConfig($key, strtoupper($_POST[$key]));
+                $value = sanitizeString($_POST[$key]);
+                if (stringStartsWith($key, "BARCODE_")) {
+                    updateConfig($key, strtoupper($value));
                 } else {
-		    updateConfig($key, $_POST[$key]);
-	        }
+                    updateConfig($key, $value);
+                }
             }
         } else {
             if (isset($_POST[$key . "_hidden"]) && $_POST[$key . "_hidden"] != $value) {
-                updateConfig($key, $_POST[$key . "_hidden"]);
+                updateConfig($key, sanitizeString($_POST[$key . "_hidden"]));
             }
         }
     }

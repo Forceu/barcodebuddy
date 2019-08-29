@@ -138,7 +138,7 @@ class WebUiGenerator {
         <nav class="mdl-navigation">
           <a class="mdl-navigation__link" href="' . $folder . 'index.php">Overview</a>
           <a class="mdl-navigation__link" href="' . $folder . 'menu/settings.php">Settings</a>
-    <!--      <a class="mdl-navigation__link" href="' . $folder . 'menu/quantities.php">Quantities</a> -->
+          <a class="mdl-navigation__link" href="' . $folder . 'menu/quantities.php">Quantities</a>
           <a class="mdl-navigation__link" href="' . $folder . 'menu/chores.php">Chores</a>
           <a class="mdl-navigation__link" href="' . $folder . 'menu/tags.php">Tags</a>
         </nav>
@@ -387,7 +387,8 @@ function processButtons() {
             foreach ($_POST["tags"][$id] as $tag) {
                 $db->exec("INSERT INTO Tags(tag, itemId) VALUES('" . sanitizeString($tag) . "', $gidSelected);");
             }
-            $previousBarcodes = getProductInfo(sanitizeString($gidSelected))["barcode"];
+            $product = getProductInfo(sanitizeString($gidSelected));
+            $previousBarcodes = $product["barcode"];
             if ($previousBarcodes == NULL) {
                 setBarcode($gidSelected, $barcode);
             } else {
@@ -399,6 +400,7 @@ function processButtons() {
             } else {
                 purchaseProduct($gidSelected, $amount);
             }
+            refreshQuantityProductName($barcode, $product["name"]);
         }
         //Hide POST, so we can refresh
         header("Location: " . $_SERVER["PHP_SELF"]);

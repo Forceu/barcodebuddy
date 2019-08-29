@@ -34,11 +34,13 @@ const DEFAULT_VALUES      = array("DEFAULT_BARCODE_C" => "BBUDDY-C",
 				 "DEFAULT_BARCODE_P" => "BBUDDY-P",
 				 "DEFAULT_BARCODE_O" => "BBUDDY-O",
 				 "DEFAULT_BARCODE_GS" => "BBUDDY-I",
+				 "DEFAULT_BARCODE_Q" => "BBUDDY-Q-",
 				 "DEFAULT_REVERT_TIME" => "10",
 				 "DEFAULT_REVERT_SINGLE" => "1",
 				 "DEFAULT_MORE_VERBOSE" => "1",
 				 "DEFAULT_GROCY_API_URL" => null,
 				 "DEFAULT_GROCY_API_KEY" => null,
+				 "DEFAULT_LAST_BARCODE" => null,
 				 "DEFAULT_WS_USE" => "false",
 				 "DEFAULT_WS_PORT" => "47631",
 				 "DEFAULT_WS_PORT_EXT" => "47631",
@@ -64,6 +66,7 @@ function initDb() {
     $db->exec("CREATE TABLE IF NOT EXISTS BarcodeLogs(id INTEGER PRIMARY KEY, log TEXT NOT NULL)");
     $db->exec("CREATE TABLE IF NOT EXISTS BBConfig(id INTEGER PRIMARY KEY, data TEXT UNIQUE NOT NULL, value TEXT NOT NULL)");
     $db->exec("CREATE TABLE IF NOT EXISTS ChoreBarcodes(id INTEGER PRIMARY KEY, choreId INTEGER UNIQUE, barcode TEXT NOT NULL )");
+    $db->exec("CREATE TABLE IF NOT EXISTS Quantities(id INTEGER PRIMARY KEY, barcode TEXT NOT NULL UNIQUE, quantitiy INTEGER NOT NULL, product TEXT)");
     insertDefaultValues();
     getConfig();
     $previousVersion = $BBCONFIG["version"];
@@ -115,10 +118,16 @@ function strrtrim($message, $strip) {
 
 function updateConfig($key, $value) {
     global $db;
+    global $BBCONFIG;
     if (in_array($key, DB_INT_VALUES)) {
         checkIfNumeric($value);
     }
-    $db->exec("UPDATE BBConfig SET value='" . sanitizeString($value) . "' WHERE data='$key'");
+    $db->exec("UPDATE BBConfig SET value='" . $value . "' WHERE data='$key'");
+    $BBCONFIG[$key] = $value;
+}
+
+function saveLastBarcode($barcode) {
+    updateConfig("LAST_BARCODE", $barcode);
 }
 
 
@@ -220,6 +229,57 @@ function getStoredBarcodes() {
     return $barcodes;
 }
 
+function getStoredBarcodeAmount($barcode) {
+    global $db;
+    $res                 = $db->query("SELECT * FROM Barcodes WHERE barcode='$barcode'");
+    if ($row = $res->fetchArray()) {
+        return $row['amount'];
+    } else {
+        return 0;
+    }
+}
+
+
+//Gets an array of locally stored quantities
+function getQuantities() {
+    global $db;
+    $res                 = $db->query('SELECT * FROM Quantities');
+    $barcodes            = array();
+    while ($row = $res->fetchArray()) {
+        $item            = array();
+        $item['id']      = $row['id'];
+        $item['barcode'] = $row['barcode'];
+        $item['quantitiy']  = $row['quantitiy'];
+        $item['product']    = $row['product'];
+        array_push($barcodes, $item);
+    }
+    return $barcodes;
+}
+
+
+//Gets quantitiy for stored barcode quantities
+function getQuantityByBarcode($barcode) {
+    global $db;
+    $res                 = $db->query("SELECT * FROM Quantities WHERE barcode='$barcode'");
+    $barcodes            = array();
+    if ($row = $res->fetchArray()) {
+        return $row['quantitiy'];
+    } else {
+       return 1;
+    }
+}
+
+
+//Save product name if already stored as Quantitiy
+function refreshQuantityProductName($barcode, $productname) {
+    global $db;
+    $res                 = $db->query("SELECT * FROM Quantities WHERE barcode='$barcode'");
+    $barcodes            = array();
+    if ($row = $res->fetchArray()) {
+        $db->exec("UPDATE Quantities SET product='$productname' WHERE barcode='$barcode'");
+    } 
+}
+
 
 
 //Gets an array of locally stored tags
@@ -242,7 +302,7 @@ function getStoredTags() {
 function updateSavedBarcodeMatch($barcode, $productId) {
     global $db;
     checkIfNumeric($productId);
-    $db->exec("UPDATE Barcodes SET possibleMatch='$productId' WHERE barcode='".sanitizeString($barcode). "'");
+    $db->exec("UPDATE Barcodes SET possibleMatch='$productId' WHERE barcode='$barcode'");
 }
 
 
@@ -265,7 +325,17 @@ function getStoredChoreBarcodes() {
 function updateChoreBarcode($choreId, $choreBarcode) {
     global $db;
     checkIfNumeric($choreId);
-    $db->exec("REPLACE INTO ChoreBarcodes(choreId, barcode) VALUES(" . $choreId . ", '" . str_replace('&#39;', "",sanitizeString($choreBarcode)) . "')");
+    $db->exec("REPLACE INTO ChoreBarcodes(choreId, barcode) VALUES(" . $choreId . ", '" . str_replace('&#39;', "", $choreBarcode) . "')");
+}
+
+function addUpdateQuantitiy($barcode, $amount, $product = null) {
+    global $db;
+    checkIfNumeric($amount);
+    if ($product != null) {
+        $db->exec("REPLACE INTO Quantities(barcode, quantitiy) VALUES ('$barcode', $amount)");
+    } else {
+        $db->exec("REPLACE INTO Quantities(barcode, quantitiy, product) VALUES ('$barcode', $amount, '$product')");
+    }
 }
 
 
@@ -275,6 +345,14 @@ function deleteChoreBarcode($id) {
     $db->exec("DELETE FROM ChoreBarcodes WHERE choreId='$id'");
 }
 
+
+//Deletes Quantity. 
+function deleteQuantitiy($id) {
+    global $db;
+    checkIfNumeric($id);
+    $db->exec("DELETE FROM Quantities WHERE id='$id'");
+}
+
 function isChoreBarcode($barcode) {
     return (getChoreBarcode($barcode)!=null);
 }
@@ -282,7 +360,7 @@ function isChoreBarcode($barcode) {
 
 function getChoreBarcode($barcode) {
     global $db;
-    $res = $db->query("SELECT * FROM ChoreBarcodes WHERE barcode='".sanitizeString($barcode)."'");
+    $res = $db->query("SELECT * FROM ChoreBarcodes WHERE barcode='$barcode'");
     if ($row = $res->fetchArray()) {
         return $row;
     } else {
@@ -301,8 +379,12 @@ function addQuantitiyToUnknownBarcode($barcode, $amount) {
     global $db;
     $db->exec("UPDATE Barcodes SET amount = amount + $amount WHERE barcode = '$barcode'");
 }
+function setQuantitiyToUnknownBarcode($barcode, $amount) {
+    global $db;
+    $db->exec("UPDATE Barcodes SET amount = $amount WHERE barcode = '$barcode'");
+}
 
-function insertUnrecognizedBarcode($barcode, $productname = "N/A", $amount = 1, $match = 0) {
+function insertUnrecognizedBarcode($barcode,  $amount = 1, $productname = "N/A", $match = 0) {
     global $db;
     $db->exec("INSERT INTO Barcodes(barcode, name, amount, possibleMatch) VALUES('$barcode', '$productname', $amount, $match)");
 }

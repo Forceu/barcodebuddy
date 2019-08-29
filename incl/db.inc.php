@@ -26,8 +26,8 @@ require_once __DIR__ . "/processing.inc.php";
 require_once __DIR__ . "/PluginLoader.php";
 
 
-const BB_VERSION = "1220";
-const BB_VERSION_READABLE = "1.2.2.0";
+const BB_VERSION = "1300";
+const BB_VERSION_READABLE = "1.3.0.0";
 
 const DEFAULT_VALUES      = array("DEFAULT_BARCODE_C" => "BBUDDY-C",
 				 "DEFAULT_BARCODE_CS" => "BBUDDY-CS",

@@ -60,7 +60,12 @@ function processNewBarcode($barcodeInput, $websocketEnabled = true) {
     if (stringStartsWith($barcode, $BBCONFIG["BARCODE_Q"])) {
         $quantitiy = str_replace($BBCONFIG["BARCODE_Q"], "", $barcode);
         checkIfNumeric($quantitiy);
-        outputLog("Set quantitiy to $quantitiy for barcode $barcode", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
+	if ($BBCONFIG["LAST_PRODUCT"] != null) {
+	    $lastBarcode = $BBCONFIG["LAST_BARCODE"] . " (" . $BBCONFIG["LAST_PRODUCT"] . ")";
+	} else {
+	    $lastBarcode = $BBCONFIG["LAST_BARCODE"];
+	}
+        outputLog("Set quantitiy to $quantitiy for barcode $lastBarcode", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
         changeQuantityAfterScan($quantitiy);
         $isProcessed = true;
     }
@@ -77,11 +82,12 @@ function processNewBarcode($barcodeInput, $websocketEnabled = true) {
     
     if (!$isProcessed) {
         $sanitizedBarcode = sanitizeString($barcode);
-        saveLastBarcode($sanitizedBarcode);
         $productInfo = getProductByBardcode($sanitizedBarcode);
         if ($productInfo == null) {
+            saveLastBarcode($sanitizedBarcode);
             processUnknownBarcode($sanitizedBarcode, $websocketEnabled);
         } else {
+            saveLastBarcode($sanitizedBarcode, $productInfo["name"]);
             processKnownBarcode($productInfo, $sanitizedBarcode, $websocketEnabled);
         }
     }
@@ -283,11 +289,15 @@ function explodeWords($words, $id) {
 function changeQuantityAfterScan($amount) {
     global $BBCONFIG;
     $barcode = sanitizeString($BBCONFIG["LAST_BARCODE"]);
-    $product = getProductByBardcode($barcode);
-    if ($product != null) {
-        addUpdateQuantitiy($barcode, $amount, $product["name"]);
+    if ($BBCONFIG["LAST_PRODUCT"] != null) {
+        addUpdateQuantitiy($barcode, $amount, $BBCONFIG["LAST_PRODUCT"]);
     } else {
-        addUpdateQuantitiy($barcode, $amount); 
+        $product = getProductByBardcode($barcode);
+        if ($product != null) {
+            addUpdateQuantitiy($barcode, $amount, $product["name"]);
+        } else {
+            addUpdateQuantitiy($barcode, $amount);
+        }
     }
     if (getStoredBarcodeAmount($barcode) == 1) {
         setQuantitiyToUnknownBarcode($barcode, $amount);

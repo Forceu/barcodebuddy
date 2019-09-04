@@ -26,8 +26,8 @@ require_once __DIR__ . "/processing.inc.php";
 require_once __DIR__ . "/PluginLoader.php";
 
 
-const BB_VERSION = "1300";
-const BB_VERSION_READABLE = "1.3.0.0";
+const BB_VERSION = "1301";
+const BB_VERSION_READABLE = "1.3.0.1";
 
 const DEFAULT_VALUES      = array("DEFAULT_BARCODE_C" => "BBUDDY-C",
 				 "DEFAULT_BARCODE_CS" => "BBUDDY-CS",
@@ -41,6 +41,7 @@ const DEFAULT_VALUES      = array("DEFAULT_BARCODE_C" => "BBUDDY-C",
 				 "DEFAULT_GROCY_API_URL" => null,
 				 "DEFAULT_GROCY_API_KEY" => null,
 				 "DEFAULT_LAST_BARCODE" => null,
+				 "DEFAULT_LAST_PRODUCT" => null,
 				 "DEFAULT_WS_USE" => "false",
 				 "DEFAULT_WS_PORT" => "47631",
 				 "DEFAULT_WS_PORT_EXT" => "47631",
@@ -126,8 +127,9 @@ function updateConfig($key, $value) {
     $BBCONFIG[$key] = $value;
 }
 
-function saveLastBarcode($barcode) {
+function saveLastBarcode($barcode, $name = null) {
     updateConfig("LAST_BARCODE", $barcode);
+    updateConfig("LAST_PRODUCT", $name);
 }
 
 
@@ -331,7 +333,7 @@ function updateChoreBarcode($choreId, $choreBarcode) {
 function addUpdateQuantitiy($barcode, $amount, $product = null) {
     global $db;
     checkIfNumeric($amount);
-    if ($product != null) {
+    if ($product == null) {
         $db->exec("REPLACE INTO Quantities(barcode, quantitiy) VALUES ('$barcode', $amount)");
     } else {
         $db->exec("REPLACE INTO Quantities(barcode, quantitiy, product) VALUES ('$barcode', $amount, '$product')");

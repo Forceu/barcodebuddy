@@ -19,7 +19,7 @@ Refer to the [wiki](https://github.com/Forceu/barcodebuddy/wiki), on how to use 
 
 ### Screenshots
 ![Screenshot of the web ui](https://raw.githubusercontent.com/Forceu/barcodebuddy/master/example/screenshots/FullSite_small.png)     
-![Screenshot of the screen module](https://github.com/Forceu/barcodebuddy/raw/master/example/screenshots/Screen.gif)
+![Screenshot of the screen module](https://github.com/Forceu/barcodebuddy/raw/master/example/screenshots/Screen_small.gif)
 
 
 
@@ -41,3 +41,4 @@ This project is licensed under the GNU GPL3 - see the [LICENSE.md](LICENSE.md) f
 * Thanks to Bernd Bestel for creating the amazing [Grocy](https://github.com/grocy/grocy) Project!
 * openfoodfacts.org for providing the barcode lookup API
 * [PHP-Websocket](https://github.com/bloatless/php-websocket)
+* [NoSleep.js](https://github.com/richtr/NoSleep.js)

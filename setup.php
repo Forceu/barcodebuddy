@@ -32,17 +32,16 @@ require_once __DIR__ . "/incl/api.inc.php";
 require_once __DIR__ . "/incl/processing.inc.php";
 require_once __DIR__ . "/incl/internalChecking.inc.php";
 
-$failed = false;
+$result = true;
 
 if (isset($_POST["GROCY_API_URL"])) {
     $apiWithTrailingSlash = rtrim($_POST["GROCY_API_URL"], '/') . '/';
-    if (checkApiConnection($apiWithTrailingSlash, $_POST["GROCY_API_KEY"])) {
+    $result = checkApiConnection($apiWithTrailingSlash, $_POST["GROCY_API_KEY"]);
+    if ($result === true) {
         updateConfig("GROCY_API_URL", sanitizeString($apiWithTrailingSlash));
         updateConfig("GROCY_API_KEY", sanitizeString($_POST["GROCY_API_KEY"]));
         header("Location: index.php");
-    } else {
-        $failed = true;
-    }
+    } 
     
 }
 
@@ -53,7 +52,7 @@ $webUi->addHeader();
 if (checkExtensionsInstalled()["result"] == RESULT_REQ_MISSING) {
     $webUi->addCard("Setup", getHtmlSetupExtMissing());
 } else {
-    $webUi->addCard("Setup", getHtmlSetupTable($failed));
+    $webUi->addCard("Setup", getHtmlSetupTable($result));
 }
 $webUi->addFooter();
 $webUi->printHtml();

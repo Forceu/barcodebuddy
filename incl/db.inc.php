@@ -24,10 +24,11 @@
  */
 require_once __DIR__ . "/processing.inc.php";
 require_once __DIR__ . "/PluginLoader.php";
+require_once __DIR__ . "/api.inc.php";
 
 
-const BB_VERSION = "1301";
-const BB_VERSION_READABLE = "1.3.0.1";
+const BB_VERSION = "1302";
+const BB_VERSION_READABLE = "1.3.0.2";
 
 const DEFAULT_VALUES      = array("DEFAULT_BARCODE_C" => "BBUDDY-C",
 				 "DEFAULT_BARCODE_CS" => "BBUDDY-CS",
@@ -151,6 +152,7 @@ function checkPermissions() {
 function upgradeBarcodeBuddy($previousVersion) {
     global $db;
     global $BBCONFIG;
+    global $ERROR_MESSAGE;
     //Place for future update protocols
     $db->exec("UPDATE BBConfig SET value='" . BB_VERSION . "' WHERE data='version'");
     if ($previousVersion < 1211) {
@@ -159,6 +161,16 @@ function upgradeBarcodeBuddy($previousVersion) {
         updateConfig("BARCODE_O", strtoupper($BBCONFIG["BARCODE_O"]));
         updateConfig("BARCODE_P", strtoupper($BBCONFIG["BARCODE_P"]));
         updateConfig("BARCODE_CS", strtoupper($BBCONFIG["BARCODE_CS"]));
+    }
+    if ($previousVersion < 1302) {
+        getConfig();
+        $version = getGrocyVersion();
+	if ($version[0] < 2 || $version[1] < 5) {
+            updateConfig("GROCY_API_KEY", null);
+            $ERROR_MESSAGE = "Grocy 2.5.0 or newer required. You are running ".implode(".", $version).", please upgrade your Grocy instance. Click <a href=\"./setup.php\">here</a> to re-enter your credentials.";
+            include __DIR__ . "/../error.php";
+	    die();
+        }
     }
 }
 

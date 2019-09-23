@@ -31,6 +31,7 @@ const MENU_GENERIC = 0;
 const MENU_MAIN = 1;
 const MENU_SETUP = 2;
 const MENU_SETTINGS = 3;
+const MENU_ERROR = 4;
 
 
 
@@ -82,7 +83,7 @@ class WebUiGenerator {
         } else {
             $folder = "./";
         }
-        if ($this->menu == MENU_SETUP) {
+        if ($this->menu == MENU_SETUP || $this->menu == MENU_ERROR) {
             $indexfile = "setup.php";
         } else {
             $indexfile = "index.php";
@@ -123,7 +124,7 @@ class WebUiGenerator {
           <span class="mdl-layout-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style="color: white; text-decoration: none;" href="' . $folder . $indexfile . '">Barcode Buddy</a></span>
           <!-- Add spacer, to align navigation to the right -->
           <div class="mdl-layout-spacer"></div>';
-        if ($this->menu != MENU_SETUP) {
+        if ($this->menu != MENU_SETUP && $this->menu != MENU_ERROR) {
             $this->htmlOutput = $this->htmlOutput . '      <nav class="mdl-navigation mdl-layout--always"><a class="mdl-navigation__link" target="_blank" href="' . str_replace("api/", "", $BBCONFIG["GROCY_API_URL"]) . '">Grocy</a>';
             if ($BBCONFIG["WS_USE"]) {
                 $this->htmlOutput = $this->htmlOutput . '<a class="mdl-navigation__link" target="_blank" href="' . $folder . 'screen.php">Screen</a>';
@@ -132,7 +133,7 @@ class WebUiGenerator {
         }
         $this->htmlOutput = $this->htmlOutput . '  </div>
       </header>';
-        if ($this->menu != MENU_SETUP) {
+        if ($this->menu != MENU_SETUP && $this->menu != MENU_ERROR) {
             $this->htmlOutput = $this->htmlOutput . '<div class="mdl-layout__drawer">
         <span class="mdl-layout-title">Menu</span>
         <nav class="mdl-navigation">

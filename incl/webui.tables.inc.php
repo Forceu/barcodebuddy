@@ -315,13 +315,19 @@ function setCheckedIfConfigTrue($value) {
 }
 
 
-function getHtmlSetupTable($failed) {
+function getHtmlSetupTable($result) {
+    global $BBCONFIG;
     $returnString = '<form name="settingsform" id="settingsform" method="post" action="' . $_SERVER['PHP_SELF'] . '" >
         Welcome to Barcode Buddy! Please enter your Grocy API details below. For more information, please visit the <a target="_blank" href="https://github.com/Forceu/barcodebuddy/wiki/2.0-Installation">wiki</a>.<br><br><br>
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
             <input pattern="https://.*/api/|http://.*/api/|https://.*/api|http://.*/api" class="mdl-textfield__input" size="60" ';
+
     if (isset($_POST["GROCY_API_URL"])) {
         $returnString = $returnString . 'value="' . $_POST["GROCY_API_URL"] . '" ';
+    } else {   
+       if ($BBCONFIG["GROCY_API_URL"] != null) {
+           $returnString = $returnString . 'value="' . $BBCONFIG["GROCY_API_URL"] . '" ';
+       }
     }
      $returnString = $returnString . ' placeholder="e.g. https://your.grocy.com/api/" name="GROCY_API_URL" type="text" id="grocy_url">
             <label class="mdl-textfield__label" for="grocy_url">Grocy API URL</label>
@@ -334,8 +340,8 @@ function getHtmlSetupTable($failed) {
      $returnString = $returnString . 'name="GROCY_API_KEY"  type="text" id="grocy_api_key">
             <label class="mdl-textfield__label" for="grocy_api_key">Grocy API Key</label>
           </div><br>';
-    if ($failed) {
-         $returnString = $returnString . '<font color="red">Unable to connect to API! Please double check input and try again.</font>';
+    if ($result !== true) {
+         $returnString = $returnString . '<font color="red">Unable to connect to API: '.$result.'</font>';
     }
      $returnString = $returnString . '<br>
 	<button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">

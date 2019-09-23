@@ -4,7 +4,7 @@ Pass barcodes to Barcode Buddy. If already in [Grocys](https://github.com/grocy/
 
 ## Prerequisites
 
-Webserver that supports PHP (eg. NGINX, Apache), php-sqlite3, php-curl, ideally a barcode scanner
+Webserver that supports PHP (eg. NGINX, Apache), php-sqlite3, php-curl, ideally a barcode scanner, [Grocy](https://github.com/grocy/grocy) API key
 
 ## Getting Started
 

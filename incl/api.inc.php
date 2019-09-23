@@ -96,13 +96,43 @@ function checkApiConnection($givenurl, $apikey) {
     $response = curl_exec($ch);
     curl_close($ch);
     if ($response === false) {
-       return false;
+       return "Could not connect to server.";
     }
     $decoded1 = json_decode($response, true);
     if (isset($decoded1->response->status) && $decoded1->response->status == 'ERROR') {
-        die('Error occured: ' . $decoded1->response->errormessage);
+        return $decoded1->response->errormessage;
     }
-    return (isset($decoded1["grocy_version"]["Version"]));
+    if (isset($decoded1["grocy_version"]["Version"])) {
+        $version = explode(".", $decoded1["grocy_version"]["Version"]);
+	if ($version[0] < 2 || $version[1] < 5) {
+            return "Grocy 2.5.0 or newer required. You are running ".$decoded1["grocy_version"]["Version"].", please upgrade your Grocy instance.";
+        }
+	return true;
+    }
+    return "Invalid response. Maybe you are using an incorrect API key?";
+}
+
+function getGrocyVersion(){
+    global $BBCONFIG;
+    $apiurl = $BBCONFIG["GROCY_API_URL"].API_SYTEM_INFO;
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $apiurl);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. $BBCONFIG["GROCY_API_KEY"]));
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    if ($response === false) {
+       die("Could not connect to server.");
+    }
+    $decoded1 = json_decode($response, true);
+    if (isset($decoded1->response->status) && $decoded1->response->status == 'ERROR') {
+        die($decoded1->response->errormessage);
+    }
+    if (isset($decoded1["grocy_version"]["Version"])) {
+        return explode(".", $decoded1["grocy_version"]["Version"]);
+    }
+    die ("Grocy did not provide version");
 }
 
 

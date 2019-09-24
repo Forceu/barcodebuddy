@@ -240,11 +240,15 @@ return '<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label
 		  </div><br>
 		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 		    <input class="mdl-textfield__input" value="'.$BBCONFIG["BARCODE_GS"].'" type="text" name="BARCODE_GS" id="barcode_gs">
-		    <label class="mdl-textfield__label" for="barcode_o">Barcode: Inventory</label>
+		    <label class="mdl-textfield__label" for="barcode_gs">Barcode: Inventory</label>
 		  </div>
 		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 		    <input class="mdl-textfield__input" value="'.$BBCONFIG["BARCODE_Q"].'" type="text" name="BARCODE_Q" id="barcode_q">
-		    <label class="mdl-textfield__label" for="barcode_o">Barcode: Quantitiy</label>
+		    <label class="mdl-textfield__label" for="barcode_q">Barcode: Quantitiy</label>
+		  </div><br>
+		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+		    <input class="mdl-textfield__input" value="'.$BBCONFIG["BARCODE_AS"].'" type="text" name="BARCODE_AS" id="barcode_as">
+		    <label class="mdl-textfield__label" for="barcode_as">Barcode: Add to shopping list</label>
 		  </div><br>
 <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
     <input class="mdl-textfield__input" type="text" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57" pattern="-?[0-9]*(\.[0-9]+)?" value="'.$BBCONFIG["REVERT_TIME"].'" id="general_revert_min"  name="REVERT_TIME">

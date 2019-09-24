@@ -51,10 +51,14 @@ function processNewBarcode($barcodeInput, $websocketEnabled = true) {
         outputLog("Set state to Open", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
         $isProcessed = true;
     }
-    
     if ($barcode == $BBCONFIG["BARCODE_GS"]) {
         setTransactionState(STATE_GETSTOCK);
         outputLog("Set state to Inventory", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
+        $isProcessed = true;
+    }
+    if ($barcode == $BBCONFIG["BARCODE_AS"]) {
+        setTransactionState(STATE_ADD_SL);
+        outputLog("Set state to Shopping list", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
         $isProcessed = true;
     }
     if (stringStartsWith($barcode, $BBCONFIG["BARCODE_Q"])) {
@@ -109,6 +113,7 @@ const EVENT_TYPE_CONSUME_S_PRODUCT    = 11;
 const EVENT_TYPE_PURCHASE_PRODUCT     = 12;
 const EVENT_TYPE_OPEN_PRODUCT         = 13;
 const EVENT_TYPE_GET_STOCK_PRODUCT    = 14;
+const EVENT_TYPE_ADD_TO_SHOPPINGLIST  = 15;
 
 function outputLog($log, $eventType, $isVerbose = false, $websocketEnabled = true, $websocketResultCode = "0", $websocketText = null) {
     global $LOADED_PLUGINS;
@@ -174,6 +179,9 @@ function processModeChangeGetParameter($modeParameter) {
         case "inventory":
 	    setTransactionState(STATE_GETSTOCK);
             break;
+        case "shoppinglist":
+	    setTransactionState(STATE_ADD_SL);
+            break;
     }
 }
 
@@ -190,42 +198,45 @@ function processRefreshedBarcode($barcode) {
 function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
     global $BBCONFIG;
     $state = getTransactionState();
-
+    
     switch ($state) {
-        case STATE_CONSUME :
-            consumeProduct($productInfo ["id"], 1, false);
-            outputLog("Product found. Consuming 1 " . $productInfo ["unit"] . " of " . $productInfo ["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, 0, "Consuming 1 " . $productInfo ["unit"] . " of " . $productInfo ["name"]);
+        case STATE_CONSUME:
+            consumeProduct($productInfo["id"], 1, false);
+            outputLog("Product found. Consuming 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, 0, "Consuming 1 " . $productInfo["unit"] . " of " . $productInfo["name"]);
             break;
-        case STATE_CONSUME_SPOILED :
-            consumeProduct($productInfo ["id"], 1, true);
-            outputLog("Product found. Consuming 1 spoiled " . $productInfo ["unit"] . " of " . $productInfo ["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, 0, "Consuming 1 spoiled " . $productInfo ["unit"] . " of " . $productInfo ["name"]);
-            if ($BBCONFIG ["REVERT_SINGLE"]) {
+        case STATE_CONSUME_SPOILED:
+            consumeProduct($productInfo["id"], 1, true);
+            outputLog("Product found. Consuming 1 spoiled " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, 0, "Consuming 1 spoiled " . $productInfo["unit"] . " of " . $productInfo["name"]);
+            if ($BBCONFIG["REVERT_SINGLE"]) {
                 saveLog("Reverting back to Consume", true);
                 setTransactionState(STATE_CONSUME);
             }
             break;
-        case STATE_PURCHASE :
-            $amount = getQuantityByBarcode($barcode);
+        case STATE_PURCHASE:
+            $amount        = getQuantityByBarcode($barcode);
             $additionalLog = "";
-            if (!purchaseProduct($productInfo ["id"], $amount)) {
+            if (!purchaseProduct($productInfo["id"], $amount)) {
                 $additionalLog = " [WARNING]: No default best before date set!";
             }
-            outputLog("Product found. Adding  $amount " . $productInfo ["unit"] . " of " . $productInfo ["name"] . ". Barcode: " . $barcode . $additionalLog, EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, 0, "Adding 1 " . $productInfo ["unit"] . " of " . $productInfo ["name"] . $additionalLog);
+            outputLog("Product found. Adding  $amount " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode . $additionalLog, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, 0, "Adding 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . $additionalLog);
             break;
-        case STATE_OPEN :
-            outputLog("Product found. Opening 1 " . $productInfo ["unit"] . " of " . $productInfo ["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, 0, "Opening 1 " . $productInfo ["unit"] . " of " . $productInfo ["name"]);
-            openProduct($productInfo ["id"]);
-            if ($BBCONFIG ["REVERT_SINGLE"]) {
+        case STATE_OPEN:
+            outputLog("Product found. Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, 0, "Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"]);
+            openProduct($productInfo["id"]);
+            if ($BBCONFIG["REVERT_SINGLE"]) {
                 saveLog("Reverting back to Consume", true);
                 setTransactionState(STATE_CONSUME);
             }
             break;
-        case STATE_GETSTOCK :
-            outputLog("Currently in stock: " . $productInfo ["stockAmount"] . " " . $productInfo ["unit"] . " of " . $productInfo ["name"], EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, 0);
+        case STATE_GETSTOCK:
+            outputLog("Currently in stock: " . $productInfo["stockAmount"] . " " . $productInfo["unit"] . " of " . $productInfo["name"], EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, 0);
+            break;
+        case STATE_ADD_SL:
+            addToShoppinglist($productInfo["id"], 1);
+            outputLog("Added to shopping list: 1 " . $productInfo["unit"] . " of " . $productInfo["name"], EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, 0);
             break;
     }
 }
-
 
 
 //Function for generating the <select> elements in the web ui

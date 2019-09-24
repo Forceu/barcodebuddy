@@ -26,7 +26,7 @@
 
 
 const API_PRODUCTS = 'objects/products';
-const API_SHOPPINGLIST_REMOVE = 'stock/shoppinglist/remove-product';
+const API_SHOPPINGLIST = 'stock/shoppinglist/';
 const API_CHORES = 'objects/chores';
 const API_STOCK    = 'stock/products';
 const API_CHORE_EXECUTE    = 'chores/';
@@ -179,25 +179,58 @@ function purchaseProduct($id, $amount, $bestbefore = null, $price = null) {
 
 
 
+
 function removeFromShoppinglist($productid, $amount) {
-global $BBCONFIG;
-     $data      = array(
-        'product_id' => $productid,
-        'product_amount' => $amount,
+    global $BBCONFIG;
+    $data      = array(
+        'product_id'     => $productid,
+        'product_amount' => $amount
     );
     $data_json = json_encode($data);
-    $apiurl = $BBCONFIG["GROCY_API_URL"].API_SHOPPINGLIST_REMOVE;
+    $apiurl    = $BBCONFIG["GROCY_API_URL"] . API_SHOPPINGLIST. "remove-product";
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $apiurl);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. $BBCONFIG["GROCY_API_KEY"],'Content-Type: application/json','Content-Length: '.strlen($data_json)));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'GROCY-API-KEY: ' . $BBCONFIG["GROCY_API_KEY"],
+        'Content-Type: application/json',
+        'Content-Length: ' . strlen($data_json)
+    ));
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
     curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $response = curl_exec($ch);
     curl_close($ch);
     if ($response === false) {
-       die("Error removing from shoppinglist");
+        die("Error removing from shoppinglist");
+    }
+}
+
+
+//Adds a product to the default shoppinglist
+// CURRENTLY NOT USABLE IN GROCY 2.5.0, due to this bug: https://github.com/grocy/grocy/pull/376
+function addToShoppinglist($productid, $amount) {
+    global $BBCONFIG;
+    $data      = array(
+        'product_id'     => $productid,
+        'product_amount' => $amount
+    );
+    $data_json = json_encode($data);
+    $apiurl    = $BBCONFIG["GROCY_API_URL"] . API_SHOPPINGLIST. "add-product";
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $apiurl);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'GROCY-API-KEY: ' . $BBCONFIG["GROCY_API_KEY"],
+        'Content-Type: application/json',
+        'Content-Length: ' . strlen($data_json)
+    ));
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    if ($response === false) {
+        die("Error adding to shoppinglist");
     }
 }
 

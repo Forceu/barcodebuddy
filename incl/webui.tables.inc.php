@@ -261,7 +261,11 @@ return '<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label
 <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="general_checkshoppinglist">
 		  <input type="checkbox" value="1" name="SHOPPINGLIST_REMOVE" id="general_checkshoppinglist" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["SHOPPINGLIST_REMOVE"]).'>
 		  <span class="mdl-checkbox__label">Remove purchased items from shoppinglist</span>
-		</label>';
+		</label><br>
+<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="websocket_fullscreen">
+		  <input type="checkbox" value="1" name="WS_FULLSCREEN"  id="websocket_fullscreen" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["WS_FULLSCREEN"]).'>
+		  <span class="mdl-checkbox__label">Show Screen module in fullscreen</span>
+		</label><br>';
 }
 function getHtmlSettingsGrocyApi() {
     global $BBCONFIG;
@@ -302,6 +306,7 @@ function getHtmlSettingsHiddenValues() {
 return '<input type="hidden" value="0" name="REVERT_SINGLE_hidden"/>
 <input type="hidden" value="0" name="MORE_VERBOSE_hidden"/>
 <input type="hidden" value="0" name="WS_USE_hidden"/>
+<input type="hidden" value="0" name="WS_FULLSCREEN_hidden"/>
 <input type="hidden" value="0" name="WS_SSL_USE_hidden"/>
 <input type="hidden" value="0" name="SHOPPINGLIST_REMOVE_hidden"/>
 </form>';

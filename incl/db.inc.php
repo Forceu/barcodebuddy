@@ -30,6 +30,8 @@ require_once __DIR__ . "/api.inc.php";
 const BB_VERSION = "1302";
 const BB_VERSION_READABLE = "1.3.0.2";
 
+/* 1 is used for true and 0 for false, as PHP interpretes the String "false" as Boolean "true" */
+
 const DEFAULT_VALUES      = array("DEFAULT_BARCODE_C" => "BBUDDY-C",
 				 "DEFAULT_BARCODE_CS" => "BBUDDY-CS",
 				 "DEFAULT_BARCODE_P" => "BBUDDY-P",
@@ -43,11 +45,12 @@ const DEFAULT_VALUES      = array("DEFAULT_BARCODE_C" => "BBUDDY-C",
 				 "DEFAULT_GROCY_API_KEY" => null,
 				 "DEFAULT_LAST_BARCODE" => null,
 				 "DEFAULT_LAST_PRODUCT" => null,
-				 "DEFAULT_WS_USE" => "false",
+				 "DEFAULT_WS_USE" => "0",
 				 "DEFAULT_WS_PORT" => "47631",
 				 "DEFAULT_WS_PORT_EXT" => "47631",
 				 "DEFAULT_WS_SSL_USE" => "0",
 				 "DEFAULT_WS_SSL_URL" => null,
+				 "DEFAULT_WS_FULLSCREEN" => "0",
 				 "DEFAULT_SHOPPINGLIST_REMOVE" => "1");
 
 

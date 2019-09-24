@@ -190,71 +190,20 @@ class WebUiGenerator {
         if ($this->menu == MENU_SETTINGS) {
             $this->htmlOutput = $this->htmlOutput . '<button id="save-settings" onclick="checkAndReturn()" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast">Save</button>';
         }
-        $this->htmlOutput = $this->htmlOutput . '</div><script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-		<script>
+        $this->htmlOutput = $this->htmlOutput . '</div><script src="https://code.getmdl.io/1.3.0/material.min.js"></script>';
 
-		function enableButton(idSelect, idButtonAdd, idButtonConsume)
-		{
-
-		    var oSelect = document.getElementById(idSelect);
-		    var oButtonAdd = document.getElementById(idButtonAdd);
-		    var oButtonConsume = document.getElementById(idButtonConsume);
-		    oButtonAdd.disabled = oSelect.value == "0";
-		    oButtonConsume.disabled = oSelect.value == "0";
-		}';
-        
+        if ($this->menu == MENU_SETTINGS || $this->menu == MENU_GENERIC) {
+            $this->htmlOutput = $this->htmlOutput . '<script src="../incl/scripts.js"></script>';
+        } else {
+            $this->htmlOutput = $this->htmlOutput . '<script src="./incl/scripts.js"></script>';
+        }
+                
         if ($this->menu == MENU_SETTINGS) {
-            $this->htmlOutput = $this->htmlOutput . 'function switchElements() {
-	    var wsuse = document.getElementById("websocket_use");
-	    var wspint = document.getElementById("websocket_port_internal");
-	    var wspext = document.getElementById("websocket_port_external");
-	    var wsssluse = document.getElementById("websocket_ssl_use");
-	    var wssslurl = document.getElementById("websocket_ssl_url");
-
-	      wspint.disabled = !wsuse.checked;
-	      wspint.disabled = !wsuse.checked;
-	      wspext.disabled = !(wsuse.checked && !wsssluse.checked);
-	      wsssluse.disabled = !wsuse.checked;
-	      wssslurl.disabled = !(wsuse.checked && wsssluse.checked);
-
-	   if (wspint.disabled) {
-	      wspint.parentElement.MaterialTextfield.disable()
-	   } else {
-	      wspint.parentElement.MaterialTextfield.enable()
-	   }
-	   if (wspext.disabled) {
-	      wspext.parentElement.MaterialTextfield.disable()
-	   } else {
-	      wspext.parentElement.MaterialTextfield.enable()
-	   }
-	   if (wsssluse.disabled) {
-	      wsssluse.parentElement.MaterialCheckbox.disable()
-	   } else {
-	      wsssluse.parentElement.MaterialCheckbox.enable()
-	   }
-	   if (wssslurl.disabled) {
-	      wssslurl.parentElement.MaterialTextfield.disable()
-	   } else {
-	      wssslurl.parentElement.MaterialTextfield.enable()
-	   }
-	}
-
-	switchElements();
-
-	function checkAndReturn() {
-	    var wspint = document.getElementById("websocket_port_internal").value;
-	    var wspint = document.getElementById("websocket_port_internal").value;
-	    var crevert = document.getElementById("general_revert_min").value;
-
-	    if (Number.isInteger(+wspint) && Number.isInteger(+wspint) && Number.isInteger(+crevert)) {
-	       document.getElementById(\'settingsform\').submit();
-	    } else {
-	       alert("Please only enter digits for port and minutes.");
-	    } }';           
+            $this->htmlOutput = $this->htmlOutput . '<script> switchElements(); </script> ';           
         }
 
         if ($this->menu == MENU_MAIN) {
-            $this->htmlOutput = $this->htmlOutput . '
+            $this->htmlOutput = $this->htmlOutput . '<script> 
 		var modal = document.getElementById("myModal");
 		var btn = document.getElementById("add-barcode");
 		var span = document.getElementsByClassName("close")[0];
@@ -272,24 +221,8 @@ class WebUiGenerator {
 		    modal.style.display = "none";
 		    btn.style.display = "block";
 		  }
-		}';
+		}</script> ';
         }
-        $this->htmlOutput = $this->htmlOutput . '
-		function enableButtonGen(buttonId, textId, previousInput)
-		{
-		    var text=document.getElementById(textId).value;
-		    document.getElementById(buttonId).disabled=(text===previousInput);
-		}
-		function openNewTab(url, barcode) {
-		    var win = window.open(url,	"New Grocy product");
-		    var timer = setInterval(function() {
-			if (win.closed) {
-			    clearInterval(timer);
-			    window.location = "index.php?refreshbarcode="+barcode;
-			}
-		    }, 500);
-		}
-		</script>';
         if ($BBCONFIG["WS_USE"]) {
             $this->htmlOutput = $this->htmlOutput . '<script>
       		var ws = new WebSocket(';

@@ -104,11 +104,11 @@ if (!$BBCONFIG["WS_USE"]) {
           wakeLockEnabled = true;
 	  document.getElementById('beep_success').muted=false;
 	  document.getElementById('beep_nosuccess').muted=false;
-	  document.documentElement.requestFullscreen();
+	  <?php if ($BBCONFIG["WS_FULLSCREEN"]) { echo " document.documentElement.requestFullscreen();"; }?>
 	  document.getElementById("muteimg").src = "incl/img/unmute.svg";
         } else {
           noSleep.disable();
-	  document.exitFullscreen();
+	  <?php if ($BBCONFIG["WS_FULLSCREEN"]) { echo " document.exitFullscreen();"; } ?>
           wakeLockEnabled = false;
 	  document.getElementById('beep_success').muted=true;
 	  document.getElementById('beep_nosuccess').muted=true;
@@ -123,7 +123,6 @@ if (!$BBCONFIG["WS_USE"]) {
              echo "'".$BBCONFIG["WS_SSL_URL"]."');";
 	 }
       ?> 
-      var beep_success = new Audio('beep.ogg');
       ws.onopen = function() {
         document.body.style.backgroundColor = '#b9ffad';
         document.getElementById('title').textContent = 'Connected';

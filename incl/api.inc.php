@@ -22,12 +22,11 @@
  * @license    https://www.gnu.org/licenses/gpl-3.0.en.html  GNU GPL v3.0
  * @since      File available since Release 1.0
  *
- * TODO: Versions newer than 2.4.4 have easier API for shoppinglist and add product (BB-date)
  */
 
 
 const API_PRODUCTS = 'objects/products';
-const API_SHOPPINGLIST = 'objects/shopping_list';
+const API_SHOPPINGLIST_REMOVE = 'stock/shoppinglist/remove-product';
 const API_CHORES = 'objects/chores';
 const API_STOCK    = 'stock/products';
 const API_CHORE_EXECUTE    = 'chores/';
@@ -179,81 +178,30 @@ function purchaseProduct($id, $amount, $bestbefore = null, $price = null) {
 }
 
 
-function removeFromShoppinglist($productid, $amount) {
-$items = getShoppingList();
- foreach ($items as $item) {
-	$deleteItem = false;
-	if (isset($item["product_id"]) && $item["product_id"]==$productid) {
-		$modified = true;
-		$remaining = ($item["amount"] - $amount);
-		if ($remaining <1) {
-			deleteShoppingListItem($item["id"]);
-		} else {
-			setShoppingListItemAmount($item["id"],$remaining);
-		}
-	}
-}
-}
 
-function setShoppingListItemAmount($itemid, $remaining) {
- global $BBCONFIG;
+function removeFromShoppinglist($productid, $amount) {
+global $BBCONFIG;
      $data      = array(
-        'amount' => $remaining
+        'product_id' => $productid,
+        'product_amount' => $amount,
     );
     $data_json = json_encode($data);
-    $apiurl = $BBCONFIG["GROCY_API_URL"].API_SHOPPINGLIST."/".$itemid;
+    $apiurl = $BBCONFIG["GROCY_API_URL"].API_SHOPPINGLIST_REMOVE;
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $apiurl);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. $BBCONFIG["GROCY_API_KEY"],'Content-Type: application/json','Content-Length: '.strlen($data_json)));
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
     curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $response = curl_exec($ch);
     curl_close($ch);
     if ($response === false) {
-       die("Error setting barcode");
+       die("Error removing from shoppinglist");
     }
 }
 
-function deleteShoppingListItem($itemid) {
-  global $BBCONFIG;
 
-        $apiurl = $BBCONFIG["GROCY_API_URL"].API_SHOPPINGLIST."/".$itemid;
-    
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $apiurl);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. $BBCONFIG["GROCY_API_KEY"]));
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-    $curl_response = curl_exec($ch);
-    curl_close($ch);
-    if ($curl_response === false) {
-        die("Error deleting shopping list item");
-    }
-}
-
-function getShoppingList() {
-    global $BBCONFIG;
-
-        $apiurl = $BBCONFIG["GROCY_API_URL"].API_SHOPPINGLIST;
-    
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $apiurl);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. $BBCONFIG["GROCY_API_KEY"]));
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $curl_response = curl_exec($ch);
-    curl_close($ch);
-    if ($curl_response === false) {
-        die("Error getting shoppinglist");
-    }
-    
-    $decoded1 = json_decode($curl_response, true);
-    if (isset($decoded1->response->status) && $decoded1->response->status == 'ERROR') {
-        die('Error occured: ' . $decoded1->response->errormessage);
-    }
-    return $decoded1;
-}
 
 
 // Consume a Grocy product
@@ -450,5 +398,82 @@ function executeChore($choreId) {
     return $decoded1;
 }
 
+
+/* Legacy code for Grocy <2.5.0
+function removeFromShoppinglist($productid, $amount) {
+$items = getShoppingList();
+ foreach ($items as $item) {
+	$deleteItem = false;
+	if (isset($item["product_id"]) && $item["product_id"]==$productid) {
+		$modified = true;
+		$remaining = ($item["amount"] - $amount);
+		if ($remaining <1) {
+			deleteShoppingListItem($item["id"]);
+		} else {
+			setShoppingListItemAmount($item["id"],$remaining);
+		}
+	}
+}
+}
+
+function setShoppingListItemAmount($itemid, $remaining) {
+ global $BBCONFIG;
+     $data      = array(
+        'amount' => $remaining
+    );
+    $data_json = json_encode($data);
+    $apiurl = $BBCONFIG["GROCY_API_URL"].API_SHOPPINGLIST."/".$itemid;
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $apiurl);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. $BBCONFIG["GROCY_API_KEY"],'Content-Type: application/json','Content-Length: '.strlen($data_json)));
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    if ($response === false) {
+       die("Error setting barcode");
+    }
+}
+
+function deleteShoppingListItem($itemid) {
+  global $BBCONFIG;
+
+        $apiurl = $BBCONFIG["GROCY_API_URL"].API_SHOPPINGLIST."/".$itemid;
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $apiurl);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. $BBCONFIG["GROCY_API_KEY"]));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+    $curl_response = curl_exec($ch);
+    curl_close($ch);
+    if ($curl_response === false) {
+        die("Error deleting shopping list item");
+    }
+}
+
+function getShoppingList() {
+    global $BBCONFIG;
+
+        $apiurl = $BBCONFIG["GROCY_API_URL"].API_SHOPPINGLIST;
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $apiurl);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. $BBCONFIG["GROCY_API_KEY"]));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $curl_response = curl_exec($ch);
+    curl_close($ch);
+    if ($curl_response === false) {
+        die("Error getting shoppinglist");
+    }
+    
+    $decoded1 = json_decode($curl_response, true);
+    if (isset($decoded1->response->status) && $decoded1->response->status == 'ERROR') {
+        die('Error occured: ' . $decoded1->response->errormessage);
+    }
+    return $decoded1;
+} */
 
 ?>

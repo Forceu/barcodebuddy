@@ -32,6 +32,8 @@ const API_STOCK    = 'stock/products';
 const API_CHORE_EXECUTE    = 'chores/';
 const API_SYTEM_INFO    = 'system/info';
 
+const MIN_GROCY_VERSION = "2.5.1";
+
 // Getting info of a Grocy product. If no argument is passed, all products are requested
 function getProductInfo($productId = "") {
     global $BBCONFIG;
@@ -102,13 +104,34 @@ function checkApiConnection($givenurl, $apikey) {
         return $decoded1->response->errormessage;
     }
     if (isset($decoded1["grocy_version"]["Version"])) {
-        $version = explode(".", $decoded1["grocy_version"]["Version"]);
-	if ($version[0] < 2 || $version[1] < 5) {
-            return "Grocy 2.5.0 or newer required. You are running ".$decoded1["grocy_version"]["Version"].", please upgrade your Grocy instance.";
-        }
-	return true;
+        $version = $decoded1["grocy_version"]["Version"];
+	
+	if (!isSupportedGrocyVersion($version)) {
+            return "Grocy ".MIN_GROCY_VERSION." or newer required. You are running ".$version.", please upgrade your Grocy instance.";
+	} else {
+		return true;
+	}
     }
     return "Invalid response. Maybe you are using an incorrect API key?";
+}
+
+function isSupportedGrocyVersion($version) {
+    if (!preg_match("/\d+.\d+.\d+/", $version)) {
+        return false;
+    }
+    
+    $version_ex    = explode(".", $version);
+    $minVersion_ex = explode(".", MIN_GROCY_VERSION);
+    
+    if ($version_ex[0] < $minVersion_ex[0]) {
+        return false;
+    } else if ($version_ex[0] == $minVersion_ex[0] && $version_ex[1] < $minVersion_ex[1]) {
+        return false;
+    } else if ($version_ex[0] == $minVersion_ex[0] && $version_ex[1] == $minVersion_ex[1] && $version_ex[2] < $minVersion_ex[2]) {
+        return false;
+    } else {
+        return true;
+    }
 }
 
 function getGrocyVersion(){
@@ -129,7 +152,7 @@ function getGrocyVersion(){
         die($decoded1->response->errormessage);
     }
     if (isset($decoded1["grocy_version"]["Version"])) {
-        return explode(".", $decoded1["grocy_version"]["Version"]);
+        return $decoded1["grocy_version"]["Version"];
     }
     die ("Grocy did not provide version");
 }

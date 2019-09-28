@@ -27,8 +27,8 @@ require_once __DIR__ . "/PluginLoader.php";
 require_once __DIR__ . "/api.inc.php";
 
 
-const BB_VERSION = "1302";
-const BB_VERSION_READABLE = "1.3.0.2";
+const BB_VERSION = "1303";
+const BB_VERSION_READABLE = "1.3.0.3";
 
 /* 1 is used for true and 0 for false, as PHP interpretes the String "false" as Boolean "true" */
 
@@ -166,12 +166,12 @@ function upgradeBarcodeBuddy($previousVersion) {
         updateConfig("BARCODE_P", strtoupper($BBCONFIG["BARCODE_P"]));
         updateConfig("BARCODE_CS", strtoupper($BBCONFIG["BARCODE_CS"]));
     }
-    if ($previousVersion < 1302) {
+    if ($previousVersion < 1303) {
         getConfig();
         $version = getGrocyVersion();
-	if ($version[0] < 2 || $version[1] < 5) {
+	if (!isSupportedGrocyVersion($version)) {
             updateConfig("GROCY_API_KEY", null);
-            $ERROR_MESSAGE = "Grocy 2.5.0 or newer required. You are running ".implode(".", $version).", please upgrade your Grocy instance. Click <a href=\"./setup.php\">here</a> to re-enter your credentials.";
+            $ERROR_MESSAGE = "Grocy ".MIN_GROCY_VERSION." or newer required. You are running $version, please upgrade your Grocy instance. Click <a href=\"./setup.php\">here</a> to re-enter your credentials.";
             include __DIR__ . "/../error.php";
 	    die();
         }

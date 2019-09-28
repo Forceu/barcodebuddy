@@ -37,4 +37,3 @@ if (IS_DEBUG || file_exists(__DIR__ ."debug")) {
 }
 
 ?>
-

@@ -231,7 +231,6 @@ function removeFromShoppinglist($productid, $amount) {
 
 
 //Adds a product to the default shoppinglist
-// CURRENTLY NOT USABLE IN GROCY 2.5.0, due to this bug: https://github.com/grocy/grocy/pull/376
 function addToShoppinglist($productid, $amount) {
     global $BBCONFIG;
     $data      = array(

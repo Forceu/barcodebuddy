@@ -28,8 +28,8 @@ require_once __DIR__ . "/api.inc.php";
 require_once __DIR__ . "/websocketconnection.inc.php";
 
 
-const BB_VERSION = "1303";
-const BB_VERSION_READABLE = "1.3.0.3";
+const BB_VERSION = "1310";
+const BB_VERSION_READABLE = "1.3.1.0";
 
 /* 1 is used for true and 0 for false, as PHP interpretes the String "false" as Boolean "true" */
 

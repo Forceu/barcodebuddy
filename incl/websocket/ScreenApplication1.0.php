@@ -4,7 +4,9 @@ namespace WebSocket\Application;
 
 class ScreenApplication extends Application {
 
-    $currentBBMode = "Consume";
+    private $currentBBMode = "Consume";
+    private $allowedModes = array("Consume", "Consume (spoiled)", "Purchase", "Open", "Inventory", "Quantity", "Add to shoppinglist");
+
     private $_clients = array();
     
     public function onConnect($client) {
@@ -41,5 +43,23 @@ class ScreenApplication extends Application {
         foreach ($this->_clients as $sendto) {
             $sendto->send($encodedData);
         }
+    }
+
+ private function _actionGetmode(string $text): void
+    {
+        foreach ($this->_clients as $sendto) {
+            $sendto->send('{"action":"getmode","data":"4'.$this->currentBBMode.'"}');
+        }
+    }
+
+    private function _actionSetmode(string $text): void
+    {
+        $encodedData = $this->encodeData('setmode', $text);
+	if (in_array($text, $this->allowedModes)) {
+		$this->currentBBMode=$text;
+		foreach ($this->_clients as $sendto) {
+		    $sendto->send('{"action":"setmode","data":"4'.$this->currentBBMode.'"}');
+		}
+	}
     }
 }

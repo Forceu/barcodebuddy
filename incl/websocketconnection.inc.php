@@ -34,6 +34,14 @@ global $BBCONFIG;
     }
 }
 
+function sendWebsocketStateChange($newState) {
+global $BBCONFIG;
+    if ($BBCONFIG["WS_USE"] && isExtensionInstalled("sockets")) {
+        require_once __DIR__ . "/websocket/client_internal.php";
+        sendNewState($newState);
+    }
+}
+
 
 function isNewServerSupported() {
     // PHP_VERSION_ID is available as of PHP 5.2.7, if our 

@@ -25,6 +25,7 @@
 require_once __DIR__ . "/processing.inc.php";
 require_once __DIR__ . "/PluginLoader.php";
 require_once __DIR__ . "/api.inc.php";
+require_once __DIR__ . "/websocketconnection.inc.php";
 
 
 const BB_VERSION = "1303";
@@ -190,6 +191,7 @@ const SECTION_KNOWN_BARCODES = "known";
 const SECTION_UNKNOWN_BARCODES = "unknown";
 const SECTION_LOGS = "log";
 
+    
 //Getting the state TODO change date
 function getTransactionState() {
     global $db;
@@ -223,6 +225,7 @@ function getTransactionState() {
 function setTransactionState($state) {
     global $db;
     $db->exec("UPDATE TransactionState SET currentState=$state, since=datetime('now','localtime')");
+    sendWebsocketStateChange($state);
 }
 
 //Gets an array of locally stored barcodes

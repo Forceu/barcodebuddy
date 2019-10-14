@@ -232,6 +232,14 @@ class WebUiGenerator {
         }
         if ($BBCONFIG["WS_USE"] && $this->menu == MENU_MAIN) {
             $this->htmlOutput = $this->htmlOutput . '<script>
+
+		const delay = ms => new Promise(res => setTimeout(res, ms));
+
+		const startWebsocket = async () => {
+			/* waiting 1s in case barcode was added from ui */
+		  await delay(1000);
+
+
       		var ws = new WebSocket(';
             if (!$BBCONFIG["WS_SSL_USE"]) {
                 $this->htmlOutput = $this->htmlOutput . "'ws://" . $_SERVER["SERVER_NAME"] . ":" . $BBCONFIG["WS_PORT_EXT"] . "/screen');";
@@ -244,8 +252,19 @@ class WebUiGenerator {
 	      ws.onclose = function() {
 	      };
 	      ws.onmessage = function(event) {
-		window.location.reload(true); 
+		
+		var resultJson = JSON.parse(event.data);
+		var resultCode = resultJson.data.substring(0, 1);
+		switch(resultCode) {
+		  case \'0\':
+		  case \'1\':
+		  case \'2\':
+			window.location.reload(true);
+			break;
+		}
 	      };
+		};
+		startWebsocket();
 
 	    </script>';
         }
@@ -300,7 +319,7 @@ function processButtons() {
             foreach ($barcodes as $barcode) {
 		$trimmedBarcode = trim(sanitizeString($barcode));
 		if (strlen($trimmedBarcode)>0) {
-                	processNewBarcode($trimmedBarcode, false);
+                	processNewBarcode($trimmedBarcode, true);
 		}
             }
         }

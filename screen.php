@@ -53,6 +53,11 @@ if (!$BBCONFIG["WS_USE"]) {
         padding: 10px;
         text-align: center;
       }
+      #mode {
+        font: bold 10pt arial;
+        margin: auto;
+        text-align: center;
+      }
       #subtitle {
         font: bold 20pt arial;
         margin: auto;
@@ -86,6 +91,7 @@ if (!$BBCONFIG["WS_USE"]) {
   <script src="./incl/nosleep.min.js"></script>
     
     <div id="title">Connecting...</div><br>
+    <div id="mode"></div><br><br><br>
     <div id="subtitle">If you see this for more than a couple of seconds, please check if the websocket-server was started</div>
 
     <audio id="beep_success" muted="muted" src="incl/websocket/beep.ogg"  type="audio/ogg" preload="auto"></audio>
@@ -127,7 +133,13 @@ if (!$BBCONFIG["WS_USE"]) {
         document.body.style.backgroundColor = '#b9ffad';
         document.getElementById('title').textContent = 'Connected';
         document.getElementById('subtitle').textContent = 'Waiting for barcode...';
+	 var requestJson = {
+	    action: "getmode",
+	    data: ""
+	  };
+  	ws.send(JSON.stringify(requestJson));
       };
+
       ws.onclose = function() {
         document.body.style.backgroundColor = '#f9868b';
         document.getElementById('title').textContent = 'Disconnected';
@@ -136,7 +148,7 @@ if (!$BBCONFIG["WS_USE"]) {
       ws.onmessage = function(event) {
 	var resultJson = JSON.parse(event.data);
         var resultCode = resultJson.data.substring(0, 1);
-        var resultText = resultJson.data.substring(1);
+        var resultText = resultJson.data.substring(1);	
 	switch(resultCode) {
 	  case '0':
 		document.body.style.backgroundColor = '#47ac3f';
@@ -155,6 +167,8 @@ if (!$BBCONFIG["WS_USE"]) {
 		document.getElementById('title').textContent = 'Unknown barcode';
 		document.getElementById('subtitle').textContent = resultText;
 		document.getElementById('beep_nosuccess').play();
+	  case '4':
+		document.getElementById('mode').textContent = 'Current Mode: '+resultText;
 	    break;
 	}
       };

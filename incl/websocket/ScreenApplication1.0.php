@@ -3,6 +3,8 @@
 namespace WebSocket\Application;
 
 class ScreenApplication extends Application {
+
+    $currentBBMode = "Consume";
     private $_clients = array();
     
     public function onConnect($client) {

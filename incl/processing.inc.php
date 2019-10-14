@@ -162,6 +162,13 @@ function processUnknownBarcode($barcode, $websocketEnabled) {
 }
 
 
+function stateToString($state) {
+	$allowedModes = array(STATE_CONSUME=>"Consume",STATE_CONSUME_SPOILED=> "Consume (spoiled)",STATE_PURCHASE=> "Purchase",STATE_OPEN=> "Open",STATE_GETSTOCK=> "Inventory", STATE_ADD_SL=> "Add to shoppinglist");
+	return $allowedModes[$state];
+}
+
+
+
 function processModeChangeGetParameter($modeParameter) {
     switch (trim($modeParameter)) {
         case "consume":

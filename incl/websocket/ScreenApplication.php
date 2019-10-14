@@ -8,6 +8,11 @@ use Bloatless\WebSocket\Connection;
 
 class ScreenApplication extends Application
 {
+
+
+    private $currentBBMode = "Consume";
+    private $allowedModes = array("Consume", "Consume (spoiled)", "Purchase", "Open", "Inventory", "Quantity", "Add to shoppinglist");
+
     /**
      * @var array $clients
      */
@@ -70,5 +75,37 @@ class ScreenApplication extends Application
         foreach ($this->clients as $sendto) {
             $sendto->send($encodedData);
         }
+    }
+
+
+    /**
+     * Echoes data back to client(s).
+     *
+     * @param string $text
+     * @return void
+     */
+    private function actionGetmode(string $text): void
+    {
+        foreach ($this->clients as $sendto) {
+            $sendto->send('{"action":"getmode","data":"4'.$this->currentBBMode.'"}');
+        }
+    }
+
+
+    /**
+     * Echoes data back to client(s).
+     *
+     * @param string $text
+     * @return void
+     */
+    private function actionSetmode(string $text): void
+    {
+        $encodedData = $this->encodeData('setmode', $text);
+	if (in_array($text, $this->allowedModes)) {
+		$this->currentBBMode=$text;
+		foreach ($this->clients as $sendto) {
+		    $sendto->send('{"action":"setmode","data":"4'.$this->currentBBMode.'"}');
+		}
+	}
     }
 }

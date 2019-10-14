@@ -84,9 +84,9 @@ $barcodes = getStoredBarcodes();
 
 $webUi = new WebUiGenerator(MENU_MAIN);
 $webUi->addHeader();
-$webUi->addCard("New Barcodes",getHtmlMainMenuTableKnown($barcodes),"Delete all",$_SERVER['PHP_SELF'].'?delete=known');
-$webUi->addCard("Unknown Barcodes",getHtmlMainMenuTableUnknown($barcodes),"Delete all",$_SERVER['PHP_SELF'].'?delete=unknown');
-$webUi->addCard("Processed Barcodes",getHtmlLogTextArea(),"Clear log",$_SERVER['PHP_SELF'].'?delete=log');
+$webUi->addCard("New Barcodes",getHtmlMainMenuTableKnown($barcodes),"Delete all",'window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=known\'');
+$webUi->addCard("Unknown Barcodes",getHtmlMainMenuTableUnknown($barcodes),"Delete all",'window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=unknown\'');
+$webUi->addCard("Processed Barcodes",getHtmlLogTextArea(),"Clear log",'window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=log\'');
 $webUi->addFooter();
 $webUi->printHtml();
 

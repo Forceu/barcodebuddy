@@ -54,7 +54,7 @@ class WebUiGenerator {
     }
     
 
-    function addCard($title, $html, $linkText=null, $linkUrl=null) {
+    function addCard($title, $html, $linkText=null, $onClick=null) {
         $this->htmlOutput = $this->htmlOutput.'
 	    <section class="section--center mdl-grid--no-spacing mdl-grid mdl-shadow--2dp">
             <div class="mdl-card mdl-cell  mdl-cell--12-col">
@@ -63,13 +63,13 @@ class WebUiGenerator {
 		'.$html.'
 		</div>
             </div>';
-	 if ($linkText !=null &&  $linkUrl!=null) {
+	 if ($linkText !=null &&  $onClick!=null) {
 		$id=rand();
  	   $this->htmlOutput = $this->htmlOutput.'<button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="btn'.$id.'">
               <i class="material-icons">more_vert</i>
             </button>
             <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="btn'.$id.'">
-              <li class="mdl-menu__item" onclick="window.location.href=\''.$linkUrl.'\'">'.$linkText.'</li>
+              <li class="mdl-menu__item" onclick="'.$onClick.'">'.$linkText.'</li>
             </ul>';
 	}
           $this->htmlOutput = $this->htmlOutput.'</section>';
@@ -153,7 +153,14 @@ class WebUiGenerator {
         global $BBCONFIG;
 
         $this->htmlOutput = $this->htmlOutput . ' <section class="section--footer mdl-grid">
-          </section><footer class="mdl-mini-footer">
+          </section>
+<div aria-live="assertive" aria-atomic="true" aria-relevant="text" class="mdl-snackbar mdl-js-snackbar">
+    <div class="mdl-snackbar__text"></div>
+    <button type="button" class="mdl-snackbar__action"></button>
+</div>
+
+
+<footer class="mdl-mini-footer">
 	  <div class="mdl-mini-footer__left-section">
 	    <div class="mdl-logo">Barcode Buddy </div>
 	    <ul class="mdl-mini-footer__link-list">
@@ -223,7 +230,7 @@ class WebUiGenerator {
 		  }
 		}</script> ';
         }
-        if ($BBCONFIG["WS_USE"]) {
+        if ($BBCONFIG["WS_USE"] && $this->menu == MENU_MAIN) {
             $this->htmlOutput = $this->htmlOutput . '<script>
       		var ws = new WebSocket(';
             if (!$BBCONFIG["WS_SSL_USE"]) {

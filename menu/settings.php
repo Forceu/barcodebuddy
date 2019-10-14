@@ -34,10 +34,12 @@ require_once __DIR__ . "/../incl/processing.inc.php";
 require_once __DIR__ . "/../incl/websocketconnection.inc.php";
 require_once __DIR__ . "/../incl/webui.inc.php";
 
-if (isset($_POST["BARCODE_C"])) {
+if (isset($_POST["isSaved"])) {
         saveSettings(); 
+	var_dump($_POST);
+	die("All saved!");
         //Hide POST, so we can refresh
-        header("Location: " . $_SERVER["PHP_SELF"]);
+//        header("Location: " . $_SERVER["PHP_SELF"]);
         die();
     }
 
@@ -45,10 +47,10 @@ if (isset($_POST["BARCODE_C"])) {
 
 $webUi = new WebUiGenerator(MENU_SETTINGS);
 $webUi->addHeader();
-$webUi->addHtml('<form name="settingsform" id="settingsform" method="post" action="' . $_SERVER['PHP_SELF'] . '" >');
 $webUi->addCard("General Settings",getHtmlSettingsGeneral());
 $webUi->addCard("Grocy API",getHtmlSettingsGrocyApi());
-$webUi->addCard("Websockets",getHtmlSettingsWebsockets());
+$isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on');
+$webUi->addCard("Websockets",getHtmlSettingsWebsockets(), 'Test Configuration', 'testWebsocket(\''.$_SERVER['HTTP_HOST'].'\', '.var_export($isHttps, true).');');
 $webUi->addHtml(getHtmlSettingsHiddenValues());
 $webUi->addFooter();
 $webUi->printHtml();

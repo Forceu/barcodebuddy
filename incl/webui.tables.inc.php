@@ -222,7 +222,9 @@ function getHtmlChoreTable() {
 
 function getHtmlSettingsGeneral() {
     global $BBCONFIG;
-return '<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+return '<form name="settingsform_1" id="settingsform_1">
+
+		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 		    <input class="mdl-textfield__input" value="'.$BBCONFIG["BARCODE_C"].'" type="text" name="BARCODE_C" id="barcode_c">
 		    <label class="mdl-textfield__label" for="barcode_c">Barcode: Consume</label>
 		  </div>
@@ -269,25 +271,28 @@ return '<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label
 <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="websocket_fullscreen">
 		  <input type="checkbox" value="1" name="WS_FULLSCREEN"  id="websocket_fullscreen" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["WS_FULLSCREEN"]).'>
 		  <span class="mdl-checkbox__label">Show Screen module in fullscreen</span>
-		</label><br>';
+		</label><br></form>';
 }
 function getHtmlSettingsGrocyApi() {
     global $BBCONFIG;
-return '<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+return '<form name="settingsform_2" id="settingsform_2">
+<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 		    <input class="mdl-textfield__input" pattern="https://.*/api/|http://.*/api/|https://.*/api|http://.*/api" size="60" value="'.$BBCONFIG["GROCY_API_URL"].'" name="GROCY_API_URL" type="text" id="grocy_url">
 		    <label class="mdl-textfield__label" for="grocy_url">Grocy API URL</label>
 		  </div><br>
 		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 		    <input class="mdl-textfield__input" pattern="[A-Za-z0-9]{50}"   size="60" value="'.$BBCONFIG["GROCY_API_KEY"].'" name="GROCY_API_KEY"  type="text" id="grocy_api_key">
 		    <label class="mdl-textfield__label" for="grocy_api_key">Grocy API Key</label>
-		  </div>';
+		  </div></form>';
 }
 function getHtmlSettingsWebsockets() {
     global $BBCONFIG;
-return  '<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="websocket_use">
+return  '<form name="settingsform_3" id="settingsform_3">
+
+	<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="websocket_use">
 		  <input type="checkbox" value="1" name="WS_USE" onChange="switchElements()"  id="websocket_use" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["WS_USE"]).'>
 		  <span class="mdl-checkbox__label">Use websockets</span>
-		</label><br>
+		</label> <br>
  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
     <input class="mdl-textfield__input" type="text" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57" pattern="-?[0-9]*(\.[0-9]+)?" value="'.$BBCONFIG["WS_PORT"].'" id="websocket_port_internal" name="WS_PORT">
     <label class="mdl-textfield__label" for="websocket_port_internal">Websocket Port</label>
@@ -303,16 +308,21 @@ return  '<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="w
  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
     <input class="mdl-textfield__input" type="text" value="'.$BBCONFIG["WS_SSL_URL"].'" name="WS_SSL_URL" id="websocket_ssl_url">
     <label class="mdl-textfield__label" for="websocket_ssl_url">External websocket URL</label>
-  </div>';
+  </div><br>
+<div id="progressbar" style="display:none" class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div></form>
+
+';
 }
 
 function getHtmlSettingsHiddenValues() {
-return '<input type="hidden" value="0" name="REVERT_SINGLE_hidden"/>
+return '<form name="settingsform_4" id="settingsform_4">
+<input type="hidden" value="0" name="REVERT_SINGLE_hidden"/>
 <input type="hidden" value="0" name="MORE_VERBOSE_hidden"/>
+<input type="hidden" value="0" name="SHOPPINGLIST_REMOVE_hidden"/>
 <input type="hidden" value="0" name="WS_USE_hidden"/>
 <input type="hidden" value="0" name="WS_FULLSCREEN_hidden"/>
 <input type="hidden" value="0" name="WS_SSL_USE_hidden"/>
-<input type="hidden" value="0" name="SHOPPINGLIST_REMOVE_hidden"/>
+<input type="hidden" value="1" name="isSaved"/>
 </form>';
 }
 

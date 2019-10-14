@@ -36,10 +36,8 @@ require_once __DIR__ . "/../incl/webui.inc.php";
 
 if (isset($_POST["isSaved"])) {
         saveSettings(); 
-	var_dump($_POST);
-	die("All saved!");
         //Hide POST, so we can refresh
-//        header("Location: " . $_SERVER["PHP_SELF"]);
+        header("Location: " . $_SERVER["PHP_SELF"]);
         die();
     }
 

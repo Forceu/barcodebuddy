@@ -85,6 +85,7 @@ html, body {
 }
 .mdl-demo .mdl-layout.is-small-screen .mdl-card .mdl-card__supporting-text {
   margin: 15px;
+  width: calc(100% - 30px);
 }
 .mdl-demo.mdl-demo .mdl-card__supporting-text h4 {
   margin-top: 0;

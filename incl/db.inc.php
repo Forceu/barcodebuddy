@@ -205,7 +205,7 @@ function getTransactionState() {
             return STATE_CONSUME;
         } else {
             $stateSet            = strtotime($since);
-            $now                 = strtotime('now');
+            $now                 = strtotime(getDbTimeInLC());
             $differenceInMinutes = round(abs($now - $stateSet) / 60, 0);
             if ($differenceInMinutes > $BBCONFIG["REVERT_TIME"]) {
                 setTransactionState(STATE_CONSUME);
@@ -219,7 +219,10 @@ function getTransactionState() {
     }
 }
 
-
+function getDbTimeInLC() {
+    global $db;
+    return $db->querySingle("SELECT datetime('now','localtime');");
+}
 
 //Setting the state
 function setTransactionState($state) {

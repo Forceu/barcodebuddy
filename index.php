@@ -79,7 +79,7 @@ processButtons();
 
 $barcodes = $db->getStoredBarcodes();
 		if (sizeof($barcodes['known']) > 0 || sizeof($barcodes['unknown']) > 0) {
-		    $productinfo = getProductInfo();
+		    $productinfo = API::getProductInfo();
 		}
 
 $webUi = new WebUiGenerator(MENU_MAIN);

@@ -87,7 +87,7 @@ function processNewBarcode($barcodeInput, $websocketEnabled = true) {
     
     if (!$isProcessed) {
         $sanitizedBarcode = sanitizeString($barcode);
-        $productInfo = getProductByBardcode($sanitizedBarcode);
+        $productInfo = API::getProductByBardcode($sanitizedBarcode);
         if ($productInfo == null) {
             $db->saveLastBarcode($sanitizedBarcode);
             processUnknownBarcode($sanitizedBarcode, $websocketEnabled);
@@ -133,8 +133,8 @@ function processChoreBarcode($barcode) {
    global $db;
    $id = $db->getChoreBarcode(sanitizeString($barcode))['choreId'];
    checkIfNumeric($id);
-   executeChore( $id);
-   return sanitizeString(getChoresInfo($id)["name"]);
+   API::executeChore( $id);
+   return sanitizeString(API::getChoresInfo($id)["name"]);
 }
 
 //If grocy does not know this barcode
@@ -151,7 +151,7 @@ function processUnknownBarcode($barcode, $websocketEnabled) {
     } else {
         $productname = "N/A";
         if (is_numeric($barcode)) {
-            $productname = lookupNameByBarcode($barcode);
+            $productname = API::lookupNameByBarcode($barcode);
         }
         if ($productname != "N/A") {
             outputLog("Unknown barcode looked up, found name: " . $productname . ". Barcode: " . $barcode, EVENT_TYPE_ADD_NEW_BARCODE, false, $websocketEnabled, 1, $productname);
@@ -200,7 +200,7 @@ function processModeChangeGetParameter($modeParameter) {
 //This will be called when a new grocy product is created from BB and the grocy tab is closed
 function processRefreshedBarcode($barcode) {
     global $db;
-    $productInfo = getProductByBardcode($barcode);
+    $productInfo = API::getProductByBardcode($barcode);
     if ($productInfo != null) {
         $db->updateSavedBarcodeMatch($barcode, $productInfo["id"]);
     }
@@ -214,11 +214,11 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
     
     switch ($state) {
         case STATE_CONSUME:
-            consumeProduct($productInfo["id"], 1, false);
+            API::consumeProduct($productInfo["id"], 1, false);
             outputLog("Product found. Consuming 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, 0, "Consuming 1 " . $productInfo["unit"] . " of " . $productInfo["name"]);
             break;
         case STATE_CONSUME_SPOILED:
-            consumeProduct($productInfo["id"], 1, true);
+            API::consumeProduct($productInfo["id"], 1, true);
             outputLog("Product found. Consuming 1 spoiled " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, 0, "Consuming 1 spoiled " . $productInfo["unit"] . " of " . $productInfo["name"]);
             if ($BBCONFIG["REVERT_SINGLE"]) {
                 $db->saveLog("Reverting back to Consume", true);
@@ -228,14 +228,14 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
         case STATE_PURCHASE:
             $amount        = $db->getQuantityByBarcode($barcode);
             $additionalLog = "";
-            if (!purchaseProduct($productInfo["id"], $amount)) {
+            if (!API::purchaseProduct($productInfo["id"], $amount)) {
                 $additionalLog = " [WARNING]: No default best before date set!";
             }
             outputLog("Product found. Adding  $amount " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode . $additionalLog, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, 0, "Adding 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . $additionalLog);
             break;
         case STATE_OPEN:
             outputLog("Product found. Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, 0, "Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"]);
-            openProduct($productInfo["id"]);
+            API::openProduct($productInfo["id"]);
             if ($BBCONFIG["REVERT_SINGLE"]) {
                 $db->saveLog("Reverting back to Consume", true);
                 $db->setTransactionState(STATE_CONSUME);
@@ -245,7 +245,7 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
             outputLog("Currently in stock: " . $productInfo["stockAmount"] . " " . $productInfo["unit"] . " of " . $productInfo["name"], EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, 0);
             break;
         case STATE_ADD_SL:
-            addToShoppinglist($productInfo["id"], 1);
+            API::addToShoppinglist($productInfo["id"], 1);
             outputLog("Added to shopping list: 1 " . $productInfo["unit"] . " of " . $productInfo["name"], EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, 0);
             break;
     }
@@ -316,7 +316,7 @@ function changeQuantityAfterScan($amount) {
     if ($BBCONFIG["LAST_PRODUCT"] != null) {
         $db->addUpdateQuantitiy($barcode, $amount, $BBCONFIG["LAST_PRODUCT"]);
     } else {
-        $product = getProductByBardcode($barcode);
+        $product = API::getProductByBardcode($barcode);
         if ($product != null) {
             $db->addUpdateQuantitiy($barcode, $amount, $product["name"]);
         } else {
@@ -332,7 +332,7 @@ function changeQuantityAfterScan($amount) {
 function getAllTags() {
     global $db;
     $tags       = $db->getStoredTags();
-    $products   = getProductInfo();
+    $products   = API::getProductInfo();
     $returnTags = array();
     
     foreach ($tags as $tag) {
@@ -360,7 +360,7 @@ function sortChores($a,$b) {
 
 function getAllChores() {
     global $db;
-    $chores = getChoresInfo();
+    $chores = API::getChoresInfo();
     $barcodes = $db->getStoredChoreBarcodes();
     $returnChores = array();
 

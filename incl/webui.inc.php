@@ -348,18 +348,18 @@ function processButtons() {
 		    foreach ($_POST["tags"][$id] as $tag) {
 			$db->addTag(sanitizeString($tag), $gidSelected);
 		    }
-		    $product = getProductInfo(sanitizeString($gidSelected));
+		    $product = API::getProductInfo(sanitizeString($gidSelected));
 		    $previousBarcodes = $product["barcode"];
 		    if ($previousBarcodes == NULL) {
-		        setBarcode($gidSelected, $barcode);
+		        API::setBarcode($gidSelected, $barcode);
 		    } else {
-		        setBarcode($gidSelected, $previousBarcodes . "," . $barcode);
+		        API::setBarcode($gidSelected, $previousBarcodes . "," . $barcode);
 		    }
 		    $db->deleteBarcode($id);
 		    if ($isConsume) {
-		        consumeProduct($gidSelected, $amount);
+		        API::consumeProduct($gidSelected, $amount);
 		    } else {
-		        purchaseProduct($gidSelected, $amount);
+		        API::purchaseProduct($gidSelected, $amount);
 		    }
 		    $db->refreshQuantityProductName($barcode, $product["name"]);
 		}

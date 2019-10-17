@@ -174,8 +174,8 @@ private $db = null;
         }
         if ($previousVersion < 1303) {
             $this->getConfig();
-            $version = getGrocyVersion();
-            if (!isSupportedGrocyVersion($version)) {
+            $version = API::getGrocyVersion();
+            if (!API::isSupportedGrocyVersion($version)) {
                 $this->updateConfig("GROCY_API_KEY", null);
                 $ERROR_MESSAGE = "Grocy " . MIN_GROCY_VERSION . " or newer required. You are running $version, please upgrade your Grocy instance. Click <a href=\"./setup.php\">here</a> to re-enter your credentials.";
                 include __DIR__ . "/../error.php";
@@ -254,7 +254,7 @@ private $db = null;
     }
     
     public function getBarcodeById($id) {
-        $this->db->query("SELECT * FROM Barcodes WHERE id='$id'");
+        $res = $this->db->query("SELECT * FROM Barcodes WHERE id='$id'");
         $row = $res->fetchArray();
         return $row;
     }
@@ -371,7 +371,7 @@ private $db = null;
     }
     
     public function isChoreBarcode($barcode) {
-        return (getChoreBarcode($barcode) != null);
+        return ($this->getChoreBarcode($barcode) != null);
     }
     
     

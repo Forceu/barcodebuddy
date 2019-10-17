@@ -36,7 +36,7 @@ $result = true;
 
 if (isset($_POST["GROCY_API_URL"])) {
     $apiWithTrailingSlash = rtrim($_POST["GROCY_API_URL"], '/') . '/';
-    $result = checkApiConnection($apiWithTrailingSlash, $_POST["GROCY_API_KEY"]);
+    $result = API::checkApiConnection($apiWithTrailingSlash, $_POST["GROCY_API_KEY"]);
     if ($result === true) {
         $db->updateConfig("GROCY_API_URL", sanitizeString($apiWithTrailingSlash));
         $db->updateConfig("GROCY_API_KEY", sanitizeString($_POST["GROCY_API_KEY"]));

@@ -39,7 +39,7 @@ require_once __DIR__ . "/../incl/webui.inc.php";
 if (isset($_POST["button_delete"])) {
         $id = $_POST["button_delete"];
         checkIfNumeric($id);
-        deleteQuantitiy($id);
+        $db->deleteQuantitiy($id);
         //Hide POST, so we can refresh
         header("Location: " . $_SERVER["PHP_SELF"]);
         die();

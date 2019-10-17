@@ -38,8 +38,8 @@ if (isset($_POST["GROCY_API_URL"])) {
     $apiWithTrailingSlash = rtrim($_POST["GROCY_API_URL"], '/') . '/';
     $result = checkApiConnection($apiWithTrailingSlash, $_POST["GROCY_API_KEY"]);
     if ($result === true) {
-        updateConfig("GROCY_API_URL", sanitizeString($apiWithTrailingSlash));
-        updateConfig("GROCY_API_KEY", sanitizeString($_POST["GROCY_API_KEY"]));
+        $db->updateConfig("GROCY_API_URL", sanitizeString($apiWithTrailingSlash));
+        $db->updateConfig("GROCY_API_KEY", sanitizeString($_POST["GROCY_API_KEY"]));
         header("Location: index.php");
     } 
     

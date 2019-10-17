@@ -77,7 +77,7 @@ if (isset($_GET["add"])) {
 // Only one row can be processed at a time
 processButtons();
 
-$barcodes = getStoredBarcodes();
+$barcodes = $db->getStoredBarcodes();
 		if (sizeof($barcodes['known']) > 0 || sizeof($barcodes['unknown']) > 0) {
 		    $productinfo = getProductInfo();
 		}

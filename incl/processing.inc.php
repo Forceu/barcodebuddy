@@ -27,37 +27,38 @@ require_once __DIR__ . "/db.inc.php";
 
 // Function that is called when a barcode is passed on
 function processNewBarcode($barcodeInput, $websocketEnabled = true) {
+    global $db;
     global $BBCONFIG;
     
     $barcode     = strtoupper($barcodeInput);
     $isProcessed = false;
     if ($barcode == $BBCONFIG["BARCODE_C"]) {
-        setTransactionState(STATE_CONSUME);
+        $db->setTransactionState(STATE_CONSUME);
         outputLog("Set state to Consume", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
         $isProcessed = true;
     }
     if ($barcode == $BBCONFIG["BARCODE_CS"]) {
-        setTransactionState(STATE_CONSUME_SPOILED);
+        $db->setTransactionState(STATE_CONSUME_SPOILED);
         outputLog("Set state to Consume (spoiled)", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
         $isProcessed = true;
     }
     if ($barcode == $BBCONFIG["BARCODE_P"]) {
-        setTransactionState(STATE_PURCHASE);
+        $db->setTransactionState(STATE_PURCHASE);
         outputLog("Set state to Purchase", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
         $isProcessed = true;
     }
     if ($barcode == $BBCONFIG["BARCODE_O"]) {
-        setTransactionState(STATE_OPEN);
+        $db->setTransactionState(STATE_OPEN);
         outputLog("Set state to Open", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
         $isProcessed = true;
     }
     if ($barcode == $BBCONFIG["BARCODE_GS"]) {
-        setTransactionState(STATE_GETSTOCK);
+        $db->setTransactionState(STATE_GETSTOCK);
         outputLog("Set state to Inventory", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
         $isProcessed = true;
     }
     if ($barcode == $BBCONFIG["BARCODE_AS"]) {
-        setTransactionState(STATE_ADD_SL);
+        $db->setTransactionState(STATE_ADD_SL);
         outputLog("Set state to Shopping list", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
         $isProcessed = true;
     }
@@ -78,7 +79,7 @@ function processNewBarcode($barcodeInput, $websocketEnabled = true) {
         $isProcessed = true;
     }
     
-    if (isChoreBarcode($barcode) == true) {
+    if ($db->isChoreBarcode($barcode)) {
         $choreText = processChoreBarcode($barcode);
         outputLog("Executed chore: " . $choreText, EVENT_TYPE_EXEC_CHORE, true, $websocketEnabled);
         $isProcessed = true;
@@ -88,10 +89,10 @@ function processNewBarcode($barcodeInput, $websocketEnabled = true) {
         $sanitizedBarcode = sanitizeString($barcode);
         $productInfo = getProductByBardcode($sanitizedBarcode);
         if ($productInfo == null) {
-            saveLastBarcode($sanitizedBarcode);
+            $db->saveLastBarcode($sanitizedBarcode);
             processUnknownBarcode($sanitizedBarcode, $websocketEnabled);
         } else {
-            saveLastBarcode($sanitizedBarcode, $productInfo["name"]);
+            $db->saveLastBarcode($sanitizedBarcode, $productInfo["name"]);
             processKnownBarcode($productInfo, $sanitizedBarcode, $websocketEnabled);
         }
     }
@@ -117,7 +118,8 @@ const EVENT_TYPE_ADD_TO_SHOPPINGLIST  = 15;
 
 function outputLog($log, $eventType, $isVerbose = false, $websocketEnabled = true, $websocketResultCode = "0", $websocketText = null) {
     global $LOADED_PLUGINS;
-    saveLog($log, $isVerbose);
+    global $db;
+    $db->saveLog($log, $isVerbose);
     if ($websocketText == null) {
         $websocketText = $log;
     }
@@ -128,7 +130,8 @@ function outputLog($log, $eventType, $isVerbose = false, $websocketEnabled = tru
 }
 
 function processChoreBarcode($barcode) {
-    $id = getChoreBarcode(sanitizeString($barcode))['choreId'];
+   global $db;
+   $id = $db->getChoreBarcode(sanitizeString($barcode))['choreId'];
    checkIfNumeric($id);
    executeChore( $id);
    return sanitizeString(getChoresInfo($id)["name"]);
@@ -138,13 +141,13 @@ function processChoreBarcode($barcode) {
 function processUnknownBarcode($barcode, $websocketEnabled) {
     global $db;
     $amount = 1;
-    if (getTransactionState() == STATE_PURCHASE) {
-        $amount = getQuantityByBarcode($barcode);
+    if ($db->getTransactionState() == STATE_PURCHASE) {
+        $amount = $db->getQuantityByBarcode($barcode);
     }
-    if (isUnknownBarcodeAlreadyStored($barcode)) {
+    if ($db->isUnknownBarcodeAlreadyStored($barcode)) {
         //Unknown barcode already in local database
         outputLog("Unknown product already scanned. Increasing quantitiy. Barcode: " . $barcode, EVENT_TYPE_ADD_NEW_BARCODE, false, $websocketEnabled, 1);
-        addQuantitiyToUnknownBarcode($barcode, $amount);
+        $db->addQuantitiyToUnknownBarcode($barcode, $amount);
     } else {
         $productname = "N/A";
         if (is_numeric($barcode)) {
@@ -152,10 +155,10 @@ function processUnknownBarcode($barcode, $websocketEnabled) {
         }
         if ($productname != "N/A") {
             outputLog("Unknown barcode looked up, found name: " . $productname . ". Barcode: " . $barcode, EVENT_TYPE_ADD_NEW_BARCODE, false, $websocketEnabled, 1, $productname);
-            insertUnrecognizedBarcode($barcode,  $amount, $productname, checkNameForTags($productname));
+            $db->insertUnrecognizedBarcode($barcode,  $amount, $productname, checkNameForTags($productname));
         } else {
             outputLog("Unknown barcode could not be looked up. Barcode: " . $barcode, EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, 2, $barcode);
-            insertUnrecognizedBarcode($barcode, $amount);
+            $db->insertUnrecognizedBarcode($barcode, $amount);
         }
         
     }
@@ -170,24 +173,25 @@ function stateToString($state) {
 
 
 function processModeChangeGetParameter($modeParameter) {
+    global $db;
     switch (trim($modeParameter)) {
         case "consume":
-	    setTransactionState(STATE_CONSUME);
+	    $db->setTransactionState(STATE_CONSUME);
             break;
         case "consume_s":
-	    setTransactionState(STATE_CONSUME_SPOILED);
+	    $db->setTransactionState(STATE_CONSUME_SPOILED);
             break;
         case "purchase":
-	    setTransactionState(STATE_PURCHASE);
+	    $db->setTransactionState(STATE_PURCHASE);
             break;
         case "open":
-	    setTransactionState(STATE_OPEN);
+	    $db->setTransactionState(STATE_OPEN);
             break;
         case "inventory":
-	    setTransactionState(STATE_GETSTOCK);
+	    $db->setTransactionState(STATE_GETSTOCK);
             break;
         case "shoppinglist":
-	    setTransactionState(STATE_ADD_SL);
+	    $db->setTransactionState(STATE_ADD_SL);
             break;
     }
 }
@@ -195,16 +199,18 @@ function processModeChangeGetParameter($modeParameter) {
 
 //This will be called when a new grocy product is created from BB and the grocy tab is closed
 function processRefreshedBarcode($barcode) {
+    global $db;
     $productInfo = getProductByBardcode($barcode);
     if ($productInfo != null) {
-        updateSavedBarcodeMatch($barcode, $productInfo["id"]);
+        $db->updateSavedBarcodeMatch($barcode, $productInfo["id"]);
     }
 }
 
     // Process a barcode that Grocy already knows
 function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
     global $BBCONFIG;
-    $state = getTransactionState();
+    global $db;
+    $state = $db->getTransactionState();
     
     switch ($state) {
         case STATE_CONSUME:
@@ -215,12 +221,12 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
             consumeProduct($productInfo["id"], 1, true);
             outputLog("Product found. Consuming 1 spoiled " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, 0, "Consuming 1 spoiled " . $productInfo["unit"] . " of " . $productInfo["name"]);
             if ($BBCONFIG["REVERT_SINGLE"]) {
-                saveLog("Reverting back to Consume", true);
-                setTransactionState(STATE_CONSUME);
+                $db->saveLog("Reverting back to Consume", true);
+                $db->setTransactionState(STATE_CONSUME);
             }
             break;
         case STATE_PURCHASE:
-            $amount        = getQuantityByBarcode($barcode);
+            $amount        = $db->getQuantityByBarcode($barcode);
             $additionalLog = "";
             if (!purchaseProduct($productInfo["id"], $amount)) {
                 $additionalLog = " [WARNING]: No default best before date set!";
@@ -231,8 +237,8 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
             outputLog("Product found. Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, 0, "Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"]);
             openProduct($productInfo["id"]);
             if ($BBCONFIG["REVERT_SINGLE"]) {
-                saveLog("Reverting back to Consume", true);
-                setTransactionState(STATE_CONSUME);
+                $db->saveLog("Reverting back to Consume", true);
+                $db->setTransactionState(STATE_CONSUME);
             }
             break;
         case STATE_GETSTOCK:
@@ -291,8 +297,7 @@ function explodeWords($words, $id) {
     }
     foreach ($ary as $str) {
         $sanitizedWord = str_replace(array( '(', ')' ), '', $str);
-        $count = $db->querySingle("SELECT COUNT(*) as count FROM Tags WHERE tag='" . $sanitizedWord . "'");
-        if ($count == 0) {
+        if ($db->tagNotUsedYet($sanitizedWord)) {
             $selections = $selections . '<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-' . $id . '_' . $i . '">
   <input type="checkbox"  value="' . $sanitizedWord . '" name="tags[' . $id . '][' . $i . ']" id="checkbox-' . $id . '_' . $i . '" class="mdl-checkbox__input">
   <span class="mdl-checkbox__label">' . $sanitizedWord . '</span>
@@ -306,25 +311,27 @@ function explodeWords($words, $id) {
 
 function changeQuantityAfterScan($amount) {
     global $BBCONFIG;
+    global $db;
     $barcode = sanitizeString($BBCONFIG["LAST_BARCODE"]);
     if ($BBCONFIG["LAST_PRODUCT"] != null) {
-        addUpdateQuantitiy($barcode, $amount, $BBCONFIG["LAST_PRODUCT"]);
+        $db->addUpdateQuantitiy($barcode, $amount, $BBCONFIG["LAST_PRODUCT"]);
     } else {
         $product = getProductByBardcode($barcode);
         if ($product != null) {
-            addUpdateQuantitiy($barcode, $amount, $product["name"]);
+            $db->addUpdateQuantitiy($barcode, $amount, $product["name"]);
         } else {
-            addUpdateQuantitiy($barcode, $amount);
+            $db->addUpdateQuantitiy($barcode, $amount);
         }
     }
-    if (getStoredBarcodeAmount($barcode) == 1) {
-        setQuantitiyToUnknownBarcode($barcode, $amount);
+    if ($db->getStoredBarcodeAmount($barcode) == 1) {
+        $db->setQuantitiyToUnknownBarcode($barcode, $amount);
     }
 }
 
 
 function getAllTags() {
-    $tags       = getStoredTags();
+    global $db;
+    $tags       = $db->getStoredTags();
     $products   = getProductInfo();
     $returnTags = array();
     
@@ -352,8 +359,9 @@ function sortChores($a,$b) {
 
 
 function getAllChores() {
+    global $db;
     $chores = getChoresInfo();
-    $barcodes = getStoredChoreBarcodes();
+    $barcodes = $db->getStoredChoreBarcodes();
     $returnChores = array();
 
     foreach ($chores as $chore) {
@@ -374,21 +382,37 @@ function stringStartsWith($string, $startString) {
     $len = strlen($startString);
     return (substr($string, 0, $len) === $startString);
 }
+
+
+
+function strrtrim($message, $strip) { 
+    // break message apart by strip string 
+    $lines = explode($strip, $message); 
+    $last  = ''; 
+    // pop off empty strings at the end 
+    do { 
+        $last = array_pop($lines); 
+    } while (empty($last) && (count($lines))); 
+    // re-assemble what remains 
+    return implode($strip, array_merge($lines, array($last))); 
+} 
+
 function saveSettings() {
     global $BBCONFIG;
+    global $db;
     foreach ($BBCONFIG as $key => $value) {
         if (isset($_POST[$key])) {
             if ($_POST[$key] != $value) {
                 $value = sanitizeString($_POST[$key]);
                 if (stringStartsWith($key, "BARCODE_")) {
-                    updateConfig($key, strtoupper($value));
+                    $db->updateConfig($key, strtoupper($value));
                 } else {
-                    updateConfig($key, $value);
+                    $db->updateConfig($key, $value);
                 }
             }
         } else {
             if (isset($_POST[$key . "_hidden"]) && $_POST[$key . "_hidden"] != $value) {
-                updateConfig($key, sanitizeString($_POST[$key . "_hidden"]));
+                $db->updateConfig($key, sanitizeString($_POST[$key . "_hidden"]));
             }
         }
     }

@@ -39,9 +39,9 @@ if (isset($_POST["button_edit"])) {
         checkIfNumeric($id);
         $barcode = sanitizeString($_POST["barcode_".$id]);
         if ($barcode=="") {
-              deleteChoreBarcode($id);
+              $db->deleteChoreBarcode($id);
         } else {
-              updateChoreBarcode($id, $barcode);
+              $db->updateChoreBarcode($id, $barcode);
         }
         //Hide POST, so we can refresh
         header("Location: " . $_SERVER["PHP_SELF"]);

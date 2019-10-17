@@ -288,7 +288,7 @@ function processButtons() {
     global $db;
     
     if (isset($_GET["delete"])) {
-        deleteAll($_GET["delete"]);
+        $db->deleteAll($_GET["delete"]);
         //Hide get
         header("Location: " . $_SERVER["PHP_SELF"]);
         die();
@@ -297,7 +297,7 @@ function processButtons() {
     if (isset($_POST["button_delete"])) {
         $id = $_POST["button_delete"];
         checkIfNumeric($id);
-        deleteBarcode($id);
+        $db->deleteBarcode($id);
         //Hide POST, so we can refresh
         header("Location: " . $_SERVER["PHP_SELF"]);
         die();
@@ -307,7 +307,7 @@ function processButtons() {
     if (isset($_POST["button_delete"])) {
         $id = $_POST["button_delete"];
         checkIfNumeric($id);
-        deleteBarcode($id);
+        $db->deleteBarcode($id);
         //Hide POST, so we can refresh
         header("Location: " . $_SERVER["PHP_SELF"]);
         die();
@@ -339,29 +339,31 @@ function processButtons() {
         }
         checkIfNumeric($id);
         $gidSelected = $_POST["select_" . $id];
-        $res         = $db->query("SELECT * FROM Barcodes WHERE id='$id'");
-        if ($gidSelected != 0 && ($row = $res->fetchArray())) {
-            $barcode = sanitizeString($row["barcode"], true);
-            $amount  = $row["amount"];
-            checkIfNumeric($amount);
-            foreach ($_POST["tags"][$id] as $tag) {
-                $db->exec("INSERT INTO Tags(tag, itemId) VALUES('" . sanitizeString($tag) . "', $gidSelected);");
-            }
-            $product = getProductInfo(sanitizeString($gidSelected));
-            $previousBarcodes = $product["barcode"];
-            if ($previousBarcodes == NULL) {
-                setBarcode($gidSelected, $barcode);
-            } else {
-                setBarcode($gidSelected, $previousBarcodes . "," . $barcode);
-            }
-            deleteBarcode($id);
-            if ($isConsume) {
-                consumeProduct($gidSelected, $amount);
-            } else {
-                purchaseProduct($gidSelected, $amount);
-            }
-            refreshQuantityProductName($barcode, $product["name"]);
-        }
+        if ($gidSelected != 0) {
+	    $row = $db->getBarcodeById($id);
+	    if ($row !== false) {
+		    $barcode = sanitizeString($row["barcode"], true);
+		    $amount  = $row["amount"];
+		    checkIfNumeric($amount);
+		    foreach ($_POST["tags"][$id] as $tag) {
+			$db->addTag(sanitizeString($tag), $gidSelected);
+		    }
+		    $product = getProductInfo(sanitizeString($gidSelected));
+		    $previousBarcodes = $product["barcode"];
+		    if ($previousBarcodes == NULL) {
+		        setBarcode($gidSelected, $barcode);
+		    } else {
+		        setBarcode($gidSelected, $previousBarcodes . "," . $barcode);
+		    }
+		    $db->deleteBarcode($id);
+		    if ($isConsume) {
+		        consumeProduct($gidSelected, $amount);
+		    } else {
+		        purchaseProduct($gidSelected, $amount);
+		    }
+		    $db->refreshQuantityProductName($barcode, $product["name"]);
+		}
+	}
         //Hide POST, so we can refresh
         header("Location: " . $_SERVER["PHP_SELF"]);
         die();

@@ -64,7 +64,8 @@ class TableGenerator {
 
 //outputs stored logs to the textarea
 function getHtmlLogTextArea() {
-    $logs = getLogs();
+    global $db;
+    $logs = $db->getLogs();
     if (sizeof($logs) == 0) {
         return "No barcodes processed yet.";
     } else {
@@ -405,7 +406,8 @@ function printSettingsQuantity() {
 }
 
 function printSettingsQuantityTable(){
-    $quantities = getQuantities();
+    global $db;
+    $quantities = $db->getQuantities();
      if (sizeof($quantities) == 0) {
         return "No saved quantities yet.";
     } else {

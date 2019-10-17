@@ -6,8 +6,10 @@
 import sys
 import os
 from evdev import InputDevice, list_devices, ecodes, categorize
+#import requests 
 
 SCRIPT_LOCATION = "/var/www/html/barcodebuddy/index.php"
+#SERVER_ADDRESS = "https://your.bbuddy.url/index.php"
 
 CODE_MAP_CHAR = {
     'KEY_MINUS': "-",
@@ -69,21 +71,6 @@ CODE_MAP_CHAR = {
     'KEY_Y': "Y",
     'KEY_DOT': ".",
 
-##We do not want these keys to be passed to the cmd
-
-#   'KEY_SPACE': " ",
-#   'KEY_BACKSLASH': "\\",
-#    'KEY_GRAVE': "`",
-#    'KEY_NUMERIC_STAR': "*",
-#    'KEY_LEFTBRACE': "[",
-#    'KEY_RIGHTBRACE': "]",
-#    'KEY_COMMA': ",",
-#    'KEY_EQUAL': "=",
-#    'KEY_SEMICOLON': ";",
-#    'KEY_APOSTROPHE': "'"
-#    'KEY_TAB': "\t",
-#    'KEY_SLASH': "/",
-
 
 }
 
@@ -110,6 +97,8 @@ if __name__ == "__main__":
                 if e.keycode == "KEY_ENTER":
                     print "Sending :" + data
                     os.system("sudo -H -u www-data /usr/bin/screen -dm /usr/bin/php " + SCRIPT_LOCATION + " " + data)
+		    #If you want to send GET requests instead, uncomment the line below and the "import requests". The method above is preferred
+		    #requests.get(SERVER_ADDRESS+'?add='+data)
                     data = ""
                 else:
                     data += parse_key_to_char(e.keycode)

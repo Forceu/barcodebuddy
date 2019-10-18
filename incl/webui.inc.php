@@ -345,8 +345,10 @@ function processButtons() {
 		    $barcode = sanitizeString($row["barcode"], true);
 		    $amount  = $row["amount"];
 		    checkIfNumeric($amount);
-		    foreach ($_POST["tags"][$id] as $tag) {
-			$db->addTag(sanitizeString($tag), $gidSelected);
+		    if (isset($_POST["tags"])) {
+			    foreach ($_POST["tags"][$id] as $tag) {
+				$db->addTag(sanitizeString($tag), $gidSelected);
+			    }
 		    }
 		    $product = API::getProductInfo(sanitizeString($gidSelected));
 		    $previousBarcodes = $product["barcode"];

@@ -319,7 +319,7 @@ private $db = null;
     }
     
     public function tagNotUsedYet($name) {
-        $count = $db->querySingle("SELECT COUNT(*) as count FROM Tags WHERE tag='" . $sanitizedWord . "'");
+        $count = $this->db->querySingle("SELECT COUNT(*) as count FROM Tags WHERE tag='" . $sanitizedWord . "'");
         return ($count == 0);
     }
     

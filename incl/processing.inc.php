@@ -155,7 +155,7 @@ function processUnknownBarcode($barcode, $websocketEnabled) {
         }
         if ($productname != "N/A") {
             outputLog("Unknown barcode looked up, found name: " . $productname . ". Barcode: " . $barcode, EVENT_TYPE_ADD_NEW_BARCODE, false, $websocketEnabled, 1, $productname);
-            $db->insertUnrecognizedBarcode($barcode,  $amount, $productname, checkNameForTags($productname));
+            $db->insertUnrecognizedBarcode($barcode,  $amount, $productname, $db->checkNameForTags($productname));
         } else {
             outputLog("Unknown barcode could not be looked up. Barcode: " . $barcode, EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, 2, $barcode);
             $db->insertUnrecognizedBarcode($barcode, $amount);

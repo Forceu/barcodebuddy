@@ -46,6 +46,8 @@ const SECTION_UNKNOWN_BARCODES = "unknown";
 const SECTION_LOGS             = "log";
 
 
+
+// Creates a database connection and offers DB functions
 class DatabaseConnection {
 
 
@@ -83,7 +85,7 @@ private $db = null;
     }
     
     
-    //Initiate database and create if not existent
+    //Initiate database and create global variable for config
     private function initDb() {
         global $BBCONFIG;
         
@@ -106,7 +108,7 @@ private $db = null;
         }
     }
     
-    
+    //Inserts default values for Barcode Buddy Config
     private function insertDefaultValues() {
         $this->db->exec("INSERT INTO TransactionState(id,currentState,since) SELECT 1, 0, datetime('now','localtime') WHERE NOT EXISTS(SELECT 1 FROM TransactionState WHERE id = 1)");
         $this->db->exec("INSERT INTO BBConfig(id,data,value) SELECT 1, \"version\", \"" . BB_VERSION . "\" WHERE NOT EXISTS(SELECT 1 FROM BBConfig WHERE id = 1)");
@@ -116,7 +118,7 @@ private $db = null;
         }
     }
     
-    
+    //Reads  Barcode Buddy Config from DB
     private function getConfig() {
         global $BBCONFIG;
         $BBCONFIG = array();
@@ -130,7 +132,7 @@ private $db = null;
         $BBCONFIG["GROCY_BASE_URL"] = strrtrim($BBCONFIG["GROCY_API_URL"], "api/");
     }
     
-    
+    //Sets the config key with new value
     public function updateConfig($key, $value) {
         global $BBCONFIG;
         if (in_array($key, self::DB_INT_VALUES)) {
@@ -140,12 +142,13 @@ private $db = null;
         $BBCONFIG[$key] = $value;
     }
     
+    //Save last used barcode into DB
     public function saveLastBarcode($barcode, $name = null) {
         $this->updateConfig("LAST_BARCODE", $barcode);
         $this->updateConfig("LAST_PRODUCT", $name);
     }
     
-    
+    //Checks if database is writable
     private function checkPermissions() {
         if (file_exists(DATABASE_PATH)) {
             if (!is_writable(DATABASE_PATH)) {
@@ -160,6 +163,7 @@ private $db = null;
         }
     }
     
+    //Is called after updating Barcode Buddy to a new version
     private function upgradeBarcodeBuddy($previousVersion) {
         global $BBCONFIG;
         global $ERROR_MESSAGE;
@@ -212,6 +216,7 @@ private $db = null;
         }
     }
     
+    //Gets the local tine wuth the DB function, more reliable than PHP
     private function getDbTimeInLC() {
         return $this->db->querySingle("SELECT datetime('now','localtime');");
     }
@@ -244,6 +249,8 @@ private $db = null;
         return $barcodes;
     }
     
+    //Returns stored amont of saved barcodes that is not accosiated with a product yet
+    //Not to be confused with default amount for barcodes
     public function getStoredBarcodeAmount($barcode) {
         $res = $this->db->query("SELECT * FROM Barcodes WHERE barcode='$barcode'");
         if ($row = $res->fetchArray()) {
@@ -253,6 +260,7 @@ private $db = null;
         }
     }
     
+    //gers barcode stored in DB by ID
     public function getBarcodeById($id) {
         $res = $this->db->query("SELECT * FROM Barcodes WHERE id='$id'");
         $row = $res->fetchArray();
@@ -314,16 +322,18 @@ private $db = null;
         return $tags;
     }
     
+    //Adds tag to DB
     public function addTag($tag, $itemid) {
         $this->db->exec("INSERT INTO Tags(tag, itemId) VALUES('$tag', $itemid);");
     }
     
+    //Returns true if $name is not saved as a tag yet
     public function tagNotUsedYet($name) {
         $count = $this->db->querySingle("SELECT COUNT(*) as count FROM Tags WHERE tag='" . $name . "'");
         return ($count == 0);
     }
     
-    
+    //Sets the possible match for a barcode that has a tag in its name
     public function updateSavedBarcodeMatch($barcode, $productId) {
         checkIfNumeric($productId);
         $this->db->exec("UPDATE Barcodes SET possibleMatch='$productId' WHERE barcode='$barcode'");
@@ -344,11 +354,13 @@ private $db = null;
         return $chores;
     }
     
+    //Updates a chore barcode
     public function updateChoreBarcode($choreId, $choreBarcode) {
         checkIfNumeric($choreId);
         $this->db->exec("REPLACE INTO ChoreBarcodes(choreId, barcode) VALUES(" . $choreId . ", '" . str_replace('&#39;', "", $choreBarcode) . "')");
     }
     
+    //Adds a default quantitiy for a barcodem or updates the product
     public function addUpdateQuantitiy($barcode, $amount, $product = null) {
         checkIfNumeric($amount);
         if ($product == null) {
@@ -358,23 +370,25 @@ private $db = null;
         }
     }
     
+    //Deletes a barcode associated with a chore
     public function deleteChoreBarcode($id) {
         checkIfNumeric($id);
         $this->db->exec("DELETE FROM ChoreBarcodes WHERE choreId='$id'");
     }
     
     
-    //Deletes Quantity. 
+    //Deletes Quantity barcode
     public function deleteQuantitiy($id) {
         checkIfNumeric($id);
         $this->db->exec("DELETE FROM Quantities WHERE id='$id'");
     }
     
+    //Checks if barcode is associated with a chore
     public function isChoreBarcode($barcode) {
         return ($this->getChoreBarcode($barcode) != null);
     }
     
-    
+    //Get chore from barcode
     public function getChoreBarcode($barcode) {
         $res = $this->db->query("SELECT * FROM ChoreBarcodes WHERE barcode='$barcode'");
         if ($row = $res->fetchArray()) {
@@ -384,20 +398,24 @@ private $db = null;
         }
     }
     
-    
+    //Returns true if an unknown barcode is already in the list
     public function isUnknownBarcodeAlreadyStored($barcode) {
         $count = $this->db->querySingle("SELECT COUNT(*) as count FROM Barcodes WHERE barcode='$barcode'");
         return ($count != 0);
     }
     
+    //Increases quantitiy of a saved barcode (not to confuse with default quantitiy)
     public function addQuantitiyToUnknownBarcode($barcode, $amount) {
         $this->db->exec("UPDATE Barcodes SET amount = amount + $amount WHERE barcode = '$barcode'");
         
     }
+    
+    //Sets quantitiy of a saved barcode (not to confuse with default quantitiy)
     public function setQuantitiyToUnknownBarcode($barcode, $amount) {
         $this->db->exec("UPDATE Barcodes SET amount = $amount WHERE barcode = '$barcode'");
     }
     
+    //Add an unknown barcode
     public function insertUnrecognizedBarcode($barcode, $amount = 1, $productname = "N/A", $match = 0) {
         $this->db->exec("INSERT INTO Barcodes(barcode, name, amount, possibleMatch) VALUES('$barcode', '$productname', $amount, $match)");
     }
@@ -446,6 +464,7 @@ private $db = null;
         $this->db->exec("DELETE FROM Tags WHERE id='$id'");
     }
     
+    //Delete all saved barcodes
     public function deleteAll($section) {
         switch ($section) {
             case SECTION_KNOWN_BARCODES:

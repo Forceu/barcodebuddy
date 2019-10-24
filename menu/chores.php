@@ -34,6 +34,8 @@ require_once __DIR__ . "/../incl/processing.inc.php";
 require_once __DIR__ . "/../incl/websocketconnection.inc.php";
 require_once __DIR__ . "/../incl/webui.inc.php";
 
+
+//Save tag if edit button was pressed
 if (isset($_POST["button_edit"])) {
         $id = $_POST["button_edit"];
         checkIfNumeric($id);

@@ -35,6 +35,7 @@ const REQ_EXTENSIONS       = array("curl", "date", "sqlite3", "json");
 const OPTIONAL_EXTENSIONS  = array("sockets");
 
 
+//Checks if the required PHP extensions are installed and active
 function checkExtensionsInstalled() {
     $loadedExtensions = get_loaded_extensions();
     $result           = array();
@@ -56,11 +57,14 @@ function checkExtensionsInstalled() {
     return $result;
 }
 
+
+//Check a specific extension
 function isExtensionInstalled($name) {
     $loadedExtensions = get_loaded_extensions();
     return in_array($name, $loadedExtensions);
 }
 
+//Check if Grocy API config is set in the database
 function isGrocyApiSet() {
     global $BBCONFIG;
     return ($BBCONFIG["GROCY_API_URL"] != null && $BBCONFIG["GROCY_API_KEY"] != null);

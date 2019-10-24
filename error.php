@@ -26,6 +26,11 @@
  *
  */
 
+
+/** This file should only be loaded if an error has occured
+ *  The global variable $ERROR_MESSAGE needs to be set
+ *  with the error message.
+ */ 
 if (!isset($ERROR_MESSAGE)) {
     header("Location: index.php");
 }

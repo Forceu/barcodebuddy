@@ -34,10 +34,12 @@ require_once __DIR__ . "/../incl/processing.inc.php";
 require_once __DIR__ . "/../incl/websocketconnection.inc.php";
 require_once __DIR__ . "/../incl/webui.inc.php";
 
+
+//Save settings
 if (isset($_POST["isSaved"])) {
         saveSettings(); 
-        //Hide POST, so we can refresh
-        header("Location: " . $_SERVER["PHP_SELF"]);
+        //is done with AJAX call, therefore no output is needed
+        //header("Location: " . $_SERVER["PHP_SELF"]);
         die();
     }
 

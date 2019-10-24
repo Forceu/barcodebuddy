@@ -98,6 +98,8 @@ function processNewBarcode($barcodeInput, $websocketEnabled = true) {
     }
 }
 
+
+//Event types used for plugins
 const EVENT_TYPE_ERROR                = -1;
 const EVENT_TYPE_MODE_CHANGE          =  0;
 const EVENT_TYPE_CONSUME              =  1;
@@ -116,6 +118,8 @@ const EVENT_TYPE_OPEN_PRODUCT         = 13;
 const EVENT_TYPE_GET_STOCK_PRODUCT    = 14;
 const EVENT_TYPE_ADD_TO_SHOPPINGLIST  = 15;
 
+
+//Save a log input to the database or submit websocket
 function outputLog($log, $eventType, $isVerbose = false, $websocketEnabled = true, $websocketResultCode = "0", $websocketText = null) {
     global $LOADED_PLUGINS;
     global $db;
@@ -129,6 +133,7 @@ function outputLog($log, $eventType, $isVerbose = false, $websocketEnabled = tru
     }
 }
 
+//Execute a chore when chore barcode was submitted
 function processChoreBarcode($barcode) {
    global $db;
    $id = $db->getChoreBarcode(sanitizeString($barcode))['choreId'];
@@ -165,13 +170,14 @@ function processUnknownBarcode($barcode, $websocketEnabled) {
 }
 
 
+//Convert state to string for websocket server
 function stateToString($state) {
 	$allowedModes = array(STATE_CONSUME=>"Consume",STATE_CONSUME_SPOILED=> "Consume (spoiled)",STATE_PURCHASE=> "Purchase",STATE_OPEN=> "Open",STATE_GETSTOCK=> "Inventory", STATE_ADD_SL=> "Add to shoppinglist");
 	return $allowedModes[$state];
 }
 
 
-
+//Change mode if was supplied by GET parameter
 function processModeChangeGetParameter($modeParameter) {
     global $db;
     switch (trim($modeParameter)) {
@@ -272,6 +278,7 @@ function printSelections($selected, $productinfo) {
     return $optionscontent;
 }
 
+//Sanitizes a string for database input
 function sanitizeString($input, $strongFilter = false) {
     if ($strongFilter) {
         return filter_var($input, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
@@ -280,6 +287,7 @@ function sanitizeString($input, $strongFilter = false) {
     }
 }
 
+//Terminates script if non numeric
 function checkIfNumeric($input) {
     if (!is_numeric($input)) {
         die("Illegal input! " . sanitizeString($input) . " needs to be a number");
@@ -308,7 +316,7 @@ function explodeWords($words, $id) {
     return $selections;
 }
 
-
+//If a quantity barcode was scanned, add the quantitiy and process further
 function changeQuantityAfterScan($amount) {
     global $BBCONFIG;
     global $db;
@@ -329,6 +337,7 @@ function changeQuantityAfterScan($amount) {
 }
 
 
+//Merge tags and product info
 function getAllTags() {
     global $db;
     $tags       = $db->getStoredTags();
@@ -348,16 +357,19 @@ function getAllTags() {
     return $returnTags;
 }
 
+//Sorts the tags by name
 function sortTags($a,$b) {
           return $a['item']>$b['item'];
      }
 
 
+//Sorts the chores by name
 function sortChores($a,$b) {
           return $a['name']>$b['name'];
      }
 
 
+//Merges chores with chore info
 function getAllChores() {
     global $db;
     $chores = API::getChoresInfo();
@@ -378,13 +390,14 @@ function getAllChores() {
     return $returnChores;
 }
 
+//Returns true if string starts with $startString
 function stringStartsWith($string, $startString) {
     $len = strlen($startString);
     return (substr($string, 0, $len) === $startString);
 }
 
 
-
+//Trim string
 function strrtrim($message, $strip) { 
     // break message apart by strip string 
     $lines = explode($strip, $message); 
@@ -397,6 +410,8 @@ function strrtrim($message, $strip) {
     return implode($strip, array_merge($lines, array($last))); 
 } 
 
+//Called when settings were saved. For each input, the setting
+//is saved as a database entry
 function saveSettings() {
     global $BBCONFIG;
     global $db;

@@ -26,6 +26,8 @@
 
 $LOADED_PLUGINS = array();
 
+
+//Load all PHP files placed in the "plugins" folder
 foreach (glob(__DIR__ . "/../plugins/*.php") as $filename) {
     array_push($LOADED_PLUGINS, pathinfo($filename)["filename"]);
     include_once $filename;

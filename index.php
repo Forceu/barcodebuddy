@@ -38,6 +38,7 @@ require_once __DIR__ . "/incl/websocketconnection.inc.php";
 require_once __DIR__ . "/incl/webui.inc.php";
 
 
+//If invalid settings are set, load setup
 if (checkExtensionsInstalled()["result"] == RESULT_REQ_MISSING || !isGrocyApiSet()) {
     header("Location: setup.php");
     die();
@@ -48,19 +49,27 @@ if (isset($_GET["version"]) || (isset($argv[1]) && $argv[1]=="-v")) {
    die("BarcodeBuddy ".BB_VERSION);
 }
 
+
+//If arguments are passed with the CLI, parse them as barcode
 if (isset($argv[1])) {
     processNewBarcode(sanitizeString($argv[1], true));
     die;
 }
+
+//If mode was set with GET parameter
 if (isset($_GET["mode"])) {
     processModeChangeGetParameter($_GET["mode"]);
     hideGetPostParameters();
 }
+
+//Called if a new product was created through the idea
 if (isset($_GET["refreshbarcode"])) {
     processRefreshedBarcode(sanitizeString($_GET["refreshbarcode"]));
     hideGetPostParameters();
 }
 
+
+//If barcode was submitted with GET parameter
 if (isset($_GET["add"])) {
     processNewBarcode(sanitizeString($_GET["add"], true));
     if (!isset($_GET["showui"])) {

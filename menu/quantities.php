@@ -36,6 +36,7 @@ require_once __DIR__ . "/../incl/webui.inc.php";
 
 
 
+//Delete Quantitiy 
 if (isset($_POST["button_delete"])) {
         $id = $_POST["button_delete"];
         checkIfNumeric($id);
@@ -50,7 +51,6 @@ if (isset($_POST["button_delete"])) {
 $webUi = new WebUiGenerator(MENU_GENERIC);
 $webUi->addHeader();
 $webUi->addCard("Saved Quantities",printSettingsQuantityTable());
-//printMainTables();
 $webUi->addFooter();
 $webUi->printHtml();
 ?>

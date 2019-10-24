@@ -34,6 +34,7 @@ require_once __DIR__ . "/incl/internalChecking.inc.php";
 
 $result = true;
 
+//If settings were submitted, save and check them
 if (isset($_POST["GROCY_API_URL"])) {
     $apiWithTrailingSlash = rtrim($_POST["GROCY_API_URL"], '/') . '/';
     $result = API::checkApiConnection($apiWithTrailingSlash, $_POST["GROCY_API_KEY"]);

@@ -125,6 +125,8 @@ class API {
         return "Invalid response. Maybe you are using an incorrect API key?";
     }
     
+    
+    //Check if the installed Grocy versin is equal or newer to the required version
     public function isSupportedGrocyVersion($version) {
         if (!preg_match("/\d+.\d+.\d+/", $version)) {
             return false;
@@ -144,6 +146,8 @@ class API {
         }
     }
     
+    
+    //Requests the version of the Grocy instance
     public function getGrocyVersion() {
         global $BBCONFIG;
         $apiurl = $BBCONFIG["GROCY_API_URL"] . API_SYTEM_INFO;
@@ -218,7 +222,7 @@ class API {
     
     
     
-    
+    //Removes an item from the default shoppinglist
     private function removeFromShoppinglist($productid, $amount) {
         global $BBCONFIG;
         $data      = array(

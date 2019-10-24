@@ -147,11 +147,8 @@ if (!$BBCONFIG["WS_USE"]) {
       };
       ws.onmessage = function(event) {
 	var resultJson = JSON.parse(event.data);
-	console.log(resultJson);
         var resultCode = resultJson.data.substring(0, 1);
-	console.log(resultCode);
         var resultText = resultJson.data.substring(1);	
-	console.log(resultText);
 	switch(resultCode) {
 	  case '0':
 		document.body.style.backgroundColor = '#47ac3f';

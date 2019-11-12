@@ -3,6 +3,10 @@
 from evdev import InputDevice, categorize, ecodes
 import requests
 
+
+SERVER_ADDRESS = 'http://10.0.20.2/barcodebuddy/index.php' # Replace with your BarcodeBuddy URL
+device = InputDevice('/dev/input/event1') # Replace with your device
+
 scancodes = {
 	1:  u'?1',
 	2:  u'1',
@@ -56,9 +60,6 @@ scancodes = {
 	50: u'M'
 }
 NOT_RECOGNIZED_KEY = u'?'
-SERVER_ADDRESS = 'http://10.0.20.2/barcodebuddy/index.php' # Replace with your BarcodeBuddy URL
-
-device = InputDevice('/dev/input/event1') # Replace with your device
 
 barcode = ''
 

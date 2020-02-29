@@ -297,18 +297,20 @@ function checkIfNumeric($input) {
 //Generate checkboxes for web ui
 function explodeWords($words, $id) {
     global $db;
-    $selections = "";
-    $ary        = explode(' ', $words);
-    $i          = 0;
     if ($words == "N/A") {
         return "";
     }
+    $selections  = "";
+    $ignoreChars = array(",", ".", "-", ":","(",")");
+    $cleanWords  = str_replace($ignoreChars, " ", $words);
+    $ary         = explode(' ', $cleanWords);
+    $i           = 0;
     foreach ($ary as $str) {
-        $sanitizedWord = str_replace(array( '(', ')' ), '', $str);
-        if ($db->tagNotUsedYet($sanitizedWord)) {
+	$tagWord = trim($str);
+        if (strlen($tagWord) > 0 && $db->tagNotUsedYet($tagWord)) {
             $selections = $selections . '<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-' . $id . '_' . $i . '">
-  <input type="checkbox"  value="' . $sanitizedWord . '" name="tags[' . $id . '][' . $i . ']" id="checkbox-' . $id . '_' . $i . '" class="mdl-checkbox__input">
-  <span class="mdl-checkbox__label">' . $sanitizedWord . '</span>
+  <input type="checkbox"  value="' . $tagWord . '" name="tags[' . $id . '][' . $i . ']" id="checkbox-' . $id . '_' . $i . '" class="mdl-checkbox__input">
+  <span class="mdl-checkbox__label">' . $tagWord . '</span>
 </label>';
             $i++;
         }

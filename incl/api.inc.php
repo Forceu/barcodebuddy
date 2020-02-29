@@ -34,6 +34,27 @@ const API_SYTEM_INFO     = 'system/info';
 
 const MIN_GROCY_VERSION  = "2.5.1";
 
+//TODO
+/* class CurlGenerator {
+    private $ch = null;
+    
+    function __construct($url, $apikey) {
+	$this->ch = curl_init();
+        curl_setopt($this->ch, CURLOPT_URL, $url);
+        curl_setopt($this->ch, CURLOPT_HTTPHEADER, array(
+            'GROCY-API-KEY: ' . $apikey
+        ));
+        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
+    }
+
+   function execute() {
+	$result = curl_exec($this->ch);
+        curl_close($this->ch);
+	return $result;
+   }
+}
+*/ 
+
 class API {
     
     // Getting info of a Grocy product. If no argument is passed, all products are requested

@@ -41,6 +41,9 @@ const METHOD_GET         = "GET";
 const METHOD_PUT         = "PUT";
 const METHOD_POST        = "POST";
 
+const LOGIN_URL         = "loginurl";
+const LOGIN_API_KEY     = "loginkey";
+
 class InvalidServerResponseException extends Exception { }
 class InvalidJsonResponseException   extends Exception { }
 
@@ -48,14 +51,22 @@ class CurlGenerator {
     private $ch = null;
     private $method = METHOD_GET;
     
-    function __construct($url, $method = METHOD_GET, $jasonData = null) {
-        global $BBCONFIG;
+    function __construct($url, $method = METHOD_GET, $jasonData = null, $loginOverride = null, $noApiCall = false) {
         
         $this->method = $method;
         $this->ch     = curl_init();
 
+        if ($loginOverride == null) {
+            global $BBCONFIG;
+            $apiKey = $BBCONFIG["GROCY_API_KEY"];
+            $apiUrl = $BBCONFIG["GROCY_API_URL"];
+        } else {
+            $apiKey = $loginOverride[LOGIN_API_KEY];
+            $apiUrl = $loginOverride[LOGIN_URL];
+        }
+
         $headerArray = array(
-            'GROCY-API-KEY: ' . $BBCONFIG["GROCY_API_KEY"]
+            'GROCY-API-KEY: ' . $apiKey
         );
         if ($jasonData != null) {
             array_push($headerArray, 'Content-Type: application/json');
@@ -63,7 +74,10 @@ class CurlGenerator {
             curl_setopt($this->ch, CURLOPT_POSTFIELDS, $jasonData);
         }
         
-        curl_setopt($this->ch, CURLOPT_URL, $BBCONFIG["GROCY_API_URL"] . $url);
+        if ($noApiCall)
+            curl_setopt($this->ch, CURLOPT_URL, $url);
+        else
+            curl_setopt($this->ch, CURLOPT_URL, $apiUrl . $url);
         curl_setopt($this->ch, CURLOPT_HTTPHEADER, $headerArray);
         curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, $this->method);
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
@@ -89,7 +103,12 @@ class CurlGenerator {
 
 class API {
     
-    // Getting info of a Grocy product. If no argument is passed, all products are requested
+    /**
+     * Getting info about one or all Grocy products.
+     * 
+     * @param  string ProductId or none, to get a list of all products
+     * @return array Product info or array of products
+     */
     public function getProductInfo($productId = "") {
 
         if ($productId == "") {
@@ -110,7 +129,12 @@ class API {
     }
     
     
-    // Set a Grocy product to "opened"
+    /**
+     * Open product with $id
+     * 
+     * @param  String productId
+     * @return none
+     */
     public function openProduct($id) {
 
         $data      = json_encode(array(
@@ -127,28 +151,27 @@ class API {
     }
     
     
-    
-    // Check if API details are correct
+
+    /**
+     *   Check if API details are correct
+     * 
+     * @param  String URL to Grocy API
+     * @param  String API key
+     * @return Returns String with error or true if connection could be established
+     */
     public function checkApiConnection($givenurl, $apikey) {
-        $apiurl = $givenurl . API_SYTEM_INFO;
-        $ch     = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $apiurl);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'GROCY-API-KEY: ' . $apikey
-        ));
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($ch);
-        curl_close($ch);
-        if ($response === false) {
+        $loginInfo = array(LOGIN_URL => $givenurl, LOGIN_API_KEY => $apikey);
+
+        $curl = new CurlGenerator(API_SYTEM_INFO, METHOD_GET, null, $loginInfo);
+        try {
+            $result = $curl->execute(true);
+        } catch (InvalidServerResponseException $e) {
             return "Could not connect to server.";
+        } catch (InvalidJsonResponseException $e) {
+            return $e->getMessage();
         }
-        $decoded1 = json_decode($response, true);
-        if (isset($decoded1->response->status) && $decoded1->response->status == 'ERROR') {
-            return $decoded1->response->errormessage;
-        }
-        if (isset($decoded1["grocy_version"]["Version"])) {
-            $version = $decoded1["grocy_version"]["Version"];
+        if (isset($result["grocy_version"]["Version"])) {
+            $version = $result["grocy_version"]["Version"];
             
             if (!API::isSupportedGrocyVersion($version)) {
                 return "Grocy " . MIN_GROCY_VERSION . " or newer required. You are running " . $version . ", please upgrade your Grocy instance.";
@@ -159,8 +182,13 @@ class API {
         return "Invalid response. Maybe you are using an incorrect API key?";
     }
     
-    
-    //Check if the installed Grocy versin is equal or newer to the required version
+    /**
+     *
+     * Check if the installed Grocy version is equal or newer to the required version
+     * 
+     * @param  String reported Grocy version
+     * @return boolean true if version supported
+     */
     public function isSupportedGrocyVersion($version) {
         if (!preg_match("/\d+.\d+.\d+/", $version)) {
             return false;
@@ -181,42 +209,49 @@ class API {
     }
     
     
-    //Requests the version of the Grocy instance
+    /**
+     *
+     * Requests the version of the Grocy instance
+     * 
+     * @return String Reported Grocy version
+     */
     public function getGrocyVersion() {
-        global $BBCONFIG;
-        $apiurl = $BBCONFIG["GROCY_API_URL"] . API_SYTEM_INFO;
-        $ch     = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $apiurl);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'GROCY-API-KEY: ' . $BBCONFIG["GROCY_API_KEY"]
-        ));
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($ch);
-        curl_close($ch);
-        if ($response === false) {
-            die("Could not connect to server.");
+
+        $curl = new CurlGenerator(API_SYTEM_INFO);
+        try {
+            $result = $curl->execute(true);
+        } catch (InvalidServerResponseException $e) {
+            die ("Could not connect to server.");
+        } catch (InvalidJsonResponseException $e) {
+            die ($e->getMessage());
         }
-        $decoded1 = json_decode($response, true);
-        if (isset($decoded1->response->status) && $decoded1->response->status == 'ERROR') {
-            die($decoded1->response->errormessage);
+
+        if (isset($result["grocy_version"]["Version"])) {
+            return $result["grocy_version"]["Version"];
         }
-        if (isset($decoded1["grocy_version"]["Version"])) {
-            return $decoded1["grocy_version"]["Version"];
-        }
-        die("Grocy did not provide version");
+        die("Grocy did not provide version number");
     }
     
     
-    // Add a Grocy product. Return: false if default best before date not set
+    /**
+     *
+     *  Adds a Grocy product.
+     * 
+     * @param  String id of product
+     * @param  int amount of product
+     * @param  String Date of best before Default: null (requests default BestBefore date from grocy)
+     * @param  String price of product Default: null
+     * @return false if default best before date not set
+     */
     public function purchaseProduct($id, $amount, $bestbefore = null, $price = null) {
         global $BBCONFIG;
         
         $daysBestBefore = 0;
-        $data           = array(
+        $data = array(
             'amount' => $amount,
             'transaction_type' => 'purchase'
         );
+
         if ($price != null) {
             $data['price'] = $price;
         }
@@ -228,26 +263,16 @@ class API {
             $data['best_before_date'] = self::formatBestBeforeDays($daysBestBefore);
         }
         $data_json = json_encode($data);
-        
-        
-        $apiurl = $BBCONFIG["GROCY_API_URL"] . API_STOCK . "/" . $id . "/add";
-        
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $apiurl);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'GROCY-API-KEY: ' . $BBCONFIG["GROCY_API_KEY"],
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($data_json)
-        ));
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($ch);
-        curl_close($ch);
-        if ($response === false) {
+
+        $apiurl = API_STOCK . "/" . $id . "/add";
+
+        $curl = new CurlGenerator($apiurl, METHOD_POST, $data_json);
+        try {
+            $curl->execute();
+        } catch (InvalidServerResponseException $e) {
             die("Error purchasing product");
         }
-        
+
         if ($BBCONFIG["SHOPPINGLIST_REMOVE"]) {
             self::removeFromShoppinglist($id, $amount);
         }
@@ -256,56 +281,49 @@ class API {
     
     
     
-    //Removes an item from the default shoppinglist
-    private function removeFromShoppinglist($productid, $amount) {
-        global $BBCONFIG;
-        $data      = array(
+    /**
+     *
+     * Removes an item from the default shoppinglist
+     * 
+     * @param  String product id
+     * @param  Int amount
+     * @return none
+     */
+    public function removeFromShoppinglist($productid, $amount) {
+        $data      = json_encode(array(
             'product_id' => $productid,
             'product_amount' => $amount
-        );
-        $data_json = json_encode($data);
-        $apiurl    = $BBCONFIG["GROCY_API_URL"] . API_SHOPPINGLIST . "remove-product";
-        
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $apiurl);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'GROCY-API-KEY: ' . $BBCONFIG["GROCY_API_KEY"],
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($data_json)
         ));
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($ch);
-        curl_close($ch);
-        if ($response === false) {
+        $apiurl = API_SHOPPINGLIST . "remove-product";
+
+        $curl = new CurlGenerator($apiurl, METHOD_POST, $data);
+        try {
+            $curl->execute();
+        } catch (InvalidServerResponseException $e) {
             die("Error removing from shoppinglist");
         }
     }
     
-    
-    //Adds a product to the default shoppinglist
+ 
+    /**
+     *
+     * Adds an item to the default shoppinglist
+     * 
+     * @param  String product id
+     * @param  Int amount
+     * @return none
+     */
     public function addToShoppinglist($productid, $amount) {
-        global $BBCONFIG;
-        $data      = array(
+        $data      = json_encode(array(
             'product_id' => $productid,
             'product_amount' => $amount
-        );
-        $data_json = json_encode($data);
-        $apiurl    = $BBCONFIG["GROCY_API_URL"] . API_SHOPPINGLIST . "add-product";
-        $ch        = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $apiurl);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'GROCY-API-KEY: ' . $BBCONFIG["GROCY_API_KEY"],
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($data_json)
         ));
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($ch);
-        curl_close($ch);
-        if ($response === false) {
+        $apiurl = API_SHOPPINGLIST . "add-product";
+
+        $curl = new CurlGenerator($apiurl, METHOD_POST, $data);
+        try {
+            $curl->execute();
+        } catch (InvalidServerResponseException $e) {
             die("Error adding to shoppinglist");
         }
     }
@@ -313,35 +331,30 @@ class API {
     
     
     
-    // Consume a Grocy product
-    public function consumeProduct($id, $amount, $spoiled = "false") {
-        global $BBCONFIG;
-        $data      = array(
+   /**
+    * Consumes a product
+    * 
+    * @param  int id
+    * @param  int amount
+    * @param  boolean set true if product was spoiled. Default: false 
+    * @return none
+    */
+    public function consumeProduct($id, $amount, $spoiled = false) {
+
+        $data      = json_encode(array(
             'amount' => $amount,
             'transaction_type' => 'consume',
             'spoiled' => $spoiled
-        );
-        $data_json = json_encode($data);
+        ));
         
         $apiurl = $BBCONFIG["GROCY_API_URL"] . API_STOCK . "/" . $id . "/consume";
-        
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $apiurl);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'GROCY-API-KEY: ' . $BBCONFIG["GROCY_API_KEY"],
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($data_json)
-        ));
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($ch);
-        curl_close($ch);
-        if ($response === false) {
+
+        $curl = new CurlGenerator($apiurl, METHOD_POST, $data);
+        try {
+            $curl->execute();
+        } catch (InvalidServerResponseException $e) {
             die("Error consuming product");
         }
-        return $response;
-        
     }
     
     // Add a barcode number to a Grocy product

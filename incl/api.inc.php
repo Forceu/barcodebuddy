@@ -357,29 +357,24 @@ class API {
         }
     }
     
-    // Add a barcode number to a Grocy product
+    /**
+     * Sets barcode to a Grocy product (replaces all old ones,
+     *  so make sure to request them first)
+     * @param int product id
+     * @param String barcode(s) to set
+     */
     public function setBarcode($id, $barcode) {
-        global $BBCONFIG;
-        
-        $data      = array(
+
+        $data      = json_encode(array(
             'barcode' => $barcode
-        );
-        $data_json = json_encode($data);
-        $apiurl    = $BBCONFIG["GROCY_API_URL"] . API_PRODUCTS . "/" . $id;
-        
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $apiurl);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'GROCY-API-KEY: ' . $BBCONFIG["GROCY_API_KEY"],
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($data_json)
         ));
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($ch);
-        curl_close($ch);
-        if ($response === false) {
+
+        $apiurl    = API_PRODUCTS . "/" . $id;
+
+        $curl = new CurlGenerator($apiurl, METHOD_PUT, $data);
+        try {
+            $curl->execute();
+        } catch (InvalidServerResponseException $e) {
             die("Error setting barcode");
         }
     }

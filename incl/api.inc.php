@@ -25,6 +25,8 @@
  */
 
 
+require_once __DIR__ . "/config.php";
+
 const API_PRODUCTS       = 'objects/products';
 const API_SHOPPINGLIST   = 'stock/shoppinglist/';
 const API_CHORES         = 'objects/chores';
@@ -34,81 +36,92 @@ const API_SYTEM_INFO     = 'system/info';
 
 const MIN_GROCY_VERSION  = "2.5.1";
 
-//TODO
-/* class CurlGenerator {
-    private $ch = null;
-    
-    function __construct($url, $apikey) {
-	$this->ch = curl_init();
-        curl_setopt($this->ch, CURLOPT_URL, $url);
-        curl_setopt($this->ch, CURLOPT_HTTPHEADER, array(
-            'GROCY-API-KEY: ' . $apikey
-        ));
-        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
-    }
 
-   function execute() {
-	$result = curl_exec($this->ch);
+const METHOD_GET         = "GET";
+const METHOD_PUT         = "PUT";
+const METHOD_POST        = "POST";
+
+class InvalidServerResponseException extends Exception { }
+class InvalidJsonResponseException   extends Exception { }
+
+class CurlGenerator {
+    private $ch = null;
+    private $method = METHOD_GET;
+    
+    function __construct($url, $method = METHOD_GET, $jasonData = null) {
+        global $BBCONFIG;
+        
+        $this->method = $method;
+        $this->ch     = curl_init();
+
+        $headerArray = array(
+            'GROCY-API-KEY: ' . $BBCONFIG["GROCY_API_KEY"]
+        );
+        if ($jasonData != null) {
+            array_push($headerArray, 'Content-Type: application/json');
+            array_push($headerArray, 'Content-Length: ' . strlen($jasonData));
+            curl_setopt($this->ch, CURLOPT_POSTFIELDS, $jasonData);
+        }
+        
+        curl_setopt($this->ch, CURLOPT_URL, $BBCONFIG["GROCY_API_URL"] . $url);
+        curl_setopt($this->ch, CURLOPT_HTTPHEADER, $headerArray);
+        curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, $this->method);
+        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, 0);
+        curl_setopt($this->ch, CURLOPT_TIMEOUT, CURL_TIMEOUT_S);
+    }
+    
+    function execute($decode = false) {
+        $curlResult = curl_exec($this->ch);
         curl_close($this->ch);
-	return $result;
-   }
+        if ($curlResult === false)
+            throw new InvalidServerResponseException();
+        if ($decode) {
+            $jsonDecoded = json_decode($curlResult, true);
+            if (isset($jsonDecoded->response->status) && $jsonDecoded->response->status == 'ERROR') {
+                throw new InvalidJsonResponseException($jsonDecoded->response->errormessage);
+            }
+            return $jsonDecoded;
+        } else
+            return $curlResult;
+    }
 }
-*/ 
 
 class API {
     
     // Getting info of a Grocy product. If no argument is passed, all products are requested
     public function getProductInfo($productId = "") {
-        global $BBCONFIG;
-        
+
         if ($productId == "") {
-            $apiurl = $BBCONFIG["GROCY_API_URL"] . API_PRODUCTS;
+            $apiurl = API_PRODUCTS;
         } else {
-            $apiurl = $BBCONFIG["GROCY_API_URL"] . API_PRODUCTS . "/" . $productId;
+            $apiurl = API_PRODUCTS . "/" . $productId;
         }
-        
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $apiurl);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'GROCY-API-KEY: ' . $BBCONFIG["GROCY_API_KEY"]
-        ));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $curl_response = curl_exec($ch);
-        curl_close($ch);
-        if ($curl_response === false) {
+
+        $curl = new CurlGenerator($apiurl);
+        try {
+            $result = $curl->execute(true);
+        } catch (InvalidServerResponseException $e) {
             die("Error getting product info");
+        } catch (InvalidJsonResponseException $e) {
+            die("Error parsing product info");
         }
-        
-        $decoded1 = json_decode($curl_response, true);
-        if (isset($decoded1->response->status) && $decoded1->response->status == 'ERROR') {
-            die('Error occured: ' . $decoded1->response->errormessage);
-        }
-        return $decoded1;
+        return $result;
     }
     
     
     // Set a Grocy product to "opened"
     public function openProduct($id) {
-        global $BBCONFIG;
-        $data      = array(
+
+        $data      = json_encode(array(
             'amount' => "1"
-        );
-        $data_json = json_encode($data);
-        
-        $apiurl = $BBCONFIG["GROCY_API_URL"] . API_STOCK . "/" . $id . "/open";
-        $ch     = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $apiurl);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'GROCY-API-KEY: ' . $BBCONFIG["GROCY_API_KEY"],
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($data_json)
         ));
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($ch);
-        curl_close($ch);
-        if ($response === false) {
+        $apiurl = API_STOCK . "/" . $id . "/open";
+
+        $curl = new CurlGenerator($apiurl, METHOD_POST, $data);
+        try {
+            $curl->execute();
+        } catch (InvalidServerResponseException $e) {
             die("Error opening product");
         }
     }

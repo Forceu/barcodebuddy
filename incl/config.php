@@ -30,6 +30,10 @@ const DATABASE_PATH = __DIR__ . '/../barcodebuddy.db';
 //Enable debug output
 const IS_DEBUG      = false;
 
+
+//Set timeout for CURL
+const CURL_TIMEOUT_S  = 20;
+
 //Enable debug as well if file "debug" exists in this directory
 if (IS_DEBUG || file_exists(__DIR__ ."debug")) {
     ini_set('display_errors', 1);

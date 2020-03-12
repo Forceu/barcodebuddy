@@ -156,7 +156,7 @@ function processUnknownBarcode($barcode, $websocketEnabled) {
     } else {
         $productname = "N/A";
         if (is_numeric($barcode)) {
-            $productname = API::lookupNameByBarcode($barcode);
+            $productname = API::lookupNameByBarcodeInOpenFoodFacts($barcode);
         }
         if ($productname != "N/A") {
             outputLog("Unknown barcode looked up, found name: " . $productname . ". Barcode: " . $barcode, EVENT_TYPE_ADD_NEW_BARCODE, false, $websocketEnabled, 1, $productname);

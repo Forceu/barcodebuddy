@@ -381,7 +381,11 @@ class API {
     
     
     
-    // Formats the amount of days into future date
+    /**
+     * Formats the amount of days into future date
+     * @param  [int] $days  Amount of days a product is consumable, or -1 if it does not expire
+     * @return [String]     Formatted date
+     */
     private function formatBestBeforeDays($days) {
         if ($days == "-1") {
             return "2999-12-31";
@@ -391,7 +395,11 @@ class API {
         }
     }
     
-    // Get default best before in days from a Grocy product
+    /**
+     * Retrieves the default best before date for a product
+     * @param  [int] $id Product id
+     * @return [int]     Amount of days or -1 if it does not expire
+     */
     private function getDefaultBestBeforeDays($id) {
         $info = self::getProductInfo($id);
         $days = $info["default_best_before_days"];
@@ -400,67 +408,63 @@ class API {
     }
     
     
-    // Look up a barcode using openfoodfacts
-    public function lookupNameByBarcode($barcode) {
+    /**
+     * Look up a barcode using openfoodfacts
+     * @param  [String] $barcode Input barcode
+     * @return [String]          Returns product name or "N/A" if not found
+     */
+    public function lookupNameByBarcodeInOpenFoodFacts($barcode) {
         
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://world.openfoodfacts.org/api/v0/product/" . $barcode . ".json");
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($ch);
-        if ($response === false) {
-            die("Error looking up barcode from OFF.");
+        $url = "https://world.openfoodfacts.org/api/v0/product/" . $barcode . ".json";
+
+        $curl = new CurlGenerator($url, METHOD_GET, null, null, true);
+        try {
+            $result = $curl->execute(true);
+        } catch (InvalidServerResponseException $e) {
+            die ("Could not connect to Open Food Facts.");
+        } catch (InvalidJsonResponseException $e) {
+            die ($e->getMessage());
         }
-        curl_close($ch);
-        
-        if (strpos($response, 'product not found') !== false) {
-            return "N/A";
-        } else {
-            $decoded1 = json_decode($response, true);
-            if (isset($decoded1->response->status) && $decoded1->response->status == 'ERROR') {
-                die('Error occured: ' . $decoded1->response->errormessage);
-            }
-            if (isset($decoded1["product"]["generic_name"]) && $decoded1["product"]["generic_name"] != "") {
-                return sanitizeString($decoded1["product"]["generic_name"]);
-            }
-            if (isset($decoded1["product"]["product_name"]) && $decoded1["product"]["product_name"] != "") {
-                return sanitizeString($decoded1["product"]["product_name"]);
-            }
+        if (!isset($result["status"]) || $result["status"] !== 1) {
             return "N/A";
         }
+        if (isset($result["product"]["generic_name"]) && $result["product"]["generic_name"] != "") {
+            return sanitizeString($result["product"]["generic_name"]);
+        }
+        if (isset($result["product"]["product_name"]) && $result["product"]["product_name"] != "") {
+            return sanitizeString($result["product"]["product_name"]);
+        }
+        return "N/A";
     }
     
     
-    // Get a Grocy product by barcode
+    /**
+     * Get a Grocy product by barcode
+     * @param  [String] $barcode barcode to lookup
+     * @return [Array]           Array if product info or null if barcode
+     *                           is not associated with a product
+     */
     public function getProductByBardcode($barcode) {
-        global $BBCONFIG;
         
-        $apiurl = $BBCONFIG["GROCY_API_URL"] . API_STOCK . "/by-barcode/" . $barcode;
-        
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $apiurl);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'GROCY-API-KEY: ' . $BBCONFIG["GROCY_API_KEY"]
-        ));
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($ch);
-        curl_close($ch);
-        if ($response === false) {
-            die("Error looking up product by barcode");
+        $apiurl = API_STOCK . "/by-barcode/" . $barcode;
+
+
+        $curl = new CurlGenerator($apiurl);
+        try {
+            $result = $curl->execute(true);
+        } catch (InvalidServerResponseException $e) {
+            die ("Error looking up product by barcode");
+        } catch (InvalidJsonResponseException $e) {
+            die ($e->getMessage());
         }
         
-        $decoded1 = json_decode($response, true);
-        if (isset($decoded1->response->status) && $decoded1->response->status == 'ERROR') {
-            die('Error occured: ' . $decoded1->response->errormessage);
-        }
-        if (isset($decoded1["product"]["id"])) {
-            checkIfNumeric($decoded1["product"]["id"]);
+        if (isset($result["product"]["id"])) {
+            checkIfNumeric($result["product"]["id"]);
             $resultArray                = array();
-            $resultArray["id"]          = $decoded1["product"]["id"];
-            $resultArray["name"]        = sanitizeString($decoded1["product"]["name"]);
-            $resultArray["unit"]        = sanitizeString($decoded1["quantity_unit_stock"]["name"]);
-            $resultArray["stockAmount"] = sanitizeString($decoded1["stock_amount"]);
+            $resultArray["id"]          = $result["product"]["id"];
+            $resultArray["name"]        = sanitizeString($result["product"]["name"]);
+            $resultArray["unit"]        = sanitizeString($result["quantity_unit_stock"]["name"]);
+            $resultArray["stockAmount"] = sanitizeString($result["stock_amount"]);
             if ($resultArray["stockAmount"] == null) {
                 $resultArray["stockAmount"] = "0";
             }
@@ -472,148 +476,54 @@ class API {
     
     
     
-    // Getting info of a Grocy chore. If no argument is passed, all products are requested
+    /**
+     * Getting info of a Grocy chore
+     * @param  string $choreId  Chore ID. If not passed, all chores are looked up
+     * @return [array]          Either chore if ID, or all chores
+     */
     public function getChoresInfo($choreId = "") {
-        global $BBCONFIG;
         
         if ($choreId == "") {
-            $apiurl = $BBCONFIG["GROCY_API_URL"] . API_CHORES;
+            $apiurl = API_CHORES;
         } else {
-            $apiurl = $BBCONFIG["GROCY_API_URL"] . API_CHORES . "/" . $choreId;
+            $apiurl = API_CHORES . "/" . $choreId;
         }
         
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $apiurl);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'GROCY-API-KEY: ' . $BBCONFIG["GROCY_API_KEY"]
-        ));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $curl_response = curl_exec($ch);
-        curl_close($ch);
-        if ($curl_response === false) {
-            die("Error getting chore info");
+        $curl = new CurlGenerator($apiurl);
+        try {
+            $result = $curl->execute(true);
+        } catch (InvalidServerResponseException $e) {
+            die ("Could not get chore info");
+        } catch (InvalidJsonResponseException $e) {
+            die ($e->getMessage());
         }
-        
-        $decoded1 = json_decode($curl_response, true);
-        if (isset($decoded1->response->status) && $decoded1->response->status == 'ERROR') {
-            die('Error occured: ' . $decoded1->response->errormessage);
-        }
-        return $decoded1;
+        return $result;
     }
     
     
-    // Getting info of a Grocy chore. If no argument is passed, all products are requested
+    /**
+     * Executes a Grocy chore
+     * @param  [int] $choreId Chore id
+     */
     public function executeChore($choreId) {
-        global $BBCONFIG;
         
-        $apiurl    = $BBCONFIG["GROCY_API_URL"] . API_CHORE_EXECUTE . $choreId . "/execute";
-        $data      = array(
+        $apiurl    = API_CHORE_EXECUTE . $choreId . "/execute";
+        $data      = json_encode(array(
             'tracked_time' => "",
             'done_by' => ""
-        );
-        $data_json = json_encode($data);
-        
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $apiurl);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'GROCY-API-KEY: ' . $BBCONFIG["GROCY_API_KEY"],
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($data_json)
         ));
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $curl_response = curl_exec($ch);
-        curl_close($ch);
-        if ($curl_response === false) {
-            die("Error getting chore info");
+
+
+        $curl = new CurlGenerator($apiurl, METHOD_POST, $data);
+        try {
+            $result = $curl->execute(true);
+        } catch (InvalidServerResponseException $e) {
+            die ("Could not execute chore");
+        } catch (InvalidJsonResponseException $e) {
+            die ($e->getMessage());
         }
-        
-        $decoded1 = json_decode($curl_response, true);
-        if (isset($decoded1->response->status) && $decoded1->response->status == 'ERROR') {
-            die('Error occured: ' . $decoded1->response->errormessage);
-        }
-        return $decoded1;
     }
     
 }
-
-
-/* Legacy code for Grocy <2.5.0
-function removeFromShoppinglist($productid, $amount) {
-$items = getShoppingList();
- foreach ($items as $item) {
-	$deleteItem = false;
-	if (isset($item["product_id"]) && $item["product_id"]==$productid) {
-		$modified = true;
-		$remaining = ($item["amount"] - $amount);
-		if ($remaining <1) {
-			deleteShoppingListItem($item["id"]);
-		} else {
-			setShoppingListItemAmount($item["id"],$remaining);
-		}
-	}
-}
-}
-
-function setShoppingListItemAmount($itemid, $remaining) {
- global $BBCONFIG;
-     $data      = array(
-        'amount' => $remaining
-    );
-    $data_json = json_encode($data);
-    $apiurl = $BBCONFIG["GROCY_API_URL"].API_SHOPPINGLIST."/".$itemid;
-    
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $apiurl);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. $BBCONFIG["GROCY_API_KEY"],'Content-Type: application/json','Content-Length: '.strlen($data_json)));
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $response = curl_exec($ch);
-    curl_close($ch);
-    if ($response === false) {
-       die("Error setting barcode");
-    }
-}
-
-function deleteShoppingListItem($itemid) {
-  global $BBCONFIG;
-
-        $apiurl = $BBCONFIG["GROCY_API_URL"].API_SHOPPINGLIST."/".$itemid;
-    
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $apiurl);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. $BBCONFIG["GROCY_API_KEY"]));
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-    $curl_response = curl_exec($ch);
-    curl_close($ch);
-    if ($curl_response === false) {
-        die("Error deleting shopping list item");
-    }
-}
-
-function getShoppingList() {
-    global $BBCONFIG;
-
-        $apiurl = $BBCONFIG["GROCY_API_URL"].API_SHOPPINGLIST;
-    
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $apiurl);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('GROCY-API-KEY: '. $BBCONFIG["GROCY_API_KEY"]));
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $curl_response = curl_exec($ch);
-    curl_close($ch);
-    if ($curl_response === false) {
-        die("Error getting shoppinglist");
-    }
-    
-    $decoded1 = json_decode($curl_response, true);
-    if (isset($decoded1->response->status) && $decoded1->response->status == 'ERROR') {
-        die('Error occured: ' . $decoded1->response->errormessage);
-    }
-    return $decoded1;
-} */
 
 ?>

@@ -23,13 +23,12 @@
  * @since      File available since Release 1.0
  */
 
-// It highly recommended to disallow downloads of this file
-const DATABASE_PATH = __DIR__ . '/../barcodebuddy.db';
-
-
 //Enable debug output
 const IS_DEBUG      = false;
 
+
+//Make sure to disallow reading the file in your webserver!
+const DATABASE_PATH = __DIR__ . '/../data/barcodebuddy.db';
 
 //Set timeout for CURL
 const CURL_TIMEOUT_S  = 20;

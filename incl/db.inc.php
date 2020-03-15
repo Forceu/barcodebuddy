@@ -45,7 +45,7 @@ const SECTION_KNOWN_BARCODES   = "known";
 const SECTION_UNKNOWN_BARCODES = "unknown";
 const SECTION_LOGS             = "log";
 
-
+const LEGACY_DATABASE_PATH = __DIR__ . '/../barcodebuddy.db';
 
 // Creates a database connection and offers DB functions
 class DatabaseConnection {
@@ -155,12 +155,43 @@ private $db = null;
                 die("DB Error: Database file is not writable");
             }
         } else {
+            self::createDbDirectory();
+            self::checkAndMoveIfOldDbLocation();
             if (!is_writable(dirname(DATABASE_PATH))) {
-                die("DB Error: Database file cannot be created, as folder is not writable. Please check your permissions.<br>
-                 Have a look at this link to find out how to do this:
-                 <a href='https://github.com/olab/Open-Labyrinth/wiki/How-do-I-make-files-and-folders-writable-for-the-web-server%3F'>" . "How do I make files and folders writable for the web server?</a>");
+                self::showErrorNotWritable("DB Error Not_Writable");
             }
         }
+    }
+
+    private function showErrorNotWritable($error="DB Error") {
+        die($error . ": Database file cannot be created, as folder is not writable. Please check your permissions.<br>
+                 Have a look at this link to find out how to do this:
+                 <a href='https://github.com/olab/Open-Labyrinth/wiki/How-do-I-make-files-and-folders-writable-for-the-web-server%3F'>" . "How do I make files and folders writable for the web server?</a>");
+    }
+
+    private function createDbDirectory() {
+        $dirName = dirname(DATABASE_PATH);
+        if (!file_exists($dirName)) {
+            $couldCreateDir = mkdir($dirName, 0700, true);
+            if (!$couldCreateDir) {
+                self::showErrorNotWritable("DB Error Could_Not_Create_Dir"); 
+            }
+        }
+    }
+
+    /**
+     * Since BB 1.3.2 the database is in the /data/ folder.
+     * If there is an old database, create the new folder and move it there. 
+     */
+    private function checkAndMoveIfOldDbLocation() {
+        //If only old db exists, create directory and move file
+        if (file_exists(LEGACY_DATABASE_PATH) && !file_exists(DATABASE_PATH)) {
+            self::createDbDirectory();
+            $couldMove = rename(LEGACY_DATABASE_PATH, DATABASE_PATH);
+            if (!couldMove) {
+                self::showErrorNotWritable("DB Error Could_Not_Move");
+            }
+       }
     }
     
     //Is called after updating Barcode Buddy to a new version

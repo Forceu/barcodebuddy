@@ -34,6 +34,13 @@ require_once __DIR__ . "/incl/db.inc.php";
 if (!$BBCONFIG["WS_USE"]) {
    die("Please enable websockets in the settings first!");
 }
+
+if ($BBCONFIG["WS_SSL_USE"]) {
+    $socketUrl = $BBCONFIG["WS_SSL_URL"];
+} else {
+    $socketUrl = "ws://".$_SERVER["SERVER_ADDR"].":".$BBCONFIG["WS_PORT_EXT"]."/screen";
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -122,13 +129,7 @@ if (!$BBCONFIG["WS_USE"]) {
         }
       }
 
-      var ws = new WebSocket( <?php
-	 if (!$BBCONFIG["WS_SSL_USE"]) {
-             echo "'ws://".$_SERVER["SERVER_NAME"].":".$BBCONFIG["WS_PORT_EXT"]."/screen');";
-	 } else {
-             echo "'".$BBCONFIG["WS_SSL_URL"]."');";
-	 }
-      ?> 
+      var ws = new WebSocket( <?php echo "'".$socketUrl."'"    ?> ); 
       ws.onopen = function() {
         document.body.style.backgroundColor = '#b9ffad';
         document.getElementById('title').textContent = 'Connected';
@@ -143,7 +144,7 @@ if (!$BBCONFIG["WS_USE"]) {
       ws.onclose = function() {
         document.body.style.backgroundColor = '#f9868b';
         document.getElementById('title').textContent = 'Disconnected';
-        document.getElementById('subtitle').textContent = 'Please check connection';
+        document.getElementById('subtitle').textContent = 'Please check connection: <?php echo $socketUrl ?>';
       };
       ws.onmessage = function(event) {
 	var resultJson = JSON.parse(event.data);

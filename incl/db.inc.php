@@ -130,6 +130,10 @@ private $db = null;
             die("DB Error: Could not get configuration");
         }
         $BBCONFIG["GROCY_BASE_URL"] = strrtrim($BBCONFIG["GROCY_API_URL"], "api/");
+        if (IS_DOCKER) {
+            $BBCONFIG["WS_USE" ] = "1";
+            $BBCONFIG["WS_PORT" ] = "47631";
+        }
     }
     
     //Sets the config key with new value

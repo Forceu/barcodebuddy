@@ -75,13 +75,18 @@ function switchElements() {
 	    var wssslurl = document.getElementById("websocket_ssl_url");
 	    var wssfs = document.getElementById("websocket_fullscreen");
 
-	      wspint.disabled = !wsuse.checked;
-	      wspint.disabled = !wsuse.checked;
-	      wssfs.disabled =  !wsuse.checked;
-	      wspext.disabled = !(wsuse.checked && !wsssluse.checked);
+	      wsuse.disabled    = IS_DOCKER;
+	      wspint.disabled   = !wsuse.checked || IS_DOCKER;
+	      wssfs.disabled    = !wsuse.checked;
+	      wspext.disabled   = !(wsuse.checked && !wsssluse.checked);
 	      wsssluse.disabled = !wsuse.checked;
 	      wssslurl.disabled = !(wsuse.checked && wsssluse.checked);
 	try {
+	   if (wsuse.disabled) {
+	      wsuse.parentElement.MaterialCheckbox.disable();
+	   } else {
+	      wsuse.parentElement.MaterialCheckbox.enable();
+	   }
 	   if (wsssluse.disabled) {
 	      wsssluse.parentElement.MaterialCheckbox.disable();
 	   } else {

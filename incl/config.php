@@ -27,6 +27,7 @@
 const IS_DEBUG      = false;
 
 
+// If true, websockets cannot be disabled and internal port cannot be changed
 const IS_DOCKER     = false;
 
 

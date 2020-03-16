@@ -291,7 +291,7 @@ function getHtmlSettingsWebsockets() {
 return  '<form name="settingsform_3" id="settingsform_3">
 
 	<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="websocket_use">
-		  <input type="checkbox" value="1" name="WS_USE" onChange="switchElements()"  id="websocket_use" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["WS_USE"]).'>
+		  <input type="checkbox" value="1" name="WS_USE" onChange="switchElements()"  id="websocket_use" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["WS_USE"] || IS_DOCKER).'>
 		  <span class="mdl-checkbox__label">Use websockets</span>
 		</label> <br>
  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -311,7 +311,7 @@ return  '<form name="settingsform_3" id="settingsform_3">
     <label class="mdl-textfield__label" for="websocket_ssl_url">External websocket URL</label>
   </div><br>
 <div id="progressbar" style="display:none" class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div></form>
-
+    <script> var IS_DOCKER = ' . var_export(IS_DOCKER, true) . ' </script>
 ';
 }
 

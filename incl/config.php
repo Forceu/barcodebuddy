@@ -27,6 +27,9 @@
 const IS_DEBUG      = false;
 
 
+const IS_DOCKER     = false;
+
+
 //Make sure to disallow reading the file in your webserver!
 const DATABASE_PATH = __DIR__ . '/../data/barcodebuddy.db';
 

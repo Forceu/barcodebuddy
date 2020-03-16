@@ -26,7 +26,12 @@
 
 
 require_once __DIR__ . '/incl/config.php';
-require_once __DIR__ . '/incl/db.inc.php';
+
+if (!IS_DOCKER)
+    require_once __DIR__ . '/incl/db.inc.php';
+else {
+    $BBCONFIG = array("WS_PORT" => "47631");
+}
 require_once __DIR__ . '/incl/websocketconnection.inc.php';
 
 const ENABLE_STATISTICS = false;

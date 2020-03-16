@@ -291,7 +291,7 @@ function getHtmlSettingsWebsockets() {
 return  '<form name="settingsform_3" id="settingsform_3">
 
 	<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="websocket_use">
-		  <input type="checkbox" value="1" name="WS_USE" onChange="switchElements()"  id="websocket_use" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["WS_USE"] || IS_DOCKER).'>
+		  <input type="checkbox" value="1" name="WS_USE" onChange="switchWebsocketCheckboxes()"  id="websocket_use" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["WS_USE"] || IS_DOCKER).'>
 		  <span class="mdl-checkbox__label">Use websockets</span>
 		</label> <br>
  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -303,7 +303,7 @@ return  '<form name="settingsform_3" id="settingsform_3">
     <label class="mdl-textfield__label" for="websocket_port_external">Websocket Port External</label>
   </div><br><br>
   <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="websocket_ssl_use">
-		  <input type="checkbox" value="1" name="WS_SSL_USE" onChange="switchElements()" id="websocket_ssl_use" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["WS_SSL_USE"]).'>
+		  <input type="checkbox" value="1" name="WS_SSL_USE" onChange="switchWebsocketCheckboxes()" id="websocket_ssl_use" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["WS_SSL_USE"]).'>
 		  <span class="mdl-checkbox__label">Use SSL proxy</span>
 		</label><br>
  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">

@@ -67,13 +67,13 @@ function testWebsocket(server, isHttps) {
 }
 
 
-function switchElements() {
-	    var wsuse = document.getElementById("websocket_use");
-	    var wspint = document.getElementById("websocket_port_internal");
-	    var wspext = document.getElementById("websocket_port_external");
+function switchWebsocketCheckboxes() {
+	    var wsuse    = document.getElementById("websocket_use");
+	    var wspint   = document.getElementById("websocket_port_internal");
+	    var wspext   = document.getElementById("websocket_port_external");
 	    var wsssluse = document.getElementById("websocket_ssl_use");
 	    var wssslurl = document.getElementById("websocket_ssl_url");
-	    var wssfs = document.getElementById("websocket_fullscreen");
+	    var wssfs    = document.getElementById("websocket_fullscreen");
 
 	      wsuse.disabled    = IS_DOCKER;
 	      wspint.disabled   = !wsuse.checked || IS_DOCKER;

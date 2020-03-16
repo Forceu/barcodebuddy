@@ -206,7 +206,7 @@ class WebUiGenerator {
         }
                 
         if ($this->menu == MENU_SETTINGS) {
-            $this->htmlOutput = $this->htmlOutput . '<script> switchElements(); </script> ';           
+            $this->htmlOutput = $this->htmlOutput . '<script> switchWebsocketCheckboxes(); </script> ';           
         }
 
         if ($this->menu == MENU_MAIN) {

@@ -69,14 +69,12 @@ function testWebsocket(server, isHttps) {
 
 function switchWebsocketCheckboxes() {
 	    var wsuse    = document.getElementById("websocket_use");
-	    var wspint   = document.getElementById("websocket_port_internal");
 	    var wspext   = document.getElementById("websocket_port_external");
 	    var wsssluse = document.getElementById("websocket_ssl_use");
 	    var wssslurl = document.getElementById("websocket_ssl_url");
 	    var wssfs    = document.getElementById("websocket_fullscreen");
 
 	      wsuse.disabled    = IS_DOCKER;
-	      wspint.disabled   = !wsuse.checked || IS_DOCKER;
 	      wssfs.disabled    = !wsuse.checked;
 	      wspext.disabled   = !(wsuse.checked && !wsssluse.checked);
 	      wsssluse.disabled = !wsuse.checked;
@@ -101,12 +99,6 @@ function switchWebsocketCheckboxes() {
 	      wssslurl.parentElement.MaterialTextfield.disable();
 	   } else {
 	      wssslurl.parentElement.MaterialTextfield.enable();
-	   }
-
-	   if (wspint.disabled) {
-	      wspint.parentElement.MaterialTextfield.disable();
-	   } else {
-	      wspint.parentElement.MaterialTextfield.enable();
 	   }
 	   if (wspext.disabled) {
 	      wspext.parentElement.MaterialTextfield.disable();

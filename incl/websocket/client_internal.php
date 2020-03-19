@@ -24,6 +24,7 @@
  *
  */
 
+require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../websocketconnection.inc.php';
 require_once __DIR__ . '/../processing.inc.php';
 
@@ -37,7 +38,7 @@ function sendWSResult($resultValue, $name) {
         require_once __DIR__ . '/php-websocket-1.0/class.websocket_client.php';
         $client = new WebsocketClient;
     }
-        if ($client->connect('127.0.0.1', $BBCONFIG["WS_PORT"], '/screen')) {
+        if ($client->connect('127.0.0.1', PORT_WEBSOCKET_SERVER, '/screen')) {
             $payload = json_encode(array(
                 'action' => 'echo',
                 'data' => $resultValue . $name
@@ -56,7 +57,7 @@ function sendNewState($newState) {
         require_once __DIR__ . '/php-websocket-1.0/class.websocket_client.php';
         $client = new WebsocketClient;
     }
-        if ($client->connect('127.0.0.1', $BBCONFIG["WS_PORT"], '/screen')) {
+        if ($client->connect('127.0.0.1', PORT_WEBSOCKET_SERVER, '/screen')) {
             $payload = json_encode(array(
                 'action' => 'setmode',
                 'data' => stateToString($newState)

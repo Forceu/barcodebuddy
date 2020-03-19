@@ -23,19 +23,23 @@
  * @since      File available since Release 1.0
  */
 
-//Enable debug output
-const IS_DEBUG      = false;
+
+//Port for websocket server to use
+const PORT_WEBSOCKET_SERVER = 47631;
+
+//Make sure to disallow reading the file in your webserver!
+const DATABASE_PATH 		= __DIR__ . '/../data/barcodebuddy.db';
+
+//Set timeout for CURL
+const CURL_TIMEOUT_S  		= 20;
 
 
 // If true, websockets cannot be disabled and internal port cannot be changed
-const IS_DOCKER     = false;
+const IS_DOCKER     		= false;
 
+//Enable debug output
+const IS_DEBUG      		= false;
 
-//Make sure to disallow reading the file in your webserver!
-const DATABASE_PATH = __DIR__ . '/../data/barcodebuddy.db';
-
-//Set timeout for CURL
-const CURL_TIMEOUT_S  = 20;
 
 //Enable debug as well if file "debug" exists in this directory
 if (IS_DEBUG || file_exists(__DIR__ ."debug")) {

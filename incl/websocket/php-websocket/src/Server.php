@@ -67,7 +67,7 @@ class Server extends Socket
     public function __construct($host = 'localhost', $port = 8000)
     {
         parent::__construct($host, $port);
-        $this->log('Server created');
+        $this->log('Started BarcodeBuddy websocket server on port ' . $port);
     }
 
     /**

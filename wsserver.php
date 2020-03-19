@@ -26,12 +26,6 @@
 
 
 require_once __DIR__ . '/incl/config.php';
-
-if (!IS_DOCKER)
-    require_once __DIR__ . '/incl/db.inc.php';
-else {
-    $BBCONFIG = array("WS_PORT" => "47631");
-}
 require_once __DIR__ . '/incl/websocketconnection.inc.php';
 
 const ENABLE_STATISTICS = false;
@@ -51,7 +45,7 @@ if (isNewServerSupported()) {
         require __DIR__ . '/php-websocket/src/Application/StatusApplication.php';
     }
     
-    $server = new \Bloatless\WebSocket\Server('127.0.0.1', (int)$BBCONFIG["WS_PORT"]);
+    $server = new \Bloatless\WebSocket\Server('127.0.0.1', PORT_WEBSOCKET_SERVER);
     
     // server settings:
     $server->setMaxClients(100);
@@ -76,7 +70,7 @@ if (isNewServerSupported()) {
     $classLoader = new SplClassLoader('WebSocket', __DIR__ . '/incl/websocket/php-websocket-1.0/server/lib');
     $classLoader->register();
     
-    $server = new \WebSocket\Server('127.0.0.1', (int)$BBCONFIG["WS_PORT"], false);
+    $server = new \WebSocket\Server('127.0.0.1', PORT_WEBSOCKET_SERVER, false);
     
     // server settings:
     $server->setMaxClients(100);

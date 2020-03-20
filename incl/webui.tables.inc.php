@@ -24,6 +24,7 @@
  *
  */
 
+require_once __DIR__ . "/config.php"; 
 
 
 
@@ -287,10 +288,16 @@ return '<form name="settingsform_2" id="settingsform_2">
 		  </div></form>';
 }
 function getHtmlSettingsWebsockets() {
-    global $BBCONFIG;
-return  '<form name="settingsform_3" id="settingsform_3">
+    require_once __DIR__ . "/sse/websocket_client.php"; 
+    $sp = websocket_open('localhost', PORT_WEBSOCKET_SERVER, '', $errorstr, 5);
+    if ($sp !== false) {
+        return  '<form name="settingsform_3" id="settingsform_3"></form>
+            <span style="color:green">Websocket server is running.</span>';
+        } else {
+        return  '<form name="settingsform_3" id="settingsform_3"></form>
+            <span style="color:red">Websocket server is not running! '.$errorstr.'</span>';
+        }
 
-';
 }
 
 function getHtmlSettingsHiddenValues() {

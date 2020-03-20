@@ -27,16 +27,22 @@
 require_once __DIR__ . "/internalChecking.inc.php";
 
 function sendWebsocketMessage($resultText, $websocketEnabled, $resultCode = "0") {
-global $BBCONFIG;
-    if ($BBCONFIG["WS_USE"] && $websocketEnabled && isExtensionInstalled("sockets")) {
+    if ($websocketEnabled && isExtensionInstalled("sockets")) {
         require_once __DIR__ . "/websocket/client_internal.php";
         sendWSResult($resultCode, $resultText);
     }
 }
 
+
+function requestCurrentState() {
+    if (isExtensionInstalled("sockets")) {
+        require_once __DIR__ . "/websocket/client_internal.php";
+        requestSavedState();
+    }
+}
+
 function sendWebsocketStateChange($newState) {
-global $BBCONFIG;
-    if ($BBCONFIG["WS_USE"] && isExtensionInstalled("sockets")) {
+    if (isExtensionInstalled("sockets")) {
         require_once __DIR__ . "/websocket/client_internal.php";
         sendNewState($newState);
     }

@@ -66,15 +66,11 @@ const DEFAULT_VALUES      = array("DEFAULT_BARCODE_C"          => "BBUDDY-C",
 				 "DEFAULT_GROCY_API_KEY"       => null,
 				 "DEFAULT_LAST_BARCODE"        => null,
 				 "DEFAULT_LAST_PRODUCT"        => null,
-				 "DEFAULT_WS_USE"              => "0",
-				 "DEFAULT_WS_PORT_EXT"         => "47631",
-				 "DEFAULT_WS_SSL_USE"          => "0",
-				 "DEFAULT_WS_SSL_URL"          => null,
 				 "DEFAULT_WS_FULLSCREEN"       => "0",
 				 "DEFAULT_SHOPPINGLIST_REMOVE" => "1");
 
 
-const DB_INT_VALUES = array("REVERT_TIME", "WS_PORT_EXT");
+const DB_INT_VALUES = array("REVERT_TIME");
 
 private $db = null;
 

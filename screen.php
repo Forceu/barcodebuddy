@@ -29,17 +29,6 @@
 
 
 require_once __DIR__ . "/incl/config.php";
-require_once __DIR__ . "/incl/db.inc.php";
-
-if (!$BBCONFIG["WS_USE"]) {
-   die("Please enable websockets in the settings first!");
-}
-
-if ($BBCONFIG["WS_SSL_USE"]) {
-    $socketUrl = $BBCONFIG["WS_SSL_URL"];
-} else {
-    $socketUrl = "ws://".$_SERVER["SERVER_ADDR"].":".$BBCONFIG["WS_PORT_EXT"]."/screen";
-}
 
 ?>
 
@@ -129,52 +118,52 @@ if ($BBCONFIG["WS_SSL_USE"]) {
         }
       }
 
-      var ws = new WebSocket( <?php echo "'".$socketUrl."'"    ?> ); 
-      ws.onopen = function() {
-        document.body.style.backgroundColor = '#b9ffad';
-        document.getElementById('title').textContent = 'Connected';
-        document.getElementById('subtitle').textContent = 'Waiting for barcode...';
-	 var requestJson = {
-	    action: "getmode",
-	    data: ""
-	  };
-  	ws.send(JSON.stringify(requestJson));
-      };
+      if(typeof(EventSource) !== "undefined") {
+  var source = new EventSource("incl/sse/sse_data.php");
 
-      ws.onclose = function() {
+
+document.body.style.backgroundColor = '#b9ffad';
+document.getElementById('title').textContent = 'Connected';
+document.getElementById('subtitle').textContent = 'Waiting for barcode...';
+
+  source.onmessage = function(event) {
+       var resultJson = JSON.parse(event.data);
+            var resultCode = resultJson.data.substring(0, 1);
+            var resultText = resultJson.data.substring(1);  
+      switch(resultCode) {
+        case '0':
+        document.body.style.backgroundColor = '#47ac3f';
+        document.getElementById('title').textContent = 'Scan success';
+        document.getElementById('subtitle').textContent = resultText;
+        document.getElementById('beep_success').play();
+          break;
+        case '1':
+        document.body.style.backgroundColor = '#a2ff9b';
+        document.getElementById('title').textContent = 'Barcode looked up';
+        document.getElementById('subtitle').textContent = resultText;
+        document.getElementById('beep_success').play();
+          break;
+        case '2':
+        document.body.style.backgroundColor = '#eaff8a';
+        document.getElementById('title').textContent = 'Unknown barcode';
+        document.getElementById('subtitle').textContent = resultText;
+        document.getElementById('beep_nosuccess').play();
+          break;
+        case '4':
+        document.getElementById('mode').textContent = 'Current Mode: '+resultText;
+          break;
+        case 'E':
+        document.body.style.backgroundColor = '#f9868b';
+        document.getElementById('title').textContent = 'Error';
+        document.getElementById('subtitle').textContent = resultText;
+          break;
+      }
+  };
+} else {
         document.body.style.backgroundColor = '#f9868b';
         document.getElementById('title').textContent = 'Disconnected';
-        document.getElementById('subtitle').textContent = 'Please check connection: <?php echo $socketUrl ?>';
-      };
-      ws.onmessage = function(event) {
-	var resultJson = JSON.parse(event.data);
-        var resultCode = resultJson.data.substring(0, 1);
-        var resultText = resultJson.data.substring(1);	
-	switch(resultCode) {
-	  case '0':
-		document.body.style.backgroundColor = '#47ac3f';
-		document.getElementById('title').textContent = 'Scan success';
-		document.getElementById('subtitle').textContent = resultText;
-		document.getElementById('beep_success').play();
-	    break;
-	  case '1':
-		document.body.style.backgroundColor = '#a2ff9b';
-		document.getElementById('title').textContent = 'Barcode looked up';
-		document.getElementById('subtitle').textContent = resultText;
-		document.getElementById('beep_success').play();
-	    break;
-	  case '2':
-		document.body.style.backgroundColor = '#eaff8a';
-		document.getElementById('title').textContent = 'Unknown barcode';
-		document.getElementById('subtitle').textContent = resultText;
-		document.getElementById('beep_nosuccess').play();
-	    break;
-	  case '4':
-		document.getElementById('mode').textContent = 'Current Mode: '+resultText;
-	    break;
-	}
-      };
-
+        document.getElementById('subtitle').textContent = 'Sorry, your browser does not support server-sent events';
+}
     </script> 
     
   </body>

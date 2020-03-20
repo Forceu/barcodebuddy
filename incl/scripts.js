@@ -8,113 +8,8 @@ function enableButton(idSelect, idButtonAdd, idButtonConsume)
 		    oButtonConsume.disabled = oSelect.value == "0";
 		}
 
-function testWebsocket(server, isHttps) {
-    
-    var notification = document.querySelector('.mdl-js-snackbar');
-
-    var wsuse = document.getElementById("websocket_use");
-    if (!wsuse.checked) {
-		notification.MaterialSnackbar.showSnackbar(
-		  {
-		    message: 'Please enable websockets first',
-	  	    timeout: 2000
-		  }
-		);
-	return;
-    }
-
-    var url = null;
-    var wspint = document.getElementById("websocket_port_internal");
-    var wspext = document.getElementById("websocket_port_external");
-    var wsssluse = document.getElementById("websocket_ssl_use");
-    var wssslurl = document.getElementById("websocket_ssl_url");
-
-    if (wsssluse.checked) {
-	url = wssslurl.value;
-    } else {
-	if (isHttps) {
-		url = "wss://"+server+":"+wspext.value;
-	} else {
-		url = "ws://"+server+":"+wspext.value;
-	}
-    }
-  
-    var ws = new WebSocket(url);
-
-	var progressbar = document.getElementById("progressbar");
-	progressbar.style.display = 'block'; 
- 	ws.onclose = function (event) {
-		progressbar.style.display = 'none'; 
-		notification.MaterialSnackbar.showSnackbar(
-		  {
-		    message: 'Error! Could not connect to websocket! Please check your configuration.',
-	  	    timeout: 8000
-		  }
-		);
-		ws.close();
-	};
-        ws.onopen = function() {
-		progressbar.style.display = 'none'; 
-		notification.MaterialSnackbar.showSnackbar(
-		  {
-		    message: 'Sucessfully connected! You can use all websocket features.',
-	  	    timeout: 5000
-		  }
-		);
-		ws.onclose = null;
-		ws.close();
-      };
-}
-
-
-function switchWebsocketCheckboxes() {
-	    var wsuse    = document.getElementById("websocket_use");
-	    var wspext   = document.getElementById("websocket_port_external");
-	    var wsssluse = document.getElementById("websocket_ssl_use");
-	    var wssslurl = document.getElementById("websocket_ssl_url");
-	    var wssfs    = document.getElementById("websocket_fullscreen");
-
-	      wsuse.disabled    = IS_DOCKER;
-	      wssfs.disabled    = !wsuse.checked;
-	      wspext.disabled   = !(wsuse.checked && !wsssluse.checked);
-	      wsssluse.disabled = !wsuse.checked;
-	      wssslurl.disabled = !(wsuse.checked && wsssluse.checked);
-	try {
-	   if (wsuse.disabled) {
-	      wsuse.parentElement.MaterialCheckbox.disable();
-	   } else {
-	      wsuse.parentElement.MaterialCheckbox.enable();
-	   }
-	   if (wsssluse.disabled) {
-	      wsssluse.parentElement.MaterialCheckbox.disable();
-	   } else {
-	      wsssluse.parentElement.MaterialCheckbox.enable();
-	   }
-	   if (wssfs.disabled) {
-	      wssfs.parentElement.MaterialCheckbox.disable();
-	   } else {
-	      wssfs.parentElement.MaterialCheckbox.enable();
-	   }
-	   if (wssslurl.disabled) {
-	      wssslurl.parentElement.MaterialTextfield.disable();
-	   } else {
-	      wssslurl.parentElement.MaterialTextfield.enable();
-	   }
-	   if (wspext.disabled) {
-	      wspext.parentElement.MaterialTextfield.disable();
-	   } else {
-	      wspext.parentElement.MaterialTextfield.enable();
-	   }
-	}
-	catch(error) {	}
-}
 
 function checkAndReturn() {
-	    var wspint = document.getElementById("websocket_port_internal").value;
-	    var wspint = document.getElementById("websocket_port_internal").value;
-	    var crevert = document.getElementById("general_revert_min").value;
-
-	    if (Number.isInteger(+wspint) && Number.isInteger(+wspint) && Number.isInteger(+crevert)) {
 		 var form1 = document.getElementById("settingsform_1");
 		 var form2 = document.getElementById("settingsform_2");
 		 var form3 = document.getElementById("settingsform_3");
@@ -131,10 +26,6 @@ function checkAndReturn() {
 		xhr.open("POST", 'settings.php', true);
   		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		xhr.send(postString);
-
-	    } else {
-	       alert("Please only enter digits for port and minutes.");
-	    }
  }
 
 

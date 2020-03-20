@@ -126,9 +126,7 @@ class WebUiGenerator {
           <div class="mdl-layout-spacer"></div>';
         if ($this->menu != MENU_SETUP && $this->menu != MENU_ERROR) {
             $this->htmlOutput = $this->htmlOutput . '      <nav class="mdl-navigation mdl-layout--always"><a class="mdl-navigation__link" target="_blank" href="' . str_replace("api/", "", $BBCONFIG["GROCY_API_URL"]) . '">Grocy</a>';
-            if ($BBCONFIG["WS_USE"]) {
                 $this->htmlOutput = $this->htmlOutput . '<a class="mdl-navigation__link" target="_blank" href="' . $folder . 'screen.php">Screen</a>';
-            }
             $this->htmlOutput = $this->htmlOutput . '</nav>';
         }
         $this->htmlOutput = $this->htmlOutput . '  </div>
@@ -230,7 +228,7 @@ class WebUiGenerator {
 		  }
 		}</script> ';
         }
-        if ($BBCONFIG["WS_USE"] && $this->menu == MENU_MAIN) {
+        if ($this->menu == MENU_MAIN) {
             $this->htmlOutput = $this->htmlOutput . '<script>
 
 		const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -239,32 +237,22 @@ class WebUiGenerator {
 			/* waiting 1s in case barcode was added from ui */
 		  await delay(1000);
 
-
-      		var ws = new WebSocket(';
-            if (!$BBCONFIG["WS_SSL_USE"]) {
-                $this->htmlOutput = $this->htmlOutput . "'ws://" . $_SERVER["SERVER_NAME"] . ":" . $BBCONFIG["WS_PORT_EXT"] . "/screen');";
-            } else {
-                $this->htmlOutput = $this->htmlOutput . "'" . $BBCONFIG["WS_SSL_URL"] . "');";
-            }
-            $this->htmlOutput = $this->htmlOutput . ' 
-	      ws.onopen = function() {
-	      };
-	      ws.onclose = function() {
-	      };
-	      ws.onmessage = function(event) {
-		
-		var resultJson = JSON.parse(event.data);
-		var resultCode = resultJson.data.substring(0, 1);
-		switch(resultCode) {
-		  case \'0\':
-		  case \'1\':
-		  case \'2\':
-			window.location.reload(true);
-			break;
-		}
+          var source = new EventSource("incl/sse/sse_data.php?onlyrefresh");
+          source.onmessage = function(event) {
+               var resultJson = JSON.parse(event.data);
+                    var resultCode = resultJson.data.substring(0, 1);
+                    var resultText = resultJson.data.substring(1);  
+              switch(resultCode) {
+              case \'0\':
+              case \'1\':
+              case \'2\':
+                    window.location.reload(true);
+                    break;
+              }
 	      };
 		};
-		startWebsocket();
+        if(typeof(EventSource) !== "undefined")
+		  startWebsocket();
 
 	    </script>';
         }

@@ -290,24 +290,6 @@ function getHtmlSettingsWebsockets() {
     global $BBCONFIG;
 return  '<form name="settingsform_3" id="settingsform_3">
 
-	<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="websocket_use">
-		  <input type="checkbox" value="1" name="WS_USE" onChange="switchWebsocketCheckboxes()"  id="websocket_use" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["WS_USE"] || IS_DOCKER).'>
-		  <span class="mdl-checkbox__label">Use websockets</span>
-		</label> <br>
- <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-    <input class="mdl-textfield__input" type="text" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57" pattern="-?[0-9]*(\.[0-9]+)?" value="'.$BBCONFIG["WS_PORT_EXT"].'" id="websocket_port_external" name="WS_PORT_EXT">
-    <label class="mdl-textfield__label" for="websocket_port_external">Websocket Port External</label>
-  </div><br><br>
-  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="websocket_ssl_use">
-		  <input type="checkbox" value="1" name="WS_SSL_USE" onChange="switchWebsocketCheckboxes()" id="websocket_ssl_use" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["WS_SSL_USE"]).'>
-		  <span class="mdl-checkbox__label">Use SSL proxy</span>
-		</label><br>
- <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-    <input class="mdl-textfield__input" type="text" value="'.$BBCONFIG["WS_SSL_URL"].'" name="WS_SSL_URL" id="websocket_ssl_url">
-    <label class="mdl-textfield__label" for="websocket_ssl_url">External websocket URL</label>
-  </div><br>
-<div id="progressbar" style="display:none" class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div></form>
-    <script> var IS_DOCKER = ' . var_export(IS_DOCKER, true) . ' </script>
 ';
 }
 
@@ -316,9 +298,7 @@ return '<form name="settingsform_4" id="settingsform_4">
 <input type="hidden" value="0" name="REVERT_SINGLE_hidden"/>
 <input type="hidden" value="0" name="MORE_VERBOSE_hidden"/>
 <input type="hidden" value="0" name="SHOPPINGLIST_REMOVE_hidden"/>
-<input type="hidden" value="0" name="WS_USE_hidden"/>
 <input type="hidden" value="0" name="WS_FULLSCREEN_hidden"/>
-<input type="hidden" value="0" name="WS_SSL_USE_hidden"/>
 <input type="hidden" value="1" name="isSaved"/>
 </form>';
 }

@@ -30,39 +30,46 @@ require_once __DIR__ . '/../processing.inc.php';
 
 //Send result of a barcode entry
 function sendWSResult($resultValue, $name) {
-    global $BBCONFIG;
-    if (isNewServerSupported()) {
-        require_once __DIR__ . '/php-websocket/src/Client.php';
-        $client = new \Bloatless\WebSocket\Client;
-    } else {
-        require_once __DIR__ . '/php-websocket-1.0/class.websocket_client.php';
-        $client = new WebsocketClient;
+    $client = getClient();
+    if ($client->connect('127.0.0.1', PORT_WEBSOCKET_SERVER, '/screen')) {
+        $payload = json_encode(array(
+            'action' => 'echo',
+            'data' => $resultValue . $name
+        ));
+        $client->sendData($payload);
     }
-        if ($client->connect('127.0.0.1', PORT_WEBSOCKET_SERVER, '/screen')) {
-            $payload = json_encode(array(
-                'action' => 'echo',
-                'data' => $resultValue . $name
-            ));
-            $client->sendData($payload);
-        }
+}
+
+function requestSavedState() {
+    $client = getClient();
+    if ($client->connect('127.0.0.1', PORT_WEBSOCKET_SERVER, '/screen')) {
+        $payload = json_encode(array(
+            'action' => 'getmode',
+            'data' => ''
+        ));
+        $client->sendData($payload);
+    }
 }
 
 //Send current Barcode Buddy state
 function sendNewState($newState) {
-   global $BBCONFIG;
+    $client = getClient();
+    if ($client->connect('127.0.0.1', PORT_WEBSOCKET_SERVER, '/screen')) {
+        $payload = json_encode(array(
+            'action' => 'setmode',
+            'data' => stateToString($newState)
+        ));
+        $client->sendData($payload);
+    }
+}
+
+function getClient() {
     if (isNewServerSupported()) {
         require_once __DIR__ . '/php-websocket/src/Client.php';
-        $client = new \Bloatless\WebSocket\Client;
+        return new \Bloatless\WebSocket\Client;
     } else {
         require_once __DIR__ . '/php-websocket-1.0/class.websocket_client.php';
-        $client = new WebsocketClient;
+        return new WebsocketClient;
     }
-        if ($client->connect('127.0.0.1', PORT_WEBSOCKET_SERVER, '/screen')) {
-            $payload = json_encode(array(
-                'action' => 'setmode',
-                'data' => stateToString($newState)
-            ));
-            $client->sendData($payload);
-        }
 }
 ?>

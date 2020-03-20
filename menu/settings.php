@@ -50,7 +50,7 @@ $webUi->addHeader();
 $webUi->addCard("General Settings",getHtmlSettingsGeneral());
 $webUi->addCard("Grocy API",getHtmlSettingsGrocyApi());
 $isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on');
-$webUi->addCard("Websockets",getHtmlSettingsWebsockets(), 'Test Configuration', 'testWebsocket(\''.$_SERVER['HTTP_HOST'].'\', '.var_export($isHttps, true).');');
+$webUi->addCard("Websocket Server Status",getHtmlSettingsWebsockets(), 'Test Configuration', 'testWebsocket(\''.$_SERVER['HTTP_HOST'].'\', '.var_export($isHttps, true).');');
 $webUi->addHtml(getHtmlSettingsHiddenValues());
 $webUi->addFooter();
 $webUi->printHtml();

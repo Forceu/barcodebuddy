@@ -6,6 +6,8 @@ namespace Bloatless\WebSocket;
 
 use Bloatless\WebSocket\Application\ApplicationInterface;
 
+require_once __DIR__ . '/../../../config.php';
+
 class Connection
 {
     public $waitingForData = false;
@@ -246,7 +248,10 @@ class Connection
             $this->dataBuffer = '';
             $this->waitingForData = false;
         }
-
+	if (IS_DEBUG) {
+		echo "Received data: ";
+		echo $decodedData["payload"]."\n";
+	}
         // trigger status application:
         if ($this->server->hasApplication('status')) {
             $this->server->getApplication('status')->clientActivity($this->port);

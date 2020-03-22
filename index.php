@@ -69,9 +69,18 @@ if (isset($_GET["refreshbarcode"])) {
 }
 
 
-//If barcode was submitted with GET parameter
+//If barcode was submitted with GET parameter "add"
 if (isset($_GET["add"])) {
     processNewBarcode(sanitizeString($_GET["add"], true));
+    if (!isset($_GET["showui"])) {
+        die("OK");
+    }
+    hideGetPostParameters();
+}
+
+//If barcode was submitted with GET parameter "text"
+if (isset($_GET["text"])) {
+    processNewBarcode(sanitizeString($_GET["text"], true));
     if (!isset($_GET["showui"])) {
         die("OK");
     }

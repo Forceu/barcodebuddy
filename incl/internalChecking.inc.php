@@ -30,11 +30,16 @@ const RESULT_ALL_INSTALLED = 0;
 const RESULT_OPT_MISSING   = 1;
 const RESULT_REQ_MISSING   = 2;
 
-const REQ_EXTENSIONS       = array("curl", "date", "sqlite3", "json");
-const OPTIONAL_EXTENSIONS  = array("sockets");
+const REQ_EXTENSIONS       = array("curl", "date", "sqlite3", "json", "sockets");
+const OPTIONAL_EXTENSIONS  = array();
 
 
-//Checks if the required PHP extensions are installed and active
+/**
+ * Checks if the required PHP extensions are installed and active
+ * 
+ * @return [array] Returns an array for all modules. $return["result"] is
+ *                 RESULT_ALL_INSTALLED, RESULT_OPT_MISSING or RESULT_REQ_MISSING
+ */
 function checkExtensionsInstalled() {
     $loadedExtensions = get_loaded_extensions();
     $result           = array();

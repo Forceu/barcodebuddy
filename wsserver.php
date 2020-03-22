@@ -27,8 +27,13 @@
 
 require_once __DIR__ . '/incl/config.php';
 require_once __DIR__ . '/incl/websocketconnection.inc.php';
+require_once __DIR__ . '/incl/internalChecking.inc.php';
 
 const ENABLE_STATISTICS = false;
+
+if (checkExtensionsInstalled()["result"] != RESULT_ALL_INSTALLED) {
+    die("Not all required extensions are installed. Please run setup.php for more information.");
+}
 
 
 //If we are using php7.2+, the new server version is supported

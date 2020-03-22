@@ -88,7 +88,7 @@ class CurlGenerator {
     function execute($decode = false) {
         $curlResult = curl_exec($this->ch);
         curl_close($this->ch);
-        if ($curlResult === false)
+        if ($curlResult === false || $curlResult == "")
             throw new InvalidServerResponseException();
         if ($decode) {
             $jsonDecoded = json_decode($curlResult, true);
@@ -109,7 +109,7 @@ class API {
      * @param  string ProductId or none, to get a list of all products
      * @return array Product info or array of products
      */
-    public function getProductInfo($productId = "") {
+    public static function getProductInfo($productId = "") {
 
         if ($productId == "") {
             $apiurl = API_PRODUCTS;
@@ -121,9 +121,9 @@ class API {
         try {
             $result = $curl->execute(true);
         } catch (InvalidServerResponseException $e) {
-            die("Error getting product info");
+            self::logError("Error getting product info. Could not connect to Grocy server.");
         } catch (InvalidJsonResponseException $e) {
-            die("Error parsing product info");
+            self::logError("Error parsing product info");
         }
         return $result;
     }
@@ -135,7 +135,7 @@ class API {
      * @param  String productId
      * @return none
      */
-    public function openProduct($id) {
+    public static function openProduct($id) {
 
         $data      = json_encode(array(
             'amount' => "1"
@@ -146,7 +146,7 @@ class API {
         try {
             $curl->execute();
         } catch (InvalidServerResponseException $e) {
-            die("Error opening product");
+            self::logError("Error opening product. Could not connect to Grocy server.");
         }
     }
     
@@ -159,14 +159,14 @@ class API {
      * @param  String API key
      * @return Returns String with error or true if connection could be established
      */
-    public function checkApiConnection($givenurl, $apikey) {
+    public static function checkApiConnection($givenurl, $apikey) {
         $loginInfo = array(LOGIN_URL => $givenurl, LOGIN_API_KEY => $apikey);
 
         $curl = new CurlGenerator(API_SYTEM_INFO, METHOD_GET, null, $loginInfo);
         try {
             $result = $curl->execute(true);
         } catch (InvalidServerResponseException $e) {
-            return "Could not connect to server.";
+            return "Could not connect to server or invalid API key";
         } catch (InvalidJsonResponseException $e) {
             return $e->getMessage();
         }
@@ -189,7 +189,7 @@ class API {
      * @param  String reported Grocy version
      * @return boolean true if version supported
      */
-    public function isSupportedGrocyVersion($version) {
+    public static function isSupportedGrocyVersion($version) {
         if (!preg_match("/\d+.\d+.\d+/", $version)) {
             return false;
         }
@@ -215,21 +215,21 @@ class API {
      * 
      * @return String Reported Grocy version
      */
-    public function getGrocyVersion() {
+    public static function getGrocyVersion() {
 
         $curl = new CurlGenerator(API_SYTEM_INFO);
         try {
             $result = $curl->execute(true);
         } catch (InvalidServerResponseException $e) {
-            die ("Could not connect to server.");
+            self::logError ("Could not connect to Grocy server.");
         } catch (InvalidJsonResponseException $e) {
-            die ($e->getMessage());
+            self::logError ($e->getMessage());
         }
 
         if (isset($result["grocy_version"]["Version"])) {
             return $result["grocy_version"]["Version"];
         }
-        die("Grocy did not provide version number");
+        self::logError("Grocy did not provide version number");
     }
     
     
@@ -243,7 +243,7 @@ class API {
      * @param  String price of product Default: null
      * @return false if default best before date not set
      */
-    public function purchaseProduct($id, $amount, $bestbefore = null, $price = null) {
+    public static function purchaseProduct($id, $amount, $bestbefore = null, $price = null) {
         global $BBCONFIG;
         
         $daysBestBefore = 0;
@@ -270,7 +270,7 @@ class API {
         try {
             $curl->execute();
         } catch (InvalidServerResponseException $e) {
-            die("Error purchasing product");
+            self::logError("Error purchasing product. Could not connect to Grocy server.");
         }
 
         if ($BBCONFIG["SHOPPINGLIST_REMOVE"]) {
@@ -289,7 +289,7 @@ class API {
      * @param  Int amount
      * @return none
      */
-    public function removeFromShoppinglist($productid, $amount) {
+    public static function removeFromShoppinglist($productid, $amount) {
         $data      = json_encode(array(
             'product_id' => $productid,
             'product_amount' => $amount
@@ -300,7 +300,7 @@ class API {
         try {
             $curl->execute();
         } catch (InvalidServerResponseException $e) {
-            die("Error removing from shoppinglist");
+            self::logError("Error removing from shoppinglist. Could not connect to Grocy server.");
         }
     }
     
@@ -313,7 +313,7 @@ class API {
      * @param  Int amount
      * @return none
      */
-    public function addToShoppinglist($productid, $amount) {
+    public static function addToShoppinglist($productid, $amount) {
         $data      = json_encode(array(
             'product_id' => $productid,
             'product_amount' => $amount
@@ -324,7 +324,7 @@ class API {
         try {
             $curl->execute();
         } catch (InvalidServerResponseException $e) {
-            die("Error adding to shoppinglist");
+            self::logError("Error adding to shoppinglist. Could not connect to Grocy server.");
         }
     }
     
@@ -339,7 +339,7 @@ class API {
     * @param  boolean set true if product was spoiled. Default: false 
     * @return none
     */
-    public function consumeProduct($id, $amount, $spoiled = false) {
+    public static function consumeProduct($id, $amount, $spoiled = false) {
 
         $data      = json_encode(array(
             'amount' => $amount,
@@ -353,7 +353,7 @@ class API {
         try {
             $curl->execute();
         } catch (InvalidServerResponseException $e) {
-            die("Error consuming product");
+            self::logError("Could not connect to Grocy server: Error consuming product");
         }
     }
     
@@ -363,7 +363,7 @@ class API {
      * @param int product id
      * @param String barcode(s) to set
      */
-    public function setBarcode($id, $barcode) {
+    public static function setBarcode($id, $barcode) {
 
         $data      = json_encode(array(
             'barcode' => $barcode
@@ -375,7 +375,7 @@ class API {
         try {
             $curl->execute();
         } catch (InvalidServerResponseException $e) {
-            die("Error setting barcode");
+            self::logError("Could not connect to Grocy server: Error setting barcode");
         }
     }
     
@@ -386,7 +386,7 @@ class API {
      * @param  [int] $days  Amount of days a product is consumable, or -1 if it does not expire
      * @return [String]     Formatted date
      */
-    private function formatBestBeforeDays($days) {
+    private static function formatBestBeforeDays($days) {
         if ($days == "-1") {
             return "2999-12-31";
         } else {
@@ -400,7 +400,7 @@ class API {
      * @param  [int] $id Product id
      * @return [int]     Amount of days or -1 if it does not expire
      */
-    private function getDefaultBestBeforeDays($id) {
+    private static function getDefaultBestBeforeDays($id) {
         $info = self::getProductInfo($id);
         $days = $info["default_best_before_days"];
         checkIfNumeric($days);
@@ -413,7 +413,7 @@ class API {
      * @param  [String] $barcode Input barcode
      * @return [String]          Returns product name or "N/A" if not found
      */
-    public function lookupNameByBarcodeInOpenFoodFacts($barcode) {
+    public static function lookupNameByBarcodeInOpenFoodFacts($barcode) {
         
         $url = "https://world.openfoodfacts.org/api/v0/product/" . $barcode . ".json";
 
@@ -421,9 +421,11 @@ class API {
         try {
             $result = $curl->execute(true);
         } catch (InvalidServerResponseException $e) {
-            die ("Could not connect to Open Food Facts.");
+            self::logError("Could not connect to OpenFoodFacts.", false);
+            return "N/A";
         } catch (InvalidJsonResponseException $e) {
-            die ($e->getMessage());
+            self::logError("Error parsing OpenFoodFacts response: ".$e->getMessage(), false);
+            return "N/A";
         }
         if (!isset($result["status"]) || $result["status"] !== 1) {
             return "N/A";
@@ -444,7 +446,7 @@ class API {
      * @return [Array]           Array if product info or null if barcode
      *                           is not associated with a product
      */
-    public function getProductByBardcode($barcode) {
+    public static function getProductByBardcode($barcode) {
         
         $apiurl = API_STOCK . "/by-barcode/" . $barcode;
 
@@ -453,9 +455,9 @@ class API {
         try {
             $result = $curl->execute(true);
         } catch (InvalidServerResponseException $e) {
-            die ("Error looking up product by barcode");
+            self::logError ("Could not connect to Grocy server: Error looking up product by barcode");
         } catch (InvalidJsonResponseException $e) {
-            die ($e->getMessage());
+            self::logError ($e->getMessage());
         }
         
         if (isset($result["product"]["id"])) {
@@ -481,7 +483,7 @@ class API {
      * @param  string $choreId  Chore ID. If not passed, all chores are looked up
      * @return [array]          Either chore if ID, or all chores
      */
-    public function getChoresInfo($choreId = "") {
+    public static function getChoresInfo($choreId = "") {
         
         if ($choreId == "") {
             $apiurl = API_CHORES;
@@ -493,9 +495,9 @@ class API {
         try {
             $result = $curl->execute(true);
         } catch (InvalidServerResponseException $e) {
-            die ("Could not get chore info");
+            self::logError ("Could not connect to Grocy server: Could not get chore info");
         } catch (InvalidJsonResponseException $e) {
-            die ($e->getMessage());
+            self::logError ($e->getMessage());
         }
         return $result;
     }
@@ -505,7 +507,7 @@ class API {
      * Executes a Grocy chore
      * @param  [int] $choreId Chore id
      */
-    public function executeChore($choreId) {
+    public static function executeChore($choreId) {
         
         $apiurl    = API_CHORE_EXECUTE . $choreId . "/execute";
         $data      = json_encode(array(
@@ -518,10 +520,16 @@ class API {
         try {
             $result = $curl->execute(true);
         } catch (InvalidServerResponseException $e) {
-            die ("Could not execute chore");
+            self::logError ("Could not connect to Grocy server: Could not execute chore");
         } catch (InvalidJsonResponseException $e) {
-            die ($e->getMessage());
+            self::logError ($e->getMessage());
         }
+    }
+
+    public static function logError($errorMessage, $isFatal = true) {
+        require_once __DIR__ . "/db.inc.php";
+        global $db;
+        $db->saveError($errorMessage, $isFatal);
     }
     
 }

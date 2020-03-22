@@ -469,12 +469,24 @@ private $db = null;
     }
     
     
+    public function saveError($errorMessage, $isFatal = true) {
+        $this->saveLog($errorMessage, false, true);
+        if ($isFatal) {
+            echo("<b><span style=\"color: red;\">{$errorMessage}</span> Please check your URL and API key in the settings menu!</b>");
+        }
+    }
+
     //Save a log
-    public function saveLog($log, $isVerbose = false) {
+    public function saveLog($log, $isVerbose = false, $isError = false) {
         global $BBCONFIG;
         if ($isVerbose == false || $BBCONFIG["MORE_VERBOSE"] == true) {
             $date = date('Y-m-d H:i:s');
-            $this->db->exec("INSERT INTO BarcodeLogs(log) VALUES('" . $date . ": " . sanitizeString($log) . "')");
+            if ($isError) {
+                $logEntry = $date . ': <span style="color: red;">' . sanitizeString($log) . '</span>';
+            } else {
+                $logEntry = $date . ": " . sanitizeString($log);
+            }
+            $this->db->exec("INSERT INTO BarcodeLogs(log) VALUES('" . $logEntry . "')");
         }
     }
     

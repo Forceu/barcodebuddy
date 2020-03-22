@@ -70,11 +70,20 @@ function getHtmlLogTextArea() {
     if (sizeof($logs) == 0) {
         return "No barcodes processed yet.";
     } else {
-        $returnString = '<textarea readonly class="mdl-textfield__input" rows="15">';
+        $returnString = '<div style="
+        -moz-appearance: textfield-multiline;
+        -webkit-appearance: textarea;
+                max-height: 18em;
+                overflow:auto;
+        contenteditable="true"
+        ondrop="return false"
+        oncut="return false"
+        onpaste="return false"
+        onkeydown="if(event.metaKey) return true; return false;">';
         foreach ($logs as $log) {
-            $returnString = $returnString . $log . "\r\n";
+            $returnString = $returnString . $log . "<br>";
         }
-        return $returnString . '</textarea>';
+        return $returnString . '</div>';
     }
 }
 

@@ -45,6 +45,7 @@ const LOGIN_URL         = "loginurl";
 const LOGIN_API_KEY     = "loginkey";
 
 class InvalidServerResponseException extends Exception { }
+class UnauthorizedException          extends Exception { }
 class InvalidJsonResponseException   extends Exception { }
 
 class CurlGenerator {
@@ -86,8 +87,11 @@ class CurlGenerator {
     }
     
     function execute($decode = false) {
-        $curlResult = curl_exec($this->ch);
+        $curlResult   = curl_exec($this->ch);
+        $responseCode = curl_getinfo($this->ch, CURLINFO_RESPONSE_CODE);
         curl_close($this->ch);
+        if ($responseCode == 401)
+            throw new UnauthorizedException();
         if ($curlResult === false || $curlResult == "")
             throw new InvalidServerResponseException();
         if ($decode) {
@@ -121,7 +125,9 @@ class API {
         try {
             $result = $curl->execute(true);
         } catch (InvalidServerResponseException $e) {
-            self::logError("Error getting product info. Could not connect to Grocy server.");
+            self::logError("Could not connect to Grocy server: Error getting product info");
+        } catch (UnauthorizedException $e) {
+            self::logError("Invalid API key: Error getting product info");
         } catch (InvalidJsonResponseException $e) {
             self::logError("Error parsing product info");
         }
@@ -146,7 +152,9 @@ class API {
         try {
             $curl->execute();
         } catch (InvalidServerResponseException $e) {
-            self::logError("Error opening product. Could not connect to Grocy server.");
+            self::logError("Could not connect to Grocy server: Error opening product");
+        } catch (UnauthorizedException $e) {
+            self::logError("Invalid API key: Error opening product");
         }
     }
     
@@ -166,9 +174,11 @@ class API {
         try {
             $result = $curl->execute(true);
         } catch (InvalidServerResponseException $e) {
-            return "Could not connect to server or invalid API key";
+            return "Could not connect to server";
         } catch (InvalidJsonResponseException $e) {
             return $e->getMessage();
+        } catch (UnauthorizedException $e) {
+            return "Invalid API key";
         }
         if (isset($result["grocy_version"]["Version"])) {
             $version = $result["grocy_version"]["Version"];
@@ -224,6 +234,8 @@ class API {
             self::logError ("Could not connect to Grocy server.");
         } catch (InvalidJsonResponseException $e) {
             self::logError ($e->getMessage());
+        } catch (UnauthorizedException $e) {
+            self::logError("Invalid API key");
         }
 
         if (isset($result["grocy_version"]["Version"])) {
@@ -270,7 +282,9 @@ class API {
         try {
             $curl->execute();
         } catch (InvalidServerResponseException $e) {
-            self::logError("Error purchasing product. Could not connect to Grocy server.");
+            self::logError("Could not connect to Grocy server: Error purchasing product");
+        } catch (UnauthorizedException $e) {
+            self::logError("Invalid API key: Error purchasing product");
         }
 
         if ($BBCONFIG["SHOPPINGLIST_REMOVE"]) {
@@ -300,7 +314,9 @@ class API {
         try {
             $curl->execute();
         } catch (InvalidServerResponseException $e) {
-            self::logError("Error removing from shoppinglist. Could not connect to Grocy server.");
+            self::logError("Could not connect to Grocy server: Error removing from shoppinglist");
+        } catch (UnauthorizedException $e) {
+            self::logError("Invalid API key: Error removing from shoppinglis");
         }
     }
     
@@ -324,7 +340,9 @@ class API {
         try {
             $curl->execute();
         } catch (InvalidServerResponseException $e) {
-            self::logError("Error adding to shoppinglist. Could not connect to Grocy server.");
+            self::logError("Could not connect to Grocy server: Error adding to shoppinglist");
+        } catch (UnauthorizedException $e) {
+            self::logError("Invalid API key: Error adding to shoppinglist");
         }
     }
     
@@ -354,6 +372,8 @@ class API {
             $curl->execute();
         } catch (InvalidServerResponseException $e) {
             self::logError("Could not connect to Grocy server: Error consuming product");
+        } catch (UnauthorizedException $e) {
+            self::logError("Invalid API key: Error consuming product");
         }
     }
     
@@ -376,6 +396,8 @@ class API {
             $curl->execute();
         } catch (InvalidServerResponseException $e) {
             self::logError("Could not connect to Grocy server: Error setting barcode");
+        } catch (UnauthorizedException $e) {
+            self::logError("Invalid API key: Error setting barcode");
         }
     }
     
@@ -423,6 +445,8 @@ class API {
         } catch (InvalidServerResponseException $e) {
             self::logError("Could not connect to OpenFoodFacts.", false);
             return "N/A";
+        } catch (UnauthorizedException $e) {
+            self::logError("Could not connect to OpenFoodFacts - unauthorized");
         } catch (InvalidJsonResponseException $e) {
             self::logError("Error parsing OpenFoodFacts response: ".$e->getMessage(), false);
             return "N/A";
@@ -456,6 +480,8 @@ class API {
             $result = $curl->execute(true);
         } catch (InvalidServerResponseException $e) {
             self::logError ("Could not connect to Grocy server: Error looking up product by barcode");
+        } catch (UnauthorizedException $e) {
+            self::logError("Invalid API key: Error looking up product by barcode");
         } catch (InvalidJsonResponseException $e) {
             self::logError ($e->getMessage());
         }
@@ -496,6 +522,8 @@ class API {
             $result = $curl->execute(true);
         } catch (InvalidServerResponseException $e) {
             self::logError ("Could not connect to Grocy server: Could not get chore info");
+        } catch (UnauthorizedException $e) {
+            self::logError("Invalid API key: Could not get chore info");
         } catch (InvalidJsonResponseException $e) {
             self::logError ($e->getMessage());
         }
@@ -521,6 +549,8 @@ class API {
             $result = $curl->execute(true);
         } catch (InvalidServerResponseException $e) {
             self::logError ("Could not connect to Grocy server: Could not execute chore");
+        } catch (UnauthorizedException $e) {
+            self::logError("Invalid API key: Could not execute chore");
         } catch (InvalidJsonResponseException $e) {
             self::logError ($e->getMessage());
         }

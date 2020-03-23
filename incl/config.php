@@ -48,4 +48,8 @@ if (IS_DEBUG || file_exists(__DIR__ ."debug")) {
     error_reporting(E_ALL);
 }
 
+
+const BB_VERSION           = "1400";
+const BB_VERSION_READABLE  = "1.4.0.0";
+
 ?>

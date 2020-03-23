@@ -25,6 +25,7 @@
  */
 
 
+require_once __DIR__ . "/config.php";
 require_once __DIR__ . "/webui.tables.inc.php";
 
 const MENU_GENERIC = 0;
@@ -76,6 +77,7 @@ class WebUiGenerator {
     }
 
     function addHeader() {
+        require_once __DIR__ . "/db.inc.php";
         global $BBCONFIG;
         
         if ($this->menu == MENU_SETTINGS || $this->menu == MENU_GENERIC) {
@@ -148,8 +150,6 @@ class WebUiGenerator {
     }
 
     function addFooter() {
-        global $BBCONFIG;
-
         $this->htmlOutput = $this->htmlOutput . ' <section class="section--footer mdl-grid">
           </section>
 <div aria-live="assertive" aria-atomic="true" aria-relevant="text" class="mdl-snackbar mdl-js-snackbar">
@@ -273,6 +273,8 @@ function hideGetPostParameters() {
 
 //Check if a button on the web ui was pressed and process
 function processButtons() {
+    require_once __DIR__ . "/db.inc.php";
+    require_once __DIR__ . "/api.inc.php";
     global $db;
     
     if (isset($_GET["delete"])) {

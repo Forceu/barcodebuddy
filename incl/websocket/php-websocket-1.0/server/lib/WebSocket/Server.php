@@ -167,7 +167,7 @@ class Server extends Socket
 	 */
     public function log($message, $type = 'info')
     {
-        echo date('Y-m-d H:i:s') . ' [' . ($type ? $type : 'error') . '] ' . $message . PHP_EOL;
+        echo '[WebsocketServer] [' . ($type ? $type : 'error') . '] ' . $message . PHP_EOL;
     }
 	
 	/**

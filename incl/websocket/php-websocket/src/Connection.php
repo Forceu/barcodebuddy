@@ -69,7 +69,7 @@ class Connection
         $this->port = (int) $tmp[1];
         $this->connectionId = md5($this->ip . $this->port . spl_object_hash($this));
 
-        $this->log('Connected');
+        //$this->log('Connected');
     }
 
     /**
@@ -81,7 +81,7 @@ class Connection
      */
     private function handshake(string $data): bool
     {
-        $this->log('Performing handshake');
+        //$this->log('Performing handshake');
         $lines = preg_split("/\r\n/", $data);
 
         // check for valid http-header:
@@ -163,7 +163,7 @@ class Connection
         }
 
         $this->handshaked = true;
-        $this->log('Handshake sent');
+        //$this->log('Handshake sent');
         $this->application->onConnect($this);
 
         // trigger status application:

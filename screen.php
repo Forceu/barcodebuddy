@@ -86,6 +86,7 @@ require_once __DIR__ . "/incl/db.inc.php";
   </head>
   <body bgcolor="#f6ff94">
   <script src="./incl/nosleep.min.js"></script>
+  <script src="./incl/he.js"></script>
     
     <div id="title">Connecting...</div><br>
     <div id="mode"></div><br><br><br>
@@ -135,13 +136,13 @@ document.getElementById('subtitle').textContent = 'Waiting for barcode...';
         case '0':
         document.body.style.backgroundColor = '#47ac3f';
         document.getElementById('title').textContent = 'Scan success';
-        document.getElementById('subtitle').textContent = resultText;
+        document.getElementById('subtitle').textContent = he.decode(resultText);
         document.getElementById('beep_success').play();
           break;
         case '1':
         document.body.style.backgroundColor = '#a2ff9b';
         document.getElementById('title').textContent = 'Barcode looked up';
-        document.getElementById('subtitle').textContent = resultText;
+        document.getElementById('subtitle').textContent = he.decode(resultText);
         document.getElementById('beep_success').play();
           break;
         case '2':

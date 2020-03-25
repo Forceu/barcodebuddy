@@ -95,7 +95,7 @@ class CurlGenerator {
     
     function execute($decode = false) {
         $curlResult   = curl_exec($this->ch);
-        $this->checkForErrorsAndThrow($curlResult, $decode);
+        $this->checkForErrorsAndThrow($curlResult);
         curl_close($this->ch);
 
         if ($decode) {
@@ -108,7 +108,7 @@ class CurlGenerator {
             return $curlResult;
     }
 
-    private function checkForErrorsAndThrow($curlResult, $decode) {
+    private function checkForErrorsAndThrow($curlResult) {
         $curlError    = curl_errno($this->ch);
         $responseCode = curl_getinfo($this->ch, CURLINFO_RESPONSE_CODE);
 
@@ -120,7 +120,7 @@ class CurlGenerator {
                 throw new InvalidSSLException();
             else
                 throw new InvalidServerResponseException();
-        } elseif ($decode && $curlResult == "") {
+        } elseif ($curlResult == "" && $responseCode != 204) {
                 throw new InvalidServerResponseException();
         }  
     }

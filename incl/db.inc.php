@@ -469,7 +469,7 @@ private $db = null;
     
     
     public function saveError($errorMessage, $isFatal = true) {
-        $verboseError = "<span style=\"color: red;\">{$errorMessage}</span> Please check your URL and API key in the settings menu!";
+        $verboseError = '<span style="color: red;">'.sanitizeString($errorMessage).'</span> Please check your URL and API key in the settings menu!';
         $this->saveLog($verboseError, false, true);
         if ($isFatal) {
             echo("<b>".$verboseError."</b>");

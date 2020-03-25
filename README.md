@@ -8,13 +8,13 @@ Webserver that supports PHP (eg. NGINX, Apache) or Docker, a [Grocy](https://git
 
 ## Getting Started
 
-Refer to the [wiki](https://github.com/Forceu/barcodebuddy/wiki), on how to install the program. Installation can be done in a couple of minutes.
+Refer to the [documentation](https://barcodebuddy-documentation.readthedocs.io/en/latest/), on how to install the program. Installation can be done in a couple of minutes.
 
 ### Usage
 
 Barcodes can either manually be added to the programm or the process can be automated by grabbing the input from the scanner.
 
-Refer to the [wiki](https://github.com/Forceu/barcodebuddy/wiki), on how to use the program.
+Refer to the [documentation](https://barcodebuddy-documentation.readthedocs.io/en/latest/), on how to use the program.
 
 
 ### Screenshots

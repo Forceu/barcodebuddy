@@ -557,7 +557,6 @@ class API {
     }
 
     public static function processError($e, $errormessage) {
-echo $e;
         $class = get_class($e);
         switch($class) {
             case 'InvalidServerResponseException':

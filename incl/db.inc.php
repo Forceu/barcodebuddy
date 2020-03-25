@@ -201,6 +201,9 @@ private $db = null;
         if ($previousVersion < 1303) {
             $this->getConfig();
             $version = API::getGrocyVersion();
+            if ($version == null) {
+                die ("Unable to get Grocy version");
+            }
             if (!API::isSupportedGrocyVersion($version)) {
                 $this->updateConfig("GROCY_API_KEY", null);
                 $ERROR_MESSAGE = "Grocy " . MIN_GROCY_VERSION . " or newer required. You are running $version, please upgrade your Grocy instance. Click <a href=\"./setup.php\">here</a> to re-enter your credentials.";
@@ -466,9 +469,10 @@ private $db = null;
     
     
     public function saveError($errorMessage, $isFatal = true) {
-        $this->saveLog($errorMessage, false, true);
+        $verboseError = "<span style=\"color: red;\">{$errorMessage}</span> Please check your URL and API key in the settings menu!";
+        $this->saveLog($verboseError, false, true);
         if ($isFatal) {
-            echo("<b><span style=\"color: red;\">{$errorMessage}</span> Please check your URL and API key in the settings menu!</b>");
+            echo("<b>".$verboseError."</b>");
         }
     }
 
@@ -478,7 +482,7 @@ private $db = null;
         if ($isVerbose == false || $BBCONFIG["MORE_VERBOSE"] == true) {
             $date = date('Y-m-d H:i:s');
             if ($isError) {
-                $logEntry = $date . ': <span style="color: red;">' . sanitizeString($log) . '</span>';
+                $logEntry = $date .': ' . $log;
             } else {
                 $logEntry = $date . ": " . sanitizeString($log);
             }

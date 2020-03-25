@@ -95,7 +95,7 @@ class CurlGenerator {
     
     function execute($decode = false) {
         $curlResult   = curl_exec($this->ch);
-        $this->checkForErrorsAndThrow($curlResult);
+        $this->checkForErrorsAndThrow($curlResult, $decode);
         curl_close($this->ch);
 
         if ($decode) {
@@ -108,7 +108,7 @@ class CurlGenerator {
             return $curlResult;
     }
 
-    private function checkForErrorsAndThrow($curlResult) {
+    private function checkForErrorsAndThrow($curlResult, $decode) {
         $curlError    = curl_errno($this->ch);
         $responseCode = curl_getinfo($this->ch, CURLINFO_RESPONSE_CODE);
 
@@ -120,7 +120,7 @@ class CurlGenerator {
                 throw new InvalidSSLException();
             else
                 throw new InvalidServerResponseException();
-        } elseif ($curlResult == "") {
+        } elseif ($decode && $curlResult == "") {
                 throw new InvalidServerResponseException();
         }  
     }
@@ -557,6 +557,7 @@ class API {
     }
 
     public static function processError($e, $errormessage) {
+echo $e;
         $class = get_class($e);
         switch($class) {
             case 'InvalidServerResponseException':

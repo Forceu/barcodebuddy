@@ -377,7 +377,7 @@ class API {
             'spoiled' => $spoiled
         ));
         
-        $apiurl = $BBCONFIG["GROCY_API_URL"] . API_STOCK . "/" . $id . "/consume";
+        $apiurl = API_STOCK . "/" . $id . "/consume";
 
         $curl = new CurlGenerator($apiurl, METHOD_POST, $data);
         try {

@@ -14,7 +14,7 @@ Refer to the [documentation](https://barcodebuddy-documentation.readthedocs.io/e
 
 Barcodes can either manually be added to the programm or the process can be automated by grabbing the input from the scanner.
 
-Refer to the [documentation]https://barcodebuddy-documentation.readthedocs.io/en/latest/), on how to use the program.
+Refer to the [documentation](https://barcodebuddy-documentation.readthedocs.io/en/latest/), on how to use the program.
 
 
 ### Screenshots

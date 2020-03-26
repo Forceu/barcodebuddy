@@ -265,7 +265,7 @@ function printSelections($selected, $productinfo) {
     foreach ($productinfo as $product) {
         $selections[$product["id"]] = $product["name"];
     }
-    asort($selections);
+    natcasesort($selections);
     
     $optionscontent = "<option value=\"0\" >= None =</option>";
     foreach ($selections as $key => $val) {

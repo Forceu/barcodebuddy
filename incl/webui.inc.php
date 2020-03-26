@@ -331,32 +331,32 @@ function processButtons() {
         checkIfNumeric($id);
         $gidSelected = $_POST["select_" . $id];
         if ($gidSelected != 0) {
-	    $row = $db->getBarcodeById($id);
-	    if ($row !== false) {
-		    $barcode = sanitizeString($row["barcode"], true);
-		    $amount  = $row["amount"];
-		    checkIfNumeric($amount);
-		    if (isset($_POST["tags"])) {
-			    foreach ($_POST["tags"][$id] as $tag) {
-				$db->addTag(sanitizeString($tag), $gidSelected);
-			    }
-		    }
-		    $product = API::getProductInfo(sanitizeString($gidSelected));
-		    $previousBarcodes = $product["barcode"];
-		    if ($previousBarcodes == NULL) {
-		        API::setBarcode($gidSelected, $barcode);
-		    } else {
-		        API::setBarcode($gidSelected, $previousBarcodes . "," . $barcode);
-		    }
-		    $db->deleteBarcode($id);
-		    if ($isConsume) {
-		        API::consumeProduct($gidSelected, $amount);
-		    } else {
-		        API::purchaseProduct($gidSelected, $amount);
-		    }
-		    $db->refreshQuantityProductName($barcode, $product["name"]);
-		}
-	}
+    	    $row = $db->getBarcodeById($id);
+    	    if ($row !== false) {
+    		    $barcode = sanitizeString($row["barcode"], true);
+    		    $amount  = $row["amount"];
+    		    checkIfNumeric($amount);
+    		    if (isset($_POST["tags"])) {
+    			    foreach ($_POST["tags"][$id] as $tag) {
+    				$db->addTag(sanitizeString($tag), $gidSelected);
+    			    }
+    		    }
+    		    $product = API::getProductInfo(sanitizeString($gidSelected));
+    		    $previousBarcodes = $product["barcode"];
+    		    if ($previousBarcodes == NULL) {
+    		        API::setBarcode($gidSelected, $barcode);
+    		    } else {
+    		        API::setBarcode($gidSelected, $previousBarcodes . "," . $barcode);
+    		    }
+    		    $db->deleteBarcode($id);
+    		    if ($isConsume) {
+    		        API::consumeProduct($gidSelected, $amount);
+    		    } else {
+    		        API::purchaseProduct($gidSelected, $amount);
+    		    }
+    		    $db->refreshQuantityProductName($barcode, $product["name"]);
+    		}
+	   }
         //Hide POST, so we can refresh
         header("Location: " . $_SERVER["PHP_SELF"]);
         die();

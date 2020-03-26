@@ -58,6 +58,7 @@ class CurlGenerator {
         $this->ch     = curl_init();
 
         if ($loginOverride == null) {
+            require_once __DIR__ . "/db.inc.php";
             global $BBCONFIG;
             $apiKey = $BBCONFIG["GROCY_API_KEY"];
             $apiUrl = $BBCONFIG["GROCY_API_URL"];
@@ -274,6 +275,7 @@ class API {
      * @return false if default best before date not set
      */
     public static function purchaseProduct($id, $amount, $bestbefore = null, $price = null) {
+        require_once __DIR__ . "/db.inc.php";
         global $BBCONFIG;
         
         $daysBestBefore = 0;

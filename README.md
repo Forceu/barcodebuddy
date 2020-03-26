@@ -26,10 +26,6 @@ Refer to the [documentation](https://barcodebuddy-documentation.readthedocs.io/e
 
 
 
-## Comments
-
-This is a fairly new project, if you want to contribute, feel free to do so! 
-
 ## Authors
 
 * **Marc Ole Bulling** - *Initial work*

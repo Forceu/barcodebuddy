@@ -4,16 +4,21 @@ require_once __DIR__ . "/../config.php";
 require_once __DIR__ . "/websocket_client.php";
 require_once __DIR__ . "/../websocketconnection.inc.php";
 
+const MAX_EXECUTION_TIME_S = 60;
+
 initStream();
 connectToWebsocket();
-if (!isset($_GET["onlyrefresh"]))
-	requestData();
+sendStillAlive();
+if (isset($_GET["getState"])) {
+    requestCurrentState();
+    die("OK");
+}
 readData();
 
 
 function connectToWebsocket() {
     global $sp;
-    if (!($sp = websocket_open('localhost', PORT_WEBSOCKET_SERVER, '', $errorstr, 30))) {
+    if (!($sp = websocket_open('localhost', PORT_WEBSOCKET_SERVER, '', $errorstr, 15))) {
         if (strpos($errorstr, "Connection refused") !== false)
             sendData('{"action":"error","data":"EConnection to websocket server refused! Please make sure that it has been started."}', "100000000");
         else
@@ -22,19 +27,22 @@ function connectToWebsocket() {
     }
 }
 
-function requestData() {
-    global $sp;
-    requestCurrentState();
-    readData();
+function sendStillAlive() {
+    sendData('{"action":"status","data":"9Connected"}');
 }
 
-//Originally this was in a while loop, however for some reason it caused php-fpm to lock up
+
 function readData() {
     global $sp;
     
-    $data = websocket_read($sp, $errstr);
-    if ($data != "")
-        sendData($data);
+    $timeStart = microtime(true);
+    while (microtime(true) - $timeStart < MAX_EXECUTION_TIME_S) {
+        $data = websocket_read($sp, $errstr);
+        if ($data != "")
+            sendData($data);
+        else
+            sendStillAlive();
+       }
 }
 
 function sendData($data, $retryMs = 10) {

@@ -238,7 +238,7 @@ class WebUiGenerator {
 			/* waiting 1s in case barcode was added from ui */
 		  await delay(1000);
 
-          eventSource = new EventSource("incl/sse/sse_data.php?onlyrefresh");
+          eventSource = new EventSource("incl/sse/sse_data.php");
           eventSource.onmessage = function(event) {
                var resultJson = JSON.parse(event.data);
                     var resultCode = resultJson.data.substring(0, 1);

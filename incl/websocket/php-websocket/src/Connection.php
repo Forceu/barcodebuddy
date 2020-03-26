@@ -68,8 +68,9 @@ class Connection
         $this->ip = $tmp[0];
         $this->port = (int) $tmp[1];
         $this->connectionId = md5($this->ip . $this->port . spl_object_hash($this));
-
-        //$this->log('Connected');
+	if (IS_DEBUG) {
+        	$this->log('Connected', 'Debug');
+	}
     }
 
     /**
@@ -163,7 +164,9 @@ class Connection
         }
 
         $this->handshaked = true;
-        //$this->log('Handshake sent');
+	if (IS_DEBUG) {
+		$this->log('Handshake sent', 'Debug');
+	}
         $this->application->onConnect($this);
 
         // trigger status application:
@@ -249,8 +252,7 @@ class Connection
             $this->waitingForData = false;
         }
 	if (IS_DEBUG) {
-		echo "Received data: ";
-		echo $decodedData["payload"]."\n";
+                $this->log('Received data: '. $decodedData["payload"], 'Debug');
 	}
         // trigger status application:
         if ($this->server->hasApplication('status')) {
@@ -298,6 +300,9 @@ class Connection
     public function send(string $payload, string $type = 'text', bool $masked = false): bool
     {
 
+	if (IS_DEBUG) {
+                $this->log('Sending data: '.$payload, 'Debug');
+	}
         try {
             $encodedData = $this->hybi10Encode($payload, $type, $masked);
             $this->server->writeBuffer($this->socket, $encodedData);

@@ -99,34 +99,43 @@ require_once __DIR__ . "/incl/db.inc.php";
 </div>
     <script>
 
-      var noSleep = new NoSleep();
-      var wakeLockEnabled = false;
+      var noSleep          = new NoSleep();
+      var wakeLockEnabled  = false;
+      var isFirstStart     = true;
       
      function toggleSound() {
         if (!wakeLockEnabled) {
           noSleep.enable();
           wakeLockEnabled = true;
-	  document.getElementById('beep_success').muted=false;
-	  document.getElementById('beep_nosuccess').muted=false;
-	  <?php if ($BBCONFIG["WS_FULLSCREEN"]) { echo " document.documentElement.requestFullscreen();"; }?>
-	  document.getElementById("muteimg").src = "incl/img/unmute.svg";
-        } else {
-          noSleep.disable();
-	  <?php if ($BBCONFIG["WS_FULLSCREEN"]) { echo " document.exitFullscreen();"; } ?>
-          wakeLockEnabled = false;
-	  document.getElementById('beep_success').muted=true;
-	  document.getElementById('beep_nosuccess').muted=true;
-	  document.getElementById("muteimg").src = "incl/img/mute.svg";
+      	  document.getElementById('beep_success').muted=false;
+      	  document.getElementById('beep_nosuccess').muted=false;
+      	  <?php if ($BBCONFIG["WS_FULLSCREEN"]) { echo " document.documentElement.requestFullscreen();"; }?>
+      	  document.getElementById("muteimg").src = "incl/img/unmute.svg";
+              } else {
+                noSleep.disable();
+      	  <?php if ($BBCONFIG["WS_FULLSCREEN"]) { echo " document.exitFullscreen();"; } ?>
+                wakeLockEnabled = false;
+      	  document.getElementById('beep_success').muted=true;
+      	  document.getElementById('beep_nosuccess').muted=true;
+      	  document.getElementById("muteimg").src = "incl/img/mute.svg";
         }
       }
 
-      if(typeof(EventSource) !== "undefined") {
+if(typeof(EventSource) !== "undefined") {
   var source = new EventSource("incl/sse/sse_data.php");
 
 
-document.body.style.backgroundColor = '#b9ffad';
-document.getElementById('title').textContent = 'Connected';
-document.getElementById('subtitle').textContent = 'Waiting for barcode...';
+  source.onopen = function() {
+    if (isFirstStart) {
+      isFirstStart=false;
+      document.body.style.backgroundColor = '#b9ffad';
+      document.getElementById('title').textContent = 'Connected';
+      document.getElementById('subtitle').textContent = 'Waiting for barcode...';
+      var http = new XMLHttpRequest();
+      http.open("GET", "incl/sse/sse_data.php?getState");
+      http.send();
+    }
+  };
 
   source.onmessage = function(event) {
        var resultJson = JSON.parse(event.data);

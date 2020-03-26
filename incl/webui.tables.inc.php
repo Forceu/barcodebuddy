@@ -234,55 +234,67 @@ function getHtmlChoreTable() {
 function getHtmlSettingsGeneral() {
     global $BBCONFIG;
 return '<form name="settingsform_1" id="settingsform_1">
-
+<div class="flex-settings">
+        <div class="flex-settings-child">
 		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 		    <input class="mdl-textfield__input" value="'.$BBCONFIG["BARCODE_C"].'" type="text" name="BARCODE_C" id="barcode_c">
 		    <label class="mdl-textfield__label" for="barcode_c">Barcode: Consume</label>
-		  </div>
+		  </div>&nbsp;&nbsp;</div>
+        <div class="flex-settings-child">
 		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 		    <input class="mdl-textfield__input" value="'.$BBCONFIG["BARCODE_CS"].'" type="text" name="BARCODE_CS" id="barcode_cs">
 		    <label class="mdl-textfield__label" for="barcode_cs">Barcode: Consume (spoiled)</label>
-		  </div><br>
+		  </div>&nbsp;&nbsp;</div>
+        <div class="flex-settings-child">
 		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 		    <input class="mdl-textfield__input" value="'.$BBCONFIG["BARCODE_P"].'" type="text" name="BARCODE_P" id="barcode_p">
 		    <label class="mdl-textfield__label" for="barcode_p">Barcode: Purchase</label>
-		  </div>
+		  </div>&nbsp;&nbsp;</div>
+        <div class="flex-settings-child">
 		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 		    <input class="mdl-textfield__input" value="'.$BBCONFIG["BARCODE_O"].'" type="text" name="BARCODE_O" id="barcode_o">
 		    <label class="mdl-textfield__label" for="barcode_o">Barcode: Open</label>
-		  </div><br>
+		  </div>&nbsp;&nbsp;</div>
+        <div class="flex-settings-child">
 		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 		    <input class="mdl-textfield__input" value="'.$BBCONFIG["BARCODE_GS"].'" type="text" name="BARCODE_GS" id="barcode_gs">
 		    <label class="mdl-textfield__label" for="barcode_gs">Barcode: Inventory</label>
-		  </div>
+		  </div>&nbsp;&nbsp;</div>
+        <div class="flex-settings-child">
 		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 		    <input class="mdl-textfield__input" value="'.$BBCONFIG["BARCODE_Q"].'" type="text" name="BARCODE_Q" id="barcode_q">
 		    <label class="mdl-textfield__label" for="barcode_q">Barcode: Quantitiy</label>
-		  </div><br>
+		  </div>&nbsp;&nbsp;</div>
+        <div class="flex-settings-child">
 		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 		    <input class="mdl-textfield__input" value="'.$BBCONFIG["BARCODE_AS"].'" type="text" name="BARCODE_AS" id="barcode_as">
 		    <label class="mdl-textfield__label" for="barcode_as">Barcode: Add to shopping list</label>
-		  </div><br>
-<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+		  </div>&nbsp;&nbsp;</div>
+        <div class="flex-settings-child">
+    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
     <input class="mdl-textfield__input" type="text" onkeypress="return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57" pattern="-?[0-9]*(\.[0-9]+)?" value="'.$BBCONFIG["REVERT_TIME"].'" id="general_revert_min"  name="REVERT_TIME">
     <label class="mdl-textfield__label" for="general_revert_min">Revert state to &quot;Consume&quot; after time passed in minutes</label>
-  </div><br>
+      </div>&nbsp;&nbsp;</div>
+</div>
+
+
+  <br>
   <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="general_revert">
 		  <input type="checkbox" value="1" name="REVERT_SINGLE" id="general_revert" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["REVERT_SINGLE"]).'>
 		  <span class="mdl-checkbox__label">Revert after single item scan in &quot;Open&quot; or &quot;Spoiled&quot; mode</span>
-		</label><br>
-  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="general_verbose">
-		  <input type="checkbox" value="1" name="MORE_VERBOSE" id="general_verbose" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["MORE_VERBOSE"]).'>
-		  <span class="mdl-checkbox__label">More verbose logs</span>
-		</label><br>
+		</label>
 <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="general_checkshoppinglist">
 		  <input type="checkbox" value="1" name="SHOPPINGLIST_REMOVE" id="general_checkshoppinglist" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["SHOPPINGLIST_REMOVE"]).'>
 		  <span class="mdl-checkbox__label">Remove purchased items from shoppinglist</span>
-		</label><br>
+		</label>
 <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="websocket_fullscreen">
 		  <input type="checkbox" value="1" name="WS_FULLSCREEN"  id="websocket_fullscreen" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["WS_FULLSCREEN"]).'>
 		  <span class="mdl-checkbox__label">Show Screen module in fullscreen</span>
-		</label><br></form>';
+		</label>
+  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="general_verbose">
+          <input type="checkbox" value="1" name="MORE_VERBOSE" id="general_verbose" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["MORE_VERBOSE"]).'>
+          <span class="mdl-checkbox__label">More verbose logs</span>
+        </label><br><br><small><i>Hint: You can find picture files of the default barcodes in the &quot;example&quot; folder or <a style="color: inherit;" href="https://github.com/Forceu/barcodebuddy/tree/master/example/defaultBarcodes">online</a></i></small></form>';
 }
 function getHtmlSettingsGrocyApi() {
     global $BBCONFIG;

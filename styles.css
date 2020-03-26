@@ -316,3 +316,22 @@ right: 0 !important;
   cursor: pointer;
 }
 
+
+.flex-settings {
+  margin: auto;
+  display: flex;
+  flex-wrap:wrap;
+}
+
+.flex-settings-child {
+  flex: 0 0 33.33%;
+  order:1;
+}
+
+@media (max-width:600px) {
+  .flex-settings-child {
+    flex: 0 0 100%;
+  }
+}
+
+

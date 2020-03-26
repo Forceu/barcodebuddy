@@ -24,6 +24,9 @@ html, body {
   margin: 0;
 }
 
+/* needed for iOS13, otherwise only double click on items is possible */
+.mdl-ripple { background: #000; opacity: 0.001; }
+
 .mdl-demo .mdl-layout__header-row {
   padding-left: 40px;
 }

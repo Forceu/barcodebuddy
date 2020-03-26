@@ -181,7 +181,7 @@ class WebUiGenerator {
 		    <h2>Add barcode</h2>
 
 		Enter your barcodes below, one each line.&nbsp;<br><br>
-		<form name="form" method="post" action="' . $_SERVER['PHP_SELF'] . '" >
+		<form name="form" onsubmit="disableSSE()" method="post" action="' . $_SERVER['PHP_SELF'] . '" >
 		<textarea name="newbarcodes" id="newbarcodes" class="mdl-textfield__input" rows="15"></textarea>
 		<span style="font-size: 9px;">It is recommended to use a script that grabs the barcode scanner input, instead of doing it manually. See the <a href="https://github.com/Forceu/barcodebuddy" rel="noopener noreferrer" target="_blank">project website</a> on how to do this.</span><br><br><br>
 
@@ -202,13 +202,17 @@ class WebUiGenerator {
         } else {
             $this->htmlOutput = $this->htmlOutput . '<script src="./incl/scripts.js"></script>';
         }
-                
-        if ($this->menu == MENU_SETTINGS) {
-            $this->htmlOutput = $this->htmlOutput . '<script> switchWebsocketCheckboxes(); </script> ';           
-        }
 
         if ($this->menu == MENU_MAIN) {
             $this->htmlOutput = $this->htmlOutput . '<script> 
+
+        var eventSource = null;
+
+        function disableSSE() {
+            if (eventSource!=null)
+                eventSource.close();
+        }
+
 		var modal = document.getElementById("myModal");
 		var btn = document.getElementById("add-barcode");
 		var span = document.getElementsByClassName("close")[0];
@@ -226,10 +230,7 @@ class WebUiGenerator {
 		    modal.style.display = "none";
 		    btn.style.display = "block";
 		  }
-		}</script> ';
-        }
-        if ($this->menu == MENU_MAIN) {
-            $this->htmlOutput = $this->htmlOutput . '<script>
+		}
 
 		const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -237,8 +238,8 @@ class WebUiGenerator {
 			/* waiting 1s in case barcode was added from ui */
 		  await delay(1000);
 
-          var source = new EventSource("incl/sse/sse_data.php?onlyrefresh");
-          source.onmessage = function(event) {
+          eventSource = new EventSource("incl/sse/sse_data.php?onlyrefresh");
+          eventSource.onmessage = function(event) {
                var resultJson = JSON.parse(event.data);
                     var resultCode = resultJson.data.substring(0, 1);
                     var resultText = resultJson.data.substring(1);  
@@ -246,8 +247,8 @@ class WebUiGenerator {
               case \'0\':
               case \'1\':
               case \'2\':
-                    window.location.reload(true);
-                    break;
+                window.location.reload(true);
+                break;
               }
 	      };
 		};

@@ -61,7 +61,7 @@ if (IS_DEBUG || file_exists(__DIR__ ."debug")) {
 }
 
 
-const BB_VERSION          = "1410";
-const BB_VERSION_READABLE = "1.4.1.0";
+const BB_VERSION          = "1411";
+const BB_VERSION_READABLE = "1.4.1.1";
 
 ?>

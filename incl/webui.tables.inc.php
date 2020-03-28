@@ -118,7 +118,8 @@ function getHtmlMainMenuTableKnown($barcodes) {
             $table->addCell('<select  onchange=\'enableButton("select_' . $itemId . '", "button_add_' . $item['id'] . '", "button_consume_' . $item['id'] . '")\' id="select_' . $itemId . '" name="select_' . $itemId . '">' . printSelections($item['match'], $productinfo) . '</select>');
             $table->addCell('<button ' . $isDisabled . ' class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="button_add_' . $item['id'] . '" name="button_add" type="submit"  value="' . $itemId . '">Add</button> <button ' . $isDisabled . ' class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="button_consume_' . $item['id'] . '" name="button_consume" type="submit" value="' . $itemId . '">Consume</button>');
             $table->addCell(explodeWords($item['name'], $itemId));
-            $table->addCell('<input type="button" onclick="openNewTab(\''.$BBCONFIG["GROCY_BASE_URL"].'product/new?closeAfterCreation&prefillname='.rawurlencode($item['name']).'&prefillbarcode='.$item['barcode'].'\', \''.$item['barcode'].'\')" name="button_createproduct" class="mdl-button mdl-js-button mdl-js-ripple-effect" value="Create Product"/>');
+            $table->addCell('<input type="button" onclick="openNewTab(\''.$BBCONFIG["GROCY_BASE_URL"].'product/new?closeAfterCreation&prefillname='.rawurlencode(htmlspecialchars_decode
+($item['name'],ENT_QUOTES)).'&prefillbarcode='.$item['barcode'].'\', \''.$item['barcode'].'\')" name="button_createproduct" class="mdl-button mdl-js-button mdl-js-ripple-effect" value="Create Product"/>');
             $table->addCell('<button name="button_delete" type="submit" class="mdl-button mdl-js-button mdl-js-ripple-effect" value="' . $itemId . '">Remove</button>');
             $table->endRow();
         }

@@ -212,6 +212,9 @@ function processRefreshedBarcode($barcode) {
     }
 }
 
+//We are using the old inventory API until the next Grocy version is officially released
+const USE_NEW_INVENTORY_API = false;
+
     // Process a barcode that Grocy already knows
 function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
     global $BBCONFIG;
@@ -248,7 +251,16 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
             }
             break;
         case STATE_GETSTOCK:
-            outputLog("Currently in stock: " . $productInfo["stockAmount"] . " " . $productInfo["unit"] . " of " . $productInfo["name"], EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, 0);
+            $output = "Currently in stock: " . $productInfo["stockAmount"] . " " . $productInfo["unit"] . " of " . $productInfo["name"];
+            if (USE_NEW_INVENTORY_API) {
+                if ($productInfo["stockAmount"] > 0) {
+                    $locationInfo = API::getProductLocations($productInfo["id"]);
+                    foreach ($locationInfo as $location) {
+                        $output = $output . "\nLocation ". $location["location_name"] . ": ".$location["amount"]. " " . $productInfo["unit"];
+                    }
+                } 
+            }
+            outputLog($output, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, 0);
             break;
         case STATE_ADD_SL:
             API::addToShoppinglist($productInfo["id"], 1);

@@ -511,6 +511,28 @@ class API {
             return null;
         }
     }
+
+
+
+    /**
+     * Gets location and amount of stock of a product
+     * @param  [String] $productid  Product id
+     * @return [Array]              Array with location info, null if none in stock
+     */
+    public static function getProductLocations($productid) {
+        
+        $apiurl = API_STOCK . "/" . $productid . "/locations";
+
+
+        $curl = new CurlGenerator($apiurl);
+        try {
+            $result = $curl->execute(true);
+        } catch (Exception $e) {
+            self::processError($e, "Could not lookup product location");
+        }
+        return $result;
+    }
+    
     
     
     

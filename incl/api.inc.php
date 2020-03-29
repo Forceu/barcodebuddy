@@ -99,20 +99,21 @@ class CurlGenerator {
         $this->checkForErrorsAndThrow($curlResult);
         curl_close($this->ch);
 
-        if ($decode) {
-            $jsonDecoded = json_decode($curlResult, true);
-            if (isset($jsonDecoded->response->status) && $jsonDecoded->response->status == 'ERROR') {
-                throw new InvalidJsonResponseException($jsonDecoded->response->errormessage);
-            }
+        $jsonDecoded = json_decode($curlResult, true);
+        if ($decode && isset($jsonDecoded->response->status) && $jsonDecoded->response->status == 'ERROR') 
+            throw new InvalidJsonResponseException($jsonDecoded->response->errormessage);
+        if (isset($jsonDecoded["error_message"])) 
+            throw new InvalidJsonResponseException($jsonDecoded["error_message"]);
+        
+        if ($decode)
             return $jsonDecoded;
-        } else
+         else
             return $curlResult;
     }
 
     private function checkForErrorsAndThrow($curlResult) {
         $curlError    = curl_errno($this->ch);
         $responseCode = curl_getinfo($this->ch, CURLINFO_RESPONSE_CODE);
-
 
         if ($responseCode == 401)
             throw new UnauthorizedException();
@@ -123,7 +124,7 @@ class CurlGenerator {
                 throw new InvalidServerResponseException();
         } elseif ($curlResult == "" && $responseCode != 204) {
                 throw new InvalidServerResponseException();
-        }  
+        }
     }
 
     private static function isErrorSslRelated($curlError) {
@@ -196,7 +197,7 @@ class API {
         } catch (InvalidServerResponseException $e) {
             return "Could not connect to server<br>";
         } catch (InvalidJsonResponseException $e) {
-            return $e->getMessage();
+            return "Error: ". $e->getMessage();
         } catch (UnauthorizedException $e) {
             return "Invalid API key<br>";
         } catch (InvalidSSLException $e) {

@@ -48,23 +48,24 @@ class DatabaseConnection {
 
 
 /* 1 is used for true and 0 for false, as PHP interpretes the String "false" as Boolean "true" */
-const DEFAULT_VALUES      = array("DEFAULT_BARCODE_C"          => "BBUDDY-C",
-				 "DEFAULT_BARCODE_CS"          => "BBUDDY-CS",
-				 "DEFAULT_BARCODE_P"           => "BBUDDY-P",
-				 "DEFAULT_BARCODE_O"           => "BBUDDY-O",
-				 "DEFAULT_BARCODE_GS"          => "BBUDDY-I",
-				 "DEFAULT_BARCODE_Q"           => "BBUDDY-Q-",
-				 "DEFAULT_BARCODE_AS"          => "BBUDDY-AS",
-				 "DEFAULT_REVERT_TIME"         => "10",
-				 "DEFAULT_REVERT_SINGLE"       => "1",
-				 "DEFAULT_MORE_VERBOSE"        => "1",
-				 "DEFAULT_GROCY_API_URL"       => null,
-				 "DEFAULT_GROCY_API_KEY"       => null,
-				 "DEFAULT_LAST_BARCODE"        => null,
-				 "DEFAULT_LAST_PRODUCT"        => null,
-				 "DEFAULT_WS_FULLSCREEN"       => "0",
-                 "DEFAULT_SHOPPINGLIST_REMOVE" => "1",
-                 "DEFAULT_USE_GENERIC_NAME"    => "1");
+const DEFAULT_VALUES      = array(
+                "DEFAULT_BARCODE_C"           => "BBUDDY-C",
+				"DEFAULT_BARCODE_CS"          => "BBUDDY-CS",
+				"DEFAULT_BARCODE_P"           => "BBUDDY-P",
+				"DEFAULT_BARCODE_O"           => "BBUDDY-O",
+				"DEFAULT_BARCODE_GS"          => "BBUDDY-I",
+				"DEFAULT_BARCODE_Q"           => "BBUDDY-Q-",
+				"DEFAULT_BARCODE_AS"          => "BBUDDY-AS",
+				"DEFAULT_REVERT_TIME"         => "10",
+				"DEFAULT_REVERT_SINGLE"       => "1",
+				"DEFAULT_MORE_VERBOSE"        => "1",
+				"DEFAULT_GROCY_API_URL"       => null,
+				"DEFAULT_GROCY_API_KEY"       => null,
+				"DEFAULT_LAST_BARCODE"        => null,
+				"DEFAULT_LAST_PRODUCT"        => null,
+				"DEFAULT_WS_FULLSCREEN"       => "0",
+                "DEFAULT_SHOPPINGLIST_REMOVE" => "1",
+                "DEFAULT_USE_GENERIC_NAME"    => "1");
 
 
 const DB_INT_VALUES = array("REVERT_TIME");
@@ -116,7 +117,10 @@ private $db = null;
         $BBCONFIG = array();
         $res      = $this->db->query("SELECT * FROM BBConfig");
         while ($row = $res->fetchArray()) {
-            $BBCONFIG[$row['data']] = $row['value'];
+            if (isset(OVERRIDDEN_CONFIG[$row['data']]))
+                $BBCONFIG[$row['data']] = OVERRIDDEN_CONFIG[$row['data']];
+            else
+                $BBCONFIG[$row['data']] = $row['value'];
         }
         if (sizeof($BBCONFIG) == 0) {
             die("DB Error: Could not get configuration");

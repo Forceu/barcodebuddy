@@ -53,6 +53,28 @@ const IS_DOCKER     		       = false;
 const IS_DEBUG      		       = false;
 
 
+//If you need to manually override a config value, you can do so with this array.
+//Any overriden value cannot be changed through the UI anymore!
+const OVERRIDDEN_CONFIG            = array(
+				 //"BARCODE_C"           => "BBUDDY-C",
+				 //"BARCODE_CS"          => "BBUDDY-CS",
+				 //"BARCODE_P"           => "BBUDDY-P",
+				 //"BARCODE_O"           => "BBUDDY-O",
+				 //"BARCODE_GS"          => "BBUDDY-I",
+				 //"BARCODE_Q"           => "BBUDDY-Q-",
+				 //"BARCODE_AS"          => "BBUDDY-AS",
+				 //"REVERT_TIME"         => "10",
+				 //"REVERT_SINGLE"       => "1",
+				 //"MORE_VERBOSE"        => "1",
+				 //"GROCY_API_URL"       => null,
+				 //"GROCY_API_KEY"       => null,
+				 //"LAST_BARCODE"        => null,
+				 //"LAST_PRODUCT"        => null,
+				 //"WS_FULLSCREEN"       => "0",
+                 //"SHOPPINGLIST_REMOVE" => "1",
+                 //"USE_GENERIC_NAME"    => "1"
+                 );
+
 //Enable debug as well if file "debug" exists in this directory
 if (IS_DEBUG || file_exists(__DIR__ ."debug")) {
     ini_set('display_errors', 1);

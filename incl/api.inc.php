@@ -94,7 +94,7 @@ class CurlGenerator {
         }
     }
     
-    function execute($decode = false) {
+    function execute($decode = false, $ignoreJsonError = false) {
         $curlResult   = curl_exec($this->ch);
         $this->checkForErrorsAndThrow($curlResult);
         curl_close($this->ch);
@@ -102,7 +102,7 @@ class CurlGenerator {
         $jsonDecoded = json_decode($curlResult, true);
         if ($decode && isset($jsonDecoded->response->status) && $jsonDecoded->response->status == 'ERROR') 
             throw new InvalidJsonResponseException($jsonDecoded->response->errormessage);
-        if (isset($jsonDecoded["error_message"])) 
+        if (!$ignoreJsonError && isset($jsonDecoded["error_message"])) 
             throw new InvalidJsonResponseException($jsonDecoded["error_message"]);
         
         if ($decode)
@@ -508,7 +508,7 @@ class API {
 
         $curl = new CurlGenerator($apiurl);
         try {
-            $result = $curl->execute(true);
+            $result = $curl->execute(true, true);
         } catch (Exception $e) {
             self::processError($e, "Could not lookup Grocy barcode");
         }

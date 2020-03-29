@@ -28,10 +28,10 @@
 const PORT_WEBSOCKET_SERVER        = 47631;
 
 //Make sure to disallow reading the file in your webserver!
-const DATABASE_PATH 		       = __DIR__ . '/../data/barcodebuddy.db';
+const DATABASE_PATH                = __DIR__ . '/../data/barcodebuddy.db';
 
 //Set timeout for CURL
-const CURL_TIMEOUT_S  		       = 20;
+const CURL_TIMEOUT_S               = 20;
 
 
 //If you are using a self-signed certificate on the Grocy server, enable this.
@@ -47,30 +47,30 @@ const CURL_ALLOW_INSECURE_SSL_HOST = false;
 
 
 // If true, websockets cannot be disabled and internal port cannot be changed
-const IS_DOCKER     		       = false;
+const IS_DOCKER                    = false;
 
 //Enable debug output
-const IS_DEBUG      		       = false;
+const IS_DEBUG                     = false;
 
 
 //If you need to manually override a config value, you can do so with this array.
 //Any overriden value cannot be changed through the UI anymore!
 const OVERRIDDEN_CONFIG            = array(
-				 //"BARCODE_C"           => "BBUDDY-C",
-				 //"BARCODE_CS"          => "BBUDDY-CS",
-				 //"BARCODE_P"           => "BBUDDY-P",
-				 //"BARCODE_O"           => "BBUDDY-O",
-				 //"BARCODE_GS"          => "BBUDDY-I",
-				 //"BARCODE_Q"           => "BBUDDY-Q-",
-				 //"BARCODE_AS"          => "BBUDDY-AS",
-				 //"REVERT_TIME"         => "10",
-				 //"REVERT_SINGLE"       => "1",
-				 //"MORE_VERBOSE"        => "1",
-				 //"GROCY_API_URL"       => null,
-				 //"GROCY_API_KEY"       => null,
-				 //"LAST_BARCODE"        => null,
-				 //"LAST_PRODUCT"        => null,
-				 //"WS_FULLSCREEN"       => "0",
+                 //"BARCODE_C"           => "BBUDDY-C",
+                 //"BARCODE_CS"          => "BBUDDY-CS",
+                 //"BARCODE_P"           => "BBUDDY-P",
+                 //"BARCODE_O"           => "BBUDDY-O",
+                 //"BARCODE_GS"          => "BBUDDY-I",
+                 //"BARCODE_Q"           => "BBUDDY-Q-",
+                 //"BARCODE_AS"          => "BBUDDY-AS",
+                 //"REVERT_TIME"         => "10",
+                 //"REVERT_SINGLE"       => "1",
+                 //"MORE_VERBOSE"        => "1",
+                 //"GROCY_API_URL"       => null,
+                 //"GROCY_API_KEY"       => null,
+                 //"LAST_BARCODE"        => null,
+                 //"LAST_PRODUCT"        => null,
+                 //"WS_FULLSCREEN"       => "0",
                  //"SHOPPINGLIST_REMOVE" => "1",
                  //"USE_GENERIC_NAME"    => "1"
                  );

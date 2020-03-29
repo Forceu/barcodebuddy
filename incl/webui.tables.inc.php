@@ -289,9 +289,13 @@ return '<form name="settingsform_1" id="settingsform_1">
 		  <span class="mdl-checkbox__label">Remove purchased items from shoppinglist</span>
 		</label>
 <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="websocket_fullscreen">
-		  <input type="checkbox" value="1" name="WS_FULLSCREEN"  id="websocket_fullscreen" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["WS_FULLSCREEN"]).'>
-		  <span class="mdl-checkbox__label">Show Screen module in fullscreen</span>
-		</label>
+          <input type="checkbox" value="1" name="WS_FULLSCREEN"  id="websocket_fullscreen" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["WS_FULLSCREEN"]).'>
+          <span class="mdl-checkbox__label">Show Screen module in fullscreen</span>
+        </label>
+<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="USE_GENERIC_NAME">
+          <input type="checkbox" value="1" name="USE_GENERIC_NAME"  id="USE_GENERIC_NAME" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["USE_GENERIC_NAME"]).'>
+          <span class="mdl-checkbox__label">Use generic names for lookup</span>
+        </label>
   <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="general_verbose">
           <input type="checkbox" value="1" name="MORE_VERBOSE" id="general_verbose" class="mdl-checkbox__input" '.setCheckedIfConfigTrue($BBCONFIG["MORE_VERBOSE"]).'>
           <span class="mdl-checkbox__label">More verbose logs</span>
@@ -328,6 +332,7 @@ return '<form name="settingsform_4" id="settingsform_4">
 <input type="hidden" value="0" name="MORE_VERBOSE_hidden"/>
 <input type="hidden" value="0" name="SHOPPINGLIST_REMOVE_hidden"/>
 <input type="hidden" value="0" name="WS_FULLSCREEN_hidden"/>
+<input type="hidden" value="0" name="USE_GENERIC_NAME_hidden"/>
 <input type="hidden" value="1" name="isSaved"/>
 </form>';
 }

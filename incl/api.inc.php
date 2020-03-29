@@ -447,6 +447,7 @@ class API {
      * @return [String]          Returns product name or "N/A" if not found
      */
     public static function lookupNameByBarcodeInOpenFoodFacts($barcode) {
+        global $BBCONFIG;
         
         $url = "https://world.openfoodfacts.org/api/v0/product/" . $barcode . ".json";
 
@@ -469,11 +470,26 @@ class API {
         if (!isset($result["status"]) || $result["status"] !== 1) {
             return "N/A";
         }
+
+        $genericName = null;
+        $productName = null;
         if (isset($result["product"]["generic_name"]) && $result["product"]["generic_name"] != "") {
-            return sanitizeString($result["product"]["generic_name"]);
+            $genericName = sanitizeString($result["product"]["generic_name"]);
         }
         if (isset($result["product"]["product_name"]) && $result["product"]["product_name"] != "") {
-            return sanitizeString($result["product"]["product_name"]);
+            $productName = sanitizeString($result["product"]["product_name"]);
+        }
+
+        if ($BBCONFIG["USE_GENERIC_NAME"]) {
+            if ($genericName != null)
+                return $genericName;
+            if ($productName != null)
+                return $productName;
+        } else {
+            if ($productName != null)
+                return $productName;
+            if ($genericName != null)
+                return $genericName;
         }
         return "N/A";
     }

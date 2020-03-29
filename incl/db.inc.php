@@ -63,7 +63,8 @@ const DEFAULT_VALUES      = array("DEFAULT_BARCODE_C"          => "BBUDDY-C",
 				 "DEFAULT_LAST_BARCODE"        => null,
 				 "DEFAULT_LAST_PRODUCT"        => null,
 				 "DEFAULT_WS_FULLSCREEN"       => "0",
-				 "DEFAULT_SHOPPINGLIST_REMOVE" => "1");
+                 "DEFAULT_SHOPPINGLIST_REMOVE" => "1",
+                 "DEFAULT_USE_GENERIC_NAME"    => "1");
 
 
 const DB_INT_VALUES = array("REVERT_TIME");

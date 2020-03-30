@@ -51,6 +51,10 @@ class InvalidSSLException            extends Exception { }
 class CurlGenerator {
     private $ch = null;
     private $method = METHOD_GET;
+
+    const IGNORED_API_ERRORS_REGEX = array(
+        '/No product with barcode .+ found/'
+    );
     
     function __construct($url, $method = METHOD_GET, $jasonData = null, $loginOverride = null, $noApiCall = false) {
         
@@ -94,7 +98,7 @@ class CurlGenerator {
         }
     }
     
-    function execute($decode = false, $ignoreJsonError = false) {
+    function execute($decode = false) {
         $curlResult   = curl_exec($this->ch);
         $this->checkForErrorsAndThrow($curlResult);
         curl_close($this->ch);
@@ -102,9 +106,16 @@ class CurlGenerator {
         $jsonDecoded = json_decode($curlResult, true);
         if ($decode && isset($jsonDecoded->response->status) && $jsonDecoded->response->status == 'ERROR') 
             throw new InvalidJsonResponseException($jsonDecoded->response->errormessage);
-        if (!$ignoreJsonError && isset($jsonDecoded["error_message"])) 
-            throw new InvalidJsonResponseException($jsonDecoded["error_message"]);
         
+        if (isset($jsonDecoded["error_message"])) {
+            $isIgnoredError = false;
+            foreach (self::IGNORED_API_ERRORS_REGEX as $ignoredError) {
+                if (preg_match($ignoredError, $jsonDecoded["error_message"]))
+                    $isIgnoredError = true;
+            }
+            if (!$isIgnoredError)
+                throw new InvalidJsonResponseException($jsonDecoded["error_message"]);
+        }
         if ($decode)
             return $jsonDecoded;
          else
@@ -508,7 +519,7 @@ class API {
 
         $curl = new CurlGenerator($apiurl);
         try {
-            $result = $curl->execute(true, true);
+            $result = $curl->execute(true);
         } catch (Exception $e) {
             self::processError($e, "Could not lookup Grocy barcode");
         }

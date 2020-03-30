@@ -124,8 +124,6 @@ while True:
                 if event.type == ecodes.EV_KEY:
                     eventdata = categorize(event)
                     if eventdata.keystate == 1:
-                        print(eventdata)
-                        print(eventdata.scancode)
                         scancode = eventdata.scancode
                         if scancode == 28:
                             print('Sending: ' + barcode)

@@ -77,7 +77,7 @@ NOT_RECOGNIZED_KEY = u'?'
 barcode = ''
 
 
-#Lazily check to see if the device is already connected before the monitor starts.
+# lazily check to see if the device is already connected before the monitor starts.
 for device in devices:
     for name in (i['NAME'] for i in device.ancestors if 'NAME' in i):
         if SCANNER_STR in name:
@@ -99,8 +99,6 @@ while True:
 
             # find the device we're interested in and add it to fds
             for name in (i['NAME'] for i in udev.ancestors if 'NAME' in i):
-                # I used a virtual input device for this test - you
-                # should adapt this to your needs
                 if SCANNER_STR in name:
                     if udev.action == u'add':
                         print('Device added: %s' % udev)

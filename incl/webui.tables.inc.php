@@ -62,37 +62,12 @@ class TableGenerator {
     
 }
 
-
-//outputs stored logs to the textarea
-function getHtmlLogTextArea() {
-    global $db;
-    $logs = $db->getLogs();
-    if (sizeof($logs) == 0) {
-        return "No barcodes processed yet.";
-    } else {
-        $returnString = '<div style="
-        -moz-appearance: textfield-multiline;
-        -webkit-appearance: textarea;
-                max-height: 18em;
-                overflow:auto;
-        contenteditable="true"
-        ondrop="return false"
-        oncut="return false"
-        onpaste="return false"
-        onkeydown="if(event.metaKey) return true; return false;">';
-        foreach ($logs as $log) {
-            $returnString = $returnString . $log . "<br>";
-        }
-        return $returnString . '</div>';
-    }
-}
-
 //Generate the table with barcodes
 function getHtmlMainMenuTableKnown($barcodes) {
     global $productinfo;
     global $BBCONFIG;
     if (sizeof($barcodes['known']) == 0) {
-        return "No known barcodes yet.";
+        return '<div id="f1">No known barcodes yet.</div>';
     } else {
         $table        = new TableGenerator(array(
             "Name",
@@ -104,7 +79,7 @@ function getHtmlMainMenuTableKnown($barcodes) {
             "Create",
             "Remove"
         ));
-        $returnString = '<form name="form" method="post" action="' . $_SERVER['PHP_SELF'] . '" >';
+        $returnString = '<div id="f1"><form name="form" method="post" action="' . $_SERVER['PHP_SELF'] . '" >';
         foreach ($barcodes['known'] as $item) {
             $isDisabled = "disabled";
             if ($item['match'] != 0) {
@@ -123,7 +98,7 @@ function getHtmlMainMenuTableKnown($barcodes) {
             $table->addCell('<button name="button_delete" type="submit" class="mdl-button mdl-js-button mdl-js-ripple-effect" value="' . $itemId . '">Remove</button>');
             $table->endRow();
         }
-        return $returnString . $table->getHtml() . "</form>";
+        return $returnString . $table->getHtml() . "</form></div>";
     }
 }
 
@@ -133,7 +108,7 @@ function getHtmlMainMenuTableUnknown($barcodes) {
     global $BBCONFIG;
     global $productinfo;
     if (sizeof($barcodes['unknown']) == 0) {
-        return "No unknown barcodes yet.";
+        return '<div id="f2">No known barcodes yet.</div>';
     } else {
         $table        = new TableGenerator(array(
             "Barcode",
@@ -144,7 +119,7 @@ function getHtmlMainMenuTableUnknown($barcodes) {
             "Create",
             "Remove"
         ));
-        $returnString = '<form name="form" method="post" action="' . $_SERVER['PHP_SELF'] . '" >';
+        $returnString = '<div id="f2"><form name="form" method="post" action="' . $_SERVER['PHP_SELF'] . '" >';
         foreach ($barcodes['unknown'] as $item) {
             $isDisabled = "disabled";
             if ($item['match'] != 0) {
@@ -161,10 +136,35 @@ function getHtmlMainMenuTableUnknown($barcodes) {
             $table->addCell('<button name="button_delete" type="submit" class="mdl-button mdl-js-button mdl-js-ripple-effect" value="' . $itemId . '">Remove</button>');
             $table->endRow();
         }
-        return $returnString . $table->getHtml() . "</form>";
+        return $returnString . $table->getHtml() . "</form></div>";
     }
 }
 
+
+
+//outputs stored logs to the textarea
+function getHtmlLogTextArea() {
+    global $db;
+    $logs = $db->getLogs();
+    if (sizeof($logs) == 0) {
+        return '<div id="f3">No known barcodes yet.</div>';
+    } else {
+        $returnString = '<div id="f3"><div style="
+        -moz-appearance: textfield-multiline;
+        -webkit-appearance: textarea;
+                max-height: 18em;
+                overflow:auto;
+        contenteditable="true"
+        ondrop="return false"
+        oncut="return false"
+        onpaste="return false"
+        onkeydown="if(event.metaKey) return true; return false;">';
+        foreach ($logs as $log) {
+            $returnString = $returnString . $log . "<br>";
+        }
+        return $returnString . '</div></div>';
+    }
+}
 
 
 

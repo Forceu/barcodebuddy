@@ -151,19 +151,19 @@ function processUnknownBarcode($barcode, $websocketEnabled) {
     }
     if ($db->isUnknownBarcodeAlreadyStored($barcode)) {
         //Unknown barcode already in local database
-        outputLog("Unknown product already scanned. Increasing quantitiy. Barcode: " . $barcode, EVENT_TYPE_ADD_NEW_BARCODE, false, $websocketEnabled, 1);
         $db->addQuantitiyToUnknownBarcode($barcode, $amount);
+        outputLog("Unknown product already scanned. Increasing quantitiy. Barcode: " . $barcode, EVENT_TYPE_ADD_NEW_BARCODE, false, $websocketEnabled, 1);
     } else {
         $productname = "N/A";
         if (is_numeric($barcode)) {
             $productname = API::lookupNameByBarcodeInOpenFoodFacts($barcode);
         }
         if ($productname != "N/A") {
-            outputLog("Unknown barcode looked up, found name: " . $productname . ". Barcode: " . $barcode, EVENT_TYPE_ADD_NEW_BARCODE, false, $websocketEnabled, 1, $productname);
             $db->insertUnrecognizedBarcode($barcode,  $amount, $productname, $db->checkNameForTags($productname));
+            outputLog("Unknown barcode looked up, found name: " . $productname . ". Barcode: " . $barcode, EVENT_TYPE_ADD_NEW_BARCODE, false, $websocketEnabled, 1, $productname);
         } else {
-            outputLog("Unknown barcode could not be looked up. Barcode: " . $barcode, EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, 2, $barcode);
             $db->insertUnrecognizedBarcode($barcode, $amount);
+            outputLog("Unknown barcode could not be looked up. Barcode: " . $barcode, EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, 2, $barcode);
         }
         
     }
@@ -247,9 +247,9 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
             outputLog("Product found. Adding  $amount " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode . $additionalLog, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, 0, "Adding 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . $additionalLog);
             break;
         case STATE_OPEN:
+                API::openProduct($productInfo["id"]);
             if ($productInfo["stockAmount"] > 0) { 
                 outputLog("Product found. Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, 0, "Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"]);
-                API::openProduct($productInfo["id"]);
             } else {
                 outputLog("Product found. None in stock, not opening: " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, 0, "Product found. None in stock, not opening: " . $productInfo["name"]);
             }

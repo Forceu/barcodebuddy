@@ -57,22 +57,22 @@ class WebUiGenerator {
 
     function addCard($title, $html, $linkText=null, $onClick=null) {
         $this->htmlOutput = $this->htmlOutput.'
-	    <section class="section--center mdl-grid--no-spacing mdl-grid mdl-shadow--2dp">
+        <section class="section--center mdl-grid--no-spacing mdl-grid mdl-shadow--2dp">
             <div class="mdl-card mdl-cell  mdl-cell--12-col">
               <div class="mdl-card__supporting-text" style="overflow-x: auto; ">
                 <h4>'.$title.'</h4><br>
-		'.$html.'
-		</div>
+        '.$html.'
+        </div>
             </div>';
-	 if ($linkText !=null &&  $onClick!=null) {
-		$id=rand();
- 	   $this->htmlOutput = $this->htmlOutput.'<button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="btn'.$id.'">
+     if ($linkText !=null &&  $onClick!=null) {
+        $id=rand();
+       $this->htmlOutput = $this->htmlOutput.'<button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="btn'.$id.'">
               <i class="material-icons">more_vert</i>
             </button>
             <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="btn'.$id.'">
               <li class="mdl-menu__item" onclick="'.$onClick.'">'.$linkText.'</li>
             </ul>';
-	}
+    }
           $this->htmlOutput = $this->htmlOutput.'</section>';
     }
 
@@ -145,7 +145,7 @@ class WebUiGenerator {
         </nav>
       </div>';
         }
-	$this->htmlOutput = $this->htmlOutput . '<main class="mdl-layout__content" style="flex: 1 0 auto;">
+    $this->htmlOutput = $this->htmlOutput . '<main class="mdl-layout__content" style="flex: 1 0 auto;">
       <div class="mdl-layout__tab-panel is-active" id="overview">';
     }
 
@@ -159,38 +159,38 @@ class WebUiGenerator {
 
 
 <footer class="mdl-mini-footer">
-	  <div class="mdl-mini-footer__left-section">
-	    <div class="mdl-logo">Barcode Buddy </div>
-	    <ul class="mdl-mini-footer__link-list">
-		      <li><a href="https://barcodebuddy-documentation.readthedocs.io/en/latest/">Documentation</a></li>
-		      <li><a href="https://github.com/Forceu/barcodebuddy/">Source Code</a></li>
-		      <li><a href="https://github.com/Forceu/barcodebuddy/blob/master/LICENSE">License</a></li>
-		  <li>Version ' . BB_VERSION_READABLE . '</li>
-		      <li>by Marc Ole Bulling</li>
-	    </ul>
-	  </div>
-	</footer>
-	      </div></main>';
+      <div class="mdl-mini-footer__left-section">
+        <div class="mdl-logo">Barcode Buddy </div>
+        <ul class="mdl-mini-footer__link-list">
+              <li><a href="https://barcodebuddy-documentation.readthedocs.io/en/latest/">Documentation</a></li>
+              <li><a href="https://github.com/Forceu/barcodebuddy/">Source Code</a></li>
+              <li><a href="https://github.com/Forceu/barcodebuddy/blob/master/LICENSE">License</a></li>
+          <li>Version ' . BB_VERSION_READABLE . '</li>
+              <li>by Marc Ole Bulling</li>
+        </ul>
+      </div>
+    </footer>
+          </div></main>';
 
         if ($this->menu == MENU_MAIN) {
             $this->htmlOutput = $this->htmlOutput . '<div id="myModal" class="modal">
 
-		  <!-- Modal content -->
-		  <div class="modal-content">
-		    <span class="close">&times;</span>
-		    <h2>Add barcode</h2>
+          <!-- Modal content -->
+          <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add barcode</h2>
 
-		Enter your barcodes below, one each line.&nbsp;<br><br>
-		<form name="form" onsubmit="disableSSE()" method="post" action="' . $_SERVER['PHP_SELF'] . '" >
-		<textarea name="newbarcodes" id="newbarcodes" class="mdl-textfield__input" rows="15"></textarea>
-		<span style="font-size: 9px;">It is recommended to use a script that grabs the barcode scanner input, instead of doing it manually. See the <a href="https://github.com/Forceu/barcodebuddy" rel="noopener noreferrer" target="_blank">project website</a> on how to do this.</span><br><br><br>
+        Enter your barcodes below, one each line.&nbsp;<br><br>
+        <form name="form" onsubmit="disableSSE()" method="post" action="' . $_SERVER['PHP_SELF'] . '" >
+        <textarea name="newbarcodes" id="newbarcodes" class="mdl-textfield__input" rows="15"></textarea>
+        <span style="font-size: 9px;">It is recommended to use a script that grabs the barcode scanner input, instead of doing it manually. See the <a href="https://github.com/Forceu/barcodebuddy" rel="noopener noreferrer" target="_blank">project website</a> on how to do this.</span><br><br><br>
 
 
-		<button  class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast" name="button_add_manual" type="submit" value="Add">Add</button>​
-		</form>
-		  </div>
-		</div>
-		 <button id="add-barcode" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast">Add barcode</button> ';
+        <button  class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast" name="button_add_manual" type="submit" value="Add">Add</button>​
+        </form>
+          </div>
+        </div>
+         <button id="add-barcode" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast">Add barcode</button> ';
         }
         if ($this->menu == MENU_SETTINGS) {
             $this->htmlOutput = $this->htmlOutput . '<button id="save-settings" onclick="checkAndReturn()" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast">Save</button>';
@@ -213,52 +213,67 @@ class WebUiGenerator {
                 eventSource.close();
         }
 
-		var modal = document.getElementById("myModal");
-		var btn = document.getElementById("add-barcode");
-		var span = document.getElementsByClassName("close")[0];
-		btn.onclick = function() {
-		  modal.style.display = "block";
-		  btn.style.display = "none";
-		document.getElementById("newbarcodes").focus();
-		}
-		span.onclick = function() {
-		  modal.style.display = "none";
-		  btn.style.display = "block";
-		}
-		window.onclick = function(event) {
-		  if (event.target == modal) {
-		    modal.style.display = "none";
-		    btn.style.display = "block";
-		  }
-		}
+        var modal = document.getElementById("myModal");
+        var btn = document.getElementById("add-barcode");
+        var span = document.getElementsByClassName("close")[0];
+        btn.onclick = function() {
+          modal.style.display = "block";
+          btn.style.display = "none";
+        document.getElementById("newbarcodes").focus();
+        }
+        span.onclick = function() {
+          modal.style.display = "none";
+          btn.style.display = "block";
+        }
+        window.onclick = function(event) {
+          if (event.target == modal) {
+            modal.style.display = "none";
+            btn.style.display = "block";
+          }
+        }
 
-		const delay = ms => new Promise(res => setTimeout(res, ms));
+        const delay = ms => new Promise(res => setTimeout(res, ms));
 
-		const startWebsocket = async () => {
-			/* waiting 1s in case barcode was added from ui */
-		  await delay(1000);
+        const startWebsocket = async () => {
+            /* waiting 1s in case barcode was added from ui */
+        await delay(1000);
 
-          eventSource = new EventSource("incl/sse/sse_data.php");
-          eventSource.onmessage = function(event) {
-               var resultJson = JSON.parse(event.data);
-                    var resultCode = resultJson.data.substring(0, 1);
-                    var resultText = resultJson.data.substring(1);  
-              switch(resultCode) {
-              case \'0\':
-              case \'1\':
-              case \'2\':
-                window.location.reload(true);
-                break;
-              }
-	      };
-		};
-        if(typeof(EventSource) !== "undefined")
-		  startWebsocket();
+        eventSource = new EventSource("incl/sse/sse_data.php");
+        eventSource.onmessage = function(event) {
+            var resultJson = JSON.parse(event.data);
+                var resultCode = resultJson.data.substring(0, 1);
+                var resultText = resultJson.data.substring(1);  
+                switch(resultCode) {
+                    case \'0\':
+                    case \'1\':
+                    case \'2\':
 
-	    </script>';
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function() {
+                      if (this.readyState == 4 && this.status == 200) {
+                          var content = JSON.parse(this.responseText);
+                          var card1 = document.getElementById("f1");
+                          card1.innerHTML = content.f1;
+                          var card2 = document.getElementById("f2");
+                          card2.innerHTML = content.f2;
+                          var card3 = document.getElementById("f3");
+                          card3.innerHTML = content.f3;
+                      }
+                    };
+                    xhttp.open("GET", "index.php?ajaxrefresh", true);
+                    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    xhttp.send();
+                        break;
+                      }
+                  };
+                };
+                if(typeof(EventSource) !== "undefined")
+                  startWebsocket();
+
+        </script>';
         }
         $this->htmlOutput = $this->htmlOutput . '</body>
-	</html>';
+    </html>';
     }
 
 }

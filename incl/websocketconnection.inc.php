@@ -27,7 +27,7 @@
 require_once __DIR__ . "/internalChecking.inc.php";
 
 function sendWebsocketMessage($resultText, $websocketEnabled, $resultCode = "0") {
-    if ($websocketEnabled && isExtensionInstalled("sockets")) {
+    if ($websocketEnabled) {
         require_once __DIR__ . "/websocket/client_internal.php";
         sendWSResult($resultCode, $resultText);
     }
@@ -35,17 +35,13 @@ function sendWebsocketMessage($resultText, $websocketEnabled, $resultCode = "0")
 
 
 function requestCurrentState() {
-    if (isExtensionInstalled("sockets")) {
         require_once __DIR__ . "/websocket/client_internal.php";
         requestSavedState();
-    }
 }
 
 function sendWebsocketStateChange($newState) {
-    if (isExtensionInstalled("sockets")) {
         require_once __DIR__ . "/websocket/client_internal.php";
         sendNewState($newState);
-    }
 }
 
 

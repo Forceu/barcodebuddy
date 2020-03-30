@@ -8,6 +8,10 @@ function enableButton(idSelect, idButtonAdd, idButtonConsume)
 		    oButtonConsume.disabled = oSelect.value == "0";
 		}
 
+function sleep (time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
+
 
 function checkAndReturn() {
 		 var form1 = document.getElementById("settingsform_1");

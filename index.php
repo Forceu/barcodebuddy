@@ -97,6 +97,16 @@ $barcodes = $db->getStoredBarcodes();
 		    $productinfo = API::getProductInfo();
 		}
 
+//Only pass refreshed cards to AJAX
+if (isset($_GET["ajaxrefresh"])) {
+    $returnArray = array("f1" => getHtmlMainMenuTableKnown($barcodes),
+                         "f2" => getHtmlMainMenuTableUnknown($barcodes),
+                         "f3" => getHtmlLogTextArea());
+    echo json_encode($returnArray, JSON_HEX_QUOT);
+    die();
+}
+
+
 $webUi = new WebUiGenerator(MENU_MAIN);
 $webUi->addHeader();
 $webUi->addCard("New Barcodes",getHtmlMainMenuTableKnown($barcodes),"Delete all",'window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=known\'');

@@ -424,27 +424,4 @@ function strrtrim($message, $strip) {
     return implode($strip, array_merge($lines, array($last))); 
 } 
 
-//Called when settings were saved. For each input, the setting
-//is saved as a database entry
-function saveSettings() {
-    global $BBCONFIG;
-    global $db;
-    foreach ($BBCONFIG as $key => $value) {
-        if (isset($_POST[$key])) {
-            if ($_POST[$key] != $value) {
-                $value = sanitizeString($_POST[$key]);
-                if (stringStartsWith($key, "BARCODE_")) {
-                    $db->updateConfig($key, strtoupper($value));
-                } else {
-                    $db->updateConfig($key, $value);
-                }
-            }
-        } else {
-            if (isset($_POST[$key . "_hidden"]) && $_POST[$key . "_hidden"] != $value) {
-                $db->updateConfig($key, sanitizeString($_POST[$key . "_hidden"]));
-            }
-        }
-    }
-}
-
 ?>

@@ -145,7 +145,7 @@ if(typeof(EventSource) !== "undefined") {
         case '0':
         document.body.style.backgroundColor = '#47ac3f';
         document.getElementById('title').textContent = 'Scan success';
-        document.getElementById('subtitle').innerHtml = resultText.replace(/\n/g, "<br>");
+        document.getElementById('subtitle').textContent = he.decode(resultText);
         document.getElementById('beep_success').play();
           break;
         case '1':

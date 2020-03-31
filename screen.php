@@ -61,23 +61,6 @@ require_once __DIR__ . "/incl/db.inc.php";
           text-align: center;
           align-content: center
       }
-      .left{
-          width:50%;
-          float:left;
-          background:#bbb;
-          height:100%;
-      }
-      .right{
-          width:50%;
-          float:right;
-          background:#aaa;
-          height:100%;
-      }
-      #left {
-        float: left;
-        width: 70%;
-        align-content: center;
-      }
       .hdr-left {
         text-align: center;
         padding-left: 10px; 
@@ -88,9 +71,7 @@ require_once __DIR__ . "/incl/db.inc.php";
         text-align: right;
         padding-right: 10px
       }
-      .bold {
-        font: bold 15pt;
-      }
+
       #soundbuttondiv {
         position: fixed;
         bottom: 10px;
@@ -121,12 +102,6 @@ require_once __DIR__ . "/incl/db.inc.php";
       .h5 {
         font: bold 10pt arial;
         margin: auto;
-        text-align: center;
-      }
-      #subtitle {
-        font: bold 20pt arial;
-        margin: auto;
-        padding: 10px;
         text-align: center;
       }
       .sound {

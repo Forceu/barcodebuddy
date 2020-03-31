@@ -87,16 +87,28 @@ require_once __DIR__ . "/incl/db.inc.php";
   <body bgcolor="#f6ff94">
   <script src="./incl/nosleep.min.js"></script>
   <script src="./incl/he.js"></script>
-    
-    <div id="title">Connecting...</div><br>
+  <div id="status">
+    <span id="grocy-sse">Connecting...</span>
     <div id="mode"></div><br><br><br>
-    <div id="subtitle">If you see this for more than a couple of seconds, please check if the websocket-server was started</div>
+  </div>  
+  <div id="events">
+    <span id="event">If you see this for more than a couple of seconds, please check if the websocket-server was started</span>
+  </div>
+  <div id="log">
+      <span class="title"> Previous Scans: </span>
+      <span id="log-entries" class="subtitle"></span>
+  </div>
 
     <audio id="beep_success" muted="muted" src="incl/websocket/beep.ogg"  type="audio/ogg" preload="auto"></audio>
     <audio id="beep_nosuccess" muted="muted" src="incl/websocket/buzzer.ogg"  type="audio/ogg" preload="auto"></audio>
     <div id="soundbuttondiv">
 <button class="sound" onclick="toggleSound()" id="soundbutton"><img id="muteimg" src="incl/img/mute.svg" alt="Toggle sound and wakelock"></button>
 </div>
+    
+    
+    
+    
+    
     <script>
 
       var noSleep          = new NoSleep();
@@ -128,9 +140,9 @@ if(typeof(EventSource) !== "undefined") {
   source.onopen = function() {
     if (isFirstStart) {
       isFirstStart=false;
-      document.body.style.backgroundColor = '#b9ffad';
-      document.getElementById('title').textContent = 'Connected';
-      document.getElementById('subtitle').textContent = 'Waiting for barcode...';
+      document.body.style.backgroundColor = '#FBFBF8';
+      document.getElementById('grocy-sse').textContent = 'Connected';
+      document.getElementById('event').textContent = 'Waiting for barcode...';
       var http = new XMLHttpRequest();
       http.open("GET", "incl/sse/sse_data.php?getState");
       http.send();

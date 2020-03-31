@@ -181,10 +181,15 @@ require_once __DIR__ . "/incl/db.inc.php";
 if(typeof(EventSource) !== "undefined") {
   var source = new EventSource("incl/sse/sse_data.php");
 
-  async function feedbackUpdate() {
-        await sleep(2000);
-        document.getElementById('scan-result').textContent = 'Waiting for barcode...';
-      };
+  async function resetScan() {
+    await sleep(2000);
+    document.getElementById('scan-result').textContent = 'Waiting for barcode...';
+    document.getElementById('event').textContent = '';
+  };
+
+  function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
   source.onopen = function() {
     if (isFirstStart) {
@@ -209,7 +214,7 @@ if(typeof(EventSource) !== "undefined") {
         document.getElementById('scan-result').textContent = he.decode(resultText);
         document.getElementById('beep_success').play();
         document.getElementById('log-entries').innerText = '\r\n' + he.decode(resultText) + document.getElementById('log-entries').innerText;
-
+        resetScan()
           break;
         case '1':
         document.body.style.backgroundColor = '#a2ff9b';

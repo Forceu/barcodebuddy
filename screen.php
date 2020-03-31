@@ -38,19 +38,39 @@ require_once __DIR__ . "/incl/db.inc.php";
   <head>
     <title>Barcode Buddy Screen</title>
     <style>
-
+      .bold {
+        font: bold 15pt;
+      }
       #soundbuttondiv {
         position: fixed;
         bottom: 10px;
         right: 10px;
       }
-      #title {
+      .h1 {
         font: bold 50pt arial;
         margin: auto;
         padding: 10px;
         text-align: center;
       }
-      #mode {
+      .h2 {
+        font: bold 40pt arial;
+        margin: auto;
+        padding: 10px;
+        text-align: center;
+      }
+      .h3 {
+        font: bold 30pt arial;
+        margin: auto;
+        padding: 10px;
+        text-align: center;
+      }
+      .h4 {
+        font: bold 15pt arial;
+        margin: auto;
+        padding: 6px;
+        text-align: center;
+      }
+      .h5 {
         font: bold 10pt arial;
         margin: auto;
         text-align: center;
@@ -87,25 +107,33 @@ require_once __DIR__ . "/incl/db.inc.php";
   <body bgcolor="#f6ff94">
   <script src="./incl/nosleep.min.js"></script>
   <script src="./incl/he.js"></script>
-  <div id="status">
-    <span id="grocy-sse">Connecting...</span>
-    <div id="mode"></div><br><br><br>
-  </div>  
-  <div id="events">
-    <span id="event">If you see this for more than a couple of seconds, please check if the websocket-server was started</span>
-  </div>
-  <div id="log">
-      <span class="title"> Previous Scans: </span>
-      <span id="log-entries" class="subtitle"></span>
+
+  <div id="right">
+    <div id="status" class="h5">
+      <span>Grocy Status:</span>
+      <span id="grocy-sse">Connecting...</span><br>
+      <span id="mode" ></span><br><br><br>
+    </div>  
   </div>
 
+  <div id="left">
+    <div id="events">
+      <span id="event">If you see this for more than a couple of seconds, please check if the websocket-server was started</span>
+    </div>
+    <div id="log">
+        <span id="scan-result"></span><br>
+        <span class="h4"> Previous Scans: </span><br>
+        <span id="log-entries" class="subtitle"></span>
+    </div>
+  </div>
+  
     <audio id="beep_success" muted="muted" src="incl/websocket/beep.ogg"  type="audio/ogg" preload="auto"></audio>
     <audio id="beep_nosuccess" muted="muted" src="incl/websocket/buzzer.ogg"  type="audio/ogg" preload="auto"></audio>
     <div id="soundbuttondiv">
 <button class="sound" onclick="toggleSound()" id="soundbutton"><img id="muteimg" src="incl/img/mute.svg" alt="Toggle sound and wakelock"></button>
 </div>
     
-    
+     
     
     
     
@@ -136,6 +164,10 @@ require_once __DIR__ . "/incl/db.inc.php";
 if(typeof(EventSource) !== "undefined") {
   var source = new EventSource("incl/sse/sse_data.php");
 
+  async function feedbackUpdate() {
+        await sleep(2000);
+        document.getElementById('event').textContent = 'Waiting for barcode...';
+      };
 
   source.onopen = function() {
     if (isFirstStart) {
@@ -156,9 +188,11 @@ if(typeof(EventSource) !== "undefined") {
       switch(resultCode) {
         case '0':
         document.body.style.backgroundColor = '#47ac3f';
-        document.getElementById('title').textContent = 'Scan success';
-        document.getElementById('subtitle').textContent = he.decode(resultText);
+        document.getElementById('event').textContent = 'Scan success';
+        document.getElementById('scan-result').textContent = he.decode(resultText);
         document.getElementById('beep_success').play();
+        document.getElementById('log-entries').innerText = '\r\n' + he.decode(resultText) + document.getElementById('log-entries').innerText;
+
           break;
         case '1':
         document.body.style.backgroundColor = '#a2ff9b';

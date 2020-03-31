@@ -139,11 +139,11 @@ require_once __DIR__ . "/incl/db.inc.php";
     </span>
   </div>
     <div id="body" class="content">
-      <span id="event" class="h3">If you see this for more than a couple of seconds, please check if the websocket-server was started</span>
+      <p id="scan-result" class="h2">If you see this for more than a couple of seconds, please check if the websocket-server was started</p>
       <div id="log">
-          <span id="scan-result"></span><br>
-          <span class="h4"> Previous Scans: </span><br>
-          <span id="log-entries" class="subtitle"></span>
+          <p id="event" class="h3"></p><br>
+          <p class="h4 p-t10"> Previous Scans: </p>
+          <span id="log-entries" class="h5"></span>
       </div>
   </div>
 
@@ -183,7 +183,7 @@ if(typeof(EventSource) !== "undefined") {
 
   async function feedbackUpdate() {
         await sleep(2000);
-        document.getElementById('event').textContent = 'Waiting for barcode...';
+        document.getElementById('scan-result').textContent = 'Waiting for barcode...';
       };
 
   source.onopen = function() {
@@ -191,7 +191,7 @@ if(typeof(EventSource) !== "undefined") {
       isFirstStart=false;
       document.body.style.backgroundColor = '#FBFBF8';
       document.getElementById('grocy-sse').textContent = 'Connected';
-      document.getElementById('event').textContent = 'Waiting for barcode...';
+      document.getElementById('scan-result').textContent = 'Waiting for barcode...';
       var http = new XMLHttpRequest();
       http.open("GET", "incl/sse/sse_data.php?getState");
       http.send();
@@ -205,7 +205,7 @@ if(typeof(EventSource) !== "undefined") {
       switch(resultCode) {
         case '0':
         document.body.style.backgroundColor = '#47ac3f';
-        document.getElementById('event').textContent = 'Scan success';
+        document.getElementById('event').textContent = 'Scan Success';
         document.getElementById('scan-result').textContent = he.decode(resultText);
         document.getElementById('beep_success').play();
         document.getElementById('log-entries').innerText = '\r\n' + he.decode(resultText) + document.getElementById('log-entries').innerText;

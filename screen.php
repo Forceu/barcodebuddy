@@ -38,6 +38,56 @@ require_once __DIR__ . "/incl/db.inc.php";
   <head>
     <title>Barcode Buddy Screen</title>
     <style>
+      body, html{
+          padding:0;
+          margin:0;
+          position:relative;
+          height:100%
+      }
+      .header {
+          width:100%;
+          background:#ccc;
+          padding:10px;
+          box-sizing:border-box;
+          text-transform: lowercase;
+      }
+      .content{
+          background:#eee;
+          width:100%;
+          padding:10px;
+          height:100%;
+          box-sizing:border-box;
+          padding:10px;
+          text-align: center;
+          align-content: center
+      }
+      .left{
+          width:50%;
+          float:left;
+          background:#bbb;
+          height:100%;
+      }
+      .right{
+          width:50%;
+          float:right;
+          background:#aaa;
+          height:100%;
+      }
+      #left {
+        float: left;
+        width: 70%;
+        align-content: center;
+      }
+      .hdr-left {
+        text-align: center;
+        padding-left: 10px; 
+      }
+      .hdr-right {
+        float: right;
+        width: 30%;
+        text-align: right;
+        padding-right: 10px
+      }
       .bold {
         font: bold 15pt;
       }
@@ -49,7 +99,6 @@ require_once __DIR__ . "/incl/db.inc.php";
       .h1 {
         font: bold 50pt arial;
         margin: auto;
-        padding: 10px;
         text-align: center;
       }
       .h2 {
@@ -68,7 +117,6 @@ require_once __DIR__ . "/incl/db.inc.php";
         font: bold 15pt arial;
         margin: auto;
         padding: 6px;
-        text-align: center;
       }
       .h5 {
         font: bold 10pt arial;
@@ -108,34 +156,28 @@ require_once __DIR__ . "/incl/db.inc.php";
   <script src="./incl/nosleep.min.js"></script>
   <script src="./incl/he.js"></script>
 
-  <div id="right">
-    <div id="status" class="h5">
-      <span>Grocy Status:</span>
-      <span id="grocy-sse">Connecting...</span><br>
-      <span id="mode" ></span><br><br><br>
-    </div>  
+  <div id="header" class="header">
+    <span class="hdr-right h4">
+      Grocy Status: <span id="grocy-sse">Connecting...</span><br>
+    </span>
+      <span id="mode" class="h1 hdr-left"></span>
+    </span>
+  </div>
+    <div id="body" class="content">
+      <span id="event" class="h3">If you see this for more than a couple of seconds, please check if the websocket-server was started</span>
+      <div id="log">
+          <span id="scan-result"></span><br>
+          <span class="h4"> Previous Scans: </span><br>
+          <span id="log-entries" class="subtitle"></span>
+      </div>
   </div>
 
-  <div id="left">
-    <div id="events">
-      <span id="event">If you see this for more than a couple of seconds, please check if the websocket-server was started</span>
-    </div>
-    <div id="log">
-        <span id="scan-result"></span><br>
-        <span class="h4"> Previous Scans: </span><br>
-        <span id="log-entries" class="subtitle"></span>
-    </div>
-  </div>
-  
+
     <audio id="beep_success" muted="muted" src="incl/websocket/beep.ogg"  type="audio/ogg" preload="auto"></audio>
     <audio id="beep_nosuccess" muted="muted" src="incl/websocket/buzzer.ogg"  type="audio/ogg" preload="auto"></audio>
-    <div id="soundbuttondiv">
-<button class="sound" onclick="toggleSound()" id="soundbutton"><img id="muteimg" src="incl/img/mute.svg" alt="Toggle sound and wakelock"></button>
-</div>
-    
-     
-    
-    
+  <div id="soundbuttondiv">
+    <button class="sound" onclick="toggleSound()" id="soundbutton"><img id="muteimg" src="incl/img/mute.svg" alt="Toggle sound and wakelock"></button>
+  </div>
     
     <script>
 
@@ -207,7 +249,7 @@ if(typeof(EventSource) !== "undefined") {
         document.getElementById('beep_nosuccess').play();
           break;
         case '4':
-        document.getElementById('mode').textContent = 'Current Mode: '+resultText;
+        document.getElementById('mode').textContent = resultText;
           break;
         case 'E':
         document.body.style.backgroundColor = '#f9868b';

@@ -127,7 +127,7 @@ require_once __DIR__ . "/incl/db.inc.php";
     </style>
 
   </head>
-  <body bgcolor="#f6ff94">
+  <body>
   <script src="./incl/nosleep.min.js"></script>
   <script src="./incl/he.js"></script>
 
@@ -138,11 +138,11 @@ require_once __DIR__ . "/incl/db.inc.php";
       <span id="mode" class="h1 hdr-left"></span>
     </span>
   </div>
-    <div id="body" class="content">
-      <p id="scan-result" class="h2">If you see this for more than a couple of seconds, please check if the websocket-server was started</p>
+    <div id="content" class="content">
+      <p id="scan-result" class="h2">If you see this for more than a couple of seconds, please check if the that Grocy is available</p>
       <div id="log">
           <p id="event" class="h3"></p><br>
-          <p class="h4 p-t10"> Previous Scans: </p>
+          <p class="h4 p-t10"> previous scans: </p>
           <span id="log-entries" class="h5"></span>
       </div>
   </div>
@@ -183,8 +183,8 @@ if(typeof(EventSource) !== "undefined") {
 
   async function resetScan() {
     await sleep(2000);
-    document.body.style.backgroundColor = '#f6ff94';
-    document.getElementById('scan-result').textContent = 'Waiting for barcode...';
+    content.style.backgroundColor = '#eee';
+    document.getElementById('scan-result').textContent = 'waiting for barcode...';
     document.getElementById('event').textContent = '';
   };
 
@@ -192,8 +192,8 @@ if(typeof(EventSource) !== "undefined") {
       return new Promise(resolve => setTimeout(resolve, ms));
   };
 
-  function resultScan(message, text, sound) {
-    document.body.style.backgroundColor = '#47ac3f';
+  function resultScan(color, message, text, sound) {
+    content.style.backgroundColor = color;
     document.getElementById('event').textContent = message;
     document.getElementById('scan-result').textContent = text;
     document.getElementById(sound).play();
@@ -205,9 +205,8 @@ if(typeof(EventSource) !== "undefined") {
   source.onopen = function() {
     if (isFirstStart) {
       isFirstStart=false;
-      document.body.style.backgroundColor = '#FBFBF8';
       document.getElementById('grocy-sse').textContent = 'Connected';
-      document.getElementById('scan-result').textContent = 'Waiting for barcode...';
+      document.getElementById('scan-result').textContent = 'waiting for barcode...';
       var http = new XMLHttpRequest();
       http.open("GET", "incl/sse/sse_data.php?getState");
       http.send();
@@ -220,20 +219,19 @@ if(typeof(EventSource) !== "undefined") {
             var resultText = resultJson.data.substring(1);  
       switch(resultCode) {
         case '0':
-        resultScan("Scan Succeeded", he.decode(resultText), "beep_success");
+        resultScan("#33a532", "Scan Succeeded", he.decode(resultText), "beep_success");
           break;
         case '1':
-        resultScan("Barcode Looked Up",he.decode(resultText), "beep_success" )
+        resultScan("#33a532", "Barcode Looked Up", he.decode(resultText), "beep_success");
           break;
         case '2':
-        resultScan("Unknown Barcode", resultText, "beep_nosuccess")
-
+        resultScan("#F7B500", "Unknown Barcode", resultText, "beep_nosuccess");
           break;
         case '4':
         document.getElementById('mode').textContent = resultText;
           break;
         case 'E':
-        document.body.style.backgroundColor = '#f9868b';
+        document.body.style.backgroundColor = '#CC0605';
         document.getElementById('title').textContent = 'Error';
         document.getElementById('subtitle').textContent = resultText;
           break;

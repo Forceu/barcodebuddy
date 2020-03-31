@@ -183,13 +183,24 @@ if(typeof(EventSource) !== "undefined") {
 
   async function resetScan() {
     await sleep(2000);
+    document.body.style.backgroundColor = '#f6ff94';
     document.getElementById('scan-result').textContent = 'Waiting for barcode...';
     document.getElementById('event').textContent = '';
   };
 
   function sleep(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
-  }
+  };
+
+  function resultScan(message, text, sound) {
+    document.body.style.backgroundColor = '#47ac3f';
+    document.getElementById('event').textContent = message;
+    document.getElementById('scan-result').textContent = text;
+    document.getElementById(sound).play();
+    document.getElementById('log-entries').innerText = '\r\n' + text + document.getElementById('log-entries').innerText;
+    resetScan();
+
+  };
 
   source.onopen = function() {
     if (isFirstStart) {
@@ -209,24 +220,14 @@ if(typeof(EventSource) !== "undefined") {
             var resultText = resultJson.data.substring(1);  
       switch(resultCode) {
         case '0':
-        document.body.style.backgroundColor = '#47ac3f';
-        document.getElementById('event').textContent = 'Scan Success';
-        document.getElementById('scan-result').textContent = he.decode(resultText);
-        document.getElementById('beep_success').play();
-        document.getElementById('log-entries').innerText = '\r\n' + he.decode(resultText) + document.getElementById('log-entries').innerText;
-        resetScan()
+        resultScan("Scan Succeeded", he.decode(resultText), "beep_success");
           break;
         case '1':
-        document.body.style.backgroundColor = '#a2ff9b';
-        document.getElementById('title').textContent = 'Barcode looked up';
-        document.getElementById('subtitle').textContent = he.decode(resultText);
-        document.getElementById('beep_success').play();
+        resultScan("Barcode Looked Up",he.decode(resultText), "beep_success" )
           break;
         case '2':
-        document.body.style.backgroundColor = '#eaff8a';
-        document.getElementById('title').textContent = 'Unknown barcode';
-        document.getElementById('subtitle').textContent = resultText;
-        document.getElementById('beep_nosuccess').play();
+        resultScan("Unknown Barcode", resultText, "beep_nosuccess")
+
           break;
         case '4':
         document.getElementById('mode').textContent = resultText;

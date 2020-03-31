@@ -231,14 +231,14 @@ if(typeof(EventSource) !== "undefined") {
         document.getElementById('mode').textContent = resultText;
           break;
         case 'E':
-        document.body.style.backgroundColor = '#CC0605';
+        content.style.backgroundColor = '#CC0605';
         document.getElementById('title').textContent = 'Error';
         document.getElementById('subtitle').textContent = resultText;
           break;
       }
   };
 } else {
-        document.body.style.backgroundColor = '#f9868b';
+        content.style.backgroundColor = '#f9868b';
         document.getElementById('title').textContent = 'Disconnected';
         document.getElementById('subtitle').textContent = 'Sorry, your browser does not support server-sent events';
 }

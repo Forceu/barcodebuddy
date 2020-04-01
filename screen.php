@@ -38,27 +38,70 @@ require_once __DIR__ . "/incl/db.inc.php";
   <head>
     <title>Barcode Buddy Screen</title>
     <style>
+      body, html{
+          padding:0;
+          margin:0;
+          position:relative;
+          height:100%
+      }
+      .header {
+          width:100%;
+          background:#ccc;
+          padding:10px;
+          box-sizing:border-box;
+          text-transform: lowercase;
+      }
+      .content{
+          background:#eee;
+          width:100%;
+          padding:10px;
+          height:100%;
+          box-sizing:border-box;
+          padding:10px;
+          text-align: center;
+          align-content: center
+      }
+      .hdr-left {
+        text-align: center;
+        padding-left: 10px; 
+      }
+      .hdr-right {
+        float: right;
+        width: 30%;
+        text-align: right;
+        padding-right: 10px
+      }
 
       #soundbuttondiv {
         position: fixed;
         bottom: 10px;
         right: 10px;
       }
-      #title {
+      .h1 {
         font: bold 50pt arial;
         margin: auto;
+        text-align: center;
+      }
+      .h2 {
+        font: bold 40pt arial;
+        margin: auto;
         padding: 10px;
         text-align: center;
       }
-      #mode {
+      .h3 {
+        font: bold 30pt arial;
+        margin: auto;
+        padding: 10px;
+        text-align: center;
+      }
+      .h4 {
+        font: bold 15pt arial;
+        margin: auto;
+        padding: 6px;
+      }
+      .h5 {
         font: bold 10pt arial;
         margin: auto;
-        text-align: center;
-      }
-      #subtitle {
-        font: bold 20pt arial;
-        margin: auto;
-        padding: 10px;
         text-align: center;
       }
       .sound {
@@ -84,19 +127,33 @@ require_once __DIR__ . "/incl/db.inc.php";
     </style>
 
   </head>
-  <body bgcolor="#f6ff94">
+  <body>
   <script src="./incl/nosleep.min.js"></script>
   <script src="./incl/he.js"></script>
-    
-    <div id="title">Connecting...</div><br>
-    <div id="mode"></div><br><br><br>
-    <div id="subtitle">If you see this for more than a couple of seconds, please check if the websocket-server was started</div>
+
+  <div id="header" class="header">
+    <span class="hdr-right h4">
+      Grocy Status: <span id="grocy-sse">Connecting...</span><br>
+    </span>
+      <span id="mode" class="h1 hdr-left"></span>
+    </span>
+  </div>
+    <div id="content" class="content">
+      <p id="scan-result" class="h2">If you see this for more than a couple of seconds, please check if the that Grocy is available</p>
+      <div id="log">
+          <p id="event" class="h3"></p><br>
+          <p class="h4 p-t10"> previous scans: </p>
+          <span id="log-entries" class="h5"></span>
+      </div>
+  </div>
+
 
     <audio id="beep_success" muted="muted" src="incl/websocket/beep.ogg"  type="audio/ogg" preload="auto"></audio>
     <audio id="beep_nosuccess" muted="muted" src="incl/websocket/buzzer.ogg"  type="audio/ogg" preload="auto"></audio>
-    <div id="soundbuttondiv">
-<button class="sound" onclick="toggleSound()" id="soundbutton"><img id="muteimg" src="incl/img/mute.svg" alt="Toggle sound and wakelock"></button>
-</div>
+  <div id="soundbuttondiv">
+    <button class="sound" onclick="toggleSound()" id="soundbutton"><img id="muteimg" src="incl/img/mute.svg" alt="Toggle sound and wakelock"></button>
+  </div>
+    
     <script>
 
       var noSleep          = new NoSleep();
@@ -124,13 +181,32 @@ require_once __DIR__ . "/incl/db.inc.php";
 if(typeof(EventSource) !== "undefined") {
   var source = new EventSource("incl/sse/sse_data.php");
 
+  async function resetScan() {
+    await sleep(2000);
+    content.style.backgroundColor = '#eee';
+    document.getElementById('scan-result').textContent = 'waiting for barcode...';
+    document.getElementById('event').textContent = '';
+  };
+
+  function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+  };
+
+  function resultScan(color, message, text, sound) {
+    content.style.backgroundColor = color;
+    document.getElementById('event').textContent = message;
+    document.getElementById('scan-result').textContent = text;
+    document.getElementById(sound).play();
+    document.getElementById('log-entries').innerText = '\r\n' + text + document.getElementById('log-entries').innerText;
+    resetScan();
+
+  };
 
   source.onopen = function() {
     if (isFirstStart) {
       isFirstStart=false;
-      document.body.style.backgroundColor = '#b9ffad';
-      document.getElementById('title').textContent = 'Connected';
-      document.getElementById('subtitle').textContent = 'Waiting for barcode...';
+      document.getElementById('grocy-sse').textContent = 'Connected';
+      document.getElementById('scan-result').textContent = 'waiting for barcode...';
       var http = new XMLHttpRequest();
       http.open("GET", "incl/sse/sse_data.php?getState");
       http.send();
@@ -143,35 +219,26 @@ if(typeof(EventSource) !== "undefined") {
             var resultText = resultJson.data.substring(1);  
       switch(resultCode) {
         case '0':
-        document.body.style.backgroundColor = '#47ac3f';
-        document.getElementById('title').textContent = 'Scan success';
-        document.getElementById('subtitle').textContent = he.decode(resultText);
-        document.getElementById('beep_success').play();
+        resultScan("#33a532", "Scan Succeeded", he.decode(resultText), "beep_success");
           break;
         case '1':
-        document.body.style.backgroundColor = '#a2ff9b';
-        document.getElementById('title').textContent = 'Barcode looked up';
-        document.getElementById('subtitle').textContent = he.decode(resultText);
-        document.getElementById('beep_success').play();
+        resultScan("#33a532", "Barcode Looked Up", he.decode(resultText), "beep_success");
           break;
         case '2':
-        document.body.style.backgroundColor = '#eaff8a';
-        document.getElementById('title').textContent = 'Unknown barcode';
-        document.getElementById('subtitle').textContent = resultText;
-        document.getElementById('beep_nosuccess').play();
+        resultScan("#F7B500", "Unknown Barcode", resultText, "beep_nosuccess");
           break;
         case '4':
-        document.getElementById('mode').textContent = 'Current Mode: '+resultText;
+        document.getElementById('mode').textContent = resultText;
           break;
         case 'E':
-        document.body.style.backgroundColor = '#f9868b';
+        content.style.backgroundColor = '#CC0605';
         document.getElementById('title').textContent = 'Error';
         document.getElementById('subtitle').textContent = resultText;
           break;
       }
   };
 } else {
-        document.body.style.backgroundColor = '#f9868b';
+        content.style.backgroundColor = '#f9868b';
         document.getElementById('title').textContent = 'Disconnected';
         document.getElementById('subtitle').textContent = 'Sorry, your browser does not support server-sent events';
 }

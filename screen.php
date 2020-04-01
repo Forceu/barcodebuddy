@@ -139,11 +139,13 @@ require_once __DIR__ . "/incl/db.inc.php";
     </span>
   </div>
     <div id="content" class="content">
-      <p id="scan-result" class="h2">If you see this for more than a couple of seconds, please check if the that Grocy is available</p>
+       <p id="scan-result" class="h2">If you see this for more than a couple of seconds, please check if the websocket server has been started and is available</p>
       <div id="log">
           <p id="event" class="h3"></p><br>
+          <div id="previous-events">
           <p class="h4 p-t10"> previous scans: </p>
           <span id="log-entries" class="h5"></span>
+        </div>
       </div>
   </div>
 
@@ -181,11 +183,15 @@ require_once __DIR__ . "/incl/db.inc.php";
 if(typeof(EventSource) !== "undefined") {
   var source = new EventSource("incl/sse/sse_data.php");
 
-  async function resetScan() {
-    await sleep(2000);
-    content.style.backgroundColor = '#eee';
-    document.getElementById('scan-result').textContent = 'waiting for barcode...';
-    document.getElementById('event').textContent = '';
+  var currentScanId = 0;
+
+  async function resetScan(scanId) {
+    await sleep(3000);
+    if (currentScanId == scanId) {
+      content.style.backgroundColor = '#eee';
+      document.getElementById('scan-result').textContent = 'waiting for barcode...';
+      document.getElementById('event').textContent = '';
+    }
   };
 
   function sleep(ms) {
@@ -198,7 +204,8 @@ if(typeof(EventSource) !== "undefined") {
     document.getElementById('scan-result').textContent = text;
     document.getElementById(sound).play();
     document.getElementById('log-entries').innerText = '\r\n' + text + document.getElementById('log-entries').innerText;
-    resetScan();
+    currentScanId++;
+    resetScan(currentScanId);
 
   };
 
@@ -231,16 +238,19 @@ if(typeof(EventSource) !== "undefined") {
         document.getElementById('mode').textContent = resultText;
           break;
         case 'E':
-        content.style.backgroundColor = '#CC0605';
-        document.getElementById('title').textContent = 'Error';
-        document.getElementById('subtitle').textContent = resultText;
+          content.style.backgroundColor = '#CC0605';
+          document.getElementById('grocy-sse').textContent = 'disconnected';
+          document.getElementById('scan-result').style.display = 'none'
+          document.getElementById('previous-events').style.display = 'none'
+          document.getElementById('event').setAttribute('style', 'white-space: pre;');
+          document.getElementById('event').textContent = "\r\n\r\n"+resultText;
           break;
       }
   };
 } else {
         content.style.backgroundColor = '#f9868b';
-        document.getElementById('title').textContent = 'Disconnected';
-        document.getElementById('subtitle').textContent = 'Sorry, your browser does not support server-sent events';
+        document.getElementById('grocy-sse').textContent = 'Disconnected';
+        document.getElementById('event').textContent = 'Sorry, your browser does not support server-sent events';
 }
     </script> 
     

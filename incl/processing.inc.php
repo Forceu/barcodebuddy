@@ -244,7 +244,7 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
             if (!API::purchaseProduct($productInfo["id"], $amount)) {
                 $additionalLog = " [WARNING]: No default best before date set!";
             }
-            outputLog("Product found. Adding  $amount " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode . $additionalLog, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, 0, "Adding 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . $additionalLog);
+            outputLog("Product found. Adding  $amount " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode . $additionalLog, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, 0, "Adding $amount " . $productInfo["unit"] . " of " . $productInfo["name"] . $additionalLog);
             break;
         case STATE_OPEN:
                 API::openProduct($productInfo["id"]);

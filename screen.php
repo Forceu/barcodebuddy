@@ -226,7 +226,7 @@ if(typeof(EventSource) !== "undefined") {
             var resultText = resultJson.data.substring(1);  
       switch(resultCode) {
         case '0':
-        resultScan("#33a532", "Scan Succeeded", he.decode(resultText), "beep_success");
+        resultScan("#33a532", "", he.decode(resultText), "beep_success");
           break;
         case '1':
         resultScan("#33a532", "Barcode Looked Up", he.decode(resultText), "beep_success");

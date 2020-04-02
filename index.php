@@ -150,10 +150,10 @@ function processButtons() {
         if (isset($_POST["newbarcodes"]) && strlen(trim($_POST["newbarcodes"])) > 0) {
             $barcodes = explode("\n", trim($_POST['newbarcodes']));
             foreach ($barcodes as $barcode) {
-        $trimmedBarcode = trim(sanitizeString($barcode));
-        if (strlen($trimmedBarcode)>0) {
+                $trimmedBarcode = trim(sanitizeString($barcode));
+                if (strlen($trimmedBarcode) > 0) {
                     processNewBarcode($trimmedBarcode, true);
-        }
+                }
             }
         }
         
@@ -180,31 +180,35 @@ function processButtons() {
                 checkIfNumeric($amount);
                 if (isset($_POST["tags"])) {
                     foreach ($_POST["tags"][$id] as $tag) {
-                    $db->addTag(sanitizeString($tag), $gidSelected);
+                        $db->addTag(sanitizeString($tag), $gidSelected);
                     }
                 }
-                $product = API::getProductInfo(sanitizeString($gidSelected));
+                $product          = API::getProductInfo(sanitizeString($gidSelected));
                 $previousBarcodes = $product["barcode"];
                 if ($previousBarcodes == NULL) {
                     API::setBarcode($gidSelected, $barcode);
                 } else {
                     API::setBarcode($gidSelected, $previousBarcodes . "," . $barcode);
                 }
+                outputLog("Associated barcode $barcode with " . $product["name"], EVENT_TYPE_ASSOCIATE_PRODUCT, true, false);
                 $db->deleteBarcode($id);
                 if ($isConsume) {
-                    API::consumeProduct($gidSelected, $amount);
+                    if ($product["stockAmount"] < $amount) 
+                            $amount = $product["stockAmount"];
+                        API::consumeProduct($gidSelected, $amount);
+                        outputLog("Consuming $amount " . $product["unit"] . " of " . $product["name"], EVENT_TYPE_ADD_KNOWN_BARCODE, false, false);
                 } else {
                     API::purchaseProduct($gidSelected, $amount);
+                    outputLog("Adding $amount " . $product["unit"] . " of " . $product["name"], EVENT_TYPE_ADD_KNOWN_BARCODE, false, false);
                 }
                 $db->refreshQuantityProductName($barcode, $product["name"]);
             }
-       }
+        }
         //Hide POST, so we can refresh
         header("Location: " . $_SERVER["PHP_SELF"]);
         die();
     }
 }
-
 
 
 

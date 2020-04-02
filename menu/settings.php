@@ -125,7 +125,7 @@ function checkGrocyConnection() {
     global $BBCONFIG;
     $result = API::checkApiConnection($BBCONFIG["GROCY_API_URL"], $BBCONFIG["GROCY_API_KEY"]);
     if ($result === true) {
-        return  '<span style="color:green">Can connect to Grocy, valid API key.</span>';
+        return  '<span style="color:green">Successfully connected to Grocy, valid API key.</span>';
     } else {
         return  '<span style="color:red">Unable to connect to Grocy! '.$result .'</span>';
     }

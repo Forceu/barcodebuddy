@@ -26,7 +26,8 @@
 
 require_once __DIR__ . "/config.php";
 
-const API_PRODUCTS       = 'objects/products';
+const API_O_PRODUCTS     = 'objects/products';
+const API_PRODUCTS       = 'stock/products';
 const API_SHOPPINGLIST   = 'stock/shoppinglist/';
 const API_CHORES         = 'objects/chores';
 const API_STOCK          = 'stock/products';
@@ -154,7 +155,7 @@ class API {
     public static function getProductInfo($productId = "") {
 
         if ($productId == "") {
-            $apiurl = API_PRODUCTS;
+            $apiurl = API_O_PRODUCTS;
         } else {
             $apiurl = API_PRODUCTS . "/" . $productId;
         }
@@ -164,6 +165,24 @@ class API {
             $result = $curl->execute(true);
         } catch (Exception $e) {
             self::processError($e, "Could not lookup Grocy product info");
+        }
+        if ($productId != "") {
+            if (isset($result["product"]["id"])) {
+                checkIfNumeric($result["product"]["id"]);
+                $resultArray                             = array();
+                $resultArray["id"]                       = $result["product"]["id"];
+                $resultArray["barcode"]                  = $result["product"]["barcode"];
+                $resultArray["name"]                     = sanitizeString($result["product"]["name"]);
+                $resultArray["unit"]                     = sanitizeString($result["quantity_unit_stock"]["name"]);
+                $resultArray["stockAmount"]              = sanitizeString($result["stock_amount"]);
+                $resultArray["default_best_before_days"] = $result["product"]["default_best_before_days"];
+                if ($resultArray["stockAmount"] == null) {
+                    $resultArray["stockAmount"] = "0";
+                }
+                return $resultArray;
+            } else {
+                return null;
+            }
         }
         return $result;
     }
@@ -413,7 +432,7 @@ class API {
             'barcode' => $barcode
         ));
 
-        $apiurl    = API_PRODUCTS . "/" . $id;
+        $apiurl    = API_O_PRODUCTS . "/" . $id;
 
         $curl = new CurlGenerator($apiurl, METHOD_PUT, $data);
         try {

@@ -57,4 +57,54 @@ $webUi->addCard("Chores",getHtmlChoreTable());
 $webUi->addFooter();
 $webUi->printHtml();
 
+
+
+function getHtmlChoreTable() {
+    $chores = getAllChores();
+    $html = new UiEditor();
+    if (sizeof($chores) == 0) {
+        $html->addHtml("No chores yet.");
+        return $html->getHtml();
+    } else {
+        $table        = new TableGenerator(array(
+            "Chore",
+            "Barcode",
+            "Action"
+        ));
+        
+        foreach ($chores as $chore) {
+            $editText   = "Enter new barcode";
+            $editValue  = "";
+            $buttonText = "Add";
+            $labelId    = "barcode_" . $chore['id'];
+            $buttonId   = "button_" . $chore['id'];
+            if ($chore['barcode'] != null) {
+                $editText   = "Barcode will be deleted";
+                $buttonText = "Edit";
+                $editValue  = $chore['barcode'];
+            }
+            
+            $table->startRow();
+            $table->addCell($chore['name']);
+            $table->addCell($html->buildEditField($labelId, $editText,  $editValue)
+                                    ->onKeyUp('enableButtonGen(\'' . $buttonId . '\', \'' . $labelId . '\', \'' . $editValue . '\')')
+                                    ->required(false)
+                                    ->setFloatingLabel(false)
+                                    ->generate(true));
+            $table->addCell($html->buildButton("button_edit", $buttonText)
+                                    ->setDisabled()
+                                    ->setSubmit()
+                                    ->setId($buttonId)
+                                    ->setRaised()
+                                    ->setIsAccent()
+                                    ->setValue($chore['id'])
+                                    ->generate(true));
+            $table->endRow();
+        }
+        $html->addTableClass($table);
+        return $html->getHtml();
+    }
+}
+
+
 ?>

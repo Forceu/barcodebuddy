@@ -14,12 +14,10 @@ function sleep (time) {
 
 
 function checkAndReturn() {
-		 var form1 = document.getElementById("settingsform_1");
-		 var form2 = document.getElementById("settingsform_2");
-		 var form3 = document.getElementById("settingsform_3");
-		 var form4 = document.getElementById("settingsform_4");
+		 var form1 = document.getElementById("settings1_form");
+		 var form2 = document.getElementById("settings2_form");
 
-		 var postString = serialize(form1)+'&'+serialize(form2)+'&'+serialize(form3)+'&'+serialize(form4);
+		 var postString = serialize(form1)+'&'+serialize(form2);
 
 		var xhr = new XMLHttpRequest();
 		  xhr.onreadystatechange = function() {

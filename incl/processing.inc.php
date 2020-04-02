@@ -315,7 +315,7 @@ function checkIfNumeric($input) {
 }
 
 //Generate checkboxes for web ui
-function explodeWords($words, $id) {
+function explodeWordsAndMakeCheckboxes($words, $id) {
     global $db;
     if ($words == "N/A") {
         return "";

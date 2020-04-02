@@ -53,4 +53,41 @@ $webUi->addHeader();
 $webUi->addCard("Saved Quantities",printSettingsQuantityTable());
 $webUi->addFooter();
 $webUi->printHtml();
+
+
+
+
+
+function printSettingsQuantityTable(){
+    global $db;
+    $quantities = $db->getQuantities();
+    $html = new UiEditor();
+    if (sizeof($quantities) == 0) {
+        $html->addHtml("No saved quantities yet.");
+        return $html->getHtml();
+    } else {
+        $returnString = '<form name="form" method="post" action="' . $_SERVER['PHP_SELF'] . '" >';
+        $table        = new TableGenerator(array(
+            "Product",
+            "Barcode",
+            "Quantitiy",
+            "Action"
+        ));
+        
+        foreach ($quantities as $quantity) {
+            $table->startRow();
+            $table->addCell($quantity['product']);
+            $table->addCell($quantity['barcode']);
+            $table->addCell($quantity['quantitiy']);
+            $table->addCell($html->buildButton("button_delete", "Delete")
+                                ->setSubmit()
+                                ->setValue($quantity['id'])
+                                ->generate(true));
+            $table->endRow();
+        }
+        $html->addTableClass($table);
+        return $html->getHtml();
+    }
+
+}
 ?>

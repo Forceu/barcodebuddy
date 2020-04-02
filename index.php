@@ -205,4 +205,153 @@ function processButtons() {
     }
 }
 
+
+
+
+//Generate the table with barcodes
+function getHtmlMainMenuTableKnown($barcodes) {
+    global $productinfo;
+    global $BBCONFIG;
+    $html = new UiEditor(true, null, "f1");
+    if (sizeof($barcodes['known']) == 0) {
+        $html->addHtml("No known barcodes yet.");
+        return $html->getHtml();
+    } else {
+        $table        = new TableGenerator(array(
+            "Name",
+            "Barcode",
+            "Quantity",
+            "Product",
+            "Action",
+            "Tags",
+            "Create",
+            "Remove"
+        ));
+        foreach ($barcodes['known'] as $item) {
+            $isDisabled = "disabled";
+            if ($item['match'] != 0) {
+                $isDisabled = "";
+            }
+            $itemId = $item['id'];
+            $table->startRow();
+            $table->addCell($item['name']);
+            $table->addCell($item['barcode']);
+            $table->addCell($item['amount']);
+            $table->addCell('<select  onchange=\'enableButton("select_' . $itemId . '", "button_add_' . $item['id'] . '", "button_consume_' . $item['id'] . '")\' id="select_' . $itemId . '" name="select_' . $itemId . '">' . printSelections($item['match'], $productinfo) . '</select>');
+            $table->addCell($html->buildButton("button_add", "Add")
+                                ->setDisabled($isDisabled)
+                                ->setSubmit()
+                                ->setRaised()
+                                ->setIsAccent()
+                                ->setValue($item['id'])
+                                ->setId('button_add_' . $item['id'])
+                                ->generate(true). ' ' . 
+                            $html->buildButton("button_consume", "Consume")
+                                ->setDisabled($isDisabled)
+                                ->setSubmit()
+                                ->setRaised()
+                                ->setIsAccent()
+                                ->setValue($item['id'])
+                                ->setId('button_consume_' . $item['id'])
+                                ->generate(true));
+            $table->addCell(explodeWordsAndMakeCheckboxes($item['name'], $itemId));
+            $table->addCell($html->buildButton("button_createproduct", "Create Product")
+                                                ->setOnClick('openNewTab(\''.$BBCONFIG["GROCY_BASE_URL"].'product/new?closeAfterCreation&prefillname='.rawurlencode(htmlspecialchars_decode($item['name'],ENT_QUOTES)).'&prefillbarcode='.$item['barcode'].'\', \''.$item['barcode'].'\')')
+                                                ->generate(true));
+            $table->addCell($html->buildButton("button_delete", "Remove")->setSubmit()->setValue($item['id'])->generate(true));
+            $table->endRow();
+        }
+        $html->addTableClass($table);
+        return $html->getHtml();
+    }
+}
+
+
+
+//Generate the table with barcodes
+function getHtmlMainMenuTableUnknown($barcodes) {
+    global $BBCONFIG;
+    global $productinfo;
+    $html = new UiEditor(true, null, "f2");
+    if (sizeof($barcodes['unknown']) == 0) {
+        $html->addHtml("No known barcodes yet.");
+        return $html->getHtml();
+    } else {
+        $table        = new TableGenerator(array(
+            "Barcode",
+            "Look up",
+            "Quantity",
+            "Product",
+            "Action",
+            "Create",
+            "Remove"
+        ));
+        foreach ($barcodes['unknown'] as $item) {
+            $isDisabled = "disabled";
+            if ($item['match'] != 0) {
+                $isDisabled = "";
+            }
+            $itemId = $item['id'];
+            $table->startRow();
+            $table->addCell($item['barcode']);
+            $table->addCell('<a href="http://google.com/search?q=' . $item['barcode'] . '" target="_blank">Search for barcode</a>');
+            $table->addCell($item['amount']);
+            $table->addCell('<select onchange=\'enableButton("select_' . $itemId . '", "button_add_' . $item['id'] . '", "button_consume_' . $item['id'] . '")\' id="select_' . $itemId . '" name="select_' . $itemId . '">' . printSelections($item['match'], $productinfo) . '</select>');
+            $table->addCell($html->buildButton("button_add", "Add")
+                                ->setDisabled($isDisabled)
+                                ->setSubmit()
+                                ->setRaised()
+                                ->setIsAccent()
+                                ->setValue($item['id'])
+                                ->setId('button_add_' . $item['id'])
+                                ->generate(true). ' ' . 
+                            $html->buildButton("button_consume", "Consume")
+                                ->setDisabled($isDisabled)
+                                ->setSubmit()
+                                ->setRaised()
+                                ->setIsAccent()
+                                ->setValue($item['id'])
+                                ->setId('button_consume_' . $item['id'])
+                                ->generate(true));
+            $table->addCell($html->buildButton("button_createproduct", "Create Product")
+                                                ->setOnClick('openNewTab(\''.$BBCONFIG["GROCY_BASE_URL"].'product/new?closeAfterCreation&prefillbarcode='.$item['barcode'].'\', \''.$item['barcode'].'\')')
+                                                ->generate(true));
+            $table->addCell($html->buildButton("button_delete", "Remove")->setSubmit()->setValue($item['id'])->generate(true));
+            $table->endRow();
+        }
+        $html->addTableClass($table);
+        return $html->getHtml();
+    }
+}
+
+
+
+//outputs stored logs to the textarea
+function getHtmlLogTextArea() {
+    global $db;
+    $logs = $db->getLogs();
+    $html = new UiEditor(true, null, "f3");
+    if (sizeof($logs) == 0) {
+        $html->addHtml("No processed items yet.");
+        return $html->getHtml();
+    } else {
+        $html->addHtml('<div style="
+            -moz-appearance: textfield-multiline;
+            -webkit-appearance: textarea;
+                    max-height: 18em;
+                    overflow:auto;"
+            contenteditable="true"
+            ondrop="return false"
+            oncut="return false"
+            onpaste="return false"
+            onkeydown="if(event.metaKey) return true; return false;">');
+        foreach ($logs as $log) {
+            $html->addHtml($log . "<br>");
+        }
+        $html->addHtml('</div>');
+        return $html->getHtml();
+    }
+}
+
+
 ?>

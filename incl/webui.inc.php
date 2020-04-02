@@ -26,7 +26,7 @@
 
 
 require_once __DIR__ . "/config.php";
-require_once __DIR__ . "/webui.tables.inc.php";
+require_once __DIR__ . "/uiEditor.inc.php";
 
 const MENU_GENERIC = 0;
 const MENU_MAIN = 1;
@@ -278,6 +278,39 @@ class WebUiGenerator {
 
 }
 
+class TableGenerator {
+    private $htmlOutput = "";
+    
+    function __construct($tableHeadItems) {
+        $this->htmlOutput  = '<table class="mdl-data-table mdl-js-data-table mdl-cell">
+                 <thead>
+                    <tr>';
+        foreach ($tableHeadItems as $item) {
+                $this->htmlOutput = $this->htmlOutput . '<th class="mdl-data-table__cell--non-numeric">' . $item . '</th>';
+        }
+        $this->htmlOutput = $this->htmlOutput . '    </tr>
+                  </thead>
+                  <tbody>';
+    }
+    
+    
+    function startRow() {
+        $this->htmlOutput = $this->htmlOutput . '<tr>';
+    }
+
+    function addCell($html) {
+            $this->htmlOutput = $this->htmlOutput . '<td class="mdl-data-table__cell--non-numeric">' . $html . '</td>';
+    }
+
+    function endRow() {
+        $this->htmlOutput = $this->htmlOutput . '</tr>';
+    }
+    
+    function getHtml() {
+        return $this->htmlOutput . '</tbody></table>';
+    }
+    
+}
 
 
 function hideGetPostParameters() {

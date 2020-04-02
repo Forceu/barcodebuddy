@@ -52,4 +52,40 @@ $webUi->addHeader();
 $webUi->addCard("Stored Tags",getHtmlTagTable());
 $webUi->addFooter();
 $webUi->printHtml();
+
+
+
+
+
+
+function getHtmlTagTable() {
+    $tags = getAllTags();
+    $html = new UiEditor();
+    if (sizeof($tags) == 0) {
+        $html->addHtml("No tags yet.");
+        return $html->getHtml();
+    } else {
+        $table        = new TableGenerator(array(
+            "Tag",
+            "Product",
+            "Action"
+        ));
+        
+        foreach ($tags as $tag) {
+            $table->startRow();
+            $table->addCell($tag['name']);
+            $table->addCell($tag['item']);
+            $table->addCell($html->buildButton("button_delete", "Delete")
+                                ->setDisabled($isDisabled)
+                                ->setSubmit()
+                                ->setValue($tag['id'])
+                                ->generate(true));
+            $table->endRow();
+        }
+        $html->addTableClass($table);
+        return $html->getHtml();
+    }
+}
+
+
 ?>

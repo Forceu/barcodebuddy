@@ -98,6 +98,7 @@ function getHtmlSettingsGeneral() {
     $html->addCheckbox("MORE_VERBOSE", "More verbose logs", $BBCONFIG["MORE_VERBOSE"], false, false);
     $html->addLineBreak(2);
     $html->addHtml('<small><i>Hint: You can find picture files of the default barcodes in the &quot;example&quot; folder or <a style="color: inherit;" href="https://github.com/Forceu/barcodebuddy/tree/master/example/defaultBarcodes">online</a></i></small>');
+    $html->addHiddenField("isSaved", "1");
 
     return $html->getHtml();
 }
@@ -110,13 +111,26 @@ function getHtmlSettingsGrocyApi() {
                             ->pattern('https://.*/api/|http://.*/api/|https://.*/api|http://.*/api')
                             ->setPlaceholder('e.g. https://your.grocy.com/api/')
                             ->generate();
-    $html->addLineBreak();
     $editValue = "";
     $html->buildEditField('GROCY_API_KEY', 'Grocy API Key',  $BBCONFIG["GROCY_API_KEY"])
                             ->pattern('[A-Za-z0-9]{50}')
                             ->generate();
+    $html->addLineBreak(2);
+    $html->addHtml(checkGrocyConnection());
     return $html->getHtml();
 }
+
+
+function checkGrocyConnection() {
+    global $BBCONFIG;
+    $result = API::checkApiConnection($BBCONFIG["GROCY_API_URL"], $BBCONFIG["GROCY_API_KEY"]);
+    if ($result === true) {
+        return  '<span style="color:green">Can connect to Grocy, valid API key.</span>';
+    } else {
+        return  '<span style="color:red">Unable to connect to Grocy! '.$result .'</span>';
+    }
+}
+
 
 function getHtmlSettingsWebsockets() {
     $sp = websocket_open('localhost', PORT_WEBSOCKET_SERVER, '', $errorstr, 5);

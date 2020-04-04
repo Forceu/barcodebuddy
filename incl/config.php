@@ -49,6 +49,9 @@ const CURL_ALLOW_INSECURE_SSL_HOST = false;
 // If true, websockets cannot be disabled and internal port cannot be changed
 const IS_DOCKER                    = false;
 
+//Require API authentication for API
+const REQUIRE_API_KEY              = true;
+
 //Enable debug output
 const IS_DEBUG                     = false;
 

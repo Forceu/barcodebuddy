@@ -141,8 +141,12 @@ class WebUiGenerator {
           <a class="mdl-navigation__link" href="' . $folder . 'menu/settings.php">Settings</a>
           <a class="mdl-navigation__link" href="' . $folder . 'menu/quantities.php">Quantities</a>
           <a class="mdl-navigation__link" href="' . $folder . 'menu/chores.php">Chores</a>
-          <a class="mdl-navigation__link" href="' . $folder . 'menu/tags.php">Tags</a>
-        </nav>
+          <a class="mdl-navigation__link" href="' . $folder . 'menu/tags.php">Tags</a>';
+        if (REQUIRE_API_KEY) {
+            $this->htmlOutput = $this->htmlOutput . '
+             <a class="mdl-navigation__link" href="' . $folder . 'menu/apimanagement.php">API</a>';
+        }
+        $this->htmlOutput = $this->htmlOutput . '</nav>
       </div>';
         }
     $this->htmlOutput = $this->htmlOutput . '<main class="mdl-layout__content" style="flex: 1 0 auto;">

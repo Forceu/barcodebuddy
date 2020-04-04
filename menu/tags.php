@@ -76,7 +76,6 @@ function getHtmlTagTable() {
             $table->addCell($tag['name']);
             $table->addCell($tag['item']);
             $table->addCell($html->buildButton("button_delete", "Delete")
-                                ->setDisabled($isDisabled)
                                 ->setSubmit()
                                 ->setValue($tag['id'])
                                 ->generate(true));

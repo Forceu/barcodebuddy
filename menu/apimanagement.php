@@ -1,0 +1,75 @@
+<?php
+/**
+ * Barcode Buddy for Grocy
+ *
+ * PHP version 7
+ *
+ * LICENSE: This source file is subject to version 3.0 of the GNU General
+ * Public License v3.0 that is attached to this project.
+ *
+ * 
+ * Management for API keys
+ *
+ * @author     Marc Ole Bulling
+ * @copyright  2019 Marc Ole Bulling
+ * @license    https://www.gnu.org/licenses/gpl-3.0.en.html  GNU GPL v3.0
+ * @since      File available since Release 1.4
+ */
+
+
+require_once __DIR__ . "/../incl/config.php";
+require_once __DIR__ . "/../incl/db.inc.php";
+require_once __DIR__ . "/../incl/webui.inc.php";
+
+
+if (isset($_POST["generate"])) {
+	$db->generateApiKey();
+}
+
+if (isset($_POST["button_delete"])) {
+	checkIfNumeric($_POST["button_delete"]);
+	$db->deleteApiKey($_POST["button_delete"]);
+}
+
+$webUi = new WebUiGenerator(MENU_GENERIC);
+$webUi->addHeader();
+$webUi->addCard("API Keys",getApiTable());
+$webUi->addFooter();
+$webUi->printHtml();
+
+
+
+
+function getApiTable() {
+	global $db;
+    $apikeys = $db->getStoredApiKeys();
+    $html = new UiEditor();
+    $table        = new TableGenerator(array(
+        "API Key",
+        "Last Used",
+        "Action"
+    ));
+    
+    foreach ($apikeys as $apikey) {
+        $table->startRow();
+        $table->addCell($apikey['key']);
+        $table->addCell($apikey['lastused']);
+        $table->addCell($html->buildButton("button_delete", "Delete")
+                            ->setSubmit()
+                            ->setValue($apikey['id'])
+                            ->generate(true));
+        $table->endRow();
+    }
+    $html->addTableClass($table);
+    $html->addLineBreak(2);
+    $html->buildButton("generate","Add")
+    						->setSubmit()
+    						->setIsAccent()
+    						->setRaised()
+    						->generate();
+    return $html->getHtml();
+}
+
+
+
+?>

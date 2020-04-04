@@ -4,6 +4,9 @@
  *
  * PHP version 7
  *
+ * 
+ * Helper file for database connection
+ *
  * LICENSE: This source file is subject to version 3.0 of the GNU General
  * Public License v3.0 that is attached to this project.
  *
@@ -14,14 +17,6 @@
  */
 
 
-/**
- * Helper file for database connection
- *
- * @author     Marc Ole Bulling
- * @copyright  2019 Marc Ole Bulling
- * @license    https://www.gnu.org/licenses/gpl-3.0.en.html  GNU GPL v3.0
- * @since      File available since Release 1.0
- */
 require_once __DIR__ . "/processing.inc.php";
 require_once __DIR__ . "/PluginLoader.php";
 require_once __DIR__ . "/api.inc.php";
@@ -92,6 +87,7 @@ private $db = null;
         $this->db->exec("CREATE TABLE IF NOT EXISTS BBConfig(id INTEGER PRIMARY KEY, data TEXT UNIQUE NOT NULL, value TEXT NOT NULL)");
         $this->db->exec("CREATE TABLE IF NOT EXISTS ChoreBarcodes(id INTEGER PRIMARY KEY, choreId INTEGER UNIQUE, barcode TEXT NOT NULL )");
         $this->db->exec("CREATE TABLE IF NOT EXISTS Quantities(id INTEGER PRIMARY KEY, barcode TEXT NOT NULL UNIQUE, quantitiy INTEGER NOT NULL, product TEXT)");
+        $this->db->exec("CREATE TABLE IF NOT EXISTS ApiKeys(id INTEGER PRIMARY KEY, key TEXT NOT NULL UNIQUE, lastused INTEGER NOT NULL)");
         $this->insertDefaultValues();
         $this->getConfig();
         $previousVersion = $BBCONFIG["version"];
@@ -460,6 +456,34 @@ private $db = null;
             return 0;
         }
     }
+
+    //Gets an array of BBuddy API keys
+    public function getStoredApiKeys() {
+        $res    = $this->db->query('SELECT * FROM ApiKeys');
+        $apikeys = array();
+        while ($row = $res->fetchArray()) {
+            $item             = array();
+            $item['id']       = $row['id'];
+            $item['key']      = $row['key'];
+            $item['lastused'] = $row['lastused'];
+            array_push($apikeys, $item);
+        }
+        return $apikeys;
+    }
+
+
+    //Generates API key
+    public function generateApiKey() {
+        $this->db->exec("INSERT INTO ApiKeys(key, lastused) VALUES('".generateRandomString()."', 'Never');");
+    }
+
+
+    //Deletes API key
+    public function deleteApiKey($id) {
+        checkIfNumeric($id);
+        $this->db->exec("DELETE FROM ApiKeys WHERE id='$id'");
+    }
+    
     
     
     //Get all stored logs

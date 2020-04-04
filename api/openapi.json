@@ -1,0 +1,316 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Barcode Buddy",
+    "version": "1.0.0",
+    "description": "BarcodeBuddy API",
+    "license": {
+      "name": "GNU GPLv3",
+      "url": "https://www.gnu.org/licenses/gpl.txt"
+    }
+  },
+  "paths": {
+    "/system/info": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "1.4.1.1": {
+                    "value": {
+                      "data": {
+                        "version": "1.4.1.1",
+                        "version_int": "1411"
+                      },
+                      "result": {
+                        "result": "OK",
+                        "http_code": 200
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response"
+          }
+        },
+        "security": [
+          {
+            "apikey": []
+          }
+        ],
+        "summary": "Returns version number"
+      }
+    },
+    "/system/barcodes": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/normalresult"
+                  }
+                },
+                "examples": {
+                  "barcodes": {
+                    "value": {
+                      "data": {
+                        "BARCODE_C": "BBUDDY-C",
+                        "BARCODE_CS": "BBUDDY-CS",
+                        "BARCODE_P": "BBUDDY-P",
+                        "BARCODE_O": "BBUDDY-O",
+                        "BARCODE_GS": "BBUDDY-I",
+                        "BARCODE_Q": "BBUDDY-Q-",
+                        "BARCODE_AS": "BBUDDY-AS"
+                      },
+                      "result": {
+                        "result": "OK",
+                        "http_code": 200
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response"
+          }
+        },
+        "security": [
+          {
+            "apikey": []
+          }
+        ],
+        "summary": "Returns all special barcodes"
+      }
+    },
+    "/state/getmode": {
+      "description": "STATE_CONSUME         = 0;\nSTATE_CONSUME_SPOILED = 1;\nSTATE_PURCHASE        = 2;\nSTATE_OPEN            = 3;\nSTATE_GETSTOCK        = 4;\nSTATE_ADD_SL          = 5;",
+      "get": {
+        "tags": [
+          "state"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "getmode": {
+                    "value": {
+                      "data": {
+                        "mode": 0
+                      },
+                      "result": {
+                        "result": "OK",
+                        "http_code": 200
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "description": "STATE_CONSUME         = 0;\nSTATE_CONSUME_SPOILED = 1;\nSTATE_PURCHASE        = 2;\nSTATE_OPEN            = 3;\nSTATE_GETSTOCK        = 4;\nSTATE_ADD_SL          = 5;"
+          }
+        },
+        "security": [
+          {
+            "apikey": []
+          }
+        ],
+        "summary": "Returns current mode"
+      }
+    },
+    "/state/setmode": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "state": {
+                    "description": "STATE_CONSUME         = 0;\nSTATE_CONSUME_SPOILED = 1;\nSTATE_PURCHASE        = 2;\nSTATE_OPEN            = 3;\nSTATE_GETSTOCK        = 4;\nSTATE_ADD_SL          = 5;",
+                    "type": "integer"
+                  }
+                }
+              },
+              "examples": {
+                "Set Consume": {
+                  "value": 0
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "tags": [
+          "state"
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/normal"
+          }
+        },
+        "security": [
+          {
+            "apikey": []
+          }
+        ],
+        "summary": "Sets current mode"
+      }
+    },
+    "/action/scan": {
+      "post": {
+        "tags": [
+          "action"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "barcode": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "Send 123456": {
+                  "value": "123456"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/normal"
+          }
+        },
+        "security": [
+          {
+            "apikey": []
+          }
+        ],
+        "summary": "Passes a barcode to Barcode Buddy"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "normalresult": {
+        "title": "Root Type for normalresult",
+        "description": "Expected result",
+        "type": "object",
+        "properties": {
+          "data": {
+            "description": "Requested data",
+            "type": "array",
+            "items": {},
+            "properties": {
+              "mode": {
+                "format": "int32",
+                "type": "integer"
+              }
+            }
+          },
+          "result": {
+            "description": "Result codes",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "properties": {
+              "result": {
+                "type": "string"
+              },
+              "http_code": {
+                "format": "int32",
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "example": {
+          "data": {
+            "mode": 0
+          },
+          "result": {
+            "result": "OK",
+            "http_code": 200
+          }
+        }
+      }
+    },
+    "responses": {
+      "normal": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/normalresult"
+            },
+            "examples": {
+              "normal": {
+                "value": {
+                  "data": {},
+                  "result": {
+                    "result": "OK",
+                    "http_code": 200
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Normal response"
+      },
+      "error": {
+        "description": "Generic error"
+      }
+    },
+    "securitySchemes": {
+      "apikey": {
+        "type": "apiKey",
+        "description": "API key provided by UI",
+        "name": "BBUDDY_API_KEY",
+        "in": "header"
+      }
+    }
+  },
+  "security": [
+    {
+      "apikey": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "system",
+      "description": ""
+    },
+    {
+      "name": "action",
+      "description": ""
+    },
+    {
+      "name": "state",
+      "description": ""
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://your.bbuddy.url/api",
+      "description": "Target server"
+    }
+  ]
+}

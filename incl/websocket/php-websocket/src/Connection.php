@@ -59,6 +59,7 @@ class Connection
      */
     public function __construct(Server $server, $socket)
     {
+        global $CONFIG;
         $this->server = $server;
         $this->socket = $socket;
 
@@ -68,7 +69,7 @@ class Connection
         $this->ip = $tmp[0];
         $this->port = (int) $tmp[1];
         $this->connectionId = md5($this->ip . $this->port . spl_object_hash($this));
-	if (IS_DEBUG) {
+	if ($CONFIG->IS_DEBUG) {
         	$this->log('Connected', 'Debug');
 	}
     }
@@ -82,6 +83,7 @@ class Connection
      */
     private function handshake(string $data): bool
     {
+        global $CONFIG;
         //$this->log('Performing handshake');
         $lines = preg_split("/\r\n/", $data);
 
@@ -164,7 +166,7 @@ class Connection
         }
 
         $this->handshaked = true;
-	if (IS_DEBUG) {
+	if ($CONFIG->IS_DEBUG) {
 		$this->log('Handshake sent', 'Debug');
 	}
         $this->application->onConnect($this);
@@ -235,6 +237,7 @@ class Connection
      */
     private function handle(string $data): bool
     {
+        global $CONFIG;
         if ($this->waitingForData === true) {
             $data = $this->dataBuffer . $data;
             $this->dataBuffer = '';
@@ -251,7 +254,7 @@ class Connection
             $this->dataBuffer = '';
             $this->waitingForData = false;
         }
-	if (IS_DEBUG) {
+	if ($CONFIG->IS_DEBUG) {
                 $this->log('Received data: '. $decodedData["payload"], 'Debug');
 	}
         // trigger status application:
@@ -299,10 +302,11 @@ class Connection
      */
     public function send(string $payload, string $type = 'text', bool $masked = false): bool
     {
+        global $CONFIG;
 
-	if (IS_DEBUG) {
-                $this->log('Sending data: '.$payload, 'Debug');
-	}
+    	if ($CONFIG->IS_DEBUG) {
+                    $this->log('Sending data: '.$payload, 'Debug');
+    	}
         try {
             $encodedData = $this->hybi10Encode($payload, $type, $masked);
             $this->server->writeBuffer($this->socket, $encodedData);

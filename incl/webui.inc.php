@@ -79,6 +79,7 @@ class WebUiGenerator {
     function addHeader() {
         require_once __DIR__ . "/db.inc.php";
         global $BBCONFIG;
+        global $CONFIG;
         
         if ($this->menu == MENU_SETTINGS || $this->menu == MENU_GENERIC) {
             $folder = "../";
@@ -142,7 +143,7 @@ class WebUiGenerator {
           <a class="mdl-navigation__link" href="' . $folder . 'menu/quantities.php">Quantities</a>
           <a class="mdl-navigation__link" href="' . $folder . 'menu/chores.php">Chores</a>
           <a class="mdl-navigation__link" href="' . $folder . 'menu/tags.php">Tags</a>';
-        if (REQUIRE_API_KEY) {
+        if ($CONFIG->REQUIRE_API_KEY) {
             $this->htmlOutput = $this->htmlOutput . '
              <a class="mdl-navigation__link" href="' . $folder . 'menu/apimanagement.php">API</a>';
         }

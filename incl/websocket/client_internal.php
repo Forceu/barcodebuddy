@@ -30,8 +30,9 @@ require_once __DIR__ . '/../processing.inc.php';
 
 //Send result of a barcode entry
 function sendWSResult($resultValue, $name) {
+    global $CONFIG;
     $client = getClient();
-    if ($client->connect('127.0.0.1', PORT_WEBSOCKET_SERVER, '/screen')) {
+    if ($client->connect('127.0.0.1', $CONFIG->PORT_WEBSOCKET_SERVER, '/screen')) {
         $payload = json_encode(array(
             'action' => 'echo',
             'data' => $resultValue . $name
@@ -41,8 +42,9 @@ function sendWSResult($resultValue, $name) {
 }
 
 function requestSavedState() {
+    global $CONFIG;
     $client = getClient();
-    if ($client->connect('127.0.0.1', PORT_WEBSOCKET_SERVER, '/screen')) {
+    if ($client->connect('127.0.0.1', $CONFIG->PORT_WEBSOCKET_SERVER, '/screen')) {
         $payload = json_encode(array(
             'action' => 'getmode',
             'data' => ''
@@ -53,8 +55,9 @@ function requestSavedState() {
 
 //Send current Barcode Buddy state
 function sendNewState($newState) {
+    global $CONFIG;
     $client = getClient();
-    if ($client->connect('127.0.0.1', PORT_WEBSOCKET_SERVER, '/screen')) {
+    if ($client->connect('127.0.0.1', $CONFIG->PORT_WEBSOCKET_SERVER, '/screen')) {
         $payload = json_encode(array(
             'action' => 'setmode',
             'data' => stateToString($newState)

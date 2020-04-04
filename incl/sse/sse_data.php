@@ -18,7 +18,8 @@ readData();
 
 function connectToWebsocket() {
     global $sp;
-    if (!($sp = websocket_open('localhost', PORT_WEBSOCKET_SERVER, '', $errorstr, 15))) {
+    global $CONFIG;
+    if (!($sp = websocket_open('localhost', $CONFIG->PORT_WEBSOCKET_SERVER, '', $errorstr, 15))) {
         if (strpos($errorstr, "Connection refused") !== false)
             sendData('{"action":"error","data":"EConnection to websocket server refused! Please make sure that it has been started."}', "100000000");
         else

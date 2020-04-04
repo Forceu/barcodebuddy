@@ -133,7 +133,8 @@ function checkGrocyConnection() {
 
 
 function getHtmlSettingsWebsockets() {
-    $sp = websocket_open('localhost', PORT_WEBSOCKET_SERVER, '', $errorstr, 5);
+    global $CONFIG;
+    $sp = websocket_open('localhost', $CONFIG->PORT_WEBSOCKET_SERVER, '', $errorstr, 5);
     if ($sp !== false) {
         return  '<span style="color:green">Websocket server is running.</span>';
     } else {

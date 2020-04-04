@@ -76,9 +76,10 @@ private $db = null;
     //Initiate database and create global variable for config
     private function initDb() {
         global $BBCONFIG;
+        global $CONFIG;
         
         self::checkPermissions();
-        $this->db = new SQLite3(DATABASE_PATH);
+        $this->db = new SQLite3($CONFIG->DATABASE_PATH);
         $this->db->busyTimeout(5000);
         $this->db->exec("CREATE TABLE IF NOT EXISTS Barcodes(id INTEGER PRIMARY KEY, barcode TEXT NOT NULL, name TEXT NOT NULL, possibleMatch INTEGER, amount INTEGER NOT NULL)");
         $this->db->exec("CREATE TABLE IF NOT EXISTS Tags(id INTEGER PRIMARY KEY, tag TEXT NOT NULL, itemId INTEGER NOT NULL)");
@@ -110,11 +111,12 @@ private $db = null;
     //Reads  Barcode Buddy Config from DB
     private function getConfig() {
         global $BBCONFIG;
+        global $CONFIG;
         $BBCONFIG = array();
         $res      = $this->db->query("SELECT * FROM BBConfig");
         while ($row = $res->fetchArray()) {
-            if (isset(OVERRIDDEN_CONFIG[$row['data']]))
-                $BBCONFIG[$row['data']] = OVERRIDDEN_CONFIG[$row['data']];
+            if (isset($CONFIG->OVERRIDDEN_CONFIG[$row['data']]))
+                $BBCONFIG[$row['data']] = $CONFIG->OVERRIDDEN_CONFIG[$row['data']];
             else
                 $BBCONFIG[$row['data']] = $row['value'];
         }
@@ -142,14 +144,15 @@ private $db = null;
     
     //Checks if database is writable
     private function checkPermissions() {
-        if (file_exists(DATABASE_PATH)) {
-            if (!is_writable(DATABASE_PATH)) {
+        global $CONFIG;
+        if (file_exists($CONFIG->DATABASE_PATH)) {
+            if (!is_writable($CONFIG->DATABASE_PATH)) {
                 die("DB Error: Database file is not writable");
             }
         } else {
             self::createDbDirectory();
             self::checkAndMoveIfOldDbLocation();
-            if (!is_writable(dirname(DATABASE_PATH))) {
+            if (!is_writable(dirname($CONFIG->DATABASE_PATH))) {
                 self::showErrorNotWritable("DB Error Not_Writable");
             }
         }
@@ -162,7 +165,8 @@ private $db = null;
     }
 
     private function createDbDirectory() {
-        $dirName = dirname(DATABASE_PATH);
+        global $CONFIG;
+        $dirName = dirname($CONFIG->DATABASE_PATH);
         if (!file_exists($dirName)) {
             $couldCreateDir = mkdir($dirName, 0700, true);
             if (!$couldCreateDir) {
@@ -176,10 +180,11 @@ private $db = null;
      * If there is an old database, create the new folder and move it there. 
      */
     private function checkAndMoveIfOldDbLocation() {
+        global $CONFIG;
         //If only old db exists, create directory and move file
-        if (file_exists(LEGACY_DATABASE_PATH) && !file_exists(DATABASE_PATH)) {
+        if (file_exists(LEGACY_DATABASE_PATH) && !file_exists($CONFIG->DATABASE_PATH)) {
             self::createDbDirectory();
-            $couldMove = rename(LEGACY_DATABASE_PATH, DATABASE_PATH);
+            $couldMove = rename(LEGACY_DATABASE_PATH, $CONFIG->DATABASE_PATH);
             if (!couldMove) {
                 self::showErrorNotWritable("DB Error Could_Not_Move");
             }

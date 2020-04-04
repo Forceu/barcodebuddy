@@ -29,7 +29,7 @@ if ($requestedUrl == "/api/") {
     readfile(__DIR__ . "/doc.html");
     die();
 }
-if (REQUIRE_API_KEY)
+if ($CONFIG->REQUIRE_API_KEY)
 	$api->checkIfAuthorized();
 $api->execute($requestedUrl);
 

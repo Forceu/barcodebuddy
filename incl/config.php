@@ -12,15 +12,10 @@
  * @copyright  2019 Marc Ole Bulling
  * @license    https://www.gnu.org/licenses/gpl-3.0.en.html  GNU GPL v3.0
  * @since      File available since Release 1.0
- */
-
-/**
- * Config file
  *
- * @author     Marc Ole Bulling
- * @copyright  2019 Marc Ole Bulling
- * @license    https://www.gnu.org/licenses/gpl-3.0.en.html  GNU GPL v3.0
- * @since      File available since Release 1.0
+ *
+ * Config file for Barcode Buddy. These configurations cannot be changed
+ * during runtime
  */
 
 
@@ -78,15 +73,7 @@ const OVERRIDDEN_CONFIG            = array(
                  //"USE_GENERIC_NAME"    => "1"
                  );
 
-//Enable debug as well if file "debug" exists in this directory
-if (IS_DEBUG || file_exists(__DIR__ ."debug")) {
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
-}
 
-
-const BB_VERSION          = "1411";
-const BB_VERSION_READABLE = "1.4.1.1";
+require_once __DIR__ . '/configProcessing.inc.php';
 
 ?>

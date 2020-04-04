@@ -58,6 +58,7 @@ class CurlGenerator {
     );
     
     function __construct($url, $method = METHOD_GET, $jasonData = null, $loginOverride = null, $noApiCall = false) {
+        global $CONFIG;
         
         $this->method = $method;
         $this->ch     = curl_init();
@@ -90,11 +91,11 @@ class CurlGenerator {
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, 0);
         curl_setopt($this->ch, CURLOPT_USERAGENT,'BarcodeBuddy v' . BB_VERSION_READABLE);
-        curl_setopt($this->ch, CURLOPT_TIMEOUT, CURL_TIMEOUT_S);
-        if (CURL_ALLOW_INSECURE_SSL_CA) {
+        curl_setopt($this->ch, CURLOPT_TIMEOUT, $CONFIG->CURL_TIMEOUT_S);
+        if ($CONFIG->CURL_ALLOW_INSECURE_SSL_CA) {
             curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
         }
-        if (CURL_ALLOW_INSECURE_SSL_HOST) {
+        if ($CONFIG->CURL_ALLOW_INSECURE_SSL_HOST) {
             curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, false);
         }
     }

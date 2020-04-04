@@ -1,12 +1,12 @@
 #!/bin/bash
 
 
-SCRIPT_LOCATION="/var/www/html/barcodebuddy/index.php"
-SERVER_ADDRESS="https://your.bbuddy.url/index.php"
+SCRIPT_LOCATION="${SCRIPT_LOCATION:="/var/www/html/barcodebuddy/index.php"}"
+SERVER_ADDRESS="${SERVER:ADDRESS:="https://your.bbuddy.url/index.php"}"
 
-USE_CURL=false
-WWW_USER="www-data"
-IS_DOCKER=false
+USE_CURL="${USE_CURL:="false"}"
+WWW_USER="${WWW_USER:="www-data"}"
+IS_DOCKER="${IS_DOCKER:="false"}"
 
 declare -A CODE_MAP_CHAR=( ["(KEY_0)"]="0" \
     ["(KEY_1)"]="1" \

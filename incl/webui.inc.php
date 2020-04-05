@@ -35,6 +35,27 @@ const MENU_SETTINGS = 3;
 const MENU_ERROR = 4;
 
 
+class MenuItemLink {
+
+    public $itemText;
+    public $itemLink;
+
+
+    function __construct() {
+        return $this;
+    }
+
+    public function setText($text) {
+        $this->itemText = $text;
+        return $this;
+    }
+
+    public function setLink($link) {
+        $this->itemLink = $link;
+        return $this;
+    }
+}
+
 
 class WebUiGenerator {
     private $htmlOutput      = "";
@@ -58,25 +79,34 @@ class WebUiGenerator {
     }
     
 
-    function addCard($title, $html, $linkText=null, $onClick=null) {
+    function addCard($title, $html, $links = null) {
         $this->addHtml('
         <section class="section--center mdl-grid--no-spacing mdl-grid mdl-shadow--2dp">
             <div class="mdl-card mdl-cell  mdl-cell--12-col">
               <div class="mdl-card__supporting-text" style="overflow-x: auto; ">
-                <h4>'.$title.'</h4><br>
-        '.$html.'
+                <h4>' . $title . '</h4><br>
+        ' . $html . '
         </div>
             </div>');
-     if ($linkText !=null &&  $onClick!=null) {
-        $id=rand();
-       $this->addHtml('<button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="btn'.$id.'">
-              <i class="material-icons">more_vert</i>
-            </button>
-            <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="btn'.$id.'">
-              <li class="mdl-menu__item" onclick="'.$onClick.'">'.$linkText.'</li>
-            </ul>');
-    }
-          $this->addHtml('</section>');
+        if ($links != null) {
+            $linkArray = array();
+            if (!is_array($links))
+                $linkArray[0] = $links;
+            else
+                $linkArray = $links;
+            
+                $id = rand();
+                $this->addHtml('<button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="btn' . $id . '">
+                  <i class="material-icons">more_vert</i>
+                </button>
+                <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="btn' . $id . '">');
+
+            foreach ($linkArray as $link) {
+                  $this->addHtml('<li class="mdl-menu__item" onclick="' . $link->itemLink . '">' . $link->itemText . '</li>');
+            }
+            $this->addHtml('</ul>');
+        }
+        $this->addHtml('</section>');
     }
 
     function addHeader($additionalHeader = null) {

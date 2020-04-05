@@ -109,9 +109,21 @@ if (isset($_GET["ajaxrefresh"])) {
 
 $webUi = new WebUiGenerator(MENU_MAIN);
 $webUi->addHeader('<link rel="stylesheet" href="./incl/styleMain.css">');
-$webUi->addCard("New Barcodes",getHtmlMainMenuTableKnown($barcodes),"Delete all",'window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=known\'');
-$webUi->addCard("Unknown Barcodes",getHtmlMainMenuTableUnknown($barcodes),"Delete all",'window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=unknown\'');
-$webUi->addCard("Processed Barcodes",getHtmlLogTextArea(),"Clear log",'window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=log\'');
+
+$link = (new MenuItemLink())
+                ->setText("Delete all")
+                ->setLink('window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=known\'');
+$webUi->addCard("New Barcodes",getHtmlMainMenuTableKnown($barcodes), $link);
+
+$link = (new MenuItemLink())
+                ->setText("Delete all")
+                ->setLink('window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=unknown\'');
+$webUi->addCard("Unknown Barcodes",getHtmlMainMenuTableUnknown($barcodes), $link);
+
+$link = (new MenuItemLink())
+                ->setText("Clear log")
+                ->setLink('window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=log\'');
+$webUi->addCard("Processed Barcodes",getHtmlLogTextArea(), $link);
 $webUi->addFooter();
 $webUi->printHtml();
 

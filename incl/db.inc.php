@@ -489,7 +489,9 @@ private $db = null;
 
     //Generates API key
     public function generateApiKey() {
-        $this->db->exec("INSERT INTO ApiKeys(key, lastused) VALUES('".generateRandomString()."', 'Never');");
+        $key = generateRandomString();
+        $this->db->exec("INSERT INTO ApiKeys(key, lastused) VALUES('".$key."', 'Never');");
+        return $key;
     }
 
 
@@ -499,6 +501,11 @@ private $db = null;
         $this->db->exec("DELETE FROM ApiKeys WHERE id='$id'");
     }
     
+    
+    //Deletes API key
+    public function deleteAllApiKeys() {
+        $this->db->exec("DELETE FROM ApiKeys");
+    }
     
     
     //Get all stored logs

@@ -20,7 +20,9 @@
 require_once __DIR__ . "/../incl/config.php";
 require_once __DIR__ . "/../incl/db.inc.php";
 require_once __DIR__ . "/../incl/webui.inc.php";
+require_once __DIR__ . "/../incl/processing.inc.php";
 
+$mobileKey = null;
 
 if (isset($_POST["generate"])) {
 	$db->generateApiKey();
@@ -28,20 +30,67 @@ if (isset($_POST["generate"])) {
 }
 
 if (isset($_POST["button_delete"])) {
-	checkIfNumeric($_POST["button_delete"]);
-	$db->deleteApiKey($_POST["button_delete"]);
+    checkIfNumeric($_POST["button_delete"]);
+    $db->deleteApiKey($_POST["button_delete"]);
+    hideGetPostParameters();
+}
+if (isset($_POST["button_back"])) {
+    hideGetPostParameters();
+}
+
+if (isset($_GET["mobileapp"])) {
+    $mobileKey = $db->generateApiKey();
+}
+if (isset($_GET["deleteall"])) {
+    $mobileKey = $db->deleteAllApiKeys();
     hideGetPostParameters();
 }
 
 $webUi = new WebUiGenerator(MENU_GENERIC);
 $webUi->addHeader('<link rel="stylesheet" href="../incl/styleQr.css">');
-$webUi->addCard("API Keys",getApiTable());
 $webUi->addHtml('<script type="text/javascript" src="/../incl/qrcode.js"></script>');
+if ($mobileKey == null) 
+    $webUi->addCard("API Keys", getApiTable(), createMenuLinks());
+else
+    $webUi->addCard("Add mobile app", getMobileAppPage());
 $webUi->addFooter();
 $webUi->printHtml();
 
 
-const styleModal = '';
+function createMenuLinks() {
+    $links = array();
+    $linkAddApp = (new MenuItemLink())
+                    ->setText("Add mobile app")
+                    ->setLink('window.location.href=\''.$_SERVER['PHP_SELF'].'?mobileapp\'');
+    $linkDelete = (new MenuItemLink())
+                    ->setText("Revoke all")
+                    ->setLink('window.location.href=\''.$_SERVER['PHP_SELF'].'?deleteall\'');
+    $links[0] = $linkAddApp;
+    $links[1] = $linkDelete;
+    return $links;
+}
+
+function getMobileAppPage() {
+    global $mobileKey;
+    $apiUrl = getApiUrl("menu/");
+    $infoArray = array ("issetup"=> true, "url" => $apiUrl, "key" => $mobileKey);
+    $html = new UiEditor();
+    $html->addHtml("Please scan the following QR code with your Barcode Buddy app. You can download the app here: XXXXXXXX");
+    $html->addLineBreak(3);
+    $html->addHtml('<div id="placeHolder"></div>');
+    $html->addScript("var qr = qrcode(0, 'M');
+    qr.addData('".json_encode($infoArray)."');
+    qr.make();
+    document.getElementById('placeHolder').innerHTML = qr.createImgTag(8,5);");
+    $html->addLineBreak(3);
+    $html->buildButton("button_back", "Go back")
+                            ->setSubmit()
+                            ->setIsAccent()
+                            ->setRaised()
+                            ->generate();
+    return $html->getHtml();
+}
+
 
 function getApiTable() {
 	global $db;
@@ -64,7 +113,7 @@ function getApiTable() {
                             ->setValue($apikey['id'])
                             ->setOnClick("showQrCode('".$apikey['key']."')")
                             ->generate(true));
-        $table->addCell($html->buildButton("button_delete", "Delete")
+        $table->addCell($html->buildButton("button_delete", "Revoke")
                             ->setSubmit()
                             ->setValue($apikey['id'])
                             ->generate(true));
@@ -80,7 +129,7 @@ function getApiTable() {
     $html->addHtml('
         <div id="qrcode-modal" class="modal">
           <span class="close">&times;</span>
-          <div class="modal-content" id="placeHolder">
+          <div class="modal-content" id="placeHolder"></div>
         </div>');
     $html->addScript("document.addEventListener('keyup', function(e) {
             if (e.keyCode == 27) {

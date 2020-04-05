@@ -88,7 +88,7 @@ function showQrCode(content) {
 	document.getElementsByClassName("close")[0].onclick = function() {
 	    document.getElementById("qrcode-modal").style.display = "none";
 	}
-	var qr = qrcode(4, 'L');
+	var qr = qrcode(0, 'L');
 	qr.addData(content);
 	qr.make();
 	document.getElementById('placeHolder').innerHTML = qr.createImgTag(10,5);

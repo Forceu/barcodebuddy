@@ -476,6 +476,16 @@ private $db = null;
         return $apikeys;
     }
 
+    public function isValidApiKey($apiKey) {
+         foreach ($this->getStoredApiKeys() as $key) {
+            if ($apiKey === $key["key"]) {
+                $this->db->exec("UPDATE ApiKeys SET lastused=datetime('now','localtime') WHERE id=".$key["id"]);
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     //Generates API key
     public function generateApiKey() {

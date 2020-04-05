@@ -68,17 +68,29 @@ var serialize = function (form) {
 
 };
 
-function enableButtonGen(buttonId, textId, previousInput)
-		{
+	function enableButtonGen(buttonId, textId, previousInput) {
 		    var text=document.getElementById(textId).value;
 		    document.getElementById(buttonId).disabled=(text===previousInput);
-		}
-		function openNewTab(url, barcode) {
+	}
+
+	function openNewTab(url, barcode) {
 		    var win = window.open(url,	"New Grocy product");
 		    var timer = setInterval(function() {
 			if (win.closed) {
 			    clearInterval(timer);
 			    window.location = "index.php?refreshbarcode="+barcode;
 			}
-		    }, 500);
-		}
+		}, 500);
+	}
+
+
+function showQrCode(content) {
+	document.getElementsByClassName("close")[0].onclick = function() {
+	    document.getElementById("qrcode-modal").style.display = "none";
+	}
+	var qr = qrcode(4, 'L');
+	qr.addData(content);
+	qr.make();
+	document.getElementById('placeHolder').innerHTML = qr.createImgTag(10,5);
+    document.getElementById("qrcode-modal").style.display = "block";
+}

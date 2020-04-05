@@ -108,7 +108,7 @@ if (isset($_GET["ajaxrefresh"])) {
 
 
 $webUi = new WebUiGenerator(MENU_MAIN);
-$webUi->addHeader();
+$webUi->addHeader('<link rel="stylesheet" href="./incl/styleMain.css">');
 $webUi->addCard("New Barcodes",getHtmlMainMenuTableKnown($barcodes),"Delete all",'window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=known\'');
 $webUi->addCard("Unknown Barcodes",getHtmlMainMenuTableUnknown($barcodes),"Delete all",'window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=unknown\'');
 $webUi->addCard("Processed Barcodes",getHtmlLogTextArea(),"Clear log",'window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=log\'');

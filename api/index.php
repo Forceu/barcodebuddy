@@ -22,7 +22,11 @@ require_once __DIR__ . "/../incl/config.php";
 require_once __DIR__ . "/../incl/db.inc.php";
 require_once __DIR__ . "/../incl/processing.inc.php";
 
+//removes Get paramterss
 $requestedUrl = strtok($_SERVER["REQUEST_URI"], '?');
+
+//removes everything before "/api"
+$requestedUrl = trim(substr($requestedUrl, strpos($requestedUrl, '/api')));
 
 $api = new BBuddyApi();
 if ($requestedUrl == "/api/") {
@@ -51,11 +55,10 @@ class BBuddyApi {
         if ($apiKey == "")
             self::sendUnauthorizedAndDie();
         
-        foreach ($db->getStoredApiKeys() as $key) {
-            if ($apiKey === $key["key"])
-                return true;
-        }
-        self::sendUnauthorizedAndDie();
+        if ($db->isValidApiKey($apiKey))
+            return true;
+        else
+            self::sendUnauthorizedAndDie();
     }
     
     static function sendUnauthorizedAndDie() {

@@ -37,8 +37,8 @@ const MENU_ERROR = 4;
 
 
 class WebUiGenerator {
-    private $htmlOutput = "";
-    private $menu = MENU_GENERIC;
+    private $htmlOutput      = "";
+    private $menu            = MENU_GENERIC;
     
     function __construct($menu) {
         $this->menu = $menu;
@@ -46,7 +46,10 @@ class WebUiGenerator {
 
 
     function addHtml($html) {
-        $this->htmlOutput = $this->htmlOutput .$html;
+        $this->htmlOutput = $this->htmlOutput . $html;
+    }
+    function addScript($js) {
+        $this->htmlOutput = $this->htmlOutput ."<script>".$js."</script>";
     }
 
 
@@ -56,27 +59,27 @@ class WebUiGenerator {
     
 
     function addCard($title, $html, $linkText=null, $onClick=null) {
-        $this->htmlOutput = $this->htmlOutput.'
+        $this->addHtml('
         <section class="section--center mdl-grid--no-spacing mdl-grid mdl-shadow--2dp">
             <div class="mdl-card mdl-cell  mdl-cell--12-col">
               <div class="mdl-card__supporting-text" style="overflow-x: auto; ">
                 <h4>'.$title.'</h4><br>
         '.$html.'
         </div>
-            </div>';
+            </div>');
      if ($linkText !=null &&  $onClick!=null) {
         $id=rand();
-       $this->htmlOutput = $this->htmlOutput.'<button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="btn'.$id.'">
+       $this->addHtml('<button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="btn'.$id.'">
               <i class="material-icons">more_vert</i>
             </button>
             <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="btn'.$id.'">
               <li class="mdl-menu__item" onclick="'.$onClick.'">'.$linkText.'</li>
-            </ul>';
+            </ul>');
     }
-          $this->htmlOutput = $this->htmlOutput.'</section>';
+          $this->addHtml('</section>');
     }
 
-    function addHeader() {
+    function addHeader($additionalHeader = null) {
         require_once __DIR__ . "/db.inc.php";
         global $BBCONFIG;
         global $CONFIG;
@@ -91,7 +94,7 @@ class WebUiGenerator {
         } else {
             $indexfile = "index.php";
         }
-        $this->htmlOutput = $this->htmlOutput . '<!doctype html>
+        $this->addHtml('<!doctype html>
     <html lang="en">
       <head>
         <meta charset="utf-8">
@@ -114,9 +117,12 @@ class WebUiGenerator {
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-blue.min.css">
-        <link rel="stylesheet" href="' . $folder . 'styles.css">
+        <link rel="stylesheet" href="' . $folder . 'styles.css">');
+        if ($additionalHeader != null) {
+            $this->addHtml($additionalHeader);
+        }
 
-      </head>
+      $this->addHtml('</head>
 
      <body class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
 
@@ -126,36 +132,36 @@ class WebUiGenerator {
           <!-- Title -->
           <span class="mdl-layout-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style="color: white; text-decoration: none;" href="' . $folder . $indexfile . '">Barcode Buddy</a></span>
           <!-- Add spacer, to align navigation to the right -->
-          <div class="mdl-layout-spacer"></div>';
+          <div class="mdl-layout-spacer"></div>');
         if ($this->menu != MENU_SETUP && $this->menu != MENU_ERROR) {
-            $this->htmlOutput = $this->htmlOutput . '      <nav class="mdl-navigation mdl-layout--always"><a class="mdl-navigation__link" target="_blank" href="' . str_replace("api/", "", $BBCONFIG["GROCY_API_URL"]) . '">Grocy</a>';
-                $this->htmlOutput = $this->htmlOutput . '<a class="mdl-navigation__link" target="_blank" href="' . $folder . 'screen.php">Screen</a>';
-            $this->htmlOutput = $this->htmlOutput . '</nav>';
+            $this->addHtml('<nav class="mdl-navigation mdl-layout--always"><a class="mdl-navigation__link" target="_blank" href="' . str_replace("api/", "", $BBCONFIG["GROCY_API_URL"]) . '">Grocy</a>
+                <a class="mdl-navigation__link" target="_blank" href="' . $folder . 'screen.php">Screen</a>
+                </nav>');
         }
-        $this->htmlOutput = $this->htmlOutput . '  </div>
-      </header>';
+        $this->addHtml('  </div>
+      </header>');
         if ($this->menu != MENU_SETUP && $this->menu != MENU_ERROR) {
-            $this->htmlOutput = $this->htmlOutput . '<div class="mdl-layout__drawer">
+            $this->addHtml('<div class="mdl-layout__drawer">
         <span class="mdl-layout-title">Menu</span>
         <nav class="mdl-navigation">
           <a class="mdl-navigation__link" href="' . $folder . 'index.php">Overview</a>
           <a class="mdl-navigation__link" href="' . $folder . 'menu/settings.php">Settings</a>
           <a class="mdl-navigation__link" href="' . $folder . 'menu/quantities.php">Quantities</a>
           <a class="mdl-navigation__link" href="' . $folder . 'menu/chores.php">Chores</a>
-          <a class="mdl-navigation__link" href="' . $folder . 'menu/tags.php">Tags</a>';
+          <a class="mdl-navigation__link" href="' . $folder . 'menu/tags.php">Tags</a>');
         if ($CONFIG->REQUIRE_API_KEY) {
-            $this->htmlOutput = $this->htmlOutput . '
-             <a class="mdl-navigation__link" href="' . $folder . 'menu/apimanagement.php">API</a>';
+            $this->addHtml('
+             <a class="mdl-navigation__link" href="' . $folder . 'menu/apimanagement.php">API</a>');
         }
-        $this->htmlOutput = $this->htmlOutput . '</nav>
-      </div>';
+        $this->addHtml('</nav>
+      </div>');
         }
-    $this->htmlOutput = $this->htmlOutput . '<main class="mdl-layout__content" style="flex: 1 0 auto;">
-      <div class="mdl-layout__tab-panel is-active" id="overview">';
+    $this->addHtml('<main class="mdl-layout__content" style="flex: 1 0 auto;">
+      <div class="mdl-layout__tab-panel is-active" id="overview">');
     }
 
     function addFooter() {
-        $this->htmlOutput = $this->htmlOutput . ' <section class="section--footer mdl-grid">
+        $this->addHtml(' <section class="section--footer mdl-grid">
           </section>
 <div aria-live="assertive" aria-atomic="true" aria-relevant="text" class="mdl-snackbar mdl-js-snackbar">
     <div class="mdl-snackbar__text"></div>
@@ -175,10 +181,10 @@ class WebUiGenerator {
         </ul>
       </div>
     </footer>
-          </div></main>';
+          </div></main>');
 
         if ($this->menu == MENU_MAIN) {
-            $this->htmlOutput = $this->htmlOutput . '<div id="myModal" class="modal">
+            $this->addHtml('<div id="myModal" class="modal">
 
           <!-- Modal content -->
           <div class="modal-content">
@@ -195,21 +201,21 @@ class WebUiGenerator {
         </form>
           </div>
         </div>
-         <button id="add-barcode" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast">Add barcode</button> ';
+         <button id="add-barcode" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast">Add barcode</button> ');
         }
         if ($this->menu == MENU_SETTINGS) {
-            $this->htmlOutput = $this->htmlOutput . '<button id="save-settings" onclick="checkAndReturn()" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast">Save</button>';
+            $this->addHtml('<button id="save-settings" onclick="checkAndReturn()" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast">Save</button>');
         }
-        $this->htmlOutput = $this->htmlOutput . '</div><script src="https://code.getmdl.io/1.3.0/material.min.js"></script>';
+        $this->addHtml('</div><script src="https://code.getmdl.io/1.3.0/material.min.js"></script>');
 
         if ($this->menu == MENU_SETTINGS || $this->menu == MENU_GENERIC) {
-            $this->htmlOutput = $this->htmlOutput . '<script src="../incl/scripts.js"></script>';
+            $this->addHtml('<script src="../incl/scripts.js"></script>');
         } else {
-            $this->htmlOutput = $this->htmlOutput . '<script src="./incl/scripts.js"></script>';
+            $this->addHtml('<script src="./incl/scripts.js"></script>');
         }
 
         if ($this->menu == MENU_MAIN) {
-            $this->htmlOutput = $this->htmlOutput . '<script> 
+            $this->addHtml('<script> 
 
         var eventSource = null;
 
@@ -275,10 +281,10 @@ class WebUiGenerator {
                 if(typeof(EventSource) !== "undefined")
                   startWebsocket();
 
-        </script>';
+        </script>');
         }
-        $this->htmlOutput = $this->htmlOutput . '</body>
-    </html>';
+        $this->addHtml('</body>
+    </html>');
     }
 
 }

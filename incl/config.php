@@ -53,7 +53,7 @@ const IS_DEBUG                     = false;
 
 //If you need to manually override a config value, you can do so with this array.
 //Any overriden value cannot be changed through the UI anymore!
-const OVERRIDDEN_CONFIG            = array(
+const OVERRIDDEN_USER_CONFIG       = array(
                  //"BARCODE_C"           => "BBUDDY-C",
                  //"BARCODE_CS"          => "BBUDDY-CS",
                  //"BARCODE_P"           => "BBUDDY-P",

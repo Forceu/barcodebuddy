@@ -13,31 +13,37 @@ class GlobalConfig {
     public $IS_DOCKER                    = IS_DOCKER;
     public $REQUIRE_API_KEY              = REQUIRE_API_KEY;
     public $IS_DEBUG                     = IS_DEBUG;
-    public $OVERRIDDEN_CONFIG            = OVERRIDDEN_CONFIG;
+    public $OVERRIDDEN_USER_CONFIG       = OVERRIDDEN_USER_CONFIG;
     
     //Gets all the public variables declared above and checks if there
     //is an environment variable for this function. If yes, the
     //environment variable replaces the values in config.php
-    function __construct() {
+   function __construct() {
         $environmentVariables = getenv();
         $reflect              = new ReflectionClass($this);
         $props                = $reflect->getProperties(ReflectionProperty::IS_PUBLIC);
         foreach ($props as $prop) {
             
             $variableName = $prop->getName();
-            $variable     =& $this->{$variableName};
-            $variableType = gettype($variable);
+            $variable =& $this->{$variableName};
             
             foreach ($environmentVariables as $envName => $envValue) {
                 if ($envName == 'BBUDDY_' . $variableName) {
-                    if (!is_array($variable)) {
-                        $variable = self::convertPossibleBoolean($envValue);
-                        settype($variable, $variableType);
-                    } else
-                        $variable = explode(";", $envValue);
+                    $variable = self::convertCorrectType($envValue, $variable);
                 }
             }
         }
+    }
+    
+    static private function convertCorrectType($input, $originalVar) {
+        if (!is_array($originalVar)) {
+            $variableType = gettype($originalVar);
+            $result       = self::convertPossibleBoolean($input);
+            settype($result, $variableType);
+            return $result;
+        } else
+            return self::convertToArray($input);
+        
     }
     
     //PHP converts String "false" to true...
@@ -49,9 +55,39 @@ class GlobalConfig {
         return $input;
     }
     
+    static private function convertToArray($input) {
+        $result          = array();
+        $passedArguments = explode(";", $input);
+        foreach ($passedArguments as $argument) {
+            if (strpos($argument, "=") !== false) {
+                $content             = explode("=", $argument);
+                $result[$content[0]] = self::convertPossibleBoolean($content[1]);
+            }
+        }
+        return $result;
+    }
+
+    
+    function echoConfig() {
+        $environmentVariables = getenv();
+        $reflect              = new ReflectionClass($this);
+        $props                = $reflect->getProperties(ReflectionProperty::IS_PUBLIC);
+        foreach ($props as $prop) {
+            
+            $variableName = $prop->getName();
+            $variable =& $this->{$variableName};
+            
+            echo $variableName . ": ";
+            var_dump($variable);
+            echo "\n";
+        }
+    }
+    
 }
 
 $CONFIG = new GlobalConfig();
+//For debugging:
+//$CONFIG->echoConfig();
 
 //Enable debug as well if file "debug" exists in this directory
 if ($CONFIG->IS_DEBUG || file_exists(__DIR__ . "/debug")) {

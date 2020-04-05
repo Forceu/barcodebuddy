@@ -115,8 +115,8 @@ private $db = null;
         $BBCONFIG = array();
         $res      = $this->db->query("SELECT * FROM BBConfig");
         while ($row = $res->fetchArray()) {
-            if (isset($CONFIG->OVERRIDDEN_CONFIG[$row['data']]))
-                $BBCONFIG[$row['data']] = $CONFIG->OVERRIDDEN_CONFIG[$row['data']];
+            if (isset($CONFIG->OVERRIDDEN_USER_CONFIG[$row['data']]))
+                $BBCONFIG[$row['data']] = $CONFIG->OVERRIDDEN_USER_CONFIG[$row['data']];
             else
                 $BBCONFIG[$row['data']] = $row['value'];
         }

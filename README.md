@@ -25,12 +25,6 @@ Refer to the [documentation](https://barcodebuddy-documentation.readthedocs.io/e
 ![Screenshot of the screen module](https://github.com/Forceu/barcodebuddy/raw/master/example/screenshots/Screen_small.gif)
 
 
-
-## Authors
-
-* **Marc Ole Bulling** - *Initial work*
-
-
 ## License
 
 This project is licensed under the GNU GPL3 - see the [LICENSE.md](LICENSE.md) file for details

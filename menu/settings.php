@@ -25,6 +25,9 @@ require_once __DIR__ . "/../incl/sse/websocket_client.php";
 require_once __DIR__ . "/../incl/webui.inc.php";
 
 
+$CONFIG->checkIfAuthenticated(true, true);
+
+
 //Save settings
 if (isset($_POST["isSaved"])) {
         saveSettings(); 

@@ -7,32 +7,21 @@
  * LICENSE: This source file is subject to version 3.0 of the GNU General
  * Public License v3.0 that is attached to this project.
  *
- * @author     Marc Ole Bulling
- * @copyright  2019 Marc Ole Bulling
- * @license    https://www.gnu.org/licenses/gpl-3.0.en.html  GNU GPL v3.0
- * @since      File available since Release 1.0
- */
-
-
-/**
- * A screen to supervise barcode scanning. Websockets need to be enabled!
+ *  A screen to supervise barcode scanning.
  *
  * @author     Marc Ole Bulling
  * @copyright  2019 Marc Ole Bulling
  * @license    https://www.gnu.org/licenses/gpl-3.0.en.html  GNU GPL v3.0
  * @since      File available since Release 1.0
- *
- * TODO: Sound is not played on Android devices
  */
-
-
-
 
 require_once __DIR__ . "/incl/configProcessing.inc.php";
 require_once __DIR__ . "/incl/db.inc.php";
 
-?>
 
+$CONFIG->checkIfAuthenticated(true);
+
+?>
 <!DOCTYPE html>
 <html>
   <head>

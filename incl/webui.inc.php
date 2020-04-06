@@ -33,6 +33,7 @@ const MENU_MAIN = 1;
 const MENU_SETUP = 2;
 const MENU_SETTINGS = 3;
 const MENU_ERROR = 4;
+const MENU_LOGIN = 5;
 
 
 class MenuItemLink {
@@ -120,16 +121,18 @@ class WebUiGenerator {
         global $BBCONFIG;
         global $CONFIG;
         
-        if ($this->menu == MENU_SETTINGS || $this->menu == MENU_GENERIC) {
+        if ($this->menu == MENU_SETTINGS || $this->menu === MENU_GENERIC) {
             $folder = "../";
         } else {
             $folder = "./";
         }
         if ($this->menu == MENU_SETUP || $this->menu == MENU_ERROR) {
             $indexfile = "setup.php";
+        } elseif ($this->menu == MENU_LOGIN) {
+            $indexfile = "login.php";
         } else {
             $indexfile = "index.php";
-        }
+          }
         $this->addHtml('<!doctype html>
     <html lang="en">
       <head>
@@ -169,14 +172,14 @@ class WebUiGenerator {
           <span class="mdl-layout-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style="color: white; text-decoration: none;" href="' . $folder . $indexfile . '">Barcode Buddy</a></span>
           <!-- Add spacer, to align navigation to the right -->
           <div class="mdl-layout-spacer"></div>');
-        if ($this->menu != MENU_SETUP && $this->menu != MENU_ERROR) {
+        if ($this->menu != MENU_SETUP && $this->menu != MENU_ERROR && $this->menu != MENU_LOGIN) {
             $this->addHtml('<nav class="mdl-navigation mdl-layout--always"><a class="mdl-navigation__link" target="_blank" href="' . str_replace("api/", "", $BBCONFIG["GROCY_API_URL"]) . '">Grocy</a>
                 <a class="mdl-navigation__link" target="_blank" href="' . $folder . 'screen.php">Screen</a>
                 </nav>');
         }
         $this->addHtml('  </div>
       </header>');
-        if ($this->menu != MENU_SETUP && $this->menu != MENU_ERROR) {
+        if ($this->menu != MENU_SETUP && $this->menu != MENU_ERROR && $this->menu != MENU_LOGIN) {
             $this->addHtml('<div class="mdl-layout__drawer">
         <span class="mdl-layout-title">Menu</span>
         <nav class="mdl-navigation">

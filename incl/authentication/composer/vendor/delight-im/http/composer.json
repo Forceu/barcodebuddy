@@ -1,0 +1,16 @@
+{
+	"name": "delight-im/http",
+	"description": "Hypertext Transfer Protocol (HTTP) utilities for PHP",
+	"require": {
+		"php": ">=5.3.0"
+	},
+	"type": "library",
+	"keywords": [ "http", "https", "headers" ],
+	"homepage": "https://github.com/delight-im/PHP-HTTP",
+	"license": "MIT",
+	"autoload": {
+		"psr-4": {
+			"Delight\\Http\\": "src/"
+		}
+	}
+}

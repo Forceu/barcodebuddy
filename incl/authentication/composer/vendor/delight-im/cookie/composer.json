@@ -1,0 +1,17 @@
+{
+	"name": "delight-im/cookie",
+	"description": "Modern cookie management for PHP",
+	"require": {
+		"php": ">=5.4.0",
+		"delight-im/http": "^2.0"
+	},
+	"type": "library",
+	"keywords": [ "cookie", "cookies", "http", "csrf", "xss", "samesite", "same-site" ],
+	"homepage": "https://github.com/delight-im/PHP-Cookie",
+	"license": "MIT",
+	"autoload": {
+		"psr-4": {
+			"Delight\\Cookie\\": "src/"
+		}
+	}
+}

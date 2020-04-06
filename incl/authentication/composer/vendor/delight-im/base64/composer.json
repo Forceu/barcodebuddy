@@ -1,0 +1,16 @@
+{
+	"name": "delight-im/base64",
+	"description": "Simple and convenient Base64 encoding and decoding for PHP",
+	"require": {
+		"php": ">=5.3.0"
+	},
+	"type": "library",
+	"keywords": [ "base64", "base-64", "encode", "decode", "encoding", "decoding", "url-safe", "url" ],
+	"homepage": "https://github.com/delight-im/PHP-Base64",
+	"license": "MIT",
+	"autoload": {
+		"psr-4": {
+			"Delight\\Base64\\": "src/"
+		}
+	}
+}

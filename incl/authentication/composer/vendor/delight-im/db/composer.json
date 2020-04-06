@@ -1,0 +1,17 @@
+{
+	"name": "delight-im/db",
+	"description": "Safe and convenient SQL database access in a driver-agnostic way",
+	"require": {
+		"php": ">=5.6.0",
+		"ext-pdo": "*"
+	},
+	"type": "library",
+	"keywords": [ "database", "sql", "pdo", "mysql", "postgresql", "pgsql", "sqlite" ],
+	"homepage": "https://github.com/delight-im/PHP-DB",
+	"license": "MIT",
+	"autoload": {
+		"psr-4": {
+			"Delight\\Db\\": "src/"
+		}
+	}
+}

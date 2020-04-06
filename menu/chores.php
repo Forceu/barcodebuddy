@@ -25,6 +25,9 @@ require_once __DIR__ . "/../incl/processing.inc.php";
 require_once __DIR__ . "/../incl/webui.inc.php";
 
 
+$CONFIG->checkIfAuthenticated(true, true);
+
+
 //Save tag if edit button was pressed
 if (isset($_POST["button_edit"])) {
         $id = $_POST["button_edit"];

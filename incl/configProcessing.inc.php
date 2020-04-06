@@ -1,4 +1,21 @@
 <?php
+/**
+ * Barcode Buddy for Grocy
+ *
+ * PHP version 7
+ *
+ * LICENSE: This source file is subject to version 3.0 of the GNU General
+ * Public License v3.0 that is attached to this project.
+ *
+ * 
+ * Processing of all hard coded config
+ *
+ * @author     Marc Ole Bulling
+ * @copyright  2019 Marc Ole Bulling
+ * @license    https://www.gnu.org/licenses/gpl-3.0.en.html  GNU GPL v3.0
+ * @since      File available since Release 1.5
+ */
+           
 
 const BB_VERSION = "1411";
 const BB_VERSION_READABLE = "1.4.1.1";
@@ -41,6 +58,7 @@ function checkForMissingConstants() {
                         "IS_DOCKER"                    => false,
                         "REQUIRE_API_KEY"              => true,
                         "IS_DEBUG"                     => false,
+                        "DISABLE_AUTHENTICATION"       => false,
                         "OVERRIDDEN_USER_CONFIG"       => array()
                         );
     foreach ($defaultValues as $key => $value) {
@@ -60,6 +78,7 @@ class GlobalConfig {
     public $REQUIRE_API_KEY              = REQUIRE_API_KEY;
     public $IS_DEBUG                     = IS_DEBUG;
     public $OVERRIDDEN_USER_CONFIG       = OVERRIDDEN_USER_CONFIG;
+    public $DISABLE_AUTHENTICATION       = DISABLE_AUTHENTICATION;
 
    function __construct() {
         $this->loadConfig();
@@ -139,6 +158,24 @@ class GlobalConfig {
             ini_set('display_errors', 1);
             ini_set('display_startup_errors', 1);
             error_reporting(E_ALL);
+        }
+    }
+
+    public function checkIfAuthenticated($redirect = true, $ismenu = false) {
+        global $auth;
+        require_once __DIR__ . '/authentication/authentication.inc.php';
+        if ($this->DISABLE_AUTHENTICATION)
+            return true;
+        else {
+            $isLoggedIn = $auth->isLoggedIn();
+            if (!$isLoggedIn && $redirect) {
+                $location = "login.php";
+                if ($ismenu)
+                $location = "../login.php";
+                header("Location: $location");
+                die();
+            } else
+                return $isLoggedIn;
         }
     }
     

@@ -6,6 +6,7 @@ require_once __DIR__ . "/../websocketconnection.inc.php";
 
 const MAX_EXECUTION_TIME_S = 60;
 
+
 initStream();
 connectToWebsocket();
 sendStillAlive();

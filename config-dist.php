@@ -40,12 +40,11 @@ const CURL_ALLOW_INSECURE_SSL_CA   = false;
 //could be read or modified by a 3rd party!
 const CURL_ALLOW_INSECURE_SSL_HOST = false;
 
-
-// If true, websockets cannot be disabled and internal port cannot be changed
-const IS_DOCKER                    = false;
-
 //Require API authentication for API
 const REQUIRE_API_KEY              = true;
+
+//Disable user authentication. Enable if you don't want to use username/password
+const DISABLE_AUTHENTICATION       = false;
 
 //Enable debug output
 const IS_DEBUG                     = false;
@@ -72,5 +71,9 @@ const OVERRIDDEN_USER_CONFIG       = array(
                  //"SHOPPINGLIST_REMOVE" => "1",
                  //"USE_GENERIC_NAME"    => "1"
                  );
+
+
+// Currently not in use
+const IS_DOCKER                    = false;
 
 ?>

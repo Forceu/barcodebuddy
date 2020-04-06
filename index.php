@@ -25,16 +25,6 @@ require_once __DIR__ . "/incl/processing.inc.php";
 require_once __DIR__ . "/incl/websocketconnection.inc.php";
 require_once __DIR__ . "/incl/webui.inc.php";
 
-
-
-$CONFIG->checkIfAuthenticated(true);
-
-//If invalid settings are set, load setup
-if (checkExtensionsInstalled()["result"] == RESULT_REQ_MISSING || !isGrocyApiSet()) {
-    header("Location: setup.php");
-    die();
-}
-
 //If barcodes or parameters are passed through CLI or GET, process them and do not do anything else
 if (isset($_GET["version"]) || (isset($argv[1]) && $argv[1]=="-v")) {
    die("BarcodeBuddy ".BB_VERSION);
@@ -45,6 +35,16 @@ if (isset($_GET["version"]) || (isset($argv[1]) && $argv[1]=="-v")) {
 if (isset($argv[1])) {
     processNewBarcode(sanitizeString($argv[1], true));
     die;
+}
+
+
+
+$CONFIG->checkIfAuthenticated(true);
+
+//If invalid settings are set, load setup
+if (checkExtensionsInstalled()["result"] == RESULT_REQ_MISSING || !isGrocyApiSet()) {
+    header("Location: setup.php");
+    die();
 }
 
 //If mode was set with GET parameter

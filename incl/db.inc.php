@@ -179,7 +179,7 @@ private $db = null;
         if (file_exists(LEGACY_DATABASE_PATH) && !file_exists($CONFIG->DATABASE_PATH)) {
             self::createDbDirectory();
             $couldMove = rename(LEGACY_DATABASE_PATH, $CONFIG->DATABASE_PATH);
-            if (!couldMove) {
+            if (!$couldMove) {
                 showErrorNotWritable("DB Error Could_Not_Move");
             }
        }

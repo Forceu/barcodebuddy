@@ -25,6 +25,10 @@ require_once __DIR__ . "/incl/api.inc.php";
 require_once __DIR__ . "/incl/processing.inc.php";
 require_once __DIR__ . "/incl/internalChecking.inc.php";
 
+
+$CONFIG->checkIfAuthenticated(true);
+
+
 $result = true;
 
 

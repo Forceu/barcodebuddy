@@ -192,6 +192,10 @@ class WebUiGenerator {
             $this->addHtml('
              <a class="mdl-navigation__link" href="' . $folder . 'menu/apimanagement.php">API</a>');
         }
+        if (!$CONFIG->DISABLE_AUTHENTICATION) {
+            $this->addHtml('
+             <a class="mdl-navigation__link" href="' . $folder . 'logout.php">Logout</a>');
+        }
         $this->addHtml('</nav>
       </div>');
         }

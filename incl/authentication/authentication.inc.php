@@ -63,7 +63,7 @@ function getInitialSetupSql() {
 				"force_logout" INTEGER NOT NULL CHECK ("force_logout" >= 0) DEFAULT "0",
 				CONSTRAINT "email" UNIQUE ("email")
 			);
-			INSERT INTO users VALUES(1,\'admin@barcode.buddy\',\'$2y$10$6wo6L5ryKKn29t3qALCm1u61Zc2mwyjuY/sK0Qb/o0JVAYuWYUHMy\',\'admin\',0,1,1,0,1586173755,NULL,0);
+			INSERT INTO users VALUES(1,\'admin@barcode.buddy\',\'$2y$10$6wo6L5ryKKn29t3qALCm1u61Zc2mwyjuY/sK0Qb/o0JVAYuWYUHMy\',\'admin\',0,1,1,0,'.time().',NULL,0);
 			CREATE TABLE IF NOT EXISTS "users_confirmations" (
 				"id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL CHECK ("id" >= 0),
 				"user_id" INTEGER NOT NULL CHECK ("user_id" >= 0),

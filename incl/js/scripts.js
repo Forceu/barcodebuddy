@@ -87,10 +87,13 @@ var serialize = function (form) {
 function showQrCode(content) {
 	document.getElementsByClassName("close")[0].onclick = function() {
 	    document.getElementById("qrcode-modal").style.display = "none";
+		document.getElementById('btn_apilinks').style.display = "block";
 	}
 	var qr = qrcode(0, 'L');
 	qr.addData(content);
 	qr.make();
+	document.getElementById('btn_apilinks').style.display = "none";
 	document.getElementById('placeHolder').innerHTML = qr.createImgTag(10,5);
     document.getElementById("qrcode-modal").style.display = "block";
+    document.getElementById
 }

@@ -47,8 +47,8 @@ if (isset($_GET["deleteall"])) {
 }
 
 $webUi = new WebUiGenerator(MENU_GENERIC);
-$webUi->addHeader('<link rel="stylesheet" href="../incl/styleQr.css">');
-$webUi->addHtml('<script type="text/javascript" src="/../incl/qrcode.js"></script>');
+$webUi->addHeader('<link rel="stylesheet" href="../incl/css/styleQr.css">');
+$webUi->addHtml('<script type="text/javascript" src="/../incl/js/qrcode.js"></script>');
 if ($mobileKey == null) 
     $webUi->addCard("API Keys", getApiTable(), createMenuLinks());
 else
@@ -60,6 +60,7 @@ $webUi->printHtml();
 function createMenuLinks() {
     $links = array();
     $linkAddApp = (new MenuItemLink())
+                    ->setId("btn_apilinks")
                     ->setText("Add mobile app")
                     ->setLink('window.location.href=\''.$_SERVER['PHP_SELF'].'?mobileapp\'');
     $linkDelete = (new MenuItemLink())

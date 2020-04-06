@@ -440,7 +440,7 @@ function strrtrim($message, $strip) {
     return implode($strip, array_merge($lines, array($last))); 
 } 
 
-function generateRandomString($length = 60) {
+function generateRandomString($length = 30) {
     return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
 }
 

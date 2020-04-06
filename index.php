@@ -108,7 +108,7 @@ if (isset($_GET["ajaxrefresh"])) {
 
 
 $webUi = new WebUiGenerator(MENU_MAIN);
-$webUi->addHeader('<link rel="stylesheet" href="./incl/styleMain.css">');
+$webUi->addHeader('<link rel="stylesheet" href="./incl/css/styleMain.css">');
 
 $link = (new MenuItemLink())
                 ->setText("Delete all")

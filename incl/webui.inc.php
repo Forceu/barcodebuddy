@@ -39,9 +39,11 @@ class MenuItemLink {
 
     public $itemText;
     public $itemLink;
+    public $itemId;
 
 
     function __construct() {
+        $this->itemId = 'btn'.rand();
         return $this;
     }
 
@@ -52,6 +54,10 @@ class MenuItemLink {
 
     public function setLink($link) {
         $this->itemLink = $link;
+        return $this;
+    }
+    public function setId($id) {
+        $this->itemId = $id;
         return $this;
     }
 }
@@ -95,11 +101,11 @@ class WebUiGenerator {
             else
                 $linkArray = $links;
             
-                $id = rand();
-                $this->addHtml('<button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="btn' . $id . '">
+                $id = $linkArray[0]->itemId;
+                $this->addHtml('<button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="' . $id . '">
                   <i class="material-icons">more_vert</i>
                 </button>
-                <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="btn' . $id . '">');
+                <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="' . $id . '">');
 
             foreach ($linkArray as $link) {
                   $this->addHtml('<li class="mdl-menu__item" onclick="' . $link->itemLink . '">' . $link->itemText . '</li>');
@@ -147,7 +153,7 @@ class WebUiGenerator {
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-blue.min.css">
-        <link rel="stylesheet" href="' . $folder . 'styles.css">');
+        <link rel="stylesheet" href="' . $folder . '/incl/css/main.css">');
         if ($additionalHeader != null) {
             $this->addHtml($additionalHeader);
         }
@@ -239,9 +245,9 @@ class WebUiGenerator {
         $this->addHtml('</div><script src="https://code.getmdl.io/1.3.0/material.min.js"></script>');
 
         if ($this->menu == MENU_SETTINGS || $this->menu == MENU_GENERIC) {
-            $this->addHtml('<script src="../incl/scripts.js"></script>');
+            $this->addHtml('<script src="../incl/js/scripts.js"></script>');
         } else {
-            $this->addHtml('<script src="./incl/scripts.js"></script>');
+            $this->addHtml('<script src="./incl/js/scripts.js"></script>');
         }
 
         if ($this->menu == MENU_MAIN) {

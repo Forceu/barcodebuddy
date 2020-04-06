@@ -128,8 +128,8 @@ require_once __DIR__ . "/incl/db.inc.php";
 
   </head>
   <body>
-  <script src="./incl/nosleep.min.js"></script>
-  <script src="./incl/he.js"></script>
+  <script src="./incl/js/nosleep.min.js"></script>
+  <script src="./incl/js/he.js"></script>
 
   <div id="header" class="header">
     <span class="hdr-right h4">

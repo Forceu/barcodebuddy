@@ -20,28 +20,30 @@
 const BB_VERSION = "1411";
 const BB_VERSION_READABLE = "1.4.1.1";
 
-const CONFIG_LOCATION = __DIR__ . '/../data/config.php';
+const CONFIG_PATH = __DIR__ . '/../data/config.php';
+const AUTHDB_PATH = __DIR__ . '/../data/users.db';
 
 
 loadConfigPhp();
 checkForMissingConstants();
+global $CONFIG;
 $CONFIG = new GlobalConfig();
 $CONFIG->configureDebugOutput();
 //For debugging:
 //$CONFIG->echoConfig();
 
 function loadConfigPhp() {
-    if (!file_exists(CONFIG_LOCATION))
+    if (!file_exists(CONFIG_PATH))
         createConfigPhp();
-    require_once CONFIG_LOCATION;
+    require_once CONFIG_PATH;
 }
 
 function createConfigPhp() {
     require_once __DIR__ . "/processing.inc.php";
-    if (!is_writable(dirname(CONFIG_LOCATION))) {
+    if (!is_writable(dirname(CONFIG_PATH))) {
         showErrorNotWritable("FS Error DATA_PATH_NOT_WRITABLE");
     } else {
-        $couldMove = copy(__DIR__ . '/../config-dist.php', CONFIG_LOCATION);
+        $couldMove = copy(__DIR__ . '/../config-dist.php', CONFIG_PATH);
         if (!$couldMove) {
             showErrorNotWritable("FS Error COULD_NOT_MOVE");
         }
@@ -52,6 +54,8 @@ function checkForMissingConstants() {
     $defaultValues = array(
                         "PORT_WEBSOCKET_SERVER"        => 47631,
                         "DATABASE_PATH"                => __DIR__ . '/../data/barcodebuddy.db',
+                        "CONFIG_PATH"                  => CONFIG_PATH,
+                        "AUTHDB_PATH"                  => AUTHDB_PATH,
                         "CURL_TIMEOUT_S"               => 20,
                         "CURL_ALLOW_INSECURE_SSL_CA"   => false,
                         "CURL_ALLOW_INSECURE_SSL_HOST" => false,
@@ -71,6 +75,8 @@ function checkForMissingConstants() {
 class GlobalConfig {
     public $PORT_WEBSOCKET_SERVER        = PORT_WEBSOCKET_SERVER;
     public $DATABASE_PATH                = DATABASE_PATH;
+    public $CONFIG_PATH                  = CONFIG_PATH;
+    public $AUTHDB_PATH                  = AUTHDB_PATH;
     public $CURL_TIMEOUT_S               = CURL_TIMEOUT_S;
     public $CURL_ALLOW_INSECURE_SSL_CA   = CURL_ALLOW_INSECURE_SSL_CA;
     public $CURL_ALLOW_INSECURE_SSL_HOST = CURL_ALLOW_INSECURE_SSL_HOST;

@@ -19,14 +19,13 @@
 
 
 require_once __DIR__ . '/composer/vendor/autoload.php';
+require_once __DIR__ . "/../configProcessing.inc.php";
 
-const USERS_DB_PATH = __DIR__ . '/../../data/users.db';
-
-
-if (!file_exists(USERS_DB_PATH)) 
+global $CONFIG;
+if (!file_exists($CONFIG->AUTHDB_PATH)) 
     createSqlFile();
 
-$db_auth = new \Delight\Db\PdoDsn('sqlite:' . USERS_DB_PATH);
+$db_auth = new \Delight\Db\PdoDsn('sqlite:' . $CONFIG->AUTHDB_PATH);
 $auth    = new \Delight\Auth\Auth($db_auth);
 
 
@@ -36,12 +35,14 @@ function isUserSetUp() {
 }
 
 function createSqlFile() {
-    $db = new SQLite3(USERS_DB_PATH);
+	global $CONFIG;
+    $db = new SQLite3($CONFIG->AUTHDB_PATH);
     $db->exec(getInitialSetupSql());
 }
 
 function changeUserName($newName) {
-    $db = new SQLite3(USERS_DB_PATH);
+	global $CONFIG;
+    $db = new SQLite3($CONFIG->AUTHDB_PATH);
     $db->exec("UPDATE users SET username='$newName'");
 }
 

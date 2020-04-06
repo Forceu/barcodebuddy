@@ -73,7 +73,4 @@ const OVERRIDDEN_USER_CONFIG       = array(
                  //"USE_GENERIC_NAME"    => "1"
                  );
 
-
-require_once __DIR__ . '/configProcessing.inc.php';
-
 ?>

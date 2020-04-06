@@ -24,7 +24,7 @@
  *
  */
 
-require_once __DIR__ . "/config.php";
+require_once __DIR__ . "/configProcessing.inc.php";
 
 const API_O_PRODUCTS     = 'objects/products';
 const API_PRODUCTS       = 'stock/products';

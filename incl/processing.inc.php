@@ -7,14 +7,7 @@
  * LICENSE: This source file is subject to version 3.0 of the GNU General
  * Public License v3.0 that is attached to this project.
  *
- * @author     Marc Ole Bulling
- * @copyright  2019 Marc Ole Bulling
- * @license    https://www.gnu.org/licenses/gpl-3.0.en.html  GNU GPL v3.0
- * @since      File available since Release 1.0
- */
-
-
-/**
+ * 
  * Helper file for processing functions
  *
  * @author     Marc Ole Bulling
@@ -23,10 +16,11 @@
  * @since      File available since Release 1.0
  */
 
-require_once __DIR__ . "/db.inc.php";
+
 
 // Function that is called when a barcode is passed on
 function processNewBarcode($barcodeInput, $websocketEnabled = true) {
+    require_once __DIR__ . "/db.inc.php";
     global $db;
     global $BBCONFIG;
     
@@ -65,11 +59,11 @@ function processNewBarcode($barcodeInput, $websocketEnabled = true) {
     if (stringStartsWith($barcode, $BBCONFIG["BARCODE_Q"])) {
         $quantitiy = str_replace($BBCONFIG["BARCODE_Q"], "", $barcode);
         checkIfNumeric($quantitiy);
-	if ($BBCONFIG["LAST_PRODUCT"] != null) {
-	    $lastBarcode = $BBCONFIG["LAST_BARCODE"] . " (" . $BBCONFIG["LAST_PRODUCT"] . ")";
-	} else {
-	    $lastBarcode = $BBCONFIG["LAST_BARCODE"];
-	}
+    if ($BBCONFIG["LAST_PRODUCT"] != null) {
+        $lastBarcode = $BBCONFIG["LAST_BARCODE"] . " (" . $BBCONFIG["LAST_PRODUCT"] . ")";
+    } else {
+        $lastBarcode = $BBCONFIG["LAST_BARCODE"];
+    }
         outputLog("Set quantitiy to $quantitiy for barcode $lastBarcode", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
         changeQuantityAfterScan($quantitiy);
         $isProcessed = true;
@@ -129,6 +123,7 @@ const WS_RESULT_ERROR                 = 'E';
 
 //Save a log input to the database or submit websocket
 function outputLog($log, $eventType, $isVerbose = false, $websocketEnabled = true, $websocketResultCode = WS_RESULT_PRODUCT_FOUND, $websocketText = null) {
+    require_once __DIR__ . "/db.inc.php";
     global $LOADED_PLUGINS;
     global $db;
     $db->saveLog($log, $isVerbose);
@@ -143,15 +138,17 @@ function outputLog($log, $eventType, $isVerbose = false, $websocketEnabled = tru
 
 //Execute a chore when chore barcode was submitted
 function processChoreBarcode($barcode) {
-   global $db;
-   $id = $db->getChoreBarcode(sanitizeString($barcode))['choreId'];
-   checkIfNumeric($id);
-   API::executeChore( $id);
-   return sanitizeString(API::getChoresInfo($id)["name"]);
+    require_once __DIR__ . "/db.inc.php";
+    global $db;
+    $id = $db->getChoreBarcode(sanitizeString($barcode))['choreId'];
+    checkIfNumeric($id);
+    API::executeChore( $id);
+    return sanitizeString(API::getChoresInfo($id)["name"]);
 }
 
 //If grocy does not know this barcode
 function processUnknownBarcode($barcode, $websocketEnabled) {
+    require_once __DIR__ . "/db.inc.php";
     global $db;
     $amount = 1;
     if ($db->getTransactionState() == STATE_PURCHASE) {
@@ -180,32 +177,33 @@ function processUnknownBarcode($barcode, $websocketEnabled) {
 
 //Convert state to string for websocket server
 function stateToString($state) {
-	$allowedModes = array(STATE_CONSUME=>"Consume",STATE_CONSUME_SPOILED=> "Consume (spoiled)",STATE_PURCHASE=> "Purchase",STATE_OPEN=> "Open",STATE_GETSTOCK=> "Inventory", STATE_ADD_SL=> "Add to shoppinglist");
-	return $allowedModes[$state];
+    $allowedModes = array(STATE_CONSUME=>"Consume",STATE_CONSUME_SPOILED=> "Consume (spoiled)",STATE_PURCHASE=> "Purchase",STATE_OPEN=> "Open",STATE_GETSTOCK=> "Inventory", STATE_ADD_SL=> "Add to shoppinglist");
+    return $allowedModes[$state];
 }
 
 
 //Change mode if was supplied by GET parameter
 function processModeChangeGetParameter($modeParameter) {
+    require_once __DIR__ . "/db.inc.php";
     global $db;
     switch (trim($modeParameter)) {
         case "consume":
-	    $db->setTransactionState(STATE_CONSUME);
+        $db->setTransactionState(STATE_CONSUME);
             break;
         case "consume_s":
-	    $db->setTransactionState(STATE_CONSUME_SPOILED);
+        $db->setTransactionState(STATE_CONSUME_SPOILED);
             break;
         case "purchase":
-	    $db->setTransactionState(STATE_PURCHASE);
+        $db->setTransactionState(STATE_PURCHASE);
             break;
         case "open":
-	    $db->setTransactionState(STATE_OPEN);
+        $db->setTransactionState(STATE_OPEN);
             break;
         case "inventory":
-	    $db->setTransactionState(STATE_GETSTOCK);
+        $db->setTransactionState(STATE_GETSTOCK);
             break;
         case "shoppinglist":
-	    $db->setTransactionState(STATE_ADD_SL);
+        $db->setTransactionState(STATE_ADD_SL);
             break;
     }
 }
@@ -213,6 +211,7 @@ function processModeChangeGetParameter($modeParameter) {
 
 //This will be called when a new grocy product is created from BB and the grocy tab is closed
 function processRefreshedBarcode($barcode) {
+    require_once __DIR__ . "/db.inc.php";
     global $db;
     $productInfo = API::getProductByBardcode($barcode);
     if ($productInfo != null) {
@@ -225,6 +224,7 @@ const USE_NEW_INVENTORY_API = false;
 
     // Process a barcode that Grocy already knows
 function processKnownBarcode($productInfo, $barcode, $websocketEnabled) {
+    require_once __DIR__ . "/db.inc.php";
     global $BBCONFIG;
     global $db;
     $state = $db->getTransactionState();
@@ -324,6 +324,7 @@ function checkIfNumeric($input) {
 
 //Generate checkboxes for web ui
 function explodeWordsAndMakeCheckboxes($words, $id) {
+    require_once __DIR__ . "/db.inc.php";
     global $db;
     if ($words == "N/A") {
         return "";
@@ -334,7 +335,7 @@ function explodeWordsAndMakeCheckboxes($words, $id) {
     $ary         = explode(' ', $cleanWords);
     $i           = 0;
     foreach ($ary as $str) {
-	$tagWord = trim($str);
+    $tagWord = trim($str);
         if (strlen($tagWord) > 0 && $db->tagNotUsedYet($tagWord)) {
             $selections = $selections . '<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-' . $id . '_' . $i . '">
   <input type="checkbox"  value="' . $tagWord . '" name="tags[' . $id . '][' . $i . ']" id="checkbox-' . $id . '_' . $i . '" class="mdl-checkbox__input">
@@ -348,6 +349,7 @@ function explodeWordsAndMakeCheckboxes($words, $id) {
 
 //If a quantity barcode was scanned, add the quantitiy and process further
 function changeQuantityAfterScan($amount) {
+    require_once __DIR__ . "/db.inc.php";
     global $BBCONFIG;
     global $db;
     $barcode = sanitizeString($BBCONFIG["LAST_BARCODE"]);
@@ -369,6 +371,7 @@ function changeQuantityAfterScan($amount) {
 
 //Merge tags and product info
 function getAllTags() {
+    require_once __DIR__ . "/db.inc.php";
     global $db;
     $tags       = $db->getStoredTags();
     $products   = API::getProductInfo();
@@ -379,7 +382,7 @@ function getAllTags() {
             if ($product["id"] == $tag["itemId"]) {
                 $tag["item"] = $product["name"];
                 array_push($returnTags, $tag);
-		break;
+        break;
             }
         }
     }
@@ -401,6 +404,7 @@ function sortChores($a,$b) {
 
 //Merges chores with chore info
 function getAllChores() {
+    require_once __DIR__ . "/db.inc.php";
     global $db;
     $chores = API::getChoresInfo();
     $barcodes = $db->getStoredChoreBarcodes();
@@ -449,6 +453,12 @@ function getApiUrl($removeAfter) {
 
     $url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     return $requestedUrl = trim(substr($url, 0, strpos($url, $removeAfter)))."api/";
+}
+
+function showErrorNotWritable($error="DB Error") {
+    die($error . ": Database file cannot be created, as folder or databse file is not writable. Please check your permissions.<br>
+             Have a look at this link to find out how to do this:
+             <a href='https://github.com/olab/Open-Labyrinth/wiki/How-do-I-make-files-and-folders-writable-for-the-web-server%3F'>" . "How do I make files and folders writable for the web server?</a>");
 }
 
 ?>

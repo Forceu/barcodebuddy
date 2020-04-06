@@ -6,7 +6,7 @@ namespace Bloatless\WebSocket;
 
 use Bloatless\WebSocket\Application\ApplicationInterface;
 
-require_once __DIR__ . '/../../../config.php';
+require_once __DIR__ . '/../../../configProcessing.inc.php';
 
 class Connection
 {

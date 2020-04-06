@@ -1,7 +1,53 @@
-<?php 
+<?php
 
-const BB_VERSION          = "1411";
+const BB_VERSION = "1411";
 const BB_VERSION_READABLE = "1.4.1.1";
+
+const CONFIG_LOCATION = __DIR__ . '/../data/config.php';
+
+
+loadConfigPhp();
+checkForMissingConstants();
+$CONFIG = new GlobalConfig();
+$CONFIG->configureDebugOutput();
+//For debugging:
+//$CONFIG->echoConfig();
+
+function loadConfigPhp() {
+    if (!file_exists(CONFIG_LOCATION))
+        createConfigPhp();
+    require_once CONFIG_LOCATION;
+}
+
+function createConfigPhp() {
+    require_once __DIR__ . "/processing.inc.php";
+    if (!is_writable(dirname(CONFIG_LOCATION))) {
+        showErrorNotWritable("FS Error DATA_PATH_NOT_WRITABLE");
+    } else {
+        $couldMove = copy(__DIR__ . '/../config-dist.php', CONFIG_LOCATION);
+        if (!$couldMove) {
+            showErrorNotWritable("FS Error COULD_NOT_MOVE");
+        }
+    }
+}
+
+function checkForMissingConstants() {
+    $defaultValues = array(
+                        "PORT_WEBSOCKET_SERVER"        => 47631,
+                        "DATABASE_PATH"                => __DIR__ . '/../data/barcodebuddy.db',
+                        "CURL_TIMEOUT_S"               => 20,
+                        "CURL_ALLOW_INSECURE_SSL_CA"   => false,
+                        "CURL_ALLOW_INSECURE_SSL_HOST" => false,
+                        "IS_DOCKER"                    => false,
+                        "REQUIRE_API_KEY"              => true,
+                        "IS_DEBUG"                     => false,
+                        "OVERRIDDEN_USER_CONFIG"       => array()
+                        );
+    foreach ($defaultValues as $key => $value) {
+        if (!defined($key))
+            define($key, $value);
+    }
+}
 
 
 class GlobalConfig {
@@ -14,11 +60,15 @@ class GlobalConfig {
     public $REQUIRE_API_KEY              = REQUIRE_API_KEY;
     public $IS_DEBUG                     = IS_DEBUG;
     public $OVERRIDDEN_USER_CONFIG       = OVERRIDDEN_USER_CONFIG;
-    
+
+   function __construct() {
+        $this->loadConfig();
+    }
+
     //Gets all the public variables declared above and checks if there
     //is an environment variable for this function. If yes, the
     //environment variable replaces the values in config.php
-   function __construct() {
+    private function loadConfig() {
         $environmentVariables = getenv();
         $reflect              = new ReflectionClass($this);
         $props                = $reflect->getProperties(ReflectionProperty::IS_PUBLIC);
@@ -82,18 +132,16 @@ class GlobalConfig {
             echo "\n";
         }
     }
+
+    public function configureDebugOutput() {
+        //Enable debug as well if file "debug" exists in this directory
+        if ($this->IS_DEBUG || file_exists(__DIR__ . "/debug")) {
+            ini_set('display_errors', 1);
+            ini_set('display_startup_errors', 1);
+            error_reporting(E_ALL);
+        }
+    }
     
-}
-
-$CONFIG = new GlobalConfig();
-//For debugging:
-//$CONFIG->echoConfig();
-
-//Enable debug as well if file "debug" exists in this directory
-if ($CONFIG->IS_DEBUG || file_exists(__DIR__ . "/debug")) {
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
 }
 
 

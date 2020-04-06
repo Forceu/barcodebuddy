@@ -25,7 +25,7 @@
  */
 
 
-require_once __DIR__ . '/incl/config.php';
+require_once __DIR__ . '/incl/configProcessing.inc.php';
 require_once __DIR__ . '/incl/websocketconnection.inc.php';
 require_once __DIR__ . '/incl/internalChecking.inc.php';
 

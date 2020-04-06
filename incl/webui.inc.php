@@ -25,7 +25,7 @@
  */
 
 
-require_once __DIR__ . "/config.php";
+require_once __DIR__ . "/configProcessing.inc.php";
 require_once __DIR__ . "/uiEditor.inc.php";
 
 const MENU_GENERIC = 0;

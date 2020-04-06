@@ -21,7 +21,7 @@ require_once __DIR__ . "/processing.inc.php";
 require_once __DIR__ . "/PluginLoader.php";
 require_once __DIR__ . "/api.inc.php";
 require_once __DIR__ . "/websocketconnection.inc.php";
-require_once __DIR__ . "/config.php";
+require_once __DIR__ . "/configProcessing.inc.php";
 
 
 //States to tell the script what to do with the barcodes that were scanned
@@ -147,21 +147,15 @@ private $db = null;
         global $CONFIG;
         if (file_exists($CONFIG->DATABASE_PATH)) {
             if (!is_writable($CONFIG->DATABASE_PATH)) {
-                die("DB Error: Database file is not writable");
+                showErrorNotWritable("DB Error: DB_Not_Writable");
             }
         } else {
             self::createDbDirectory();
             self::checkAndMoveIfOldDbLocation();
             if (!is_writable(dirname($CONFIG->DATABASE_PATH))) {
-                self::showErrorNotWritable("DB Error Not_Writable");
+                showErrorNotWritable("DB Error Not_Writable");
             }
         }
-    }
-
-    private function showErrorNotWritable($error="DB Error") {
-        die($error . ": Database file cannot be created, as folder is not writable. Please check your permissions.<br>
-                 Have a look at this link to find out how to do this:
-                 <a href='https://github.com/olab/Open-Labyrinth/wiki/How-do-I-make-files-and-folders-writable-for-the-web-server%3F'>" . "How do I make files and folders writable for the web server?</a>");
     }
 
     private function createDbDirectory() {
@@ -170,7 +164,7 @@ private $db = null;
         if (!file_exists($dirName)) {
             $couldCreateDir = mkdir($dirName, 0700, true);
             if (!$couldCreateDir) {
-                self::showErrorNotWritable("DB Error Could_Not_Create_Dir"); 
+                showErrorNotWritable("DB Error Could_Not_Create_Dir"); 
             }
         }
     }
@@ -186,7 +180,7 @@ private $db = null;
             self::createDbDirectory();
             $couldMove = rename(LEGACY_DATABASE_PATH, $CONFIG->DATABASE_PATH);
             if (!couldMove) {
-                self::showErrorNotWritable("DB Error Could_Not_Move");
+                showErrorNotWritable("DB Error Could_Not_Move");
             }
        }
     }

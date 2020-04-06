@@ -18,7 +18,7 @@
 
 
 
-require_once __DIR__ . "/../incl/config.php";
+require_once __DIR__ . "/../incl/configProcessing.inc.php";
 require_once __DIR__ . "/../incl/db.inc.php";
 require_once __DIR__ . "/../incl/processing.inc.php";
 

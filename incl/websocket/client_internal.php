@@ -24,7 +24,7 @@
  *
  */
 
-require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../configProcessing.inc.php';
 require_once __DIR__ . '/../websocketconnection.inc.php';
 require_once __DIR__ . '/../processing.inc.php';
 

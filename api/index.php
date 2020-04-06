@@ -97,10 +97,17 @@ class BBuddyApi {
     private function initRoutes() {
         
         $this->addRoute(new ApiRoute("/action/scan", function() {
-            if (!isset($_POST["barcode"]))
+            $barcode = "";
+            if (isset($_GET["text"]))
+                $barcode = $_GET["text"];
+            if (isset($_GET["add"]))
+                $barcode = $_GET["add"];
+            if (isset($_POST["barcode"]))
+                $barcode = $_POST["barcode"];
+            if ($barcode == "")
                 return self::createResultArray(null, "No barcode supplied", 400);
             else {
-                processNewBarcode(sanitizeString($_POST["barcode"]));
+                processNewBarcode(sanitizeString($barcode));
                 return self::createResultArray();
             }
         }));

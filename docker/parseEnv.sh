@@ -20,5 +20,9 @@ if [[ $(printenv IGNORE_SSL_HOST) == "true" ]]; then
 fi
 
 for var in $(compgen -e | grep "BBUDDY_"); do
-    sed -i '/include \/etc\/nginx\/fastcgi_params;/a fastcgi_param '$var' '\'$(printenv $var)\'';' /defaults/default
+    newline='fastcgi_param '$var' '\'$(printenv $var)\'';'
+    grep -q "$newline" /config/nginx/site-confs/default
+    if [ $? -eq 1 ]; then
+       sed -i '/include \/etc\/nginx\/fastcgi_params;/a '"$newline"'' /config/nginx/site-confs/default
+    fi
 done

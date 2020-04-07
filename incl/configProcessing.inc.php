@@ -101,11 +101,12 @@ class GlobalConfig {
             
             $variableName = $prop->getName();
             $variable =& $this->{$variableName};
-            
-            foreach ($environmentVariables as $envName => $envValue) {
-                if ($envName == 'BBUDDY_' . $variableName) {
-                    $variable = self::convertCorrectType($envValue, $variable);
-                }
+
+            $configString = 'BBUDDY_' . $variableName;
+            if (isset($environmentVariables[$configString])) {
+                $variable = self::convertCorrectType($environmentVariables[$configString], $variable);
+            } elseif (isset($_SERVER[$configString])) {
+                $variable = self::convertCorrectType($_SERVER[$configString], $variable);
             }
         }
     }

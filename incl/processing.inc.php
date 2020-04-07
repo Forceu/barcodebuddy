@@ -467,7 +467,7 @@ function getApiUrl($removeAfter) {
 }
 
 function showErrorNotWritable($error="DB Error") {
-    die($error . ": Database file cannot be created, as folder or databse file is not writable. Please check your permissions.<br>
+    die($error . ": Database file cannot be created, as folder or database file is not writable. Please check your permissions.<br>
              Have a look at this link to find out how to do this:
              <a href='https://github.com/olab/Open-Labyrinth/wiki/How-do-I-make-files-and-folders-writable-for-the-web-server%3F'>" . "How do I make files and folders writable for the web server?</a>");
 }

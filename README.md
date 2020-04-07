@@ -35,6 +35,7 @@ This project is licensed under the GNU GPL3 - see the [LICENSE.md](LICENSE.md) f
 * openfoodfacts.org for providing the barcode lookup API
 * [PHP-Websocket](https://github.com/bloatless/php-websocket)
 * [NoSleep.js](https://github.com/richtr/NoSleep.js)
+* [PHP-Auth](https://github.com/delight-im/PHP-Auth)
 
 
 ## Donations

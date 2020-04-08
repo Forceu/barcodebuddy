@@ -87,9 +87,8 @@ function processNewBarcode($barcodeInput, $websocketEnabled = true) {
         $lockGenerator->createLock();
         $productInfo = API::getProductByBardcode($sanitizedBarcode);
         if ($productInfo == null) {
-            $lockGenerator->removeLock();
             $db->saveLastBarcode($sanitizedBarcode);
-            processUnknownBarcode($sanitizedBarcode, $websocketEnabled);
+            processUnknownBarcode($sanitizedBarcode, $websocketEnabled, $lockGenerator);
         } else {
             $db->saveLastBarcode($sanitizedBarcode, $productInfo["name"]);
             processKnownBarcode($productInfo, $sanitizedBarcode, $websocketEnabled, $lockGenerator);
@@ -152,7 +151,7 @@ function processChoreBarcode($barcode) {
 }
 
 //If grocy does not know this barcode
-function processUnknownBarcode($barcode, $websocketEnabled) {
+function processUnknownBarcode($barcode, $websocketEnabled, &$fileLock) {
     require_once __DIR__ . "/db.inc.php";
     global $db;
     $amount = 1;
@@ -177,6 +176,7 @@ function processUnknownBarcode($barcode, $websocketEnabled) {
         }
         
     }
+    $fileLock->removeLock();
 }
 
 

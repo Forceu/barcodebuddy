@@ -141,17 +141,25 @@ class WebUiGenerator {
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
         <title>Barcode Buddy</title>
 
-        <!-- Add to homescreen for Chrome on Android -->
-    <!--    <meta name="mobile-web-app-capable" content="yes">
-        <link rel="icon" sizes="192x192" href="images/android-desktop.png"> -->
+        <link rel="apple-touch-icon" sizes="57x57" href="'.$folder.'incl/img/favicon/apple-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="'.$folder.'incl/img/favicon/apple-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="'.$folder.'incl/img/favicon/apple-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="'.$folder.'incl/img/favicon/apple-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="'.$folder.'incl/img/favicon/apple-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="'.$folder.'incl/img/favicon/apple-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="'.$folder.'incl/img/favicon/apple-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="'.$folder.'incl/img/favicon/apple-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="'.$folder.'incl/img/favicon/apple-icon-180x180.png">
+        <link rel="icon" type="image/png" sizes="192x192"  href="'.$folder.'incl/img/favicon/android-icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="'.$folder.'incl/img/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="'.$folder.'incl/img/favicon/favicon-96x96.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="'.$folder.'incl/img/favicon/favicon-16x16.png">
+        <meta name="msapplication-TileImage" content="'.$folder.'incl/img/favicon/ms-icon-144x144.png">
+        <meta name="msapplication-navbutton-color" content="#3f51b5">
+        <meta name="msapplication-TileColor" content="#3f51b5">
+        <meta name="apple-mobile-web-app-status-bar-style" content="#3f51b5">
+        <meta name="theme-color" content="#3f51b5">
 
-        <!-- Add to homescreen for Safari on iOS -->
-    <!--    <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-status-bar-style" content="black">
-        <meta name="apple-mobile-web-app-title" content="Material Design Lite">
-        <link rel="apple-touch-icon-precomposed" href="images/ios-desktop.png">
-
-        <link rel="shortcut icon" href="images/favicon.png"> -->
 
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">

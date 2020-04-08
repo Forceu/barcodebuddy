@@ -51,7 +51,7 @@ if (isset($_GET["deleteall"])) {
 
 $webUi = new WebUiGenerator(MENU_GENERIC);
 $webUi->addHeader('<link rel="stylesheet" href="../incl/css/styleQr.css">');
-$webUi->addHtml('<script type="text/javascript" src="/../incl/js/qrcode.js"></script>');
+$webUi->addHtml('<script type="text/javascript" src="../incl/js/qrcode.js"></script>');
 if ($mobileKey == null) 
     $webUi->addCard("API Keys", getApiTable(), createMenuLinks());
 else
@@ -100,7 +100,7 @@ function getApiTable() {
 	global $db;
     $apikeys = $db->getStoredApiKeys();
     $html = new UiEditor();
-    $html->addHtml("Management of API keys. For more information about the Barcode Buddy API, click <a href='/../api/'>here</a>");
+    $html->addHtml("Management of API keys. For more information about the Barcode Buddy API, click <a href='../api/'>here</a>");
     $html->addLineBreak(4);
     $table = new TableGenerator(array(
         "API Key",

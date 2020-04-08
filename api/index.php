@@ -107,8 +107,8 @@ class BBuddyApi {
             if ($barcode == "")
                 return self::createResultArray(null, "No barcode supplied", 400);
             else {
-                processNewBarcode(sanitizeString($barcode));
-                return self::createResultArray();
+                $result = processNewBarcode(sanitizeString($barcode));
+                return self::createResultArray(array("result" => $result));
             }
         }));
         

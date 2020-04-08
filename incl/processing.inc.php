@@ -26,73 +26,61 @@ function processNewBarcode($barcodeInput, $websocketEnabled = true) {
     global $db;
     global $BBCONFIG;
     
-    $barcode     = strtoupper($barcodeInput);
-    $isProcessed = false;
+    $barcode = strtoupper($barcodeInput);
     if ($barcode == $BBCONFIG["BARCODE_C"]) {
         $db->setTransactionState(STATE_CONSUME);
-        outputLog("Set state to Consume", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
-        $isProcessed = true;
+        return outputLog("Set state to Consume", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
     }
     if ($barcode == $BBCONFIG["BARCODE_CS"]) {
         $db->setTransactionState(STATE_CONSUME_SPOILED);
-        outputLog("Set state to Consume (spoiled)", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
-        $isProcessed = true;
+        return outputLog("Set state to Consume (spoiled)", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
     }
     if ($barcode == $BBCONFIG["BARCODE_P"]) {
         $db->setTransactionState(STATE_PURCHASE);
-        outputLog("Set state to Purchase", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
-        $isProcessed = true;
+        return outputLog("Set state to Purchase", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
     }
     if ($barcode == $BBCONFIG["BARCODE_O"]) {
         $db->setTransactionState(STATE_OPEN);
-        outputLog("Set state to Open", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
-        $isProcessed = true;
+        return outputLog("Set state to Open", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
     }
     if ($barcode == $BBCONFIG["BARCODE_GS"]) {
         $db->setTransactionState(STATE_GETSTOCK);
-        outputLog("Set state to Inventory", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
-        $isProcessed = true;
+        return outputLog("Set state to Inventory", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
     }
     if ($barcode == $BBCONFIG["BARCODE_AS"]) {
         $db->setTransactionState(STATE_ADD_SL);
-        outputLog("Set state to Shopping list", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
-        $isProcessed = true;
+        return outputLog("Set state to Shopping list", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
     }
     if (stringStartsWith($barcode, $BBCONFIG["BARCODE_Q"])) {
         $quantitiy = str_replace($BBCONFIG["BARCODE_Q"], "", $barcode);
         checkIfNumeric($quantitiy);
-    if ($BBCONFIG["LAST_PRODUCT"] != null) {
-        $lastBarcode = $BBCONFIG["LAST_BARCODE"] . " (" . $BBCONFIG["LAST_PRODUCT"] . ")";
-    } else {
-        $lastBarcode = $BBCONFIG["LAST_BARCODE"];
-    }
-        outputLog("Set quantitiy to $quantitiy for barcode $lastBarcode", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
+        if ($BBCONFIG["LAST_PRODUCT"] != null) {
+            $lastBarcode = $BBCONFIG["LAST_BARCODE"] . " (" . $BBCONFIG["LAST_PRODUCT"] . ")";
+        } else {
+            $lastBarcode = $BBCONFIG["LAST_BARCODE"];
+        }
         changeQuantityAfterScan($quantitiy);
-        $isProcessed = true;
+        return outputLog("Set quantitiy to $quantitiy for barcode $lastBarcode", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
     }
     if (trim($barcode) == "") {
-        outputLog("Invalid barcode found", EVENT_TYPE_ERROR, true, $websocketEnabled, WS_RESULT_PRODUCT_UNKNOWN);
-        $isProcessed = true;
+        return outputLog("Invalid barcode found", EVENT_TYPE_ERROR, true, $websocketEnabled, WS_RESULT_PRODUCT_UNKNOWN);
     }
     
     if ($db->isChoreBarcode($barcode)) {
         $choreText = processChoreBarcode($barcode);
-        outputLog("Executed chore: " . $choreText, EVENT_TYPE_EXEC_CHORE, true, $websocketEnabled);
-        $isProcessed = true;
+        return outputLog("Executed chore: " . $choreText, EVENT_TYPE_EXEC_CHORE, true, $websocketEnabled);
     }
     
-    if (!$isProcessed) {
-        $sanitizedBarcode = sanitizeString($barcode);
-        $lockGenerator = new LockGenerator();
-        $lockGenerator->createLock();
-        $productInfo = API::getProductByBardcode($sanitizedBarcode);
-        if ($productInfo == null) {
-            $db->saveLastBarcode($sanitizedBarcode);
-            processUnknownBarcode($sanitizedBarcode, $websocketEnabled, $lockGenerator);
-        } else {
-            $db->saveLastBarcode($sanitizedBarcode, $productInfo["name"]);
-            processKnownBarcode($productInfo, $sanitizedBarcode, $websocketEnabled, $lockGenerator);
-        }
+    $sanitizedBarcode = sanitizeString($barcode);
+    $lockGenerator    = new LockGenerator();
+    $lockGenerator->createLock();
+    $productInfo = API::getProductByBardcode($sanitizedBarcode);
+    if ($productInfo == null) {
+        $db->saveLastBarcode($sanitizedBarcode);
+        return processUnknownBarcode($sanitizedBarcode, $websocketEnabled, $lockGenerator);
+    } else {
+        $db->saveLastBarcode($sanitizedBarcode, $productInfo["name"]);
+        return processKnownBarcode($productInfo, $sanitizedBarcode, $websocketEnabled, $lockGenerator);
     }
 }
 
@@ -138,6 +126,7 @@ function outputLog($log, $eventType, $isVerbose = false, $websocketEnabled = tru
     if (in_array("EventReceiver", $LOADED_PLUGINS)) {
         pluginEventReceiver_processEvent($eventType, $log);
     }
+    return $log;
 }
 
 //Execute a chore when chore barcode was submitted
@@ -161,7 +150,7 @@ function processUnknownBarcode($barcode, $websocketEnabled, &$fileLock) {
     if ($db->isUnknownBarcodeAlreadyStored($barcode)) {
         //Unknown barcode already in local database
         $db->addQuantitiyToUnknownBarcode($barcode, $amount);
-        outputLog("Unknown product already scanned. Increasing quantitiy. Barcode: " . $barcode, EVENT_TYPE_ADD_NEW_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_LOOKED_UP);
+        $output = outputLog("Unknown product already scanned. Increasing quantitiy. Barcode: " . $barcode, EVENT_TYPE_ADD_NEW_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_LOOKED_UP);
     } else {
         $productname = "N/A";
         if (is_numeric($barcode)) {
@@ -169,14 +158,14 @@ function processUnknownBarcode($barcode, $websocketEnabled, &$fileLock) {
         }
         if ($productname != "N/A") {
             $db->insertUnrecognizedBarcode($barcode,  $amount, $productname, $db->checkNameForTags($productname));
-            outputLog("Unknown barcode looked up, found name: " . $productname . ". Barcode: " . $barcode, EVENT_TYPE_ADD_NEW_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_LOOKED_UP, $productname);
+            $output = outputLog("Unknown barcode looked up, found name: " . $productname . ". Barcode: " . $barcode, EVENT_TYPE_ADD_NEW_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_LOOKED_UP, $productname);
         } else {
             $db->insertUnrecognizedBarcode($barcode, $amount);
-            outputLog("Unknown barcode could not be looked up. Barcode: " . $barcode, EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_UNKNOWN, $barcode);
+            $output = outputLog("Unknown barcode could not be looked up. Barcode: " . $barcode, EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_UNKNOWN, $barcode);
         }
-        
     }
     $fileLock->removeLock();
+    return $output;
 }
 
 
@@ -232,6 +221,9 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
     require_once __DIR__ . "/db.inc.php";
     global $BBCONFIG;
     global $db;
+
+    $output = "Undefined";
+
     $state = $db->getTransactionState();
     
     switch ($state) {
@@ -239,20 +231,19 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
             if ($productInfo["stockAmount"] > 0) { 
                 API::consumeProduct($productInfo["id"], 1, false);
                 $fileLock->removeLock();
-                outputLog("Product found. Consuming 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Consuming 1 " . $productInfo["unit"] . " of " . $productInfo["name"]);
+                return outputLog("Product found. Consuming 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Consuming 1 " . $productInfo["unit"] . " of " . $productInfo["name"]);
             } else {
-                outputLog("Product found. None in stock, not consuming: " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Product found. None in stock, not consuming: " . $productInfo["name"]);
+                return outputLog("Product found. None in stock, not consuming: " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Product found. None in stock, not consuming: " . $productInfo["name"]);
             }
-            break;
         case STATE_CONSUME_SPOILED:
             API::consumeProduct($productInfo["id"], 1, true);
             $fileLock->removeLock();
-            outputLog("Product found. Consuming 1 spoiled " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Consuming 1 spoiled " . $productInfo["unit"] . " of " . $productInfo["name"]);
+            $output = outputLog("Product found. Consuming 1 spoiled " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Consuming 1 spoiled " . $productInfo["unit"] . " of " . $productInfo["name"]);
             if ($BBCONFIG["REVERT_SINGLE"]) {
                 $db->saveLog("Reverting back to Consume", true);
                 $db->setTransactionState(STATE_CONSUME);
             }
-            break;
+            return $output;
         case STATE_PURCHASE:
             $amount        = $db->getQuantityByBarcode($barcode);
             $additionalLog = "";
@@ -260,39 +251,36 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
                 $additionalLog = " [WARNING]: No default best before date set!";
             }
             $fileLock->removeLock();
-            outputLog("Product found. Adding  $amount " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode . $additionalLog, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Adding $amount " . $productInfo["unit"] . " of " . $productInfo["name"] . $additionalLog);
-            break;
+            return outputLog("Product found. Adding  $amount " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode . $additionalLog, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Adding $amount " . $productInfo["unit"] . " of " . $productInfo["name"] . $additionalLog);
         case STATE_OPEN:
             if ($productInfo["stockAmount"] > 0) { 
                 API::openProduct($productInfo["id"]);
-                outputLog("Product found. Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"]);
+                $output = outputLog("Product found. Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"]);
             } else {
-                outputLog("Product found. None in stock, not opening: " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Product found. None in stock, not opening: " . $productInfo["name"]);
+                $output = outputLog("Product found. None in stock, not opening: " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Product found. None in stock, not opening: " . $productInfo["name"]);
             }
             $fileLock->removeLock();
             if ($BBCONFIG["REVERT_SINGLE"]) {
                 $db->saveLog("Reverting back to Consume", true);
                 $db->setTransactionState(STATE_CONSUME);
             }
-            break;
+            return $output;
         case STATE_GETSTOCK:
             $fileLock->removeLock();
-            $output = "Currently in stock: " . $productInfo["stockAmount"] . " " . $productInfo["unit"] . " of " . $productInfo["name"];
+            $log = "Currently in stock: " . $productInfo["stockAmount"] . " " . $productInfo["unit"] . " of " . $productInfo["name"];
             if (USE_NEW_INVENTORY_API) {
                 if ($productInfo["stockAmount"] > 0) {
                     $locationInfo = API::getProductLocations($productInfo["id"]);
                     foreach ($locationInfo as $location) {
-                        $output = $output . "\nLocation ". $location["location_name"] . ": ".$location["amount"]. " " . $productInfo["unit"];
+                        $log = $log . "\nLocation ". $location["location_name"] . ": ".$location["amount"]. " " . $productInfo["unit"];
                     }
                 } 
             }
-            outputLog($output, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled);
-            break;
+            return outputLog($log, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled);
         case STATE_ADD_SL:
             API::addToShoppinglist($productInfo["id"], 1);
             $fileLock->removeLock();
-            outputLog("Added to shopping list: 1 " . $productInfo["unit"] . " of " . $productInfo["name"], EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled);
-            break;
+            return outputLog("Added to shopping list: 1 " . $productInfo["unit"] . " of " . $productInfo["name"], EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled);
     }
 }
 

@@ -79,7 +79,7 @@ function getMobileAppPage() {
     $apiUrl = getApiUrl("menu/");
     $infoArray = array ("issetup"=> true, "url" => $apiUrl, "key" => $mobileKey);
     $html = new UiEditor();
-    $html->addHtml("Please scan the following QR code with your Barcode Buddy app. You can download the app here: XXXXXXXX");
+    $html->addHtml("Please scan the following QR code with your Barcode Buddy app. You can download the Android app <a target='_blank' href='https://play.google.com/store/apps/details?id=de.bulling.barcodebuddyscanner'>here</a>");
     $html->addLineBreak(3);
     $html->addHtml('<div id="placeHolder"></div>');
     $html->addScript("var qr = qrcode(0, 'M');

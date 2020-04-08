@@ -836,7 +836,7 @@
 
                         <div class="tab-content">
                           <div class="tab-pane active" id="examples-Action-actionScanPost-0-curl">
-                            <pre class="prettyprint"><code class="language-bsh">curl -X POST -H "BBUDDY_API_KEY: [[apiKey]]" "https://your.bbuddy.url/api/action/scan"</code></pre>
+                            <pre class="prettyprint"><code class="language-bsh">curl -X POST -H "BBUDDY-API-KEY: [[apiKey]]" "https://your.bbuddy.url/api/action/scan"</code></pre>
                           </div>
                           <div class="tab-pane" id="examples-Action-actionScanPost-0-java">
                             <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
@@ -896,9 +896,9 @@ public class ActionApiExample {
                             <div class="tab-pane" id="examples-Action-actionScanPost-0-objc">
                               <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
 // Configure API key authorization: (authentication scheme: apikey)
-[apiConfig setApiKey:@"YOUR_API_KEY" forApiKeyIdentifier:@"BBUDDY_API_KEY"];
+[apiConfig setApiKey:@"YOUR_API_KEY" forApiKeyIdentifier:@"BBUDDY-API-KEY"];
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-//[apiConfig setApiKeyPrefix:@"Bearer" forApiKeyIdentifier:@"BBUDDY_API_KEY"];
+//[apiConfig setApiKeyPrefix:@"Bearer" forApiKeyIdentifier:@"BBUDDY-API-KEY"];
 String *barcode = barcode_example; // 
 
 ActionApi *apiInstance = [[ActionApi alloc] init];
@@ -924,7 +924,7 @@ var defaultClient = BarcodeBuddy.ApiClient.instance;
 var apikey = defaultClient.authentications['apikey'];
 apikey.apiKey = "YOUR API KEY"
 // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//apikey.apiKeyPrefix['BBUDDY_API_KEY'] = "Token"
+//apikey.apiKeyPrefix['BBUDDY-API-KEY'] = "Token"
 
 var api = new BarcodeBuddy.ActionApi()
 var barcode = barcode_example; // {{String}} 
@@ -958,9 +958,9 @@ namespace Example
         {
 
             // Configure API key authorization: apikey
-            Configuration.Default.ApiKey.Add("BBUDDY_API_KEY", "YOUR_API_KEY");
+            Configuration.Default.ApiKey.Add("BBUDDY-API-KEY", "YOUR_API_KEY");
             // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("BBUDDY_API_KEY", "Bearer");
+            // Configuration.Default.ApiKeyPrefix.Add("BBUDDY-API-KEY", "Bearer");
 
             var apiInstance = new ActionApi();
             var barcode = barcode_example;  // String | 
@@ -986,9 +986,9 @@ namespace Example
 require_once(__DIR__ . '/vendor/autoload.php');
 
 // Configure API key authorization: apikey
-Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('BBUDDY_API_KEY', 'YOUR_API_KEY');
+Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('BBUDDY-API-KEY', 'YOUR_API_KEY');
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('BBUDDY_API_KEY', 'Bearer');
+// Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('BBUDDY-API-KEY', 'Bearer');
 
 $api_instance = new Swagger\Client\ApiActionApi();
 $barcode = barcode_example; // String | 
@@ -1008,9 +1008,9 @@ use WWW::SwaggerClient::Configuration;
 use WWW::SwaggerClient::ActionApi;
 
 # Configure API key authorization: apikey
-$WWW::SwaggerClient::Configuration::api_key->{'BBUDDY_API_KEY'} = 'YOUR_API_KEY';
+$WWW::SwaggerClient::Configuration::api_key->{'BBUDDY-API-KEY'} = 'YOUR_API_KEY';
 # uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-#$WWW::SwaggerClient::Configuration::api_key_prefix->{'BBUDDY_API_KEY'} = "Bearer";
+#$WWW::SwaggerClient::Configuration::api_key_prefix->{'BBUDDY-API-KEY'} = "Bearer";
 
 my $api_instance = WWW::SwaggerClient::ActionApi->new();
 my $barcode = barcode_example; # String | 
@@ -1032,9 +1032,9 @@ from swagger_client.rest import ApiException
 from pprint import pprint
 
 # Configure API key authorization: apikey
-swagger_client.configuration.api_key['BBUDDY_API_KEY'] = 'YOUR_API_KEY'
+swagger_client.configuration.api_key['BBUDDY-API-KEY'] = 'YOUR_API_KEY'
 # Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-# swagger_client.configuration.api_key_prefix['BBUDDY_API_KEY'] = 'Bearer'
+# swagger_client.configuration.api_key_prefix['BBUDDY-API-KEY'] = 'Bearer'
 
 # create an instance of the API class
 api_instance = swagger_client.ActionApi()
@@ -1180,7 +1180,7 @@ except ApiException as e:
 
                         <div class="tab-content">
                           <div class="tab-pane active" id="examples-State-stateGetmodeGet-0-curl">
-                            <pre class="prettyprint"><code class="language-bsh">curl -X GET -H "BBUDDY_API_KEY: [[apiKey]]" "https://your.bbuddy.url/api/state/getmode"</code></pre>
+                            <pre class="prettyprint"><code class="language-bsh">curl -X GET -H "BBUDDY-API-KEY: [[apiKey]]" "https://your.bbuddy.url/api/state/getmode"</code></pre>
                           </div>
                           <div class="tab-pane" id="examples-State-stateGetmodeGet-0-java">
                             <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
@@ -1236,9 +1236,9 @@ public class StateApiExample {
                             <div class="tab-pane" id="examples-State-stateGetmodeGet-0-objc">
                               <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
 // Configure API key authorization: (authentication scheme: apikey)
-[apiConfig setApiKey:@"YOUR_API_KEY" forApiKeyIdentifier:@"BBUDDY_API_KEY"];
+[apiConfig setApiKey:@"YOUR_API_KEY" forApiKeyIdentifier:@"BBUDDY-API-KEY"];
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-//[apiConfig setApiKeyPrefix:@"Bearer" forApiKeyIdentifier:@"BBUDDY_API_KEY"];
+//[apiConfig setApiKeyPrefix:@"Bearer" forApiKeyIdentifier:@"BBUDDY-API-KEY"];
 
 StateApi *apiInstance = [[StateApi alloc] init];
 
@@ -1260,7 +1260,7 @@ var defaultClient = BarcodeBuddy.ApiClient.instance;
 var apikey = defaultClient.authentications['apikey'];
 apikey.apiKey = "YOUR API KEY"
 // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//apikey.apiKeyPrefix['BBUDDY_API_KEY'] = "Token"
+//apikey.apiKeyPrefix['BBUDDY-API-KEY'] = "Token"
 
 var api = new BarcodeBuddy.StateApi()
 var callback = function(error, data, response) {
@@ -1292,9 +1292,9 @@ namespace Example
         {
 
             // Configure API key authorization: apikey
-            Configuration.Default.ApiKey.Add("BBUDDY_API_KEY", "YOUR_API_KEY");
+            Configuration.Default.ApiKey.Add("BBUDDY-API-KEY", "YOUR_API_KEY");
             // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("BBUDDY_API_KEY", "Bearer");
+            // Configuration.Default.ApiKeyPrefix.Add("BBUDDY-API-KEY", "Bearer");
 
             var apiInstance = new StateApi();
 
@@ -1318,9 +1318,9 @@ namespace Example
 require_once(__DIR__ . '/vendor/autoload.php');
 
 // Configure API key authorization: apikey
-Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('BBUDDY_API_KEY', 'YOUR_API_KEY');
+Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('BBUDDY-API-KEY', 'YOUR_API_KEY');
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('BBUDDY_API_KEY', 'Bearer');
+// Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('BBUDDY-API-KEY', 'Bearer');
 
 $api_instance = new Swagger\Client\ApiStateApi();
 
@@ -1338,9 +1338,9 @@ use WWW::SwaggerClient::Configuration;
 use WWW::SwaggerClient::StateApi;
 
 # Configure API key authorization: apikey
-$WWW::SwaggerClient::Configuration::api_key->{'BBUDDY_API_KEY'} = 'YOUR_API_KEY';
+$WWW::SwaggerClient::Configuration::api_key->{'BBUDDY-API-KEY'} = 'YOUR_API_KEY';
 # uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-#$WWW::SwaggerClient::Configuration::api_key_prefix->{'BBUDDY_API_KEY'} = "Bearer";
+#$WWW::SwaggerClient::Configuration::api_key_prefix->{'BBUDDY-API-KEY'} = "Bearer";
 
 my $api_instance = WWW::SwaggerClient::StateApi->new();
 
@@ -1360,9 +1360,9 @@ from swagger_client.rest import ApiException
 from pprint import pprint
 
 # Configure API key authorization: apikey
-swagger_client.configuration.api_key['BBUDDY_API_KEY'] = 'YOUR_API_KEY'
+swagger_client.configuration.api_key['BBUDDY-API-KEY'] = 'YOUR_API_KEY'
 # Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-# swagger_client.configuration.api_key_prefix['BBUDDY_API_KEY'] = 'Bearer'
+# swagger_client.configuration.api_key_prefix['BBUDDY-API-KEY'] = 'Bearer'
 
 # create an instance of the API class
 api_instance = swagger_client.StateApi()
@@ -1431,7 +1431,7 @@ STATE_ADD_SL          &#x3D; 5; </h3>
 
                         <div class="tab-content">
                           <div class="tab-pane active" id="examples-State-stateSetmodePost-0-curl">
-                            <pre class="prettyprint"><code class="language-bsh">curl -X POST -H "BBUDDY_API_KEY: [[apiKey]]" "https://your.bbuddy.url/api/state/setmode"</code></pre>
+                            <pre class="prettyprint"><code class="language-bsh">curl -X POST -H "BBUDDY-API-KEY: [[apiKey]]" "https://your.bbuddy.url/api/state/setmode"</code></pre>
                           </div>
                           <div class="tab-pane" id="examples-State-stateSetmodePost-0-java">
                             <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
@@ -1491,9 +1491,9 @@ public class StateApiExample {
                             <div class="tab-pane" id="examples-State-stateSetmodePost-0-objc">
                               <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
 // Configure API key authorization: (authentication scheme: apikey)
-[apiConfig setApiKey:@"YOUR_API_KEY" forApiKeyIdentifier:@"BBUDDY_API_KEY"];
+[apiConfig setApiKey:@"YOUR_API_KEY" forApiKeyIdentifier:@"BBUDDY-API-KEY"];
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-//[apiConfig setApiKeyPrefix:@"Bearer" forApiKeyIdentifier:@"BBUDDY_API_KEY"];
+//[apiConfig setApiKeyPrefix:@"Bearer" forApiKeyIdentifier:@"BBUDDY-API-KEY"];
 Integer *state = 56; // 
 
 StateApi *apiInstance = [[StateApi alloc] init];
@@ -1519,7 +1519,7 @@ var defaultClient = BarcodeBuddy.ApiClient.instance;
 var apikey = defaultClient.authentications['apikey'];
 apikey.apiKey = "YOUR API KEY"
 // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//apikey.apiKeyPrefix['BBUDDY_API_KEY'] = "Token"
+//apikey.apiKeyPrefix['BBUDDY-API-KEY'] = "Token"
 
 var api = new BarcodeBuddy.StateApi()
 var state = 56; // {{Integer}} 
@@ -1553,9 +1553,9 @@ namespace Example
         {
 
             // Configure API key authorization: apikey
-            Configuration.Default.ApiKey.Add("BBUDDY_API_KEY", "YOUR_API_KEY");
+            Configuration.Default.ApiKey.Add("BBUDDY-API-KEY", "YOUR_API_KEY");
             // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("BBUDDY_API_KEY", "Bearer");
+            // Configuration.Default.ApiKeyPrefix.Add("BBUDDY-API-KEY", "Bearer");
 
             var apiInstance = new StateApi();
             var state = 56;  // Integer | 
@@ -1581,9 +1581,9 @@ namespace Example
 require_once(__DIR__ . '/vendor/autoload.php');
 
 // Configure API key authorization: apikey
-Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('BBUDDY_API_KEY', 'YOUR_API_KEY');
+Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('BBUDDY-API-KEY', 'YOUR_API_KEY');
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('BBUDDY_API_KEY', 'Bearer');
+// Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('BBUDDY-API-KEY', 'Bearer');
 
 $api_instance = new Swagger\Client\ApiStateApi();
 $state = 56; // Integer | 
@@ -1603,9 +1603,9 @@ use WWW::SwaggerClient::Configuration;
 use WWW::SwaggerClient::StateApi;
 
 # Configure API key authorization: apikey
-$WWW::SwaggerClient::Configuration::api_key->{'BBUDDY_API_KEY'} = 'YOUR_API_KEY';
+$WWW::SwaggerClient::Configuration::api_key->{'BBUDDY-API-KEY'} = 'YOUR_API_KEY';
 # uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-#$WWW::SwaggerClient::Configuration::api_key_prefix->{'BBUDDY_API_KEY'} = "Bearer";
+#$WWW::SwaggerClient::Configuration::api_key_prefix->{'BBUDDY-API-KEY'} = "Bearer";
 
 my $api_instance = WWW::SwaggerClient::StateApi->new();
 my $state = 56; # Integer | 
@@ -1627,9 +1627,9 @@ from swagger_client.rest import ApiException
 from pprint import pprint
 
 # Configure API key authorization: apikey
-swagger_client.configuration.api_key['BBUDDY_API_KEY'] = 'YOUR_API_KEY'
+swagger_client.configuration.api_key['BBUDDY-API-KEY'] = 'YOUR_API_KEY'
 # Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-# swagger_client.configuration.api_key_prefix['BBUDDY_API_KEY'] = 'Bearer'
+# swagger_client.configuration.api_key_prefix['BBUDDY-API-KEY'] = 'Bearer'
 
 # create an instance of the API class
 api_instance = swagger_client.StateApi()
@@ -1775,7 +1775,7 @@ except ApiException as e:
 
                         <div class="tab-content">
                           <div class="tab-pane active" id="examples-System-systemBarcodesGet-0-curl">
-                            <pre class="prettyprint"><code class="language-bsh">curl -X GET -H "BBUDDY_API_KEY: [[apiKey]]" "https://your.bbuddy.url/api/system/barcodes"</code></pre>
+                            <pre class="prettyprint"><code class="language-bsh">curl -X GET -H "BBUDDY-API-KEY: [[apiKey]]" "https://your.bbuddy.url/api/system/barcodes"</code></pre>
                           </div>
                           <div class="tab-pane" id="examples-System-systemBarcodesGet-0-java">
                             <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
@@ -1833,9 +1833,9 @@ public class SystemApiExample {
                             <div class="tab-pane" id="examples-System-systemBarcodesGet-0-objc">
                               <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
 // Configure API key authorization: (authentication scheme: apikey)
-[apiConfig setApiKey:@"YOUR_API_KEY" forApiKeyIdentifier:@"BBUDDY_API_KEY"];
+[apiConfig setApiKey:@"YOUR_API_KEY" forApiKeyIdentifier:@"BBUDDY-API-KEY"];
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-//[apiConfig setApiKeyPrefix:@"Bearer" forApiKeyIdentifier:@"BBUDDY_API_KEY"];
+//[apiConfig setApiKeyPrefix:@"Bearer" forApiKeyIdentifier:@"BBUDDY-API-KEY"];
 
 SystemApi *apiInstance = [[SystemApi alloc] init];
 
@@ -1860,7 +1860,7 @@ var defaultClient = BarcodeBuddy.ApiClient.instance;
 var apikey = defaultClient.authentications['apikey'];
 apikey.apiKey = "YOUR API KEY"
 // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//apikey.apiKeyPrefix['BBUDDY_API_KEY'] = "Token"
+//apikey.apiKeyPrefix['BBUDDY-API-KEY'] = "Token"
 
 var api = new BarcodeBuddy.SystemApi()
 var callback = function(error, data, response) {
@@ -1892,9 +1892,9 @@ namespace Example
         {
 
             // Configure API key authorization: apikey
-            Configuration.Default.ApiKey.Add("BBUDDY_API_KEY", "YOUR_API_KEY");
+            Configuration.Default.ApiKey.Add("BBUDDY-API-KEY", "YOUR_API_KEY");
             // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("BBUDDY_API_KEY", "Bearer");
+            // Configuration.Default.ApiKeyPrefix.Add("BBUDDY-API-KEY", "Bearer");
 
             var apiInstance = new SystemApi();
 
@@ -1919,9 +1919,9 @@ namespace Example
 require_once(__DIR__ . '/vendor/autoload.php');
 
 // Configure API key authorization: apikey
-Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('BBUDDY_API_KEY', 'YOUR_API_KEY');
+Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('BBUDDY-API-KEY', 'YOUR_API_KEY');
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('BBUDDY_API_KEY', 'Bearer');
+// Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('BBUDDY-API-KEY', 'Bearer');
 
 $api_instance = new Swagger\Client\ApiSystemApi();
 
@@ -1940,9 +1940,9 @@ use WWW::SwaggerClient::Configuration;
 use WWW::SwaggerClient::SystemApi;
 
 # Configure API key authorization: apikey
-$WWW::SwaggerClient::Configuration::api_key->{'BBUDDY_API_KEY'} = 'YOUR_API_KEY';
+$WWW::SwaggerClient::Configuration::api_key->{'BBUDDY-API-KEY'} = 'YOUR_API_KEY';
 # uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-#$WWW::SwaggerClient::Configuration::api_key_prefix->{'BBUDDY_API_KEY'} = "Bearer";
+#$WWW::SwaggerClient::Configuration::api_key_prefix->{'BBUDDY-API-KEY'} = "Bearer";
 
 my $api_instance = WWW::SwaggerClient::SystemApi->new();
 
@@ -1963,9 +1963,9 @@ from swagger_client.rest import ApiException
 from pprint import pprint
 
 # Configure API key authorization: apikey
-swagger_client.configuration.api_key['BBUDDY_API_KEY'] = 'YOUR_API_KEY'
+swagger_client.configuration.api_key['BBUDDY-API-KEY'] = 'YOUR_API_KEY'
 # Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-# swagger_client.configuration.api_key_prefix['BBUDDY_API_KEY'] = 'Bearer'
+# swagger_client.configuration.api_key_prefix['BBUDDY-API-KEY'] = 'Bearer'
 
 # create an instance of the API class
 api_instance = swagger_client.SystemApi()
@@ -2093,7 +2093,7 @@ except ApiException as e:
 
                         <div class="tab-content">
                           <div class="tab-pane active" id="examples-System-systemInfoGet-0-curl">
-                            <pre class="prettyprint"><code class="language-bsh">curl -X GET -H "BBUDDY_API_KEY: [[apiKey]]" "https://your.bbuddy.url/api/system/info"</code></pre>
+                            <pre class="prettyprint"><code class="language-bsh">curl -X GET -H "BBUDDY-API-KEY: [[apiKey]]" "https://your.bbuddy.url/api/system/info"</code></pre>
                           </div>
                           <div class="tab-pane" id="examples-System-systemInfoGet-0-java">
                             <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
@@ -2149,9 +2149,9 @@ public class SystemApiExample {
                             <div class="tab-pane" id="examples-System-systemInfoGet-0-objc">
                               <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
 // Configure API key authorization: (authentication scheme: apikey)
-[apiConfig setApiKey:@"YOUR_API_KEY" forApiKeyIdentifier:@"BBUDDY_API_KEY"];
+[apiConfig setApiKey:@"YOUR_API_KEY" forApiKeyIdentifier:@"BBUDDY-API-KEY"];
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-//[apiConfig setApiKeyPrefix:@"Bearer" forApiKeyIdentifier:@"BBUDDY_API_KEY"];
+//[apiConfig setApiKeyPrefix:@"Bearer" forApiKeyIdentifier:@"BBUDDY-API-KEY"];
 
 SystemApi *apiInstance = [[SystemApi alloc] init];
 
@@ -2173,7 +2173,7 @@ var defaultClient = BarcodeBuddy.ApiClient.instance;
 var apikey = defaultClient.authentications['apikey'];
 apikey.apiKey = "YOUR API KEY"
 // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//apikey.apiKeyPrefix['BBUDDY_API_KEY'] = "Token"
+//apikey.apiKeyPrefix['BBUDDY-API-KEY'] = "Token"
 
 var api = new BarcodeBuddy.SystemApi()
 var callback = function(error, data, response) {
@@ -2205,9 +2205,9 @@ namespace Example
         {
 
             // Configure API key authorization: apikey
-            Configuration.Default.ApiKey.Add("BBUDDY_API_KEY", "YOUR_API_KEY");
+            Configuration.Default.ApiKey.Add("BBUDDY-API-KEY", "YOUR_API_KEY");
             // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("BBUDDY_API_KEY", "Bearer");
+            // Configuration.Default.ApiKeyPrefix.Add("BBUDDY-API-KEY", "Bearer");
 
             var apiInstance = new SystemApi();
 
@@ -2231,9 +2231,9 @@ namespace Example
 require_once(__DIR__ . '/vendor/autoload.php');
 
 // Configure API key authorization: apikey
-Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('BBUDDY_API_KEY', 'YOUR_API_KEY');
+Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('BBUDDY-API-KEY', 'YOUR_API_KEY');
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('BBUDDY_API_KEY', 'Bearer');
+// Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('BBUDDY-API-KEY', 'Bearer');
 
 $api_instance = new Swagger\Client\ApiSystemApi();
 
@@ -2251,9 +2251,9 @@ use WWW::SwaggerClient::Configuration;
 use WWW::SwaggerClient::SystemApi;
 
 # Configure API key authorization: apikey
-$WWW::SwaggerClient::Configuration::api_key->{'BBUDDY_API_KEY'} = 'YOUR_API_KEY';
+$WWW::SwaggerClient::Configuration::api_key->{'BBUDDY-API-KEY'} = 'YOUR_API_KEY';
 # uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-#$WWW::SwaggerClient::Configuration::api_key_prefix->{'BBUDDY_API_KEY'} = "Bearer";
+#$WWW::SwaggerClient::Configuration::api_key_prefix->{'BBUDDY-API-KEY'} = "Bearer";
 
 my $api_instance = WWW::SwaggerClient::SystemApi->new();
 
@@ -2273,9 +2273,9 @@ from swagger_client.rest import ApiException
 from pprint import pprint
 
 # Configure API key authorization: apikey
-swagger_client.configuration.api_key['BBUDDY_API_KEY'] = 'YOUR_API_KEY'
+swagger_client.configuration.api_key['BBUDDY-API-KEY'] = 'YOUR_API_KEY'
 # Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-# swagger_client.configuration.api_key_prefix['BBUDDY_API_KEY'] = 'Bearer'
+# swagger_client.configuration.api_key_prefix['BBUDDY-API-KEY'] = 'Bearer'
 
 # create an instance of the API class
 api_instance = swagger_client.SystemApi()
@@ -2311,7 +2311,6 @@ except ApiException as e:
           </div>
           <div id="footer">
             <div id="api-_footer">
-             
                 <div class="license-info">GNU GPLv3</div>
                 <div class="license-url">https://www.gnu.org/licenses/gpl.txt</div>
             </div>

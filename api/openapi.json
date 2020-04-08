@@ -283,7 +283,7 @@
       "apikey": {
         "type": "apiKey",
         "description": "API key provided by UI",
-        "name": "BBUDDY_API_KEY",
+        "name": "BBUDDY-API-KEY",
         "in": "header"
       }
     }

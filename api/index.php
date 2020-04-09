@@ -108,7 +108,7 @@ class BBuddyApi {
                 return self::createResultArray(null, "No barcode supplied", 400);
             else {
                 $result = processNewBarcode(sanitizeString($barcode));
-                return self::createResultArray(array("result" => $result));
+                return self::createResultArray(array("result" => sanitizeString($result)));
             }
         }));
         
@@ -155,7 +155,7 @@ class BBuddyApi {
     static function sendResult($data, $result) {
         header('Content-Type: application/json');
         http_response_code($result);
-        echo json_encode($data);
+        echo json_encode($data, JSON_HEX_QUOT);
         die();
     }
     

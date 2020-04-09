@@ -67,6 +67,12 @@ class BBuddyApi {
     }
     
     function execute($url) {
+        global $CONFIG;
+        
+        //Turn off all error reporting, as it could problems with parsing json at clientside
+        if (!$CONFIG->IS_DEBUG)
+            error_reporting(0);
+
         if (!isset($this->routes[$url])) {
             self::sendResult(self::createResultArray(null, "API call not found", 404), 404);
         } else {
@@ -155,7 +161,7 @@ class BBuddyApi {
     static function sendResult($data, $result) {
         header('Content-Type: application/json');
         http_response_code($result);
-        echo json_encode($data, JSON_HEX_QUOT);
+        echo trim(json_encode($data, JSON_HEX_QUOT));
         die();
     }
     

@@ -156,7 +156,7 @@ class EditFieldBuilder {
         }
         return $this;
     }
-    function disabled($disabled) {
+    function disabled($disabled = true) {
         $this->disabled = $disabled;
         return $this;
     }
@@ -602,6 +602,6 @@ class UiEditor {
         }
         return $result;
     }
-
 }
+
 ?>

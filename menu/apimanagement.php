@@ -51,7 +51,7 @@ if (isset($_GET["deleteall"])) {
 
 $webUi = new WebUiGenerator(MENU_GENERIC);
 $webUi->addHeader('<link rel="stylesheet" href="../incl/css/styleQr.css">');
-$webUi->addHtml('<script type="text/javascript" src="../incl/js/qrcode.js"></script>');
+$webUi->addHtml('<script src="../incl/js/qrcode.js"></script>');
 if ($mobileKey == null) 
     $webUi->addCard("API Keys", getApiTable(), createMenuLinks());
 else
@@ -81,17 +81,27 @@ function getMobileAppPage() {
     $html = new UiEditor();
     $html->addHtml("Please scan the following QR code with your Barcode Buddy app. You can download the Android app <a target='_blank' href='https://play.google.com/store/apps/details?id=de.bulling.barcodebuddyscanner'>here</a>");
     $html->addLineBreak(3);
-    $html->addHtml('<div id="placeHolder"></div>');
-    $html->addScript("var qr = qrcode(0, 'M');
-    qr.addData('".json_encode($infoArray)."');
-    qr.make();
-    document.getElementById('placeHolder').innerHTML = qr.createImgTag(8,5);");
+    $html->addHtml('<div class="flex-settings">');
+    $html->addDiv('<div id="placeHolder"></div>', null, "flex-settings-child");
+    $html->addHtml('<div class="flex-settings-child">');
+    $html->buildEditField('qr_url','URL', $apiUrl)
+                            ->onKeyUp('updateQrCode()')
+                            ->onfocusout('updateQrCode()')
+                            ->generate();
+    $html->addLineBreak();
+    $html->buildEditField('qr_key','API key', $mobileKey)->disabled()->generate();
+    $html->addHtml('</div></div>');
     $html->addLineBreak(3);
     $html->buildButton("button_back", "Go back")
                             ->setSubmit()
                             ->setIsAccent()
                             ->setRaised()
                             ->generate();
+    $html->addScript('var qrData =[];
+                      qrData["issetup"] = true;
+                      qrData["url"] = "'.$apiUrl.'";
+                      qrData["key"] = "'.$mobileKey.'";
+                      generateAppQrCode(qrData);');
     return $html->getHtml();
 }
 

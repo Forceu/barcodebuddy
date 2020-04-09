@@ -172,6 +172,7 @@ class WebUiGenerator {
       $this->addHtml('</head>
 
      <body class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
+     <script src="'. $folder . '/incl/js/scripts_top.js"></script>
 
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
       <header class="mdl-layout__header">

@@ -2,7 +2,7 @@
   "openapi": "3.0.2",
   "info": {
     "title": "Barcode Buddy",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "BarcodeBuddy API",
     "license": {
       "name": "GNU GPLv3",
@@ -19,18 +19,42 @@
           "200": {
             "content": {
               "application/json": {
-                "examples": {
-                  "1.4.1.1": {
-                    "value": {
-                      "data": {
-                        "version": "1.4.1.1",
-                        "version_int": "1411"
-                      },
-                      "result": {
-                        "result": "OK",
-                        "http_code": 200
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "version": {
+                          "type": "string"
+                        },
+                        "version_int": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "result": {
+                          "type": "string"
+                        },
+                        "http_code": {
+                          "format": "int32",
+                          "type": "integer"
+                        }
                       }
                     }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "version": "1.4.1.1",
+                    "version_int": "1411"
+                  },
+                  "result": {
+                    "result": "OK",
+                    "http_code": 200
                   }
                 }
               }
@@ -56,27 +80,60 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/normalresult"
-                  }
-                },
-                "examples": {
-                  "barcodes": {
-                    "value": {
-                      "data": {
-                        "BARCODE_C": "BBUDDY-C",
-                        "BARCODE_CS": "BBUDDY-CS",
-                        "BARCODE_P": "BBUDDY-P",
-                        "BARCODE_O": "BBUDDY-O",
-                        "BARCODE_GS": "BBUDDY-I",
-                        "BARCODE_Q": "BBUDDY-Q-",
-                        "BARCODE_AS": "BBUDDY-AS"
-                      },
-                      "result": {
-                        "result": "OK",
-                        "http_code": 200
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "BARCODE_C": {
+                          "type": "string"
+                        },
+                        "BARCODE_CS": {
+                          "type": "string"
+                        },
+                        "BARCODE_P": {
+                          "type": "string"
+                        },
+                        "BARCODE_O": {
+                          "type": "string"
+                        },
+                        "BARCODE_GS": {
+                          "type": "string"
+                        },
+                        "BARCODE_Q": {
+                          "type": "string"
+                        },
+                        "BARCODE_AS": {
+                          "type": "string"
+                        }
                       }
+                    },
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "result": {
+                          "type": "string"
+                        },
+                        "http_code": {
+                          "format": "int32",
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": {
+                      "BARCODE_C": "BBUDDY-C",
+                      "BARCODE_CS": "BBUDDY-CS",
+                      "BARCODE_P": "BBUDDY-P",
+                      "BARCODE_O": "BBUDDY-O",
+                      "BARCODE_GS": "BBUDDY-I",
+                      "BARCODE_Q": "BBUDDY-Q-",
+                      "BARCODE_AS": "BBUDDY-AS"
+                    },
+                    "result": {
+                      "result": "OK",
+                      "http_code": 200
                     }
                   }
                 }
@@ -103,16 +160,38 @@
           "200": {
             "content": {
               "application/json": {
-                "examples": {
-                  "getmode": {
-                    "value": {
-                      "data": {
-                        "mode": 0
-                      },
-                      "result": {
-                        "result": "OK",
-                        "http_code": 200
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "mode": {
+                          "format": "int32",
+                          "type": "integer"
+                        }
                       }
+                    },
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "result": {
+                          "type": "string"
+                        },
+                        "http_code": {
+                          "format": "int32",
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": {
+                      "mode": 0
+                    },
+                    "result": {
+                      "result": "OK",
+                      "http_code": 200
                     }
                   }
                 }
@@ -157,7 +236,72 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/normal"
+            "description": "Mode set successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "string"
+                    },
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "result": {
+                          "type": "string"
+                        },
+                        "http_code": {
+                          "format": "int32",
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": null,
+                    "result": {
+                      "result": "OK",
+                      "http_code": 200
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error if invalid state int supplied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object"
+                    },
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "result": {
+                          "type": "string"
+                        },
+                        "http_code": {
+                          "format": "int32",
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": null,
+                    "result": {
+                      "result": "Invalid state provided",
+                      "http_code": 400
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -195,7 +339,79 @@
         },
         "responses": {
           "200": {
-            "$ref": "#/components/responses/normal"
+            "description": "Scan successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "result": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "result": {
+                          "type": "string"
+                        },
+                        "http_code": {
+                          "format": "int32",
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": {
+                      "result": "Unknown barcode looked up, found name: Olive Oil. Barcode: 123456789"
+                    },
+                    "result": {
+                      "result": "OK",
+                      "http_code": 200
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error if no barcode supplied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object"
+                    },
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "result": {
+                          "type": "string"
+                        },
+                        "http_code": {
+                          "format": "int32",
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": null,
+                    "result": {
+                      "result": "No barcode supplied",
+                      "http_code": 400
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -208,77 +424,6 @@
     }
   },
   "components": {
-    "schemas": {
-      "normalresult": {
-        "title": "Root Type for normalresult",
-        "description": "Expected result",
-        "type": "object",
-        "properties": {
-          "data": {
-            "description": "Requested data",
-            "type": "array",
-            "items": {},
-            "properties": {
-              "mode": {
-                "format": "int32",
-                "type": "integer"
-              }
-            }
-          },
-          "result": {
-            "description": "Result codes",
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "properties": {
-              "result": {
-                "type": "string"
-              },
-              "http_code": {
-                "format": "int32",
-                "type": "integer"
-              }
-            }
-          }
-        },
-        "example": {
-          "data": {
-            "mode": 0
-          },
-          "result": {
-            "result": "OK",
-            "http_code": 200
-          }
-        }
-      }
-    },
-    "responses": {
-      "normal": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/normalresult"
-            },
-            "examples": {
-              "normal": {
-                "value": {
-                  "data": {},
-                  "result": {
-                    "result": "OK",
-                    "http_code": 200
-                  }
-                }
-              }
-            }
-          }
-        },
-        "description": "Normal response"
-      },
-      "error": {
-        "description": "Generic error"
-      }
-    },
     "securitySchemes": {
       "apikey": {
         "type": "apiKey",

@@ -68,8 +68,8 @@ class BBuddyApi {
     
     function execute($url) {
         global $CONFIG;
-        
-        //Turn off all error reporting, as it could problems with parsing json at clientside
+
+        //Turn off all error reporting, as it could cause problems with parsing json clientside
         if (!$CONFIG->IS_DEBUG)
             error_reporting(0);
 

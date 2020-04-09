@@ -706,39 +706,91 @@
     }
   }
 };
-            defs.normalresult = {
-  "title" : "Root Type for normalresult",
+            defs.inline_response_200 = {
   "type" : "object",
   "properties" : {
     "data" : {
-      "type" : "array",
-      "properties" : {
-        "mode" : {
-          "type" : "integer",
-          "format" : "int32"
-        }
-      },
-      "description" : "Requested data",
-      "items" : { }
+      "$ref" : "#/components/schemas/inline_response_200_data"
     },
     "result" : {
-      "type" : "array",
-      "properties" : {
-        "result" : {
-          "type" : "string"
-        },
-        "http_code" : {
-          "type" : "integer",
-          "format" : "int32"
-        }
-      },
-      "description" : "Result codes",
-      "items" : {
-        "type" : "string"
-      }
+      "$ref" : "#/components/schemas/inline_response_200_1_result"
+    }
+  }
+};
+            defs.inline_response_200_1 = {
+  "type" : "object",
+  "properties" : {
+    "data" : {
+      "$ref" : "#/components/schemas/inline_response_200_1_data"
+    },
+    "result" : {
+      "$ref" : "#/components/schemas/inline_response_200_1_result"
     }
   },
-  "description" : "Expected result",
+  "example" : {
+    "data" : {
+      "BARCODE_C" : "BBUDDY-C",
+      "BARCODE_CS" : "BBUDDY-CS",
+      "BARCODE_P" : "BBUDDY-P",
+      "BARCODE_O" : "BBUDDY-O",
+      "BARCODE_GS" : "BBUDDY-I",
+      "BARCODE_Q" : "BBUDDY-Q-",
+      "BARCODE_AS" : "BBUDDY-AS"
+    },
+    "result" : {
+      "result" : "OK",
+      "http_code" : 200
+    }
+  }
+};
+            defs.inline_response_200_1_data = {
+  "type" : "object",
+  "properties" : {
+    "BARCODE_C" : {
+      "type" : "string"
+    },
+    "BARCODE_CS" : {
+      "type" : "string"
+    },
+    "BARCODE_P" : {
+      "type" : "string"
+    },
+    "BARCODE_O" : {
+      "type" : "string"
+    },
+    "BARCODE_GS" : {
+      "type" : "string"
+    },
+    "BARCODE_Q" : {
+      "type" : "string"
+    },
+    "BARCODE_AS" : {
+      "type" : "string"
+    }
+  }
+};
+            defs.inline_response_200_1_result = {
+  "type" : "object",
+  "properties" : {
+    "result" : {
+      "type" : "string"
+    },
+    "http_code" : {
+      "type" : "integer",
+      "format" : "int32"
+    }
+  }
+};
+            defs.inline_response_200_2 = {
+  "type" : "object",
+  "properties" : {
+    "data" : {
+      "$ref" : "#/components/schemas/inline_response_200_2_data"
+    },
+    "result" : {
+      "$ref" : "#/components/schemas/inline_response_200_1_result"
+    }
+  },
   "example" : {
     "data" : {
       "mode" : 0
@@ -746,6 +798,105 @@
     "result" : {
       "result" : "OK",
       "http_code" : 200
+    }
+  }
+};
+            defs.inline_response_200_2_data = {
+  "type" : "object",
+  "properties" : {
+    "mode" : {
+      "type" : "integer",
+      "format" : "int32"
+    }
+  }
+};
+            defs.inline_response_200_3 = {
+  "type" : "object",
+  "properties" : {
+    "data" : {
+      "type" : "string"
+    },
+    "result" : {
+      "$ref" : "#/components/schemas/inline_response_200_1_result"
+    }
+  },
+  "example" : {
+    "result" : {
+      "result" : "OK",
+      "http_code" : 200
+    }
+  }
+};
+            defs.inline_response_200_4 = {
+  "type" : "object",
+  "properties" : {
+    "data" : {
+      "$ref" : "#/components/schemas/inline_response_200_4_data"
+    },
+    "result" : {
+      "$ref" : "#/components/schemas/inline_response_200_1_result"
+    }
+  },
+  "example" : {
+    "data" : {
+      "result" : "Unknown barcode looked up, found name: Olive Oil. Barcode: 123456789"
+    },
+    "result" : {
+      "result" : "OK",
+      "http_code" : 200
+    }
+  }
+};
+            defs.inline_response_200_4_data = {
+  "type" : "object",
+  "properties" : {
+    "result" : {
+      "type" : "string"
+    }
+  }
+};
+            defs.inline_response_200_data = {
+  "type" : "object",
+  "properties" : {
+    "version" : {
+      "type" : "string"
+    },
+    "version_int" : {
+      "type" : "string"
+    }
+  }
+};
+            defs.inline_response_400 = {
+  "type" : "object",
+  "properties" : {
+    "data" : {
+      "type" : "object"
+    },
+    "result" : {
+      "$ref" : "#/components/schemas/inline_response_200_1_result"
+    }
+  },
+  "example" : {
+    "result" : {
+      "result" : "Invalid state provided",
+      "http_code" : 400
+    }
+  }
+};
+            defs.inline_response_400_1 = {
+  "type" : "object",
+  "properties" : {
+    "data" : {
+      "type" : "object"
+    },
+    "result" : {
+      "$ref" : "#/components/schemas/inline_response_200_1_result"
+    }
+  },
+  "example" : {
+    "result" : {
+      "result" : "No barcode supplied",
+      "http_code" : 400
     }
   }
 };
@@ -861,7 +1012,7 @@ public class ActionApiExample {
         ActionApi apiInstance = new ActionApi();
         String barcode = barcode_example; // String | 
         try {
-            normalresult result = apiInstance.actionScanPost(barcode);
+            inline_response_200_4 result = apiInstance.actionScanPost(barcode);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling ActionApi#actionScanPost");
@@ -880,7 +1031,7 @@ public class ActionApiExample {
         ActionApi apiInstance = new ActionApi();
         String barcode = barcode_example; // String | 
         try {
-            normalresult result = apiInstance.actionScanPost(barcode);
+            inline_response_200_4 result = apiInstance.actionScanPost(barcode);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling ActionApi#actionScanPost");
@@ -905,7 +1056,7 @@ ActionApi *apiInstance = [[ActionApi alloc] init];
 
 // Passes a barcode to Barcode Buddy
 [apiInstance actionScanPostWith:barcode
-              completionHandler: ^(normalresult output, NSError* error) {
+              completionHandler: ^(inline_response_200_4 output, NSError* error) {
                             if (output) {
                                 NSLog(@"%@", output);
                             }
@@ -968,7 +1119,7 @@ namespace Example
             try
             {
                 // Passes a barcode to Barcode Buddy
-                normalresult result = apiInstance.actionScanPost(barcode);
+                inline_response_200_4 result = apiInstance.actionScanPost(barcode);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -1083,7 +1234,7 @@ except ApiException as e:
 
 
                           <h2>Responses</h2>
-                            <h3> Status: 200 - Normal response </h3>
+                            <h3> Status: 200 - Scan successful </h3>
 
                             <ul class="nav nav-tabs nav-tabs-examples" >
                                 <li class="active">
@@ -1098,22 +1249,11 @@ except ApiException as e:
                                     <script>
                                       $(document).ready(function() {
                                         var schemaWrapper = {
-  "description" : "Normal response",
+  "description" : "Scan successful",
   "content" : {
     "application/json" : {
       "schema" : {
-        "$ref" : "#/components/schemas/normalresult"
-      },
-      "examples" : {
-        "normal" : {
-          "value" : {
-            "data" : { },
-            "result" : {
-              "result" : "OK",
-              "http_code" : 200
-            }
-          }
-        }
+        "$ref" : "#/components/schemas/inline_response_200_4"
       }
     }
   }
@@ -1139,6 +1279,54 @@ except ApiException as e:
                                     </script>
                                   </div>
                                   <input id='responses-actionScanPost-200-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 400 - Error if no barcode supplied </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-actionScanPost-400-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-actionScanPost-400-schema">
+                                  <div id='responses-actionScanPost-400-schema-400' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Error if no barcode supplied",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/inline_response_400_1"
+      }
+    }
+  }
+};
+                                        var schema = schemaWrapper.content["application/json"].schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.components = {};
+                                          schemaWrapper.components.schemas = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-actionScanPost-400-schema-data').val(stringify(schema));
+                                        var result = $('#responses-actionScanPost-400-schema-400');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-actionScanPost-400-schema-data' type='hidden' value=''></input>
                                 </div>
                             </div>
 
@@ -1204,7 +1392,8 @@ public class StateApiExample {
 
         StateApi apiInstance = new StateApi();
         try {
-            apiInstance.stateGetmodeGet();
+            inline_response_200_2 result = apiInstance.stateGetmodeGet();
+            System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling StateApi#stateGetmodeGet");
             e.printStackTrace();
@@ -1221,7 +1410,8 @@ public class StateApiExample {
     public static void main(String[] args) {
         StateApi apiInstance = new StateApi();
         try {
-            apiInstance.stateGetmodeGet();
+            inline_response_200_2 result = apiInstance.stateGetmodeGet();
+            System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling StateApi#stateGetmodeGet");
             e.printStackTrace();
@@ -1244,7 +1434,10 @@ StateApi *apiInstance = [[StateApi alloc] init];
 
 // Returns current mode
 [apiInstance stateGetmodeGetWithCompletionHandler: 
-              ^(NSError* error) {
+              ^(inline_response_200_2 output, NSError* error) {
+                            if (output) {
+                                NSLog(@"%@", output);
+                            }
                             if (error) {
                                 NSLog(@"Error: %@", error);
                             }
@@ -1267,7 +1460,7 @@ var callback = function(error, data, response) {
   if (error) {
     console.error(error);
   } else {
-    console.log('API called successfully.');
+    console.log('API called successfully. Returned data: ' + data);
   }
 };
 api.stateGetmodeGet(callback);
@@ -1301,7 +1494,8 @@ namespace Example
             try
             {
                 // Returns current mode
-                apiInstance.stateGetmodeGet();
+                inline_response_200_2 result = apiInstance.stateGetmodeGet();
+                Debug.WriteLine(result);
             }
             catch (Exception e)
             {
@@ -1325,7 +1519,8 @@ Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('BBUDDY-API-K
 $api_instance = new Swagger\Client\ApiStateApi();
 
 try {
-    $api_instance->stateGetmodeGet();
+    $result = $api_instance->stateGetmodeGet();
+    print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling StateApi->stateGetmodeGet: ', $e->getMessage(), PHP_EOL;
 }
@@ -1345,7 +1540,8 @@ $WWW::SwaggerClient::Configuration::api_key->{'BBUDDY-API-KEY'} = 'YOUR_API_KEY'
 my $api_instance = WWW::SwaggerClient::StateApi->new();
 
 eval { 
-    $api_instance->stateGetmodeGet();
+    my $result = $api_instance->stateGetmodeGet();
+    print Dumper($result);
 };
 if ($@) {
     warn "Exception when calling StateApi->stateGetmodeGet: $@\n";
@@ -1369,7 +1565,8 @@ api_instance = swagger_client.StateApi()
 
 try: 
     # Returns current mode
-    api_instance.state_getmode_get()
+    api_response = api_instance.state_getmode_get()
+    pprint(api_response)
 except ApiException as e:
     print("Exception when calling StateApi->stateGetmodeGet: %s\n" % e)</code></pre>
                             </div>
@@ -1391,9 +1588,49 @@ STATE_GETSTOCK        &#x3D; 4;
 STATE_ADD_SL          &#x3D; 5; </h3>
 
                             <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-stateGetmodeGet-200-schema">Schema</a>
+                                </li>
+
                             </ul>
 
                             <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-stateGetmodeGet-200-schema">
+                                  <div id='responses-stateGetmodeGet-200-schema-200' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "STATE_CONSUME         = 0;\nSTATE_CONSUME_SPOILED = 1;\nSTATE_PURCHASE        = 2;\nSTATE_OPEN            = 3;\nSTATE_GETSTOCK        = 4;\nSTATE_ADD_SL          = 5;",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/inline_response_200_2"
+      }
+    }
+  }
+};
+                                        var schema = schemaWrapper.content["application/json"].schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.components = {};
+                                          schemaWrapper.components.schemas = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-stateGetmodeGet-200-schema-data').val(stringify(schema));
+                                        var result = $('#responses-stateGetmodeGet-200-schema-200');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-stateGetmodeGet-200-schema-data' type='hidden' value=''></input>
+                                </div>
                             </div>
 
                         </article>
@@ -1456,7 +1693,7 @@ public class StateApiExample {
         StateApi apiInstance = new StateApi();
         Integer state = 56; // Integer | 
         try {
-            normalresult result = apiInstance.stateSetmodePost(state);
+            inline_response_200_3 result = apiInstance.stateSetmodePost(state);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling StateApi#stateSetmodePost");
@@ -1475,7 +1712,7 @@ public class StateApiExample {
         StateApi apiInstance = new StateApi();
         Integer state = 56; // Integer | 
         try {
-            normalresult result = apiInstance.stateSetmodePost(state);
+            inline_response_200_3 result = apiInstance.stateSetmodePost(state);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling StateApi#stateSetmodePost");
@@ -1500,7 +1737,7 @@ StateApi *apiInstance = [[StateApi alloc] init];
 
 // Sets current mode
 [apiInstance stateSetmodePostWith:state
-              completionHandler: ^(normalresult output, NSError* error) {
+              completionHandler: ^(inline_response_200_3 output, NSError* error) {
                             if (output) {
                                 NSLog(@"%@", output);
                             }
@@ -1563,7 +1800,7 @@ namespace Example
             try
             {
                 // Sets current mode
-                normalresult result = apiInstance.stateSetmodePost(state);
+                inline_response_200_3 result = apiInstance.stateSetmodePost(state);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -1678,7 +1915,7 @@ except ApiException as e:
 
 
                           <h2>Responses</h2>
-                            <h3> Status: 200 - Normal response </h3>
+                            <h3> Status: 200 - Mode set successful </h3>
 
                             <ul class="nav nav-tabs nav-tabs-examples" >
                                 <li class="active">
@@ -1693,22 +1930,11 @@ except ApiException as e:
                                     <script>
                                       $(document).ready(function() {
                                         var schemaWrapper = {
-  "description" : "Normal response",
+  "description" : "Mode set successful",
   "content" : {
     "application/json" : {
       "schema" : {
-        "$ref" : "#/components/schemas/normalresult"
-      },
-      "examples" : {
-        "normal" : {
-          "value" : {
-            "data" : { },
-            "result" : {
-              "result" : "OK",
-              "http_code" : 200
-            }
-          }
-        }
+        "$ref" : "#/components/schemas/inline_response_200_3"
       }
     }
   }
@@ -1734,6 +1960,54 @@ except ApiException as e:
                                     </script>
                                   </div>
                                   <input id='responses-stateSetmodePost-200-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 400 - Error if invalid state int supplied </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-stateSetmodePost-400-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-stateSetmodePost-400-schema">
+                                  <div id='responses-stateSetmodePost-400-schema-400' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Error if invalid state int supplied",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/inline_response_400"
+      }
+    }
+  }
+};
+                                        var schema = schemaWrapper.content["application/json"].schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.components = {};
+                                          schemaWrapper.components.schemas = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-stateSetmodePost-400-schema-data').val(stringify(schema));
+                                        var result = $('#responses-stateSetmodePost-400-schema-400');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-stateSetmodePost-400-schema-data' type='hidden' value=''></input>
                                 </div>
                             </div>
 
@@ -1799,7 +2073,7 @@ public class SystemApiExample {
 
         SystemApi apiInstance = new SystemApi();
         try {
-            array[normalresult] result = apiInstance.systemBarcodesGet();
+            inline_response_200_1 result = apiInstance.systemBarcodesGet();
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling SystemApi#systemBarcodesGet");
@@ -1817,7 +2091,7 @@ public class SystemApiExample {
     public static void main(String[] args) {
         SystemApi apiInstance = new SystemApi();
         try {
-            array[normalresult] result = apiInstance.systemBarcodesGet();
+            inline_response_200_1 result = apiInstance.systemBarcodesGet();
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling SystemApi#systemBarcodesGet");
@@ -1841,7 +2115,7 @@ SystemApi *apiInstance = [[SystemApi alloc] init];
 
 // Returns all special barcodes
 [apiInstance systemBarcodesGetWithCompletionHandler: 
-              ^(array[normalresult] output, NSError* error) {
+              ^(inline_response_200_1 output, NSError* error) {
                             if (output) {
                                 NSLog(@"%@", output);
                             }
@@ -1901,7 +2175,7 @@ namespace Example
             try
             {
                 // Returns all special barcodes
-                array[normalresult] result = apiInstance.systemBarcodesGet();
+                inline_response_200_1 result = apiInstance.systemBarcodesGet();
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -2006,30 +2280,7 @@ except ApiException as e:
   "content" : {
     "application/json" : {
       "schema" : {
-        "type" : "array",
-        "items" : {
-          "$ref" : "#/components/schemas/normalresult"
-        },
-        "x-content-type" : "application/json"
-      },
-      "examples" : {
-        "barcodes" : {
-          "value" : {
-            "data" : {
-              "BARCODE_C" : "BBUDDY-C",
-              "BARCODE_CS" : "BBUDDY-CS",
-              "BARCODE_P" : "BBUDDY-P",
-              "BARCODE_O" : "BBUDDY-O",
-              "BARCODE_GS" : "BBUDDY-I",
-              "BARCODE_Q" : "BBUDDY-Q-",
-              "BARCODE_AS" : "BBUDDY-AS"
-            },
-            "result" : {
-              "result" : "OK",
-              "http_code" : 200
-            }
-          }
-        }
+        "$ref" : "#/components/schemas/inline_response_200_1"
       }
     }
   }
@@ -2117,7 +2368,8 @@ public class SystemApiExample {
 
         SystemApi apiInstance = new SystemApi();
         try {
-            apiInstance.systemInfoGet();
+            inline_response_200 result = apiInstance.systemInfoGet();
+            System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling SystemApi#systemInfoGet");
             e.printStackTrace();
@@ -2134,7 +2386,8 @@ public class SystemApiExample {
     public static void main(String[] args) {
         SystemApi apiInstance = new SystemApi();
         try {
-            apiInstance.systemInfoGet();
+            inline_response_200 result = apiInstance.systemInfoGet();
+            System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling SystemApi#systemInfoGet");
             e.printStackTrace();
@@ -2157,7 +2410,10 @@ SystemApi *apiInstance = [[SystemApi alloc] init];
 
 // Returns version number
 [apiInstance systemInfoGetWithCompletionHandler: 
-              ^(NSError* error) {
+              ^(inline_response_200 output, NSError* error) {
+                            if (output) {
+                                NSLog(@"%@", output);
+                            }
                             if (error) {
                                 NSLog(@"Error: %@", error);
                             }
@@ -2180,7 +2436,7 @@ var callback = function(error, data, response) {
   if (error) {
     console.error(error);
   } else {
-    console.log('API called successfully.');
+    console.log('API called successfully. Returned data: ' + data);
   }
 };
 api.systemInfoGet(callback);
@@ -2214,7 +2470,8 @@ namespace Example
             try
             {
                 // Returns version number
-                apiInstance.systemInfoGet();
+                inline_response_200 result = apiInstance.systemInfoGet();
+                Debug.WriteLine(result);
             }
             catch (Exception e)
             {
@@ -2238,7 +2495,8 @@ Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('BBUDDY-API-K
 $api_instance = new Swagger\Client\ApiSystemApi();
 
 try {
-    $api_instance->systemInfoGet();
+    $result = $api_instance->systemInfoGet();
+    print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling SystemApi->systemInfoGet: ', $e->getMessage(), PHP_EOL;
 }
@@ -2258,7 +2516,8 @@ $WWW::SwaggerClient::Configuration::api_key->{'BBUDDY-API-KEY'} = 'YOUR_API_KEY'
 my $api_instance = WWW::SwaggerClient::SystemApi->new();
 
 eval { 
-    $api_instance->systemInfoGet();
+    my $result = $api_instance->systemInfoGet();
+    print Dumper($result);
 };
 if ($@) {
     warn "Exception when calling SystemApi->systemInfoGet: $@\n";
@@ -2282,7 +2541,8 @@ api_instance = swagger_client.SystemApi()
 
 try: 
     # Returns version number
-    api_instance.system_info_get()
+    api_response = api_instance.system_info_get()
+    pprint(api_response)
 except ApiException as e:
     print("Exception when calling SystemApi->systemInfoGet: %s\n" % e)</code></pre>
                             </div>
@@ -2299,9 +2559,59 @@ except ApiException as e:
                             <h3> Status: 200 - Response </h3>
 
                             <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-systemInfoGet-200-schema">Schema</a>
+                                </li>
+
                             </ul>
 
                             <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-systemInfoGet-200-schema">
+                                  <div id='responses-systemInfoGet-200-schema-200' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Response",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/inline_response_200"
+      },
+      "example" : {
+        "data" : {
+          "version" : "1.4.1.1",
+          "version_int" : "1411"
+        },
+        "result" : {
+          "result" : "OK",
+          "http_code" : 200
+        }
+      }
+    }
+  }
+};
+                                        var schema = schemaWrapper.content["application/json"].schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.components = {};
+                                          schemaWrapper.components.schemas = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-systemInfoGet-200-schema-data').val(stringify(schema));
+                                        var result = $('#responses-systemInfoGet-200-schema-200');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-systemInfoGet-200-schema-data' type='hidden' value=''></input>
+                                </div>
                             </div>
 
                         </article>

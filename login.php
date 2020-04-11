@@ -136,6 +136,7 @@ function getHtmlCreateUser($result) {
 
 
 function getHtmlLogin($result) {
+    global $CONFIG;
     $html = new UiEditor();
     $editValue = "";
     if (isset($_POST["username"])) 
@@ -155,6 +156,10 @@ function getHtmlLogin($result) {
                         ->setSubmit()
                         ->setRaised()
                         ->setIsAccent()
+                        ->generate();
+    $pathUsers = realpath($CONFIG->AUTHDB_PATH);
+    $html->buildButton("button_forgot", "Forgot Password")
+                        ->setOnClick("alert('If you forgot your password, please delete the file $pathUsers')")
                         ->generate();
     return $html->getHtml();
 }

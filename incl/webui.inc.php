@@ -203,7 +203,7 @@ class WebUiGenerator {
         }
         if (!$CONFIG->DISABLE_AUTHENTICATION) {
             $this->addHtml('
-             <a class="mdl-navigation__link" href="' . $folder . 'logout.php">Logout</a>');
+             <a class="mdl-navigation__link" href="' . $folder . 'menu/admin.php">Admin</a>');
         }
         $this->addHtml('</nav>
       </div>');

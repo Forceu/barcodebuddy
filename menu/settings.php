@@ -42,7 +42,6 @@ $webUi = new WebUiGenerator(MENU_SETTINGS);
 $webUi->addHeader();
 $webUi->addCard("General Settings",getHtmlSettingsGeneral());
 $webUi->addCard("Grocy API",getHtmlSettingsGrocyApi());
-$isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on');
 $webUi->addCard("Websocket Server Status",getHtmlSettingsWebsockets());
 $webUi->addFooter();
 $webUi->printHtml();

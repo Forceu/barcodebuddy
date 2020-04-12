@@ -83,7 +83,7 @@ function getHtmlSettingsGeneral() {
     $html->addDiv($html->buildEditField("BARCODE_P", "Barcode: Purchase", $BBCONFIG["BARCODE_P"])->generate(true), null, "flex-settings-child");
     $html->addDiv($html->buildEditField("BARCODE_O", "Barcode: Open", $BBCONFIG["BARCODE_O"])->generate(true), null, "flex-settings-child");
     $html->addDiv($html->buildEditField("BARCODE_GS", "Barcode: Inventory", $BBCONFIG["BARCODE_GS"])->generate(true), null, "flex-settings-child");
-    $html->addDiv($html->buildEditField("BARCODE_Q", "Barcode: Quantitiy", $BBCONFIG["BARCODE_Q"])->generate(true), null, "flex-settings-child");
+    $html->addDiv($html->buildEditField("BARCODE_Q", "Barcode: Quantity", $BBCONFIG["BARCODE_Q"])->generate(true), null, "flex-settings-child");
     $html->addDiv($html->buildEditField("BARCODE_AS", "Barcode: Add to shopping list", $BBCONFIG["BARCODE_AS"])->generate(true), null, "flex-settings-child");
     $html->addDiv($html->buildEditField("REVERT_TIME", "Revert state to &quot;Consume&quot; after time passed in minutes", $BBCONFIG["REVERT_TIME"])
                                             ->pattern('-?[0-9]*(\.[0-9]+)?')

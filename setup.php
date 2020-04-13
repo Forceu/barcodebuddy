@@ -109,7 +109,7 @@ function getHtmlSetupTable($result) {
 
 function getHtmlSetupExtMissing() {
     $html = new UiEditor();
-    $html->addHtml('Welcome to Barcode Buddy! Please make sure the following extensios are installed and enabled:'); 
+    $html->addHtml('Welcome to Barcode Buddy! Please make sure the following extensions are installed and enabled:'); 
     $html->addLineBreak(2);
 	$extensions = checkExtensionsInstalled();
 	foreach ($extensions["req"] as $ext=>$installed) {

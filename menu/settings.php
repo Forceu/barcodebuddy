@@ -42,7 +42,6 @@ $webUi = new WebUiGenerator(MENU_SETTINGS);
 $webUi->addHeader();
 $webUi->addCard("General Settings",getHtmlSettingsGeneral());
 $webUi->addCard("Grocy API",getHtmlSettingsGrocyApi());
-$isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on');
 $webUi->addCard("Websocket Server Status",getHtmlSettingsWebsockets());
 $webUi->addFooter();
 $webUi->printHtml();
@@ -84,7 +83,7 @@ function getHtmlSettingsGeneral() {
     $html->addDiv($html->buildEditField("BARCODE_P", "Barcode: Purchase", $BBCONFIG["BARCODE_P"])->generate(true), null, "flex-settings-child");
     $html->addDiv($html->buildEditField("BARCODE_O", "Barcode: Open", $BBCONFIG["BARCODE_O"])->generate(true), null, "flex-settings-child");
     $html->addDiv($html->buildEditField("BARCODE_GS", "Barcode: Inventory", $BBCONFIG["BARCODE_GS"])->generate(true), null, "flex-settings-child");
-    $html->addDiv($html->buildEditField("BARCODE_Q", "Barcode: Quantitiy", $BBCONFIG["BARCODE_Q"])->generate(true), null, "flex-settings-child");
+    $html->addDiv($html->buildEditField("BARCODE_Q", "Barcode: Quantity", $BBCONFIG["BARCODE_Q"])->generate(true), null, "flex-settings-child");
     $html->addDiv($html->buildEditField("BARCODE_AS", "Barcode: Add to shopping list", $BBCONFIG["BARCODE_AS"])->generate(true), null, "flex-settings-child");
     $html->addDiv($html->buildEditField("REVERT_TIME", "Revert state to &quot;Consume&quot; after time passed in minutes", $BBCONFIG["REVERT_TIME"])
                                             ->pattern('-?[0-9]*(\.[0-9]+)?')

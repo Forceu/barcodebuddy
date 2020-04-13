@@ -544,6 +544,8 @@ class API {
             $resultArray["name"]        = sanitizeString($result["product"]["name"]);
             $resultArray["unit"]        = sanitizeString($result["quantity_unit_stock"]["name"]);
             $resultArray["stockAmount"] = sanitizeString($result["stock_amount"]);
+            $resultArray["tareWeight"]  = sanitizeString($result["product"]["tare_weight"]);
+            $resultArray["isTare"]      = ($result["product"]["enable_tare_weight_handling"] == 1);
             if ($resultArray["stockAmount"] == null) {
                 $resultArray["stockAmount"] = "0";
             }

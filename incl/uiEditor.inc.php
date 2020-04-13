@@ -128,6 +128,7 @@ class EditFieldBuilder {
     private $floatingLabel             = true;
     private $placeHolder               = null;
     private $onKeyPress                = null;
+    private $width                     = null;
 
 
 
@@ -188,6 +189,12 @@ class EditFieldBuilder {
         }
         return $this;
     }
+
+    function setWidth($width) {
+        $this->width = $width;
+        return $this;
+    }
+
     function minlength($minlength) {
         $this->minlength = $minlength;
         if ($this->type == "number") {
@@ -224,7 +231,7 @@ class EditFieldBuilder {
 
     function generate($asHtml = false) {
         return $this->editorUi->addEditFieldInternal($this->name, $this->label, $this->value, $this->pattern, $this->type, $this->disabled, $this->autocompleteEntries, $this->autocompleteEntriesLinked, $this->autocompleteRunAjax, $this->required, $this->minmax, $this->maxlength, $this->minlength, $this->capitalize, $this->onfocusout, $this->isTimeInput, $this->onkeyup,
-            $this->floatingLabel, $this->placeHolder, $this->onKeyPress, $asHtml);
+            $this->floatingLabel, $this->placeHolder, $this->onKeyPress, $this->width, $asHtml);
     }
 
 }
@@ -306,7 +313,7 @@ class UiEditor {
 
     function addEditFieldInternal($name, $label, $value, $pattern = null, $type = "text", $disabled = false, $autocompleteEntries = null, $autocompleteEntriesLinked = null,
             $autocompleteRunAjax = false, $required = true, $minmax = null, $maxlength = null, $minlength = null, $capitalize = false, $onfocusout = null, $isTimeInput = false,
-            $onKeyUp = null, $floatingLabel = true, $placeHolder = null, $onKeyPress = null, $asHtml = false) {
+            $onKeyUp = null, $floatingLabel = true, $placeHolder = null, $onKeyPress = null, $width = null, $asHtml = false) {
 
         $minmaxHtml = "";
         if ($minmax != null) {
@@ -325,6 +332,10 @@ class UiEditor {
         $requiredHtml = "";
         if ($required) {
             $requiredHtml = "required";
+        }
+        $widthHtml = "";
+        if ($width != null) {
+            $widthHtml = "style='width:$width'";
         }
         $maxLenghtHtml = "";
         if ($maxlength != null) {
@@ -371,7 +382,7 @@ class UiEditor {
         if ($floatingLabel) {
             $floatingLabelHtml ="mdl-textfield--floating-label";
         }
-        $result = '<div class="mdl-textfield mdl-js-textfield '.$floatingLabelHtml .'">
+        $result = '<div '.$widthHtml.' class="mdl-textfield mdl-js-textfield '.$floatingLabelHtml .'">
                 <input ' . $onkeyupHtml . ' '. $onKeyPressHtml . ' '. $placeholderHtml . ' ' . $capitalizeHtml . ' ' . $onfocusoutHtml . ' autocomplete="off" class="mdl-textfield__input' . $timeInputHtml . '"  ' . $maxLenghtHtml . ' ' . $minmaxHtml . ' ' . $minLenghtHtml . ' ' . $requiredHtml . ' ' . $disabledHtml . ' ' . $patternHtml . ' value="' . $value . '" type="' . $type . '" name="' . $name . '" id="' . $name . '">
                 <label id="' . $name . '_label" class="mdl-textfield__label" for="' . $name . '">' . $label . '</label>
               </div>';

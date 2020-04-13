@@ -321,6 +321,8 @@ class WebUiGenerator {
                           card2.innerHTML = content.f2;
                           var card3 = document.getElementById("f3");
                           card3.innerHTML = content.f3;
+                          if (content.f4 != "null")
+                            location.reload();
                       }
                     };
                     xhttp.open("GET", "index.php?ajaxrefresh", true);

@@ -104,6 +104,7 @@ const EVENT_TYPE_OPEN_PRODUCT         = 13;
 const EVENT_TYPE_GET_STOCK_PRODUCT    = 14;
 const EVENT_TYPE_ADD_TO_SHOPPINGLIST  = 15;
 const EVENT_TYPE_ASSOCIATE_PRODUCT    = 16;
+const EVENT_TYPE_ACTION_REQUIRED      = 17;
 
 
 const WS_RESULT_PRODUCT_FOUND         =  0;
@@ -171,10 +172,45 @@ function processUnknownBarcode($barcode, $websocketEnabled, &$fileLock) {
 
 //Convert state to string for websocket server
 function stateToString($state) {
-    $allowedModes = array(STATE_CONSUME=>"Consume",STATE_CONSUME_SPOILED=> "Consume (spoiled)",STATE_PURCHASE=> "Purchase",STATE_OPEN=> "Open",STATE_GETSTOCK=> "Inventory", STATE_ADD_SL=> "Add to shoppinglist");
+    $allowedModes = array(
+        STATE_CONSUME => "Consume",
+        STATE_CONSUME_SPOILED => "Consume (spoiled)",
+        STATE_PURCHASE => "Purchase",
+        STATE_OPEN => "Open",
+        STATE_GETSTOCK => "Inventory",
+        STATE_ADD_SL => "Add to shoppinglist"
+    );
     return $allowedModes[$state];
 }
 
+function getProductByIdFromVariable($id, $products) {
+    foreach ($products as $product) {
+        if ($product["id"] == $id)
+            return $product;
+    }
+    return null;
+}
+
+function changeWeightTareItem($barcode, $newWeight) {
+    $product = API::getProductByBardcode($barcode);
+    
+    if (($product["stockAmount"] + $product["tareWeight"]) == $newWeight) {
+        outputLog("Weight unchanged for: " . $product["name"], EVENT_TYPE_ACTION_REQUIRED, true, false);
+        return true;
+    }
+    if ($newWeight < $product["tareWeight"]) {
+        outputLog("Entered weight for " . $product["name"] . " is below tare weight (" . $product["tareWeight"] . ")", EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, false);
+        return false;
+    }
+
+    if ($product["stockAmount"] > ($newWeight - $product["tareWeight"])) {
+        API::consumeProduct($product["id"], $newWeight);
+    } else {
+        API::purchaseProduct($product["id"], $newWeight);
+    }
+    outputLog("Weight set to ".$newWeight." for: " . $product["name"], EVENT_TYPE_ACTION_REQUIRED, true, false);
+    return true;
+}
 
 //Change mode if was supplied by GET parameter
 function processModeChangeGetParameter($modeParameter) {
@@ -223,6 +259,14 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
     global $db;
 
     $output = "Undefined";
+
+    if ($productInfo["isTare"]) {
+        if (!$db->isUnknownBarcodeAlreadyStored($barcode)) 
+            $db->insertActionRequiredBarcode($barcode);
+        $fileLock->removeLock();
+        return outputLog("Action required: Enter weight for " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ACTION_REQUIRED, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Action required: Enter weight for " . $productInfo["name"]);
+    }
+
 
     $state = $db->getTransactionState();
     

@@ -84,15 +84,16 @@ if (isset($_GET["text"])) {
 processButtons();
 
 $barcodes = $db->getStoredBarcodes();
-		if (sizeof($barcodes['known']) > 0 || sizeof($barcodes['unknown']) > 0) {
-		    $productinfo = API::getProductInfo();
-		}
+if (sizeof($barcodes['known']) > 0 || sizeof($barcodes['unknown']) > 0 || sizeof($barcodes['tare']) > 0) {
+    $productinfo = API::getProductInfo();
+}
 
 //Only pass refreshed cards to AJAX
 if (isset($_GET["ajaxrefresh"])) {
     $returnArray = array("f1" => getHtmlMainMenuTableKnown($barcodes),
                          "f2" => getHtmlMainMenuTableUnknown($barcodes),
-                         "f3" => getHtmlLogTextArea());
+                         "f3" => getHtmlLogTextArea(),
+                         "f4" => getHtmlMainMenuReqActions($barcodes));
     echo json_encode($returnArray, JSON_HEX_QUOT);
     die();
 }
@@ -101,19 +102,27 @@ if (isset($_GET["ajaxrefresh"])) {
 $webUi = new WebUiGenerator(MENU_MAIN);
 $webUi->addHeader('<link rel="stylesheet" href="./incl/css/styleMain.css">');
 
+
 $link = (new MenuItemLink())
-                ->setText("Delete all")
-                ->setLink('window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=known\'');
+            ->setText("Delete all")
+            ->setLink('window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=req_actions\'');
+if (sizeof($barcodes['tare']) > 0) {
+    $webUi->addCard("Action required",getHtmlMainMenuReqActions($barcodes), $link);
+}
+
+$link = (new MenuItemLink())
+            ->setText("Delete all")
+            ->setLink('window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=known\'');
 $webUi->addCard("New Barcodes",getHtmlMainMenuTableKnown($barcodes), $link);
 
 $link = (new MenuItemLink())
-                ->setText("Delete all")
-                ->setLink('window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=unknown\'');
+            ->setText("Delete all")
+            ->setLink('window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=unknown\'');
 $webUi->addCard("Unknown Barcodes",getHtmlMainMenuTableUnknown($barcodes), $link);
 
 $link = (new MenuItemLink())
-                ->setText("Clear log")
-                ->setLink('window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=log\'');
+            ->setText("Clear log")
+            ->setLink('window.location.href=\''.$_SERVER['PHP_SELF'].'?delete=log\'');
 $webUi->addCard("Processed Barcodes",getHtmlLogTextArea(), $link);
 $webUi->addFooter();
 $webUi->printHtml();
@@ -122,7 +131,7 @@ $webUi->printHtml();
 //Check if a button on the web ui was pressed and process
 function processButtons() {
     global $db;
-    
+
     if (isset($_GET["delete"])) {
         $db->deleteAll($_GET["delete"]);
         //Hide get
@@ -137,6 +146,19 @@ function processButtons() {
         //Hide POST, so we can refresh
         header("Location: " . $_SERVER["PHP_SELF"]);
         die();
+    }
+
+    if (isset($_POST["button_submit"])) {
+        $id = $_POST["button_submit"];
+        checkIfNumeric($id);
+        if (isset($_POST["quantity_" . $id])) {
+            checkIfNumeric($_POST["quantity_" . $id]);
+            $barcode = $db->getBarcodeById($id);
+            if (changeWeightTareItem($barcode["barcode"], $_POST["quantity_" . $id]) == true) {
+                $db->deleteBarcode($id);
+            }
+        }
+        header("Location: " . $_SERVER["PHP_SELF"]);
     }
     
     
@@ -215,6 +237,50 @@ function processButtons() {
 
 
 
+//Generate the table with barcodes that require actions
+function getHtmlMainMenuReqActions($barcodes) {
+    global $productinfo;
+    global $BBCONFIG;
+    $html = new UiEditor(true, null, "f4");
+    if (sizeof($barcodes['tare']) == 0) {
+        return "null";
+    } else {
+        $table = new TableGenerator(array(
+            "Name",
+            "Current Weight",
+            "Input",
+            "Action",
+            "Remove"
+        ));
+        foreach ($barcodes['tare'] as $item) {
+            $product = API::getProductByBardcode($item['barcode']);
+            $itemId  = $item['id'];
+            $totalWeight = $product['stockAmount'] + $product['tareWeight'];
+            $table->startRow();
+            $table->addCell($product["name"]);
+            $table->addCell($totalWeight);
+            $table->addCell($html->buildEditField("quantity_" . $item['id'], "New weight (tare: ".intval($product['tareWeight']).")", $totalWeight)
+                                ->type("number")
+                                ->setWidth('8em')
+                                ->minmax(array($product['tareWeight'], null))
+                                ->generate(true));
+            $table->addCell($html->buildButton("button_submit", "Submit")
+                                ->setSubmit()
+                                ->setRaised()
+                                ->setIsAccent()
+                                ->setValue($item['id'])
+                                ->setId('button_submit_' . $item['id'])
+                                ->generate(true));
+            $table->addCell($html->buildButton("button_delete", "Remove")->setSubmit()->setValue($item['id'])->generate(true));
+            $table->endRow();
+        }
+        $html->addTableClass($table);
+        return $html->getHtml();
+    }
+}
+
+
+
 //Generate the table with barcodes
 function getHtmlMainMenuTableKnown($barcodes) {
     global $productinfo;
@@ -281,7 +347,7 @@ function getHtmlMainMenuTableUnknown($barcodes) {
     global $productinfo;
     $html = new UiEditor(true, null, "f2");
     if (sizeof($barcodes['unknown']) == 0) {
-        $html->addHtml("No known barcodes yet.");
+        $html->addHtml("No unknown barcodes yet.");
         return $html->getHtml();
     } else {
         $table        = new TableGenerator(array(

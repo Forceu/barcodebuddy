@@ -4,7 +4,8 @@ from evdev import InputDevice, categorize, ecodes
 import requests
 
 
-SERVER_ADDRESS = 'http://10.0.20.2/barcodebuddy/index.php' # Replace with your BarcodeBuddy URL
+SERVER_ADDRESS = 'http://10.0.20.2/barcodebuddy/api/' # Replace with your Barcode Buddy URL
+API_KEY = 'MyApiKey' # Replace with your Barcode Buddy API key
 device = InputDevice('/dev/input/event1') # Replace with your device
 
 scancodes = {
@@ -72,7 +73,7 @@ for event in device.read_loop():
 		scancode = eventdata.scancode
 		if scancode == 28:
 			print 'Sending: ' + barcode
-			requests.get(SERVER_ADDRESS + '?add=' + barcode)
+			requests.get(SERVER_ADDRESS + 'action/scan?apikey=' + API_KEY + '&add=' + barcode)
 			barcode = ''
 		else:
 			key = scancodes.get(scancode, NOT_RECOGNIZED_KEY)

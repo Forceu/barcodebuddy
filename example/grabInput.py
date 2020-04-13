@@ -9,7 +9,8 @@ from evdev import InputDevice, list_devices, ecodes, categorize
 #import requests 
 
 SCRIPT_LOCATION = "/var/www/html/barcodebuddy/index.php"
-#SERVER_ADDRESS = "https://your.bbuddy.url/index.php"
+#SERVER_ADDRESS = "https://your.bbuddy.url/api/"
+#API_KEY        = "YourApiKey"
 
 CODE_MAP_CHAR = {
     
@@ -98,7 +99,7 @@ if __name__ == "__main__":
                     print "Sending :" + data
                     os.system("sudo -H -u www-data /usr/bin/screen -dm /usr/bin/php " + SCRIPT_LOCATION + " " + data)
 		    #If you want to send GET requests instead, uncomment the line below and the "import requests". The method above is preferred
-		    #requests.get(SERVER_ADDRESS+'?add='+data)
+		    #requests.get(SERVER_ADDRESS+'action/scan?apikey='+API_KEY+'&add='+data)
                     data = ""
                 else:
                     data += parse_key_to_char(e.keycode)

@@ -8,7 +8,9 @@ import requests
 from evdev import InputDevice, categorize, ecodes
 
 # Replace with your BarcodeBuddy URL
-SERVER_ADDRESS = 'http://10.27.1.10:9881/index.php'
+SERVER_ADDRESS = 'http://10.0.20.2/barcodebuddy/api/'
+# Replace with your Barcode Buddy API key
+API_KEY = 'MyApiKey'
 # Replace with an UDEV name string identifier for your scanner
 SCANNER_STR = 'BarCode'
 
@@ -125,7 +127,7 @@ while True:
                         scancode = eventdata.scancode
                         if scancode == 28:
                             print('Sending: ' + barcode)
-                            requests.get(SERVER_ADDRESS + '?add=' + barcode)
+                            requests.get(SERVER_ADDRESS + 'action/scan?apikey=' + API_KEY + '&add=' + barcode)
                             barcode = ''
                         else:
                             key = scancodes.get(scancode, NOT_RECOGNIZED_KEY)

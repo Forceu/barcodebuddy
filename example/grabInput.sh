@@ -2,11 +2,12 @@
 
 
 SCRIPT_LOCATION="${SCRIPT_LOCATION:="/var/www/html/barcodebuddy/index.php"}"
-SERVER_ADDRESS="${SERVER:ADDRESS:="https://your.bbuddy.url/index.php"}"
+SERVER_ADDRESS="${SERVER_ADDRESS:="https://your.bbuddy.url/api/"}"
 
 USE_CURL="${USE_CURL:="false"}"
 WWW_USER="${WWW_USER:="www-data"}"
 IS_DOCKER="${IS_DOCKER:="false"}"
+API_KEY="${API_KEY:="YOUR_API_KEY"}"
 
 declare -A CODE_MAP_CHAR=( ["(KEY_0)"]="0" \
     ["(KEY_1)"]="1" \
@@ -130,7 +131,7 @@ evtest --grab "$deviceToUse" | while read line; do
       if [[ $USE_CURL == false ]]; then
           sudo -H -u $WWW_USER /usr/bin/screen -dm /usr/bin/php "$SCRIPT_LOCATION" $enteredText
       else
-          curl "$SERVER_ADDRESS?add=$enteredText"
+          curl "${SERVER_ADDRESS}action/scan?apikey=${API_KEY}&add=${enteredText}"
       fi
       enteredText=""
     fi

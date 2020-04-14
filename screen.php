@@ -266,7 +266,7 @@ if(typeof(EventSource) !== "undefined") {
         resultScan("#33a532", "", he.decode(resultText), "beep_success");
           break;
         case '1':
-        resultScan("#33a532", "Barcode Looked Up", he.decode(resultText), "beep_success");
+        resultScan("#a2ff9b", "Barcode Looked Up", he.decode(resultText), "beep_success");
           break;
         case '2':
         resultScan("#F7B500", "Unknown Barcode", resultText, "beep_nosuccess");

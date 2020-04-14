@@ -32,18 +32,26 @@ $CONFIG->configureDebugOutput();
 //For debugging:
 //$CONFIG->echoConfig();
 
+
 function loadConfigPhp() {
-    if (!file_exists(CONFIG_PATH))
-        createConfigPhp();
-    require_once CONFIG_PATH;
+    $env        = getenv();
+    $configPath = CONFIG_PATH;
+    if (isset($env["BBUDDY_CONFIG_PATH"])) {
+        $configPath = $env["BBUDDY_CONFIG_PATH"];
+    } elseif (isset($_SERVER["BBUDDY_CONFIG_PATH"])) {
+        $configPath = $_SERVER["BBUDDY_CONFIG_PATH"];
+    }
+    if (!file_exists($configPath))
+        createConfigPhp($configPath);
+    require_once $configPath;
 }
 
-function createConfigPhp() {
+function createConfigPhp($configPath) {
     require_once __DIR__ . "/processing.inc.php";
-    if (!is_writable(dirname(CONFIG_PATH))) {
+    if (!is_writable(dirname($configPath))) {
         showErrorNotWritable("FS Error DATA_PATH_NOT_WRITABLE");
     } else {
-        $couldMove = copy(__DIR__ . '/../config-dist.php', CONFIG_PATH);
+        $couldMove = copy(__DIR__ . '/../config-dist.php', $configPath);
         if (!$couldMove) {
             showErrorNotWritable("FS Error COULD_NOT_MOVE");
         }

@@ -49,6 +49,12 @@ const DISABLE_AUTHENTICATION       = false;
 //Enable debug output
 const IS_DEBUG                     = false;
 
+//Enable to hide the Grocy link in the header
+const HIDE_LINK_GROCY              = false;
+
+//Enable to hide the Screen module link in the header
+const HIDE_LINK_SCREEN             = false;
+
 
 //If you need to manually override a config value, you can do so with this array.
 //Any overriden value cannot be changed through the UI anymore!

@@ -71,6 +71,8 @@ function checkForMissingConstants() {
                         "REQUIRE_API_KEY"              => true,
                         "IS_DEBUG"                     => false,
                         "DISABLE_AUTHENTICATION"       => false,
+                        "HIDE_LINK_GROCY"              => false,
+                        "HIDE_LINK_SCREEN"             => false,
                         "OVERRIDDEN_USER_CONFIG"       => array()
                         );
     foreach ($defaultValues as $key => $value) {
@@ -93,6 +95,8 @@ class GlobalConfig {
     public $IS_DEBUG                     = IS_DEBUG;
     public $OVERRIDDEN_USER_CONFIG       = OVERRIDDEN_USER_CONFIG;
     public $DISABLE_AUTHENTICATION       = DISABLE_AUTHENTICATION;
+    public $HIDE_LINK_GROCY              = HIDE_LINK_GROCY;
+    public $HIDE_LINK_SCREEN             = HIDE_LINK_SCREEN;
 
    function __construct() {
         $this->loadConfig();

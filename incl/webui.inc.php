@@ -182,9 +182,13 @@ class WebUiGenerator {
           <!-- Add spacer, to align navigation to the right -->
           <div class="mdl-layout-spacer"></div>');
         if ($this->menu != MENU_SETUP && $this->menu != MENU_ERROR && $this->menu != MENU_LOGIN) {
-            $this->addHtml('<nav class="mdl-navigation mdl-layout--always"><a class="mdl-navigation__link" target="_blank" href="' . str_replace("api/", "", $BBCONFIG["GROCY_API_URL"]) . '">Grocy</a>
-                <a class="mdl-navigation__link" target="_blank" href="' . $folder . 'screen.php">Screen</a>
-                </nav>');
+            $this->addHtml('<nav class="mdl-navigation mdl-layout--always">');
+            if (!$CONFIG->HIDE_LINK_GROCY)
+                $this->addHtml('<a class="mdl-navigation__link" target="_blank" href="' . str_replace("api/", "", $BBCONFIG["GROCY_API_URL"]) . '">Grocy</a>');
+
+            if (!$CONFIG->HIDE_LINK_SCREEN)
+                $this->addHtml('<a class="mdl-navigation__link" target="_blank" href="' . $folder . 'screen.php">Screen</a>');
+            $this->addHtml('</nav>');
         }
         $this->addHtml('  </div>
       </header>');

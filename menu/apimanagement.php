@@ -110,7 +110,7 @@ function getApiTable() {
 	global $db;
     $apikeys = $db->getStoredApiKeys();
     $html = new UiEditor();
-    $html->addHtml("Management of API keys. For more information about the Barcode Buddy API, click <a href='../api/'>here</a>");
+    $html->addHtml("Management of API keys. For more information about the Barcode Buddy API, click <a  target='_blank' href='../api/'>here</a>");
     $html->addLineBreak(4);
     $table = new TableGenerator(array(
         "API Key",

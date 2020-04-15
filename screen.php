@@ -170,7 +170,7 @@ $CONFIG->checkIfAuthenticated(true);
 <div class="main-container">
   <div id="header" class="header">
     <span class="hdr-right h4">
-      Grocy Status: <span id="grocy-sse">Connecting...</span><br>
+      Status: <span id="grocy-sse">Connecting...</span><br>
     </span>
       <span id="mode" class="h1 hdr-left"></span>
     </span>
@@ -269,7 +269,7 @@ if(typeof(EventSource) !== "undefined") {
         resultScan("#a2ff9b", "Barcode Looked Up", he.decode(resultText), "beep_success");
           break;
         case '2':
-        resultScan("#F7B500", "Unknown Barcode", resultText, "beep_nosuccess");
+        resultScan("#eaff8a", "Unknown Barcode", resultText, "beep_nosuccess");
           break;
         case '4':
         document.getElementById('mode').textContent = resultText;

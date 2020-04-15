@@ -213,7 +213,9 @@ function processButtons() {
                 if ($previousBarcodes == NULL) {
                     API::setBarcode($gidSelected, $barcode);
                 } else {
-                    API::setBarcode($gidSelected, $previousBarcodes . "," . $barcode);
+                    $asArray = explode(",", $previousBarcodes);
+                    if (!in_array($barcode, $asArray))
+                        API::setBarcode($gidSelected, $previousBarcodes . "," . $barcode);
                 }
                 outputLog("Associated barcode $barcode with " . $product["name"], EVENT_TYPE_ASSOCIATE_PRODUCT, true, false);
                 $db->deleteBarcode($id);

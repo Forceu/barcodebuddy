@@ -130,7 +130,7 @@ class BBuddyApi {
             if (!isset($_POST["state"]) || !is_numeric($_POST["state"]))
                 return self::createResultArray(null, "Invalid state provided", 400);
             else {
-                $db->getTransactionState($_POST["state"]);
+                $db->setTransactionState($_POST["state"]);
                 return self::createResultArray();
             }
         }));

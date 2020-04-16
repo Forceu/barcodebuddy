@@ -221,7 +221,26 @@ if(typeof(EventSource) !== "undefined") {
   var source = new EventSource("incl/sse/sse_data.php");
 
   var currentScanId = 0;
+  var connectFailCounter = 0;
 
+  source.addEventListener("error", function(event) {
+    switch (event.target.readyState) {
+      case EventSource.CONNECTING:
+        document.getElementById('grocy-sse').textContent = 'Reconnecting...';
+        // console.log('Reconnecting...');
+        connectFailCounter ++
+          if (connectFailCounter == 500) {
+            source.close();
+            document.getElementById('grocy-sse').textContent = 'Unavailable';
+            document.getElementById('scan-result').textContent = 'Sorry, the server is offline';
+          }
+        break;
+      case EventSource.CLOSED:
+        console.log('Connection failed (CLOSED)');
+        break;
+    }
+  }, false);
+  
   async function resetScan(scanId) {
     await sleep(3000);
     if (currentScanId == scanId) {

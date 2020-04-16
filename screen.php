@@ -266,9 +266,9 @@ if(typeof(EventSource) !== "undefined") {
   };
 
   source.onopen = function() {
+    document.getElementById('grocy-sse').textContent = 'Connected';
     if (isFirstStart) {
       isFirstStart=false;
-      document.getElementById('grocy-sse').textContent = 'Connected';
       document.getElementById('scan-result').textContent = 'waiting for barcode...';
       var http = new XMLHttpRequest();
       http.open("GET", "incl/sse/sse_data.php?getState");

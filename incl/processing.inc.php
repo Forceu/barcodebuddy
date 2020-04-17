@@ -272,10 +272,17 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
     
     switch ($state) {
         case STATE_CONSUME:
+            $amountToConsume = 1;
+            if ($BBCONFIG["CONSUME_SAVED_QUANTITY"]) 
+                $amountToConsume = $db->getQuantityByBarcode($barcode);
+
             if ($productInfo["stockAmount"] > 0) { 
-                API::consumeProduct($productInfo["id"], 1, false);
+                if ($productInfo["stockAmount"] < $amountToConsume)
+                    $amountToConsume = $productInfo["stockAmount"];
+                
+                API::consumeProduct($productInfo["id"], $amountToConsume, false);
                 $fileLock->removeLock();
-                return outputLog("Product found. Consuming 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Consuming 1 " . $productInfo["unit"] . " of " . $productInfo["name"]);
+                return outputLog("Product found. Consuming ".$amountToConsume." " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Consuming ".$amountToConsume." " . $productInfo["unit"] . " of " . $productInfo["name"]);
             } else {
                 return outputLog("Product found. None in stock, not consuming: " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Product found. None in stock, not consuming: " . $productInfo["name"]);
             }

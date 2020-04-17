@@ -35,6 +35,10 @@ function processNewBarcode($barcodeInput, $websocketEnabled = true) {
         $db->setTransactionState(STATE_CONSUME_SPOILED);
         return outputLog("Set state to Consume (spoiled)", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
     }
+    if ($barcode == $BBCONFIG["BARCODE_CA"]) {
+        $db->setTransactionState(STATE_CONSUME_ALL);
+        return outputLog("Set state to Consume all", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
+    }
     if ($barcode == $BBCONFIG["BARCODE_P"]) {
         $db->setTransactionState(STATE_PURCHASE);
         return outputLog("Set state to Purchase", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
@@ -105,6 +109,7 @@ const EVENT_TYPE_GET_STOCK_PRODUCT    = 14;
 const EVENT_TYPE_ADD_TO_SHOPPINGLIST  = 15;
 const EVENT_TYPE_ASSOCIATE_PRODUCT    = 16;
 const EVENT_TYPE_ACTION_REQUIRED      = 17;
+const EVENT_TYPE_CONSUME_ALL_PRODUCT  = 18;
 
 
 const WS_RESULT_PRODUCT_FOUND         =  0;
@@ -279,13 +284,27 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
             if ($productInfo["stockAmount"] > 0) { 
                 if ($productInfo["stockAmount"] < $amountToConsume)
                     $amountToConsume = $productInfo["stockAmount"];
-                
+
                 API::consumeProduct($productInfo["id"], $amountToConsume, false);
                 $fileLock->removeLock();
                 return outputLog("Product found. Consuming ".$amountToConsume." " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Consuming ".$amountToConsume." " . $productInfo["unit"] . " of " . $productInfo["name"]);
             } else {
                 return outputLog("Product found. None in stock, not consuming: " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Product found. None in stock, not consuming: " . $productInfo["name"]);
             }
+        case STATE_CONSUME_ALL:
+            $amountToConsume = $productInfo["stockAmount"];
+            if ($productInfo["stockAmount"] > 0) { 
+                API::consumeProduct($productInfo["id"], $amountToConsume, false);
+                $fileLock->removeLock();
+                $output = outputLog("Product found. Consuming ".$amountToConsume." " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Consuming ".$amountToConsume." " . $productInfo["unit"] . " of " . $productInfo["name"]);
+            } else {
+                $output = outputLog("Product found. None in stock, not consuming: " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Product found. None in stock, not consuming: " . $productInfo["name"]);
+            }
+            if ($BBCONFIG["REVERT_SINGLE"]) {
+                $db->saveLog("Reverting back to Consume", true);
+                $db->setTransactionState(STATE_CONSUME);
+            }
+            return $output;
         case STATE_CONSUME_SPOILED:
             API::consumeProduct($productInfo["id"], 1, true);
             $fileLock->removeLock();

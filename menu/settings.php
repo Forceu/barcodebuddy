@@ -80,6 +80,7 @@ function getHtmlSettingsGeneral() {
     $html->addHtml('<div class="flex-settings">');
     $html->addDiv($html->buildEditField("BARCODE_C", "Barcode: Consume", $BBCONFIG["BARCODE_C"])->generate(true), null, "flex-settings-child");
     $html->addDiv($html->buildEditField("BARCODE_CS", "Barcode: Consume (spoiled)", $BBCONFIG["BARCODE_CS"])->generate(true), null, "flex-settings-child");
+    $html->addDiv($html->buildEditField("BARCODE_CA", "Barcode: Consume all", $BBCONFIG["BARCODE_CA"])->generate(true), null, "flex-settings-child");
     $html->addDiv($html->buildEditField("BARCODE_P", "Barcode: Purchase", $BBCONFIG["BARCODE_P"])->generate(true), null, "flex-settings-child");
     $html->addDiv($html->buildEditField("BARCODE_O", "Barcode: Open", $BBCONFIG["BARCODE_O"])->generate(true), null, "flex-settings-child");
     $html->addDiv($html->buildEditField("BARCODE_GS", "Barcode: Inventory", $BBCONFIG["BARCODE_GS"])->generate(true), null, "flex-settings-child");

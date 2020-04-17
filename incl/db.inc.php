@@ -31,6 +31,7 @@ const STATE_PURCHASE        = 2;
 const STATE_OPEN            = 3;
 const STATE_GETSTOCK        = 4;
 const STATE_ADD_SL          = 5;
+const STATE_CONSUME_ALL     = 6;
 
 const SECTION_KNOWN_BARCODES   = "known";
 const SECTION_UNKNOWN_BARCODES = "unknown";
@@ -47,6 +48,7 @@ class DatabaseConnection {
 const DEFAULT_VALUES      = array(
                 "DEFAULT_BARCODE_C"              => "BBUDDY-C",
                 "DEFAULT_BARCODE_CS"             => "BBUDDY-CS",
+                "DEFAULT_BARCODE_CA"             => "BBUDDY-CA",
                 "DEFAULT_BARCODE_P"              => "BBUDDY-P",
                 "DEFAULT_BARCODE_O"              => "BBUDDY-O",
                 "DEFAULT_BARCODE_GS"             => "BBUDDY-I",

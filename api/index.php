@@ -113,7 +113,21 @@ class BBuddyApi {
             if ($barcode == "")
                 return self::createResultArray(null, "No barcode supplied", 400);
             else {
-                $result = processNewBarcode(sanitizeString($barcode));
+                $bestBefore = null;
+                $price = null;
+                if (isset($_POST["bestBeforeInDays"]) && $_POST["bestBeforeInDays"] != null) {
+                    if (is_numeric($_POST["bestBeforeInDays"]))
+                        $bestBefore = $_POST["bestBeforeInDays"];
+                    else
+                        return self::createResultArray(null, "Invalid parameter bestBeforeInDays: needs to be type int", 400);
+                }
+                if (isset($_POST["price"]) && $_POST["price"] != null) {
+                    if (is_numeric($_POST["price"]))
+                        $price = $_POST["price"];
+                    else
+                        return self::createResultArray(null, "Invalid parameter price: needs to be type float", 400);
+                }
+                $result = processNewBarcode(sanitizeString($barcode), true, $bestBefore, $price);
                 return self::createResultArray(array("result" => sanitizeString($result)));
             }
         }));
@@ -127,10 +141,11 @@ class BBuddyApi {
         
         $this->addRoute(new ApiRoute("/state/setmode", function() {
             global $db;
-            if (!isset($_POST["state"]) || !is_numeric($_POST["state"]))
+            //Also check if value is a valid range (STATE_CONSUME the lowest and STATE_CONSUME_ALL the highest value)
+            if (!isset($_POST["state"]) || !is_numeric($_POST["state"]) || $_POST["state"] < STATE_CONSUME || $_POST["state"] > STATE_CONSUME_ALL)
                 return self::createResultArray(null, "Invalid state provided", 400);
             else {
-                $db->setTransactionState($_POST["state"]);
+                $db->setTransactionState(intval($_POST["state"]));
                 return self::createResultArray();
             }
         }));

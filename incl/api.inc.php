@@ -314,13 +314,12 @@ class API {
         }
         if ($bestbefore != null) {
             $daysBestBefore           = $bestbefore;
-            $data['best_before_date'] = $bestbefore;
+            $data['best_before_date'] = self::formatBestBeforeDays($bestbefore);
         } else {
             $daysBestBefore           = self::getDefaultBestBeforeDays($id);
             $data['best_before_date'] = self::formatBestBeforeDays($daysBestBefore);
         }
         $data_json = json_encode($data);
-
         $apiurl = API_STOCK . "/" . $id . "/add";
 
         $curl = new CurlGenerator($apiurl, METHOD_POST, $data_json);

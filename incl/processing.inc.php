@@ -19,9 +19,8 @@
 require_once __DIR__ . "/lockGenerator.inc.php";
 
 
-
 // Function that is called when a barcode is passed on
-function processNewBarcode($barcodeInput, $websocketEnabled = true) {
+function processNewBarcode($barcodeInput, $websocketEnabled = true, $bestBeforeInDays = null, $price = null) {
     require_once __DIR__ . "/db.inc.php";
     global $db;
     global $BBCONFIG;
@@ -84,7 +83,7 @@ function processNewBarcode($barcodeInput, $websocketEnabled = true) {
         return processUnknownBarcode($sanitizedBarcode, $websocketEnabled, $lockGenerator);
     } else {
         $db->saveLastBarcode($sanitizedBarcode, $productInfo["name"]);
-        return processKnownBarcode($productInfo, $sanitizedBarcode, $websocketEnabled, $lockGenerator);
+        return processKnownBarcode($productInfo, $sanitizedBarcode, $websocketEnabled, $lockGenerator, $bestBeforeInDays, $price);
     }
 }
 
@@ -258,7 +257,7 @@ function processRefreshedBarcode($barcode) {
 const USE_NEW_INVENTORY_API = false;
 
     // Process a barcode that Grocy already knows
-function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLock) {
+function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLock, $bestBeforeInDays, $price) {
     require_once __DIR__ . "/db.inc.php";
     global $BBCONFIG;
     global $db;
@@ -317,7 +316,8 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
         case STATE_PURCHASE:
             $amount        = $db->getQuantityByBarcode($barcode);
             $additionalLog = "";
-            if (!API::purchaseProduct($productInfo["id"], $amount)) {
+            $isBestBeforeSet = API::purchaseProduct($productInfo["id"], $amount, $bestBeforeInDays, $price);
+            if (!$isBestBeforeSet && $bestBeforeInDays == null) {
                 $additionalLog = " [WARNING]: No default best before date set!";
             }
             $fileLock->removeLock();

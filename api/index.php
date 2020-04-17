@@ -144,7 +144,8 @@ class BBuddyApi {
                 "BARCODE_O" => $BBCONFIG["BARCODE_O"],
                 "BARCODE_GS" => $BBCONFIG["BARCODE_GS"],
                 "BARCODE_Q" => $BBCONFIG["BARCODE_Q"],
-                "BARCODE_AS" => $BBCONFIG["BARCODE_AS"]
+                "BARCODE_AS" => $BBCONFIG["BARCODE_AS"],
+                "BARCODE_CA" => $BBCONFIG["BARCODE_CA"]
             ));
         }));
         

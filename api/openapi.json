@@ -105,6 +105,9 @@
                         },
                         "BARCODE_AS": {
                           "type": "string"
+                        },
+                        "BARCODE_CA": {
+                          "type": "string"
                         }
                       }
                     },
@@ -129,7 +132,8 @@
                       "BARCODE_O": "BBUDDY-O",
                       "BARCODE_GS": "BBUDDY-I",
                       "BARCODE_Q": "BBUDDY-Q-",
-                      "BARCODE_AS": "BBUDDY-AS"
+                      "BARCODE_AS": "BBUDDY-AS",
+                      "BARCODE_CA": "BBUDDY-CA"
                     },
                     "result": {
                       "result": "OK",
@@ -197,7 +201,7 @@
                 }
               }
             },
-            "description": "STATE_CONSUME         = 0;\nSTATE_CONSUME_SPOILED = 1;\nSTATE_PURCHASE        = 2;\nSTATE_OPEN            = 3;\nSTATE_GETSTOCK        = 4;\nSTATE_ADD_SL          = 5;"
+            "description": "STATE_CONSUME = 0; \nSTATE_CONSUME_SPOILED = 1; \nSTATE_PURCHASE = 2; \nSTATE_OPEN = 3;\nSTATE_GETSTOCK = 4; \nSTATE_ADD_SL = 5; \nSTATE_CONSUME_ALL = 6;"
           }
         },
         "security": [
@@ -217,7 +221,7 @@
                 "type": "object",
                 "properties": {
                   "state": {
-                    "description": "STATE_CONSUME         = 0;\nSTATE_CONSUME_SPOILED = 1;\nSTATE_PURCHASE        = 2;\nSTATE_OPEN            = 3;\nSTATE_GETSTOCK        = 4;\nSTATE_ADD_SL          = 5;",
+                    "description": "STATE_CONSUME = 0; \nSTATE_CONSUME_SPOILED = 1; \nSTATE_PURCHASE = 2; \nSTATE_OPEN = 3;\nSTATE_GETSTOCK = 4; \nSTATE_ADD_SL = 5; \nSTATE_CONSUME_ALL = 6;",
                     "type": "integer"
                   }
                 }

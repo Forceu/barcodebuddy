@@ -312,7 +312,7 @@ function getHtmlMainMenuTableKnown($barcodes) {
             $table->addCell($item['name']);
             $table->addCell($item['barcode']);
             $table->addCell($item['amount']);
-            $table->addCell('<select  onchange=\'enableButton("select_' . $itemId . '", "button_add_' . $item['id'] . '", "button_consume_' . $item['id'] . '")\' id="select_' . $itemId . '" name="select_' . $itemId . '">' . printSelections($item['match'], $productinfo) . '</select>');
+            $table->addCell('<select style="max-width: 20em;" onchange=\'enableButton("select_' . $itemId . '", "button_add_' . $item['id'] . '", "button_consume_' . $item['id'] . '")\' id="select_' . $itemId . '" name="select_' . $itemId . '">' . printSelections($item['match'], $productinfo) . '</select>');
             $table->addCell($html->buildButton("button_add", "Add")
                                 ->setDisabled($isDisabled)
                                 ->setSubmit()
@@ -371,7 +371,7 @@ function getHtmlMainMenuTableUnknown($barcodes) {
             $table->addCell($item['barcode']);
             $table->addCell('<a href="http://google.com/search?q=' . $item['barcode'] . '" target="_blank">Search for barcode</a>');
             $table->addCell($item['amount']);
-            $table->addCell('<select onchange=\'enableButton("select_' . $itemId . '", "button_add_' . $item['id'] . '", "button_consume_' . $item['id'] . '")\' id="select_' . $itemId . '" name="select_' . $itemId . '">' . printSelections($item['match'], $productinfo) . '</select>');
+            $table->addCell('<select style="max-width: 20em;" onchange=\'enableButton("select_' . $itemId . '", "button_add_' . $item['id'] . '", "button_consume_' . $item['id'] . '")\' id="select_' . $itemId . '" name="select_' . $itemId . '">' . printSelections($item['match'], $productinfo) . '</select>');
             $table->addCell($html->buildButton("button_add", "Add")
                                 ->setDisabled($isDisabled)
                                 ->setSubmit()

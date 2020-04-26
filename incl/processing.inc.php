@@ -399,11 +399,9 @@ function explodeWordsAndMakeCheckboxes($words, $id) {
         return "";
     }
     $selections  = "";
-    $ignoreChars = array(",", ".", "-", ":","(",")");
-    $cleanWords  = str_replace($ignoreChars, " ", $words);
-    $ary         = explode(' ', $cleanWords);
+    $cleanWords = cleanNameForTagLookup($words);
     $i           = 0;
-    foreach ($ary as $str) {
+    foreach ($cleanWords as $str) {
     $tagWord = trim($str);
         if (strlen($tagWord) > 0 && $db->tagNotUsedYet($tagWord)) {
             $selections = $selections . '<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-' . $id . '_' . $i . '">
@@ -414,6 +412,12 @@ function explodeWordsAndMakeCheckboxes($words, $id) {
         }
     }
     return $selections;
+}
+
+function cleanNameForTagLookup($input) {
+    $ignoreChars = array(",", ".", "-", ":","(",")");
+    $cleanWords  = str_replace($ignoreChars, " ", $input);
+    return explode(' ', $cleanWords);
 }
 
 //If a quantity barcode was scanned, add the quantitiy and process further

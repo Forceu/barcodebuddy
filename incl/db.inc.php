@@ -583,7 +583,7 @@ private $db = null;
     
     //Generates the SQL for word search
     private function generateQueryFromName($name) {
-        $words = explode(" ", $name);
+        $words = cleanNameForTagLookup($name);
         $i     = 0;
         $query = "SELECT itemId FROM Tags ";
         while ($i < sizeof($words)) {

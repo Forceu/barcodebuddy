@@ -73,6 +73,7 @@ function checkForMissingConstants() {
                         "DISABLE_AUTHENTICATION"       => false,
                         "HIDE_LINK_GROCY"              => false,
                         "HIDE_LINK_SCREEN"             => false,
+                        "EXTERNAL_GROCY_URL"           => null,
                         "OVERRIDDEN_USER_CONFIG"       => array()
                         );
     foreach ($defaultValues as $key => $value) {
@@ -97,6 +98,7 @@ class GlobalConfig {
     public $DISABLE_AUTHENTICATION       = DISABLE_AUTHENTICATION;
     public $HIDE_LINK_GROCY              = HIDE_LINK_GROCY;
     public $HIDE_LINK_SCREEN             = HIDE_LINK_SCREEN;
+    public $EXTERNAL_GROCY_URL           = EXTERNAL_GROCY_URL;
 
    function __construct() {
         $this->loadConfig();

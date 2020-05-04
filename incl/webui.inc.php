@@ -184,6 +184,9 @@ class WebUiGenerator {
         if ($this->menu != MENU_SETUP && $this->menu != MENU_ERROR && $this->menu != MENU_LOGIN) {
             $this->addHtml('<nav class="mdl-navigation mdl-layout--always">');
             if (!$CONFIG->HIDE_LINK_GROCY)
+                if ($CONFIG->EXTERNAL_GROCY_URL != null)
+                $this->addHtml('<a class="mdl-navigation__link" target="_blank" href="' . $CONFIG->EXTERNAL_GROCY_URL . '">Grocy</a>');
+                    else
                 $this->addHtml('<a class="mdl-navigation__link" target="_blank" href="' . str_replace("api/", "", $BBCONFIG["GROCY_API_URL"]) . '">Grocy</a>');
 
             if (!$CONFIG->HIDE_LINK_SCREEN)
@@ -200,11 +203,8 @@ class WebUiGenerator {
           <a class="mdl-navigation__link" href="' . $folder . 'menu/settings.php">Settings</a>
           <a class="mdl-navigation__link" href="' . $folder . 'menu/quantities.php">Quantities</a>
           <a class="mdl-navigation__link" href="' . $folder . 'menu/chores.php">Chores</a>
-          <a class="mdl-navigation__link" href="' . $folder . 'menu/tags.php">Tags</a>');
-        if ($CONFIG->REQUIRE_API_KEY) {
-            $this->addHtml('
-             <a class="mdl-navigation__link" href="' . $folder . 'menu/apimanagement.php">API</a>');
-        }
+          <a class="mdl-navigation__link" href="' . $folder . 'menu/tags.php">Tags</a>
+          <a class="mdl-navigation__link" href="' . $folder . 'menu/apimanagement.php">API</a>');
         if (!$CONFIG->DISABLE_AUTHENTICATION) {
             $this->addHtml('
              <a class="mdl-navigation__link" href="' . $folder . 'menu/admin.php">Admin</a>');

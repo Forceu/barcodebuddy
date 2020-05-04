@@ -55,6 +55,9 @@ const HIDE_LINK_GROCY              = false;
 //Enable to hide the Screen module link in the header
 const HIDE_LINK_SCREEN             = false;
 
+//Set your base grocy URL here if it differs from the API URL (eg. because of different network / DNS)
+const EXTERNAL_GROCY_URL           = null;
+
 
 //If you need to manually override a config value, you can do so with this array.
 //Any overriden value cannot be changed through the UI anymore!

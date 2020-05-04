@@ -108,10 +108,16 @@ function getMobileAppPage() {
 
 function getApiTable() {
 	global $db;
+    global $CONFIG;
     $apikeys = $db->getStoredApiKeys();
     $html = new UiEditor();
-    $html->addHtml("Management of API keys. For more information about the Barcode Buddy API, click <a  target='_blank' href='../api/'>here</a>");
-    $html->addLineBreak(4);
+    $html->addHtml("Management of API keys. For more information about the Barcode Buddy API, click <a  target='_blank' href='../api/'>here</a>.");
+    if (!$CONFIG->REQUIRE_API_KEY) {
+    $html->addLineBreak(2);
+        $html->addHtml("<i>API key authentication is currently <b>disabled</b>.</i>");
+    $html->addLineBreak(2);
+    } else
+        $html->addLineBreak(4);
     $table = new TableGenerator(array(
         "API Key",
         "Last Used",

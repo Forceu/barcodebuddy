@@ -276,9 +276,7 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
     
     switch ($state) {
         case STATE_CONSUME:
-            $amountToConsume = 1;
-            if ($BBCONFIG["CONSUME_SAVED_QUANTITY"]) 
-                $amountToConsume = $db->getQuantityByBarcode($barcode);
+            $amountToConsume = getQuantitiyForBarcode($barcode, true, $productInfo);
 
             if ($productInfo["stockAmount"] > 0) { 
                 if ($productInfo["stockAmount"] < $amountToConsume)
@@ -314,7 +312,7 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
             }
             return $output;
         case STATE_PURCHASE:
-            $amount        = $db->getQuantityByBarcode($barcode);
+            $amount        = getQuantitiyForBarcode($barcode, false, $productInfo);
             $additionalLog = "";
             $isBestBeforeSet = API::purchaseProduct($productInfo["id"], $amount, $bestBeforeInDays, $price);
             if (!$isBestBeforeSet && $bestBeforeInDays == null) {
@@ -352,6 +350,17 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
             $fileLock->removeLock();
             return outputLog("Added to shopping list: 1 " . $productInfo["unit"] . " of " . $productInfo["name"], EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled);
     }
+}
+
+function getQuantitiyForBarcode($barcode, $isConsume, $productInfo) {
+    global $BBCONFIG;
+    global $db;
+
+    if ($isConsume && !$BBCONFIG["CONSUME_SAVED_QUANTITY"])
+        return 1;
+    if ($BBCONFIG["USE_GROCY_QU_FACTOR"])
+        return intval($productInfo["quFactor"]);
+    return $amount = $db->getQuantityByBarcode($barcode);
 }
 
 

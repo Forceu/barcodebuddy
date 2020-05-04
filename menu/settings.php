@@ -97,6 +97,7 @@ function getHtmlSettingsGeneral() {
     $html->addCheckbox("REVERT_SINGLE", "Revert after single item scan in &quot;Open&quot; or &quot;Spoiled&quot; mode", $BBCONFIG["REVERT_SINGLE"], false, false);
     $html->addCheckbox("SHOPPINGLIST_REMOVE", "Remove purchased items from shoppinglist", $BBCONFIG["SHOPPINGLIST_REMOVE"], false, false);
     $html->addCheckbox("CONSUME_SAVED_QUANTITY", "Consume amount of quantity saved for barcode", $BBCONFIG["CONSUME_SAVED_QUANTITY"], false, false);
+    $html->addCheckbox("USE_GROCY_QU_FACTOR", "Use Grocys quantitiy conversion", $BBCONFIG["USE_GROCY_QU_FACTOR"], false, false);
     $html->addCheckbox("WS_FULLSCREEN", "Show Screen module in fullscreen", $BBCONFIG["WS_FULLSCREEN"], false, false);
     $html->addCheckbox("USE_GENERIC_NAME", "Use generic names for lookup", $BBCONFIG["USE_GENERIC_NAME"], false, false);
     $html->addCheckbox("MORE_VERBOSE", "More verbose logs", $BBCONFIG["MORE_VERBOSE"], false, false);

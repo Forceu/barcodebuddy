@@ -64,7 +64,8 @@ const DEFAULT_VALUES      = array(
                 "DEFAULT_WS_FULLSCREEN"          => "0",
                 "DEFAULT_SHOPPINGLIST_REMOVE"    => "1",
                 "DEFAULT_USE_GENERIC_NAME"       => "1",
-                "DEFAULT_CONSUME_SAVED_QUANTITY" => "0");
+                "DEFAULT_CONSUME_SAVED_QUANTITY" => "0",
+                "DEFAULT_USE_GROCY_QU_FACTOR"    => "0");
 
 
 const DB_INT_VALUES = array("REVERT_TIME");

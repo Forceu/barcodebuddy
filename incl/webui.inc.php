@@ -163,8 +163,8 @@ class WebUiGenerator {
 
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-        <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-blue.min.css">
-        <link rel="stylesheet" href="' . $folder . '/incl/css/main.css">');
+        <link rel="stylesheet" href="' . $folder . 'incl/css/material.indigo-blue.min.css">
+        <link rel="stylesheet" href="' . $folder . 'incl/css/main.css">');
         if ($additionalHeader != null) {
             $this->addHtml($additionalHeader);
         }
@@ -172,7 +172,7 @@ class WebUiGenerator {
       $this->addHtml('</head>
 
      <body class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
-     <script src="'. $folder . '/incl/js/scripts_top.js"></script>
+     <script src="'. $folder . 'incl/js/scripts_top.js"></script>
 
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
       <header class="mdl-layout__header">
@@ -217,6 +217,13 @@ class WebUiGenerator {
     }
 
     function addFooter() {
+
+        if ($this->menu == MENU_SETTINGS || $this->menu === MENU_GENERIC) {
+            $folder = "../";
+        } else {
+            $folder = "./";
+        }
+
         $this->addHtml(' <section class="section--footer mdl-grid">
           </section>
 <div aria-live="assertive" aria-atomic="true" aria-relevant="text" class="mdl-snackbar mdl-js-snackbar">
@@ -269,13 +276,7 @@ class WebUiGenerator {
         if ($this->menu == MENU_SETTINGS) {
             $this->addHtml('<button id="save-settings" onclick="checkAndReturn()" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast">Save</button>');
         }
-        $this->addHtml('</div><script src="https://code.getmdl.io/1.3.0/material.min.js"></script>');
-
-        if ($this->menu == MENU_SETTINGS || $this->menu == MENU_GENERIC) {
-            $this->addHtml('<script src="../incl/js/scripts.js"></script>');
-        } else {
-            $this->addHtml('<script src="./incl/js/scripts.js"></script>');
-        }
+        $this->addHtml('</div><script src="'. $folder.'incl/js/material.min.js"></script><script src="'. $folder.'incl/js/scripts.js"></script>');
 
         if ($this->menu == MENU_MAIN) {
             $this->addHtml('<script> 

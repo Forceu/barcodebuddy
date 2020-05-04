@@ -2,7 +2,7 @@
 .modal {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
+  z-index: 101; /* Sit on top */
   padding-top: 100px; /* Location of the box */
   left: 0;
   top: 0;
@@ -19,6 +19,7 @@
   padding: 20px;
   border: 1px solid #888;
   width: 80%;
+  overflow-y: auto;
 }
 
 .close {
@@ -33,4 +34,23 @@
   color: #000;
   text-decoration: none;
   cursor: pointer;
+}
+
+
+/* 100% Image Width on Smaller Screens */
+@media only screen and (max-width: 700px){
+  .modal-content {
+    width: 98%;
+    height: 98%;
+    padding: 5px;
+  }
+
+  .modal {
+    padding-top: 0px;
+  }
+
+  #button_add_manual {
+    width: 100%;
+  }
+
 }

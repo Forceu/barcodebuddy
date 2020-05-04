@@ -245,16 +245,23 @@ class WebUiGenerator {
           <!-- Modal content -->
           <div class="modal-content">
             <span class="close">&times;</span>
+            <div>
             <h2>Add barcode</h2>
 
         Enter your barcodes below, one each line.&nbsp;<br><br>
         <form name="form" onsubmit="disableSSE()" method="post" action="' . $_SERVER['PHP_SELF'] . '" >
         <textarea name="newbarcodes" id="newbarcodes" class="mdl-textfield__input" rows="15"></textarea>
-        <span style="font-size: 9px;">It is recommended to use a script that grabs the barcode scanner input, instead of doing it manually. See the <a href="https://github.com/Forceu/barcodebuddy" rel="noopener noreferrer" target="_blank">project website</a> on how to do this.</span><br><br><br>
 
+        <br>
 
-        <button  class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast" name="button_add_manual" type="submit" value="Add">Add</button>​
+        <button  class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast" name="button_add_manual"  id="button_add_manual" type="submit" value="Add">Add</button>​
+
+        <br><br>
+
+        <span style="font-size: 9px;">It is recommended to use a script that grabs the barcode scanner input, instead of doing it manually. See the <a href="https://barcodebuddy-documentation.readthedocs.io/en/latest/usage.html#adding-barcodes-automatically" rel="noopener noreferrer" target="_blank">documentation</a> on how to do this.</span><br>
+
         </form>
+          </div>
           </div>
         </div>
          <button id="add-barcode" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast">Add barcode</button> ');

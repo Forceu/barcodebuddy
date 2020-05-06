@@ -68,20 +68,20 @@ var serialize = function (form) {
 
 };
 
-	function enableButtonGen(buttonId, textId, previousInput) {
-		    var text=document.getElementById(textId).value;
-		    document.getElementById(buttonId).disabled=(text===previousInput);
-	}
+function enableButtonGen(buttonId, textId, previousInput) {
+	    var text=document.getElementById(textId).value;
+	    document.getElementById(buttonId).disabled=(text===previousInput);
+}
 
-	function openNewTab(url, barcode) {
-		    var win = window.open(url,	"New Grocy product");
-		    var timer = setInterval(function() {
-			if (win.closed) {
-			    clearInterval(timer);
-			    window.location = "index.php?refreshbarcode="+barcode;
-			}
-		}, 500);
-	}
+function openNewTab(url, barcode) {
+	    var win = window.open(url,	"New Grocy product");
+	    var timer = setInterval(function() {
+		if (win.closed) {
+		    clearInterval(timer);
+		    window.location = "index.php?refreshbarcode="+barcode;
+		}
+	}, 500);
+}
 
 
 function showQrCode(content) {
@@ -94,6 +94,5 @@ function showQrCode(content) {
 	qr.make();
 	document.getElementById('btn_apilinks').style.display = "none";
 	document.getElementById('placeHolder').innerHTML = qr.createImgTag(10,5);
-    document.getElementById("qrcode-modal").style.display = "block";
-    document.getElementById
+  	document.getElementById("qrcode-modal").style.display = "block";
 }

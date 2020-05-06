@@ -1,13 +1,20 @@
 # Barcode Buddy for Grocy
 
-[![Documentation Status](https://readthedocs.org/projects/barcodebuddy-documentation/badge/?version=latest)](https://barcodebuddy-documentation.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/barcodebuddy-documentation/badge/?version=latest)](https://barcodebuddy-documentation.readthedocs.io/en/latest/?badge=latest) 
 
+### Available for:
+
+- Bare Metal
+- [Docker](https://github.com/Forceu/barcodebuddy-docker)
+- [Android](https://play.google.com/store/apps/details?id=de.bulling.barcodebuddyscanner)
+
+## About
 
 Pass barcodes to Barcode Buddy. If already in [Grocys](https://github.com/grocy/grocy) system, it will consume/add/open the product in Grocy. If an unknown barcode is passed, the product name will be looked up and a corresponding product can be chosen in the Web UI. Tags can be saved - if a new product contains the tag in the name, the product will be already preselected in the drop-down list.
 
 ## Prerequisites
 
-Webserver that supports PHP (eg. NGINX, Apache) or Docker, a [Grocy](https://github.com/grocy/grocy) API key and ideally a barcode scanner
+Webserver that supports PHP (eg. NGINX, Apache) or Docker, a [Grocy](https://github.com/grocy/grocy) API key and ideally a barcode scanner or Android phone
 
 ## Getting Started
 

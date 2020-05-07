@@ -41,7 +41,7 @@ if (isset($_POST["button_back"])) {
     hideGetPostParameters();
 }
 
-if (isset($_GET["mobileapp"])) {
+if (isset($_POST["generate_app"])) {
     $mobileKey = $db->generateApiKey();
 }
 if (isset($_GET["deleteall"])) {
@@ -52,27 +52,17 @@ if (isset($_GET["deleteall"])) {
 $webUi = new WebUiGenerator(MENU_GENERIC);
 $webUi->addHeader('<link rel="stylesheet" href="../incl/css/styleQr.css">');
 $webUi->addHtml('<script src="../incl/js/qrcode.js"></script>');
+$link = (new MenuItemLink())
+            ->setId("btn_apilinks")
+            ->setText("Revoke all")
+            ->setLink('window.location.href=\''.$_SERVER['PHP_SELF'].'?deleteall\'');
 if ($mobileKey == null) 
-    $webUi->addCard("API Keys", getApiTable(), createMenuLinks());
+    $webUi->addCard("API Keys", getApiTable(), $link);
 else
     $webUi->addCard("Add mobile app", getMobileAppPage());
 $webUi->addFooter();
 $webUi->printHtml();
 
-
-function createMenuLinks() {
-    $links = array();
-    $linkAddApp = (new MenuItemLink())
-                    ->setId("btn_apilinks")
-                    ->setText("Add mobile app")
-                    ->setLink('window.location.href=\''.$_SERVER['PHP_SELF'].'?mobileapp\'');
-    $linkDelete = (new MenuItemLink())
-                    ->setText("Revoke all")
-                    ->setLink('window.location.href=\''.$_SERVER['PHP_SELF'].'?deleteall\'');
-    $links[0] = $linkAddApp;
-    $links[1] = $linkDelete;
-    return $links;
-}
 
 function getMobileAppPage() {
     global $mobileKey;
@@ -141,11 +131,16 @@ function getApiTable() {
     }
     $html->addTableClass($table);
     $html->addLineBreak(2);
-    $html->buildButton("generate","Add")
-    						->setSubmit()
-    						->setIsAccent()
-    						->setRaised()
-    						->generate();
+    $html->buildButton("generate_app","Add mobile app")
+                            ->setSubmit()
+                            ->setIsAccent()
+                            ->setRaised()
+                            ->generate();
+    $html->buildButton("generate","New API key")
+                            ->setSubmit()
+                            ->setIsAccent()
+                            ->setRaised()
+                            ->generate();
     $html->addHtml('
         <div id="qrcode-modal" class="modal">
           <span class="close">&times;</span>

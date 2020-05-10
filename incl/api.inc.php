@@ -27,7 +27,7 @@ const API_STOCK          = 'stock/products';
 const API_CHORE_EXECUTE  = 'chores/';
 const API_SYTEM_INFO     = 'system/info';
 
-const MIN_GROCY_VERSION  = "2.5.1";
+const MIN_GROCY_VERSION  = "2.7.1";
 
 
 const METHOD_GET         = "GET";
@@ -623,7 +623,7 @@ class API {
         }
     }
 
-    public static function processError($e, $errormessage) {
+    public static function processError($e, $errorMessage) {
         $class = get_class($e);
         switch($class) {
             case 'InvalidServerResponseException':
@@ -644,7 +644,8 @@ class API {
     public static function logError($errorMessage, $isFatal = true) {
         require_once __DIR__ . "/db.inc.php";
         global $db;
-        $db->saveError($errorMessage, $isFatal);
+        if ($db != null)
+            $db->saveError($errorMessage, $isFatal);
     }
     
 }

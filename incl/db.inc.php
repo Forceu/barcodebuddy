@@ -194,8 +194,11 @@ private $db = null;
     private function upgradeBarcodeBuddy($previousVersion) {
         global $BBCONFIG;
         global $ERROR_MESSAGE;
-        //Place for future update protocols
+        //We update version before the actual update routine, as otherwise the user cannot
+        //reenter setup. As the login gets invalidated in such a case, the Grocy version
+        //will be checked upon reentering.
         $this->db->exec("UPDATE BBConfig SET value='" . BB_VERSION . "' WHERE data='version'");
+        //Place for future update protocols
         if ($previousVersion < 1211) {
             $this->getConfig();
             $this->updateConfig("BARCODE_C", strtoupper($BBCONFIG["BARCODE_C"]));
@@ -204,23 +207,33 @@ private $db = null;
             $this->updateConfig("BARCODE_CS", strtoupper($BBCONFIG["BARCODE_CS"]));
         }
         if ($previousVersion < 1303) {
-            $this->getConfig();
-            $version = API::getGrocyVersion();
-            if ($version == null) {
-                die ("Unable to get Grocy version");
-            }
-            if (!API::isSupportedGrocyVersion($version)) {
-                $this->updateConfig("GROCY_API_KEY", null);
-                $ERROR_MESSAGE = "Grocy " . MIN_GROCY_VERSION . " or newer required. You are running $version, please upgrade your Grocy instance. Click <a href=\"./setup.php\">here</a> to re-enter your credentials.";
-                include __DIR__ . "/../error.php";
-                die();
-            }
+            $this->isSupportedGrocyVersionOrDie();
         }
         if ($previousVersion < 1501) {
             $this->db->exec("ALTER TABLE Barcodes ADD COLUMN requireWeight INTEGER");
         }
+        if ($previousVersion < 1503) {
+            $this->isSupportedGrocyVersionOrDie();
+        }
     }
     
+    private function isSupportedGrocyVersionOrDie() {
+        global $ERROR_MESSAGE;
+        $ERROR_MESSAGE = null;
+        $this->getConfig();
+        $version = API::getGrocyVersion();
+        if ($version == null) {
+            $ERROR_MESSAGE = "Unable to communicate with Grocy and get Grocy version.";
+        } elseif (!API::isSupportedGrocyVersion($version)) {
+            $ERROR_MESSAGE = "Grocy " . MIN_GROCY_VERSION . " or newer required. You are running $version, please upgrade your Grocy instance.";
+        }
+        if ($ERROR_MESSAGE != null) {
+            $ERROR_MESSAGE .= " Click <a href=\"./setup.php\">here</a> to re-enter your credentials.";
+            $this->updateConfig("GROCY_API_KEY", null);
+            include __DIR__ . "/../error.php";
+            die();
+        }
+    }
     
     
     //Getting the state TODO change date

@@ -244,7 +244,7 @@ if(typeof(EventSource) !== "undefined") {
   async function resetScan(scanId) {
     await sleep(3000);
     if (currentScanId == scanId) {
-      content.style.backgroundColor = '#eee';
+      document.getElementById('content').style.backgroundColor = '#eee';
       document.getElementById('scan-result').textContent = 'waiting for barcode...';
       document.getElementById('event').textContent = '';
     }
@@ -255,7 +255,7 @@ if(typeof(EventSource) !== "undefined") {
   };
 
   function resultScan(color, message, text, sound) {
-    content.style.backgroundColor = color;
+    document.getElementById('content').style.backgroundColor = color;
     document.getElementById('event').textContent = message;
     document.getElementById('scan-result').textContent = text;
     document.getElementById(sound).play();
@@ -294,7 +294,7 @@ if(typeof(EventSource) !== "undefined") {
         document.getElementById('mode').textContent = resultText;
           break;
         case 'E':
-          content.style.backgroundColor = '#CC0605';
+          document.getElementById('content').style.backgroundColor = '#CC0605';
           document.getElementById('grocy-sse').textContent = 'disconnected';
           document.getElementById('scan-result').style.display = 'none'
           document.getElementById('previous-events').style.display = 'none'
@@ -304,7 +304,7 @@ if(typeof(EventSource) !== "undefined") {
       }
   };
 } else {
-        content.style.backgroundColor = '#f9868b';
+        document.getElementById('content').style.backgroundColor = '#f9868b';
         document.getElementById('grocy-sse').textContent = 'Disconnected';
         document.getElementById('event').textContent = 'Sorry, your browser does not support server-sent events';
 }

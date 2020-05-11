@@ -26,6 +26,9 @@ Barcodes can either manually be added to the programm or the process can be auto
 
 Refer to the [documentation](https://barcodebuddy-documentation.readthedocs.io/en/latest/), on how to use the program.
 
+##### Reverse Proxies
+
+If you are using a reverse proxy, please make sure to disable caching, see [documentation](https://barcodebuddy-documentation.readthedocs.io/en/latest/setup.html#reverse-proxy)
 
 ### Screenshots
 ![Screenshot of the web ui](https://raw.githubusercontent.com/Forceu/barcodebuddy/master/example/screenshots/FullSite_small.png)     

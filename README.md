@@ -47,6 +47,9 @@ This project is licensed under the GNU GPL3 - see the [LICENSE.md](LICENSE.md) f
 * [NoSleep.js](https://github.com/richtr/NoSleep.js)
 * [PHP-Auth](https://github.com/delight-im/PHP-Auth)
 
+## Contributors
+![Contributors](https://contributors-img.web.app/image?repo=forceu/barcodebuddy)
+
 
 ## Donations
 

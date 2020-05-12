@@ -35,9 +35,8 @@ If you are using a reverse proxy, please make sure to disable caching, see [docu
 ![Screenshot of the screen module](https://github.com/Forceu/barcodebuddy/raw/master/example/screenshots/Screen_small.gif)
 
 
-## License
-
-This project is licensed under the GNU GPL3 - see the [LICENSE.md](LICENSE.md) file for details
+## Contributors
+![Contributors](https://contributors-img.web.app/image?repo=forceu/barcodebuddy)
 
 ## Acknowledgments
 
@@ -47,8 +46,9 @@ This project is licensed under the GNU GPL3 - see the [LICENSE.md](LICENSE.md) f
 * [NoSleep.js](https://github.com/richtr/NoSleep.js)
 * [PHP-Auth](https://github.com/delight-im/PHP-Auth)
 
-## Contributors
-![Contributors](https://contributors-img.web.app/image?repo=forceu/barcodebuddy)
+## License
+
+This project is licensed under the GNU GPL3 - see the [LICENSE.md](LICENSE.md) file for details
 
 
 ## Donations

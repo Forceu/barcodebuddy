@@ -58,6 +58,11 @@ const HIDE_LINK_SCREEN             = false;
 //Set your base grocy URL here if it differs from the API URL (eg. because of different network / DNS)
 const EXTERNAL_GROCY_URL           = null;
 
+//List of IPs and subnets that can bypass authentication. If using with a reverse proxy, ensure TRUSTED_PROXIES is set correctly.
+const AUTHENTICATION_BYPASS_NETS   = array();
+
+// List of IPs and subnets that will be trusted for X-Forwarded-For header information
+const TRUSTED_PROXIES              = array();
 
 //If you need to manually override a config value, you can do so with this array.
 //Any overriden value cannot be changed through the UI anymore!

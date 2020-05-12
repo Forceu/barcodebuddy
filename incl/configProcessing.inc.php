@@ -9,13 +9,13 @@
  *
  * 
  * Processing of all hard coded config
- * 
+ *
  * @author     Marc Ole Bulling
  * @copyright  2019 Marc Ole Bulling
  * @license    https://www.gnu.org/licenses/gpl-3.0.en.html  GNU GPL v3.0
  * @since      File available since Release 1.5
  */
-
+           
 
 const BB_VERSION = "1503";
 const BB_VERSION_READABLE = "1.5.0.3-dev";
@@ -162,23 +162,23 @@ class GlobalConfig {
         }
         return $result;
     }
-    
+
     
     function echoConfig() {
         $environmentVariables = getenv();
         $reflect              = new ReflectionClass($this);
         $props                = $reflect->getProperties(ReflectionProperty::IS_PUBLIC);
         foreach ($props as $prop) {
-
+            
             $variableName = $prop->getName();
             $variable =& $this->{$variableName};
-
+            
             echo $variableName . ": ";
             var_dump($variable);
             echo "\n";
         }
     }
-    
+
     public function configureDebugOutput() {
         //Enable debug as well if file "debug" exists in this directory
         if ($this->IS_DEBUG || file_exists(__DIR__ . "/debug")) {
@@ -187,7 +187,7 @@ class GlobalConfig {
             error_reporting(E_ALL);
         }
     }
-    
+
     public function checkIfAuthenticated($redirect = true, $ismenu = false) {
         global $auth;
         require_once __DIR__ . '/authentication/authentication.inc.php';

@@ -36,7 +36,9 @@ If you are using a reverse proxy, please make sure to disable caching, see [docu
 
 
 ## Contributors
-![Contributors](https://contributors-img.web.app/image?repo=forceu/barcodebuddy)
+<a href="https://github.com/forceu/barcodebuddy/graphs/contributors">
+  <img src="https://contributors-img.web.app/image?repo=forceu/barcodebuddy" />
+</a>
 
 ## Acknowledgments
 

@@ -314,11 +314,10 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
         case STATE_PURCHASE:
             $amount        = getQuantitiyForBarcode($barcode, false, $productInfo);
             $additionalLog = "";
-            $isBestBeforeSet = API::purchaseProduct($productInfo["id"], $amount, $bestBeforeInDays, $price);
+            $isBestBeforeSet = API::purchaseProduct($productInfo["id"], $amount, $bestBeforeInDays, $price, $fileLock);
             if (!$isBestBeforeSet && $bestBeforeInDays == null) {
                 $additionalLog = " [WARNING]: No default best before date set!";
             }
-            $fileLock->removeLock();
             return outputLog("Product found. Adding  $amount " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode . $additionalLog, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Adding $amount " . $productInfo["unit"] . " of " . $productInfo["name"] . $additionalLog);
         case STATE_OPEN:
             if ($productInfo["stockAmount"] > 0) { 

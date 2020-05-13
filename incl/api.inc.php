@@ -312,7 +312,7 @@ class API {
      * @param  String price of product Default: null
      * @return false if default best before date not set
      */
-    public static function purchaseProduct($id, $amount, $bestbefore = null, $price = null) {
+    public static function purchaseProduct($id, $amount, $bestbefore = null, $price = null, &$fileLock = null) {
         require_once __DIR__ . "/db.inc.php";
         global $BBCONFIG;
         
@@ -341,7 +341,8 @@ class API {
         } catch (Exception $e) {
             self::processError($e, "Could not add product to inventory");
         }
-
+        if ($fileLock != null)
+            $fileLock->removeLock();
         if ($BBCONFIG["SHOPPINGLIST_REMOVE"]) {
             self::removeFromShoppinglist($id, $amount);
         }

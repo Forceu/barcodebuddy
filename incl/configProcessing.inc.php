@@ -223,7 +223,7 @@ class GlobalConfig {
         if (!$isLoggedIn && $redirect) {
             $location = "login.php";
             if ($ismenu)
-            $location = "../login.php";
+                $location = "../login.php";
             header("Location: $location");
             die();
         } else

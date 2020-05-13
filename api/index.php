@@ -45,7 +45,11 @@ class BBuddyApi {
     
     function checkIfAuthorized() {
         global $db;
+        global $CONFIG;
         
+        if ($CONFIG->checkIfAuthenticated(false))
+            return true;
+
         $apiKey = "";
         if (isset($_SERVER["HTTP_BBUDDY_API_KEY"]))
             $apiKey = $_SERVER["HTTP_BBUDDY_API_KEY"];

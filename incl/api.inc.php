@@ -37,6 +37,8 @@ const METHOD_POST        = "POST";
 const LOGIN_URL         = "loginurl";
 const LOGIN_API_KEY     = "loginkey";
 
+const DISPLAY_DEBUG     = false;
+
 class InvalidServerResponseException extends Exception { }
 class UnauthorizedException          extends Exception { }
 class InvalidJsonResponseException   extends Exception { }
@@ -45,6 +47,7 @@ class InvalidSSLException            extends Exception { }
 class CurlGenerator {
     private $ch = null;
     private $method = METHOD_GET;
+    private $urlApi;
 
     const IGNORED_API_ERRORS_REGEX = array(
         '/No product with barcode .+ found/'
@@ -53,8 +56,9 @@ class CurlGenerator {
     function __construct($url, $method = METHOD_GET, $jasonData = null, $loginOverride = null, $noApiCall = false) {
         global $CONFIG;
         
-        $this->method = $method;
-        $this->ch     = curl_init();
+        $this->method  = $method;
+        $this->urlApi  = $url;
+        $this->ch      = curl_init();
 
         if ($loginOverride == null) {
             require_once __DIR__ . "/db.inc.php";
@@ -94,6 +98,11 @@ class CurlGenerator {
     }
     
     function execute($decode = false) {
+        if (DISPLAY_DEBUG) {
+            global $db;
+            $startTime = microtime(true);
+            $db->saveLog("<i>Executing API call: " . $this->urlApi. "</i>", false, false, true);
+        }
         $curlResult   = curl_exec($this->ch);
         $this->checkForErrorsAndThrow($curlResult);
         curl_close($this->ch);
@@ -110,6 +119,10 @@ class CurlGenerator {
             }
             if (!$isIgnoredError)
                 throw new InvalidJsonResponseException($jsonDecoded["error_message"]);
+        }
+        if (DISPLAY_DEBUG) {
+            $totalTimeMs = round((microtime(true)- $startTime) * 1000);
+            $db->saveLog("<i>Executing took " . $totalTimeMs . "ms</i>", false, false, true);
         }
         if ($decode)
             return $jsonDecoded;

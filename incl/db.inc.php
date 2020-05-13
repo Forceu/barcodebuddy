@@ -551,11 +551,11 @@ private $db = null;
     }
 
     //Save a log
-    public function saveLog($log, $isVerbose = false, $isError = false) {
+    public function saveLog($log, $isVerbose = false, $isError = false, $isDebug = false) {
         global $BBCONFIG;
         if ($isVerbose == false || $BBCONFIG["MORE_VERBOSE"] == true) {
             $date = date('Y-m-d H:i:s');
-            if ($isError) {
+            if ($isError || $isDebug) {
                 $logEntry = $date .': ' . $log;
             } else {
                 $logEntry = $date . ": " . sanitizeString($log);

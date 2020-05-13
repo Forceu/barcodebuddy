@@ -19,18 +19,22 @@
 
 class LockGenerator {
 	private $file = null;
+	private $isLocked = false;
 
 	function createLock() {
-		$this->file = fopen(__DIR__ . '/lockGenerator.inc.php', "r");
+		$this->file     = fopen(__DIR__ . '/lockGenerator.inc.php', "r");
+		$this->isLocked = true;
 		flock($this->file, LOCK_EX);
 	}
 
 	function removeLock() {
 		if ($this->file == null)
 			throw new Exception("Lock has not been created!");
-		flock($this->file, LOCK_UN);
-		fclose($this->file);
-		$this->file = null;
+		if ($this->isLocked) {
+			flock($this->file, LOCK_UN);
+			fclose($this->file);
+		}
+		$this->isLocked = false;
 	}
 }
 

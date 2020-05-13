@@ -314,7 +314,7 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
         case STATE_PURCHASE:
             $amount        = getQuantitiyForBarcode($barcode, false, $productInfo);
             $additionalLog = "";
-            $isBestBeforeSet = API::purchaseProduct($productInfo["id"], $amount, $bestBeforeInDays, $price, $fileLock);
+            $isBestBeforeSet = API::purchaseProduct($productInfo["id"], $amount, $bestBeforeInDays, $price, $fileLock, $productInfo["defaultBestBefore"]);
             if (!$isBestBeforeSet && $bestBeforeInDays == null) {
                 $additionalLog = " [WARNING]: No default best before date set!";
             }

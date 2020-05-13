@@ -312,7 +312,7 @@ class API {
      * @param  String price of product Default: null
      * @return false if default best before date not set
      */
-    public static function purchaseProduct($id, $amount, $bestbefore = null, $price = null, &$fileLock = null) {
+    public static function purchaseProduct($id, $amount, $bestbefore = null, $price = null, &$fileLock = null, $defaultBestBefore = null) {
         require_once __DIR__ . "/db.inc.php";
         global $BBCONFIG;
         
@@ -329,7 +329,10 @@ class API {
             $daysBestBefore           = $bestbefore;
             $data['best_before_date'] = self::formatBestBeforeDays($bestbefore);
         } else {
-            $daysBestBefore           = self::getDefaultBestBeforeDays($id);
+            if ($defaultBestBefore != null)
+                $daysBestBefore       = $defaultBestBefore;
+            else
+                $daysBestBefore       = self::getDefaultBestBeforeDays($id);
             $data['best_before_date'] = self::formatBestBeforeDays($daysBestBefore);
         }
         $data_json = json_encode($data);
@@ -552,14 +555,15 @@ class API {
         
         if (isset($result["product"]["id"])) {
             checkIfNumeric($result["product"]["id"]);
-            $resultArray                = array();
-            $resultArray["id"]          = $result["product"]["id"];
-            $resultArray["name"]        = sanitizeString($result["product"]["name"]);
-            $resultArray["unit"]        = sanitizeString($result["quantity_unit_stock"]["name"]);
-            $resultArray["stockAmount"] = sanitizeString($result["stock_amount"]);
-            $resultArray["tareWeight"]  = sanitizeString($result["product"]["tare_weight"]);
-            $resultArray["isTare"]      = ($result["product"]["enable_tare_weight_handling"] == 1);
-            $resultArray["quFactor"]    = sanitizeString($result["product"]["qu_factor_purchase_to_stock"]);
+            $resultArray                      = array();
+            $resultArray["id"]                = $result["product"]["id"];
+            $resultArray["name"]              = sanitizeString($result["product"]["name"]);
+            $resultArray["unit"]              = sanitizeString($result["quantity_unit_stock"]["name"]);
+            $resultArray["stockAmount"]       = sanitizeString($result["stock_amount"]);
+            $resultArray["tareWeight"]        = sanitizeString($result["product"]["tare_weight"]);
+            $resultArray["isTare"]            = ($result["product"]["enable_tare_weight_handling"] == 1);
+            $resultArray["quFactor"]          = sanitizeString($result["product"]["qu_factor_purchase_to_stock"]);
+            $resultArray["defaultBestBefore"] = sanitizeString($result["product"]["default_best_before_days"]);
             if ($resultArray["stockAmount"] == null) {
                 $resultArray["stockAmount"] = "0";
             }

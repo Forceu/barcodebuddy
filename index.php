@@ -226,7 +226,7 @@ function processButtons() {
                         outputLog("Consuming $amount " . $product["unit"] . " of " . $product["name"], EVENT_TYPE_ADD_KNOWN_BARCODE, false, false);
                 } else {
                     $additionalLog = "";
-                    if (!API::purchaseProduct($gidSelected, $amount)) {
+                    if (!API::purchaseProduct($gidSelected, $amount, $row["bestBeforeInDays"], $row["price"])) {
                         $additionalLog = " [WARNING]: No default best before date set!";
                     }
                     outputLog("Adding $amount " . $product["unit"] . " of " . $product["name"].$additionalLog, EVENT_TYPE_ADD_KNOWN_BARCODE, false, false);

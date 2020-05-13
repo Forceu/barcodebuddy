@@ -80,7 +80,7 @@ function processNewBarcode($barcodeInput, $websocketEnabled = true, $bestBeforeI
     $productInfo = API::getProductByBardcode($sanitizedBarcode);
     if ($productInfo == null) {
         $db->saveLastBarcode($sanitizedBarcode);
-        return processUnknownBarcode($sanitizedBarcode, $websocketEnabled, $lockGenerator);
+        return processUnknownBarcode($sanitizedBarcode, $websocketEnabled, $lockGenerator, $bestBeforeInDays, $price);
     } else {
         $db->saveLastBarcode($sanitizedBarcode, $productInfo["name"]);
         return processKnownBarcode($productInfo, $sanitizedBarcode, $websocketEnabled, $lockGenerator, $bestBeforeInDays, $price);
@@ -145,7 +145,7 @@ function processChoreBarcode($barcode) {
 }
 
 //If grocy does not know this barcode
-function processUnknownBarcode($barcode, $websocketEnabled, &$fileLock) {
+function processUnknownBarcode($barcode, $websocketEnabled, &$fileLock, $bestBeforeInDays, $price) {
     require_once __DIR__ . "/db.inc.php";
     global $db;
     $amount = 1;
@@ -162,10 +162,10 @@ function processUnknownBarcode($barcode, $websocketEnabled, &$fileLock) {
             $productname = API::lookupNameByBarcodeInOpenFoodFacts($barcode);
         }
         if ($productname != "N/A") {
-            $db->insertUnrecognizedBarcode($barcode,  $amount, $productname, $db->checkNameForTags($productname));
+            $db->insertUnrecognizedBarcode($barcode,  $amount, $bestBeforeInDays, $price, $productname, $db->checkNameForTags($productname));
             $output = outputLog("Unknown barcode looked up, found name: " . $productname . ". Barcode: " . $barcode, EVENT_TYPE_ADD_NEW_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_LOOKED_UP, $productname);
         } else {
-            $db->insertUnrecognizedBarcode($barcode, $amount);
+            $db->insertUnrecognizedBarcode($barcode, $amount, $bestBeforeInDays, $price);
             $output = outputLog("Unknown barcode could not be looked up. Barcode: " . $barcode, EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_UNKNOWN, $barcode);
         }
     }
@@ -266,7 +266,7 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
 
     if ($productInfo["isTare"]) {
         if (!$db->isUnknownBarcodeAlreadyStored($barcode)) 
-            $db->insertActionRequiredBarcode($barcode);
+            $db->insertActionRequiredBarcode($barcode, $bestBeforeInDays, $price);
         $fileLock->removeLock();
         return outputLog("Action required: Enter weight for " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ACTION_REQUIRED, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Action required: Enter weight for " . $productInfo["name"]);
     }

@@ -86,7 +86,7 @@ private $db = null;
         self::checkPermissions();
         $this->db = new SQLite3($CONFIG->DATABASE_PATH);
         $this->db->busyTimeout(5000);
-        $this->db->exec("CREATE TABLE IF NOT EXISTS Barcodes(id INTEGER PRIMARY KEY, barcode TEXT NOT NULL, name TEXT NOT NULL, possibleMatch INTEGER, amount INTEGER NOT NULL, requireWeight INTEGER)");
+        $this->db->exec("CREATE TABLE IF NOT EXISTS Barcodes(id INTEGER PRIMARY KEY, barcode TEXT NOT NULL, name TEXT NOT NULL, possibleMatch INTEGER, amount INTEGER NOT NULL, requireWeight INTEGER, bestBeforeInDays INTEGER, price TEXT)");
         $this->db->exec("CREATE TABLE IF NOT EXISTS Tags(id INTEGER PRIMARY KEY, tag TEXT NOT NULL, itemId INTEGER NOT NULL)");
         $this->db->exec("CREATE TABLE IF NOT EXISTS TransactionState(id INTEGER PRIMARY KEY, currentState TINYINT NOT NULL, since INTEGER NOT NULL)");
         $this->db->exec("CREATE TABLE IF NOT EXISTS BarcodeLogs(id INTEGER PRIMARY KEY, log TEXT NOT NULL)");
@@ -212,7 +212,9 @@ private $db = null;
         if ($previousVersion < 1501) {
             $this->db->exec("ALTER TABLE Barcodes ADD COLUMN requireWeight INTEGER");
         }
-        if ($previousVersion < 1503) {
+        if ($previousVersion < 1504) {
+            $this->db->exec("ALTER TABLE Barcodes ADD COLUMN bestBeforeInDays INTEGER");
+            $this->db->exec("ALTER TABLE Barcodes ADD COLUMN price TEXT");
             $this->isSupportedGrocyVersionOrDie();
         }
     }
@@ -281,13 +283,15 @@ private $db = null;
         $barcodes["unknown"] = array();
         $barcodes["tare"]    = array();
         while ($row = $res->fetchArray()) {
-            $item            = array();
-            $item['id']      = $row['id'];
-            $item['barcode'] = $row['barcode'];
-            $item['amount']  = $row['amount'];
-            $item['name']    = $row['name'];
-            $item['match']   = $row['possibleMatch'];
-            $item['tare']    = $row['requireWeight'];
+            $item                     = array();
+            $item['id']               = $row['id'];
+            $item['barcode']          = $row['barcode'];
+            $item['amount']           = $row['amount'];
+            $item['name']             = $row['name'];
+            $item['match']            = $row['possibleMatch'];
+            $item['tare']             = $row['requireWeight'];
+            $item['bestBeforeInDays'] = $row['bestBeforeInDays'];
+            $item['price']            = $row['price'];
             if ($item['tare'] == "1") {
                 array_push($barcodes["tare"], $item);
             } elseif ($row['name'] != "N/A") {
@@ -466,12 +470,20 @@ private $db = null;
     }
     
     //Add an unknown barcode
-    public function insertUnrecognizedBarcode($barcode, $amount = 1, $productname = "N/A", $match = 0) {
-        $this->db->exec("INSERT INTO Barcodes(barcode, name, amount, possibleMatch, requireWeight) VALUES('$barcode', '$productname', $amount, $match, 0)");
+    public function insertUnrecognizedBarcode($barcode, $amount = 1, $bestBeforeInDays = null, $price = null, $productname = "N/A", $match = 0) {
+        if ($bestBeforeInDays==null)
+            $bestBeforeInDays = "NULL";
+
+        $this->db->exec("INSERT INTO Barcodes(barcode, name, amount, possibleMatch, requireWeight, bestBeforeInDays, price)
+                             VALUES('$barcode', '$productname', $amount, $match, 0, $bestBeforeInDays, '$price')");
     }
 
-    public function insertActionRequiredBarcode($barcode) {
-        $this->db->exec("INSERT INTO Barcodes(barcode, name, amount, possibleMatch, requireWeight) VALUES('$barcode', 'N/A', 1, 0, 1)");
+    public function insertActionRequiredBarcode($barcode, $bestBeforeInDays = null, $price = null) {
+        if ($bestBeforeInDays==null)
+            $bestBeforeInDays = "NULL";
+
+        $this->db->exec("INSERT INTO Barcodes(barcode, name, amount, possibleMatch, requireWeight, bestBeforeInDays, price)
+                             VALUES('$barcode', 'N/A', 1, 0, 1, $bestBeforeInDays, '$price')");
     }
     
     

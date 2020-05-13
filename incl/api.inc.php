@@ -325,16 +325,16 @@ class API {
         if ($price != null) {
             $data['price'] = $price;
         }
+
         if ($bestbefore != null) {
-            $daysBestBefore           = $bestbefore;
-            $data['best_before_date'] = self::formatBestBeforeDays($bestbefore);
+            $daysBestBefore = $bestbefore;
         } else {
-            if ($defaultBestBefore != null)
-                $daysBestBefore       = $defaultBestBefore;
-            else
-                $daysBestBefore       = self::getDefaultBestBeforeDays($id);
-            $data['best_before_date'] = self::formatBestBeforeDays($daysBestBefore);
+            if ($defaultBestBefore != null) 
+                $daysBestBefore = $defaultBestBefore;
+            else 
+                $daysBestBefore = self::getDefaultBestBeforeDays($id);
         }
+        $data['best_before_date'] = self::formatBestBeforeDays($daysBestBefore);
         $data_json = json_encode($data);
         $apiurl = API_STOCK . "/" . $id . "/add";
 

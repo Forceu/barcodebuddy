@@ -59,34 +59,40 @@ const HIDE_LINK_SCREEN             = false;
 const EXTERNAL_GROCY_URL           = null;
 
 //List of IPs and subnets that can bypass authentication. If using with a reverse proxy, ensure TRUSTED_PROXIES is set correctly.
-const AUTHENTICATION_BYPASS_NETS   = array();
+const AUTHENTICATION_BYPASS_NETS   = array(
+                                         // "192.168.0.1",
+                                         // "127.0.0.1"
+                                        );
 
 // List of IPs and subnets that will be trusted for X-Forwarded-For header information
-const TRUSTED_PROXIES              = array();
+const TRUSTED_PROXIES              = array(
+                                         // "192.168.0.1",
+                                         // "127.0.0.1"
+                                        );
 
 //If you need to manually override a config value, you can do so with this array.
 //Any overriden value cannot be changed through the UI anymore!
 const OVERRIDDEN_USER_CONFIG       = array(
-                 //"BARCODE_C"                   => "BBUDDY-C",
-                 //"BARCODE_CS"                  => "BBUDDY-CS",
-                 //"BARCODE_P"                   => "BBUDDY-P",
-                 //"BARCODE_O"                   => "BBUDDY-O",
-                 //"BARCODE_GS"                  => "BBUDDY-I",
-                 //"BARCODE_Q"                   => "BBUDDY-Q-",
-                 //"BARCODE_AS"                  => "BBUDDY-AS",
-                 //"REVERT_TIME"                 => "10",
-                 //"REVERT_SINGLE"               => "1",
-                 //"MORE_VERBOSE"                => "1",
-                 //"GROCY_API_URL"               => null,
-                 //"GROCY_API_KEY"               => null,
-                 //"LAST_BARCODE"                => null,
-                 //"LAST_PRODUCT"                => null,
-                 //"WS_FULLSCREEN"               => "0",
-                 //"SHOPPINGLIST_REMOVE"         => "1",
-                 //"USE_GENERIC_NAME"            => "1",
-                 //"CONSUME_SAVED_QUANTITY"      => "0",
-                 //"DEFAULT_USE_GROCY_QU_FACTOR" => "0"
-                 );
+                                         //"BARCODE_C"                   => "BBUDDY-C",
+                                         //"BARCODE_CS"                  => "BBUDDY-CS",
+                                         //"BARCODE_P"                   => "BBUDDY-P",
+                                         //"BARCODE_O"                   => "BBUDDY-O",
+                                         //"BARCODE_GS"                  => "BBUDDY-I",
+                                         //"BARCODE_Q"                   => "BBUDDY-Q-",
+                                         //"BARCODE_AS"                  => "BBUDDY-AS",
+                                         //"REVERT_TIME"                 => "10",
+                                         //"REVERT_SINGLE"               => "1",
+                                         //"MORE_VERBOSE"                => "1",
+                                         //"GROCY_API_URL"               => null,
+                                         //"GROCY_API_KEY"               => null,
+                                         //"LAST_BARCODE"                => null,
+                                         //"LAST_PRODUCT"                => null,
+                                         //"WS_FULLSCREEN"               => "0",
+                                         //"SHOPPINGLIST_REMOVE"         => "1",
+                                         //"USE_GENERIC_NAME"            => "1",
+                                         //"CONSUME_SAVED_QUANTITY"      => "0",
+                                         //"DEFAULT_USE_GROCY_QU_FACTOR" => "0"
+                                         );
 
 
 // Currently not in use

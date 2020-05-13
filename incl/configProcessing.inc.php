@@ -212,7 +212,7 @@ class GlobalConfig {
         $ip = $this->getIpAddress();
         if ($ip) {
             // Check if any trusted subnets match the client IP
-            $trusted_subnet = array_filter($this->AUTHENTICATION_BYPASS_NETS, function($subnet) use ($ip) {return ipInSubnet($ip, $subnet);});
+            $trusted_subnet = array_filter($this->AUTHENTICATION_BYPASS_NETS, function($subnet) use ($ip) {return $this->ipInSubnet($ip, $subnet);});
             
             // if any subnet matches, bypass authentication
             if(sizeof($trusted_subnet) > 0)
@@ -243,7 +243,7 @@ class GlobalConfig {
         
         // Check if using a trusted proxy
         $proxy_trusted = array_filter($this->TRUSTED_PROXIES, function($subnet) {
-            return ipInSubnet($_SERVER['REMOTE_ADDR'], $subnet);});
+            return $this->ipInSubnet($_SERVER['REMOTE_ADDR'], $subnet);});
         if(sizeof($proxy_trusted) == 0) {
             // Remote address is not a proxy, use this as the client's IP
             return $_SERVER['REMOTE_ADDR'];

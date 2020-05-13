@@ -74,7 +74,10 @@ function checkForMissingConstants() {
                         "HIDE_LINK_GROCY"              => false,
                         "HIDE_LINK_SCREEN"             => false,
                         "EXTERNAL_GROCY_URL"           => null,
-                        "OVERRIDDEN_USER_CONFIG"       => array()
+                        "OVERRIDDEN_USER_CONFIG"       => array(),
+                        "SCREEN_TOUCH_BUTTONS"         => false,
+                        "AUTHENTICATION_BYPASS_NETS"   => array(),
+                        "TRUSTED_PROXIES"              => array()
                         );
     foreach ($defaultValues as $key => $value) {
         if (!defined($key))
@@ -99,8 +102,11 @@ class GlobalConfig {
     public $HIDE_LINK_GROCY              = HIDE_LINK_GROCY;
     public $HIDE_LINK_SCREEN             = HIDE_LINK_SCREEN;
     public $EXTERNAL_GROCY_URL           = EXTERNAL_GROCY_URL;
+    public $SCREEN_TOUCH_BUTTONS         = SCREEN_TOUCH_BUTTONS;
+    public $AUTHENTICATION_BYPASS_NETS   = AUTHENTICATION_BYPASS_NETS;
+    public $TRUSTED_PROXIES              = TRUSTED_PROXIES;
 
-   function __construct() {
+    function __construct() {
         $this->loadConfig();
     }
 
@@ -185,23 +191,146 @@ class GlobalConfig {
     public function checkIfAuthenticated($redirect = true, $ismenu = false) {
         global $auth;
         require_once __DIR__ . '/authentication/authentication.inc.php';
+        
+        // Check if authentication is disabled globally
         if ($this->DISABLE_AUTHENTICATION)
             return true;
-        else {
-            $isLoggedIn = $auth->isLoggedIn();
-            if (!$isLoggedIn && $redirect) {
+        
+        // If authentication is at all enabled, ensure the user has completed first-time setup
+        if (!isUserSetUp()) {
+             if ($redirect) {
                 $location = "login.php";
                 if ($ismenu)
                 $location = "../login.php";
                 header("Location: $location");
                 die();
             } else
-                return $isLoggedIn;
+                return false;
+        }
+        
+        // Check if IP is available for subnet-based authentication
+        $ip = $this->getIpAddress();
+        if ($ip) {
+            // Check if any trusted subnets match the client IP
+            $trusted_subnet = array_filter($this->AUTHENTICATION_BYPASS_NETS, function($subnet) use ($ip) {return ipInSubnet($ip, $subnet);});
+            
+            // if any subnet matches, bypass authentication
+            if(sizeof($trusted_subnet) > 0)
+                return true;
+        }
+        
+        $isLoggedIn = $auth->isLoggedIn();
+        if (!$isLoggedIn && $redirect) {
+            $location = "login.php";
+            if ($ismenu)
+            $location = "../login.php";
+            header("Location: $location");
+            die();
+        } else
+            return $isLoggedIn;
+    }
+    
+    /**
+     * Returns client IP address.
+     *
+     * @return false|string IP address.
+     */
+    private function getIpAddress() {
+        // Check if any remote addresses are available
+        if (!isset($_SERVER['REMOTE_ADDR'])) {
+            return false;
+        }
+        
+        // Check if using a trusted proxy
+        $proxy_trusted = array_filter($this->TRUSTED_PROXIES, function($subnet) {
+            return ipInSubnet($_SERVER['REMOTE_ADDR'], $subnet);});
+        if(sizeof($proxy_trusted) == 0) {
+            // Remote address is not a proxy, use this as the client's IP
+            return $_SERVER['REMOTE_ADDR'];
+        }
+        
+        // If so, check if the proxy has sent an X-Forwarded-For header
+        if (!isset($_SERVER["HTTP_X_FORWARDED_FOR"]) || empty($_SERVER["HTTP_X_FORWARDED_FOR"])) {
+            return false;
+        }
+        
+        // Get client IPs from the proxy
+        $ips = explode(',', $_SERVER["HTTP_X_FORWARDED_FOR"]);
+        // trim, so we can compare against trusted proxies properly
+        $ips = array_map('trim', $ips);
+        // remove trusted proxy IPs
+        $ips = array_diff($ips, $this->trustedProxies);
+        
+        // Any left?
+        if (empty($ips)) {
+            return false;
+        }
+        
+        // Since we've removed any known, trusted proxy servers, the right-most
+        // address represents the first IP we do not know about -- i.e., we do
+        // not know if it is a proxy server, or a client. As such, we treat it
+        // as the originating IP.
+        // @see http://en.wikipedia.org/wiki/X-Forwarded-For
+        $ip = array_pop($ips);
+        return $ip;
+    }
+    
+    private function ipInSubnet($ip, $subnet) {
+        $subnetComponents = explode("/", $subnet);
+        $subnetAddress = $subnetComponents[0];
+        
+        if (sizeof($subnetComponents) == 2) {
+            // Subnet is a full network
+            $subnetMask = $subnetComponents[1];
+            
+            if(filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) && filter_var($subnetAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+                // IP and Subnet are both IPv4
+                // Convert IP and subnet to integers
+                $ip = ip2long($ip);
+                $subnetAddress = ip2long($subnetAddress);
+                
+                // Trim both addresses to match the mask
+                $mask = -1 << (32 - $subnetMask);
+                $ip &= $mask;
+                $subnetAddress &= $mask;
+                
+                // Compare the remaining addresses
+                return $ip == $subnetAddress;
+                
+            } else if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) && filter_var($subnetAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+                // IP and Subnet are both IPv6
+                // Convert IP to raw bits
+                $ip = inet_pton($ip);
+                $binaryIp = $this->inet_to_bits($ip);
+                
+                // convert subnet to raw bits
+                $subnetAddress = inet_pton($subnetAddress);
+                $binarySubnet = $this->inet_to_bits($subnetAddress);
+                
+                // Trim both addresses to match the mask
+                $ip_net_bits = substr($binaryIp, 0, $subnetMask);
+                $net_bits = substr($binarySubnet, 0, $subnetMask);
+                
+                // Compare the remaining addresses
+                return $ip_net_bits == $net_bits;
+            } else {
+                // IP and Subnet are different IP versions
+                return false;
+            }
+        } else {
+            // Subnet is single address, use direct comparison
+            return $ip == $subnetAddress;
         }
     }
     
+    // IPv6 address to list of bits.
+    private function inet_to_bits($inet) {
+        $unpacked = unpack('A16', $inet);
+        $unpacked = str_split($unpacked[1]);
+        $binaryip = '';
+        foreach ($unpacked as $char) {
+            $binaryip .= str_pad(decbin(ord($char)), 8, '0', STR_PAD_LEFT);
+        }
+        return $binaryip;
+    }
 }
-
-
-
-?>

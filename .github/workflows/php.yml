@@ -1,0 +1,20 @@
+name: Test
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v1
+        with:
+          php-version: 7.3
+          coverage: none # disable xdebug, pcov
+
+      - run: composer require --dev vimeo/psalm
+        name: Install Psalm
+
+      - run: vendor/bin/psalm --output-format=github --config=.github/workflows/psalm.xml
+        name: Run Psalm

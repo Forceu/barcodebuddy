@@ -259,7 +259,7 @@ class GlobalConfig {
         // trim, so we can compare against trusted proxies properly
         $ips = array_map('trim', $ips);
         // remove trusted proxy IPs
-        $ips = array_diff($ips, $this->trustedProxies);
+        $ips = array_diff($ips, $this->TRUSTED_PROXIES);
         
         // Any left?
         if (empty($ips)) {

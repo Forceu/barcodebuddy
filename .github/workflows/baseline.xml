@@ -1,0 +1,1448 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="3.11.4@58e1d8e68e5098bf4fbfdfb420c38d563f882549">
+    <file src="api/index.php">
+        <MissingClosureReturnType occurrences="5">
+            <code>function() {</code>
+            <code>function() {</code>
+            <code>function() {</code>
+            <code>function() {</code>
+            <code>function() {</code>
+        </MissingClosureReturnType>
+        <MissingParamType occurrences="9">
+            <code>$url</code>
+            <code>$data</code>
+            <code>$result</code>
+            <code>$http_int</code>
+            <code>$route</code>
+            <code>$data</code>
+            <code>$result</code>
+            <code>$path</code>
+            <code>$function</code>
+        </MissingParamType>
+        <MissingPropertyType occurrences="5">
+            <code>$CONFIG-&gt;REQUIRE_API_KEY</code>
+            <code>$CONFIG-&gt;IS_DEBUG</code>
+            <code>$routes</code>
+            <code>$path</code>
+            <code>$function</code>
+        </MissingPropertyType>
+        <MissingReturnType occurrences="8">
+            <code>checkIfAuthorized</code>
+            <code>sendUnauthorizedAndDie</code>
+            <code>execute</code>
+            <code>createResultArray</code>
+            <code>addRoute</code>
+            <code>initRoutes</code>
+            <code>sendResult</code>
+            <code>execute</code>
+        </MissingReturnType>
+        <PossiblyFalseArgument occurrences="1">
+            <code>strpos($requestedUrl, '/api')</code>
+        </PossiblyFalseArgument>
+    </file>
+    <file src="error.php">
+        <TypeDoesNotContainType occurrences="1">
+            <code>isset($ERROR_MESSAGE)</code>
+        </TypeDoesNotContainType>
+    </file>
+    <file src="incl/PluginLoader.php">
+        <UnresolvableInclude occurrences="1">
+            <code>include_once $filename</code>
+        </UnresolvableInclude>
+    </file>
+    <file src="incl/api.inc.php">
+        <InvalidDocblock occurrences="12">
+            <code>[int]</code>
+            <code>private static function formatBestBeforeDays($days) {</code>
+            <code>[int]</code>
+            <code>private static function getDefaultBestBeforeDays($id) {</code>
+            <code>[String]</code>
+            <code>public static function lookupNameByBarcodeInOpenFoodFacts($barcode) {</code>
+            <code>[String]</code>
+            <code>public static function getProductByBardcode($barcode) {</code>
+            <code>[String]</code>
+            <code>public static function getProductLocations($productid) {</code>
+            <code>public static function getChoresInfo($choreId = "") {</code>
+            <code>[int]</code>
+        </InvalidDocblock>
+        <InvalidGlobal occurrences="2">
+            <code>global $BBCONFIG;</code>
+            <code>global $db;</code>
+        </InvalidGlobal>
+        <InvalidReturnStatement occurrences="8">
+            <code>"Could not connect to server&lt;br&gt;"</code>
+            <code>"Error: ". $e-&gt;getMessage()</code>
+            <code>"Invalid API key&lt;br&gt;"</code>
+            <code>"Invalid SSL certificate!&lt;br&gt;If you are using a self-signed certificate, you can disable the check in config.php&lt;br&gt;"</code>
+            <code>"Grocy " . MIN_GROCY_VERSION . " or newer required. You are running " . $version . ", please upgrade your Grocy instance.&lt;br&gt;"</code>
+            <code>true</code>
+            <code>"Invalid response. Are you using the correct URL?&lt;br&gt;"</code>
+            <code>$daysBestBefore != 0</code>
+        </InvalidReturnStatement>
+        <InvalidReturnType occurrences="6">
+            <code>none</code>
+            <code>Returns</code>
+            <code>false</code>
+            <code>none</code>
+            <code>none</code>
+            <code>none</code>
+        </InvalidReturnType>
+        <InvalidScalarArgument occurrences="1">
+            <code>$curlResult</code>
+        </InvalidScalarArgument>
+        <MissingParamType occurrences="38">
+            <code>$url</code>
+            <code>$method</code>
+            <code>$jasonData</code>
+            <code>$loginOverride</code>
+            <code>$noApiCall</code>
+            <code>$decode</code>
+            <code>$curlResult</code>
+            <code>$curlError</code>
+            <code>$productId</code>
+            <code>$id</code>
+            <code>$givenurl</code>
+            <code>$apikey</code>
+            <code>$version</code>
+            <code>$id</code>
+            <code>$amount</code>
+            <code>$bestbefore</code>
+            <code>$price</code>
+            <code>$fileLock</code>
+            <code>$defaultBestBefore</code>
+            <code>$productid</code>
+            <code>$amount</code>
+            <code>$productid</code>
+            <code>$amount</code>
+            <code>$id</code>
+            <code>$amount</code>
+            <code>$spoiled</code>
+            <code>$id</code>
+            <code>$barcode</code>
+            <code>$days</code>
+            <code>$id</code>
+            <code>$barcode</code>
+            <code>$barcode</code>
+            <code>$productid</code>
+            <code>$choreId</code>
+            <code>$e</code>
+            <code>$errorMessage</code>
+            <code>$errorMessage</code>
+            <code>$isFatal</code>
+        </MissingParamType>
+        <MissingPropertyType occurrences="6">
+            <code>$ch</code>
+            <code>$method</code>
+            <code>$urlApi</code>
+            <code>$CONFIG-&gt;CURL_TIMEOUT_S</code>
+            <code>$CONFIG-&gt;CURL_ALLOW_INSECURE_SSL_CA</code>
+            <code>$CONFIG-&gt;CURL_ALLOW_INSECURE_SSL_HOST</code>
+        </MissingPropertyType>
+        <MissingReturnType occurrences="13">
+            <code>execute</code>
+            <code>checkForErrorsAndThrow</code>
+            <code>isErrorSslRelated</code>
+            <code>setBarcode</code>
+            <code>formatBestBeforeDays</code>
+            <code>getDefaultBestBeforeDays</code>
+            <code>lookupNameByBarcodeInOpenFoodFacts</code>
+            <code>getProductByBardcode</code>
+            <code>getProductLocations</code>
+            <code>getChoresInfo</code>
+            <code>executeChore</code>
+            <code>processError</code>
+            <code>logError</code>
+        </MissingReturnType>
+        <NullableReturnStatement occurrences="2">
+            <code>null</code>
+            <code>null</code>
+        </NullableReturnStatement>
+        <PossiblyUndefinedVariable occurrences="1">
+            <code>$startTime</code>
+        </PossiblyUndefinedVariable>
+        <TypeDoesNotContainType occurrences="2">
+            <code>DISPLAY_DEBUG</code>
+            <code>DISPLAY_DEBUG</code>
+        </TypeDoesNotContainType>
+        <UndefinedDocblockClass occurrences="5">
+            <code>none</code>
+            <code>Returns</code>
+            <code>none</code>
+            <code>none</code>
+            <code>none</code>
+        </UndefinedDocblockClass>
+        <UndefinedVariable occurrences="1">
+            <code>$db</code>
+        </UndefinedVariable>
+    </file>
+    <file src="incl/authentication/authentication.inc.php">
+        <InvalidGlobal occurrences="1">
+            <code>global $CONFIG;</code>
+        </InvalidGlobal>
+        <MissingParamType occurrences="1">
+            <code>$newName</code>
+        </MissingParamType>
+        <MissingPropertyType occurrences="4">
+            <code>$CONFIG-&gt;AUTHDB_PATH</code>
+            <code>$CONFIG-&gt;AUTHDB_PATH</code>
+            <code>$CONFIG-&gt;AUTHDB_PATH</code>
+            <code>$CONFIG-&gt;AUTHDB_PATH</code>
+        </MissingPropertyType>
+        <MissingReturnType occurrences="4">
+            <code>isUserSetUp</code>
+            <code>createSqlFile</code>
+            <code>changeUserName</code>
+            <code>getInitialSetupSql</code>
+        </MissingReturnType>
+        <UndefinedClass occurrences="3">
+            <code>\Delight\Db\PdoDsn</code>
+            <code>\Delight\Auth\Auth</code>
+            <code>\Delight\Auth\Role</code>
+        </UndefinedClass>
+    </file>
+    <file src="incl/configProcessing.inc.php">
+        <ForbiddenCode occurrences="1">
+            <code>var_dump($variable)</code>
+        </ForbiddenCode>
+        <InvalidGlobal occurrences="1">
+            <code>global $CONFIG;</code>
+        </InvalidGlobal>
+        <InvalidOperand occurrences="1">
+            <code>$subnetMask</code>
+        </InvalidOperand>
+        <InvalidScalarArgument occurrences="4">
+            <code>1</code>
+            <code>1</code>
+            <code>$subnetMask</code>
+            <code>$subnetMask</code>
+        </InvalidScalarArgument>
+        <MissingClosureParamType occurrences="2">
+            <code>$subnet</code>
+            <code>$subnet</code>
+        </MissingClosureParamType>
+        <MissingClosureReturnType occurrences="2">
+            <code>function($subnet) use ($ip) {return $this-&gt;ipInSubnet($ip, $subnet);}</code>
+            <code>function($subnet) {</code>
+        </MissingClosureReturnType>
+        <MissingParamType occurrences="10">
+            <code>$configPath</code>
+            <code>$input</code>
+            <code>$originalVar</code>
+            <code>$input</code>
+            <code>$input</code>
+            <code>$redirect</code>
+            <code>$ismenu</code>
+            <code>$ip</code>
+            <code>$subnet</code>
+            <code>$inet</code>
+        </MissingParamType>
+        <MissingPropertyType occurrences="18">
+            <code>$PORT_WEBSOCKET_SERVER</code>
+            <code>$DATABASE_PATH</code>
+            <code>$CONFIG_PATH</code>
+            <code>$AUTHDB_PATH</code>
+            <code>$CURL_TIMEOUT_S</code>
+            <code>$CURL_ALLOW_INSECURE_SSL_CA</code>
+            <code>$CURL_ALLOW_INSECURE_SSL_HOST</code>
+            <code>$IS_DOCKER</code>
+            <code>$REQUIRE_API_KEY</code>
+            <code>$IS_DEBUG</code>
+            <code>$OVERRIDDEN_USER_CONFIG</code>
+            <code>$DISABLE_AUTHENTICATION</code>
+            <code>$HIDE_LINK_GROCY</code>
+            <code>$HIDE_LINK_SCREEN</code>
+            <code>$EXTERNAL_GROCY_URL</code>
+            <code>$SCREEN_TOUCH_BUTTONS</code>
+            <code>$AUTHENTICATION_BYPASS_NETS</code>
+            <code>$TRUSTED_PROXIES</code>
+        </MissingPropertyType>
+        <MissingReturnType occurrences="12">
+            <code>loadConfigPhp</code>
+            <code>createConfigPhp</code>
+            <code>checkForMissingConstants</code>
+            <code>loadConfig</code>
+            <code>convertCorrectType</code>
+            <code>convertPossibleBoolean</code>
+            <code>convertToArray</code>
+            <code>echoConfig</code>
+            <code>configureDebugOutput</code>
+            <code>checkIfAuthenticated</code>
+            <code>ipInSubnet</code>
+            <code>inet_to_bits</code>
+        </MissingReturnType>
+        <UndefinedConstant occurrences="16">
+            <code>PORT_WEBSOCKET_SERVER</code>
+            <code>DATABASE_PATH</code>
+            <code>CURL_TIMEOUT_S</code>
+            <code>CURL_ALLOW_INSECURE_SSL_CA</code>
+            <code>CURL_ALLOW_INSECURE_SSL_HOST</code>
+            <code>IS_DOCKER</code>
+            <code>REQUIRE_API_KEY</code>
+            <code>IS_DEBUG</code>
+            <code>OVERRIDDEN_USER_CONFIG</code>
+            <code>DISABLE_AUTHENTICATION</code>
+            <code>HIDE_LINK_GROCY</code>
+            <code>HIDE_LINK_SCREEN</code>
+            <code>EXTERNAL_GROCY_URL</code>
+            <code>SCREEN_TOUCH_BUTTONS</code>
+            <code>AUTHENTICATION_BYPASS_NETS</code>
+            <code>TRUSTED_PROXIES</code>
+        </UndefinedConstant>
+        <UndefinedThisPropertyFetch occurrences="1">
+            <code>$this-&gt;trustedProxies</code>
+        </UndefinedThisPropertyFetch>
+    </file>
+    <file src="incl/db.inc.php">
+        <MissingParamType occurrences="48">
+            <code>$key</code>
+            <code>$value</code>
+            <code>$barcode</code>
+            <code>$name</code>
+            <code>$previousVersion</code>
+            <code>$state</code>
+            <code>$barcode</code>
+            <code>$id</code>
+            <code>$barcode</code>
+            <code>$barcode</code>
+            <code>$productname</code>
+            <code>$tag</code>
+            <code>$itemid</code>
+            <code>$name</code>
+            <code>$barcode</code>
+            <code>$productId</code>
+            <code>$choreId</code>
+            <code>$choreBarcode</code>
+            <code>$barcode</code>
+            <code>$amount</code>
+            <code>$product</code>
+            <code>$id</code>
+            <code>$id</code>
+            <code>$barcode</code>
+            <code>$barcode</code>
+            <code>$barcode</code>
+            <code>$barcode</code>
+            <code>$amount</code>
+            <code>$barcode</code>
+            <code>$amount</code>
+            <code>$barcode</code>
+            <code>$amount</code>
+            <code>$productname</code>
+            <code>$match</code>
+            <code>$barcode</code>
+            <code>$name</code>
+            <code>$apiKey</code>
+            <code>$id</code>
+            <code>$errorMessage</code>
+            <code>$isFatal</code>
+            <code>$log</code>
+            <code>$isVerbose</code>
+            <code>$isError</code>
+            <code>$isDebug</code>
+            <code>$id</code>
+            <code>$id</code>
+            <code>$section</code>
+            <code>$name</code>
+        </MissingParamType>
+        <MissingPropertyType occurrences="6">
+            <code>$db</code>
+            <code>$CONFIG-&gt;DATABASE_PATH</code>
+            <code>$CONFIG-&gt;OVERRIDDEN_USER_CONFIG</code>
+            <code>$CONFIG-&gt;DATABASE_PATH</code>
+            <code>$CONFIG-&gt;DATABASE_PATH</code>
+            <code>$CONFIG-&gt;DATABASE_PATH</code>
+        </MissingPropertyType>
+        <MissingReturnType occurrences="48">
+            <code>initDb</code>
+            <code>insertDefaultValues</code>
+            <code>getConfig</code>
+            <code>updateConfig</code>
+            <code>saveLastBarcode</code>
+            <code>checkPermissions</code>
+            <code>createDbDirectory</code>
+            <code>checkAndMoveIfOldDbLocation</code>
+            <code>upgradeBarcodeBuddy</code>
+            <code>isSupportedGrocyVersionOrDie</code>
+            <code>getTransactionState</code>
+            <code>getDbTimeInLC</code>
+            <code>setTransactionState</code>
+            <code>getStoredBarcodes</code>
+            <code>getStoredBarcodeAmount</code>
+            <code>getBarcodeById</code>
+            <code>getQuantities</code>
+            <code>getQuantityByBarcode</code>
+            <code>refreshQuantityProductName</code>
+            <code>getStoredTags</code>
+            <code>addTag</code>
+            <code>tagNotUsedYet</code>
+            <code>updateSavedBarcodeMatch</code>
+            <code>getStoredChoreBarcodes</code>
+            <code>updateChoreBarcode</code>
+            <code>addUpdateQuantitiy</code>
+            <code>deleteChoreBarcode</code>
+            <code>deleteQuantitiy</code>
+            <code>isChoreBarcode</code>
+            <code>getChoreBarcode</code>
+            <code>isUnknownBarcodeAlreadyStored</code>
+            <code>addQuantitiyToUnknownBarcode</code>
+            <code>setQuantitiyToUnknownBarcode</code>
+            <code>insertUnrecognizedBarcode</code>
+            <code>insertActionRequiredBarcode</code>
+            <code>checkNameForTags</code>
+            <code>getStoredApiKeys</code>
+            <code>isValidApiKey</code>
+            <code>generateApiKey</code>
+            <code>deleteApiKey</code>
+            <code>deleteAllApiKeys</code>
+            <code>getLogs</code>
+            <code>saveError</code>
+            <code>saveLog</code>
+            <code>deleteBarcode</code>
+            <code>deleteTag</code>
+            <code>deleteAll</code>
+            <code>generateQueryFromName</code>
+        </MissingReturnType>
+    </file>
+    <file src="incl/internalChecking.inc.php">
+        <InvalidDocblock occurrences="1">
+            <code>function checkExtensionsInstalled() {</code>
+        </InvalidDocblock>
+        <MissingParamType occurrences="1">
+            <code>$name</code>
+        </MissingParamType>
+        <MissingReturnType occurrences="3">
+            <code>checkExtensionsInstalled</code>
+            <code>isExtensionInstalled</code>
+            <code>isGrocyApiSet</code>
+        </MissingReturnType>
+    </file>
+    <file src="incl/lockGenerator.inc.php">
+        <MissingPropertyType occurrences="1">
+            <code>$file</code>
+        </MissingPropertyType>
+        <MissingReturnType occurrences="2">
+            <code>createLock</code>
+            <code>removeLock</code>
+        </MissingReturnType>
+    </file>
+    <file src="incl/processing.inc.php">
+        <InvalidScalarArgument occurrences="1">
+            <code>ceil($length/strlen($x))</code>
+        </InvalidScalarArgument>
+        <MissingParamType occurrences="50">
+            <code>$barcodeInput</code>
+            <code>$websocketEnabled</code>
+            <code>$bestBeforeInDays</code>
+            <code>$price</code>
+            <code>$log</code>
+            <code>$eventType</code>
+            <code>$isVerbose</code>
+            <code>$websocketEnabled</code>
+            <code>$websocketResultCode</code>
+            <code>$websocketText</code>
+            <code>$barcode</code>
+            <code>$barcode</code>
+            <code>$websocketEnabled</code>
+            <code>$fileLock</code>
+            <code>$state</code>
+            <code>$id</code>
+            <code>$products</code>
+            <code>$barcode</code>
+            <code>$newWeight</code>
+            <code>$modeParameter</code>
+            <code>$barcode</code>
+            <code>$productInfo</code>
+            <code>$barcode</code>
+            <code>$websocketEnabled</code>
+            <code>$fileLock</code>
+            <code>$bestBeforeInDays</code>
+            <code>$price</code>
+            <code>$barcode</code>
+            <code>$isConsume</code>
+            <code>$productInfo</code>
+            <code>$selected</code>
+            <code>$productinfo</code>
+            <code>$input</code>
+            <code>$strongFilter</code>
+            <code>$input</code>
+            <code>$words</code>
+            <code>$id</code>
+            <code>$input</code>
+            <code>$amount</code>
+            <code>$a</code>
+            <code>$b</code>
+            <code>$a</code>
+            <code>$b</code>
+            <code>$string</code>
+            <code>$startString</code>
+            <code>$message</code>
+            <code>$strip</code>
+            <code>$length</code>
+            <code>$removeAfter</code>
+            <code>$error="DB</code>
+        </MissingParamType>
+        <MissingReturnType occurrences="26">
+            <code>processNewBarcode</code>
+            <code>outputLog</code>
+            <code>processChoreBarcode</code>
+            <code>processUnknownBarcode</code>
+            <code>stateToString</code>
+            <code>getProductByIdFromVariable</code>
+            <code>changeWeightTareItem</code>
+            <code>processModeChangeGetParameter</code>
+            <code>processRefreshedBarcode</code>
+            <code>processKnownBarcode</code>
+            <code>getQuantitiyForBarcode</code>
+            <code>printSelections</code>
+            <code>sanitizeString</code>
+            <code>checkIfNumeric</code>
+            <code>explodeWordsAndMakeCheckboxes</code>
+            <code>cleanNameForTagLookup</code>
+            <code>changeQuantityAfterScan</code>
+            <code>getAllTags</code>
+            <code>sortTags</code>
+            <code>sortChores</code>
+            <code>getAllChores</code>
+            <code>stringStartsWith</code>
+            <code>strrtrim</code>
+            <code>generateRandomString</code>
+            <code>getApiUrl</code>
+            <code>showErrorNotWritable</code>
+        </MissingReturnType>
+        <PossiblyFalseArgument occurrences="1">
+            <code>strpos($url, $removeAfter)</code>
+        </PossiblyFalseArgument>
+        <RedundantConditionGivenDocblockType occurrences="1">
+            <code>!$isBestBeforeSet &amp;&amp; $bestBeforeInDays == null</code>
+        </RedundantConditionGivenDocblockType>
+        <TypeDoesNotContainType occurrences="1">
+            <code>USE_NEW_INVENTORY_API</code>
+        </TypeDoesNotContainType>
+        <UndefinedFunction occurrences="1">
+            <code>pluginEventReceiver_processEvent($eventType, $log)</code>
+        </UndefinedFunction>
+    </file>
+    <file src="incl/sse/sse_data.php">
+        <InvalidScalarArgument occurrences="4">
+            <code>1</code>
+            <code>85</code>
+            <code>0</code>
+            <code>1</code>
+        </InvalidScalarArgument>
+        <MissingParamType occurrences="2">
+            <code>$data</code>
+            <code>$retryMs</code>
+        </MissingParamType>
+        <MissingReturnType occurrences="5">
+            <code>connectToWebsocket</code>
+            <code>sendStillAlive</code>
+            <code>readData</code>
+            <code>sendData</code>
+            <code>initStream</code>
+        </MissingReturnType>
+    </file>
+    <file src="incl/sse/websocket_client.php">
+        <MissingParamType occurrences="11">
+            <code>$host=''</code>
+            <code>$port=80</code>
+            <code>$headers=''</code>
+            <code>$error_string=''</code>
+            <code>$timeout=10</code>
+            <code>$ssl=false</code>
+            <code>$sp</code>
+            <code>$data</code>
+            <code>$final=true</code>
+            <code>$sp</code>
+            <code>$error_string=NULL</code>
+        </MissingParamType>
+        <MissingReturnType occurrences="3">
+            <code>websocket_open</code>
+            <code>websocket_write</code>
+            <code>websocket_read</code>
+        </MissingReturnType>
+        <PossiblyUndefinedVariable occurrences="1">
+            <code>$mask</code>
+        </PossiblyUndefinedVariable>
+    </file>
+    <file src="incl/uiEditor.inc.php">
+        <MissingParamType occurrences="127">
+            <code>$name</code>
+            <code>$label</code>
+            <code>$editorUi</code>
+            <code>$id</code>
+            <code>$onClick</code>
+            <code>$isRaised</code>
+            <code>$isHidden</code>
+            <code>$isColoured</code>
+            <code>$isAccent</code>
+            <code>$isDisabled</code>
+            <code>$additionalClasses</code>
+            <code>$isSubmit</code>
+            <code>$value</code>
+            <code>$asHtml</code>
+            <code>$name</code>
+            <code>$label</code>
+            <code>$value</code>
+            <code>$editorUi</code>
+            <code>$pattern</code>
+            <code>$type</code>
+            <code>$disabled</code>
+            <code>$autocompleteEntries</code>
+            <code>$linked</code>
+            <code>$runAjax</code>
+            <code>$required</code>
+            <code>$array</code>
+            <code>$minmax</code>
+            <code>$maxlength</code>
+            <code>$width</code>
+            <code>$minlength</code>
+            <code>$capitalize</code>
+            <code>$placeHolder</code>
+            <code>$onfocusout</code>
+            <code>$onkeyup</code>
+            <code>$onKeyPress</code>
+            <code>$floatingLabel</code>
+            <code>$asHtml</code>
+            <code>$id</code>
+            <code>$items</code>
+            <code>$linkedItems</code>
+            <code>$runAjax</code>
+            <code>$createForm</code>
+            <code>$onSubmit</code>
+            <code>$formname</code>
+            <code>$name</code>
+            <code>$label</code>
+            <code>$value</code>
+            <code>$name</code>
+            <code>$label</code>
+            <code>$table</code>
+            <code>$name</code>
+            <code>$label</code>
+            <code>$value</code>
+            <code>$pattern</code>
+            <code>$type</code>
+            <code>$disabled</code>
+            <code>$autocompleteEntries</code>
+            <code>$autocompleteEntriesLinked</code>
+            <code>$autocompleteRunAjax</code>
+            <code>$required</code>
+            <code>$minmax</code>
+            <code>$maxlength</code>
+            <code>$minlength</code>
+            <code>$capitalize</code>
+            <code>$onfocusout</code>
+            <code>$isTimeInput</code>
+            <code>$onKeyUp</code>
+            <code>$floatingLabel</code>
+            <code>$placeHolder</code>
+            <code>$onKeyPress</code>
+            <code>$width</code>
+            <code>$asHtml</code>
+            <code>$name</code>
+            <code>$value</code>
+            <code>$asHtml</code>
+            <code>$name</code>
+            <code>$label</code>
+            <code>$valueLabels</code>
+            <code>$values</code>
+            <code>$preselected</code>
+            <code>$name</code>
+            <code>$label</code>
+            <code>$asHtml</code>
+            <code>$name</code>
+            <code>$label</code>
+            <code>$isChecked</code>
+            <code>$isDisabled</code>
+            <code>$useSpaces</code>
+            <code>$name</code>
+            <code>$label</code>
+            <code>$isRaised</code>
+            <code>$isDisabled</code>
+            <code>$asHtml</code>
+            <code>$isColoured</code>
+            <code>$onClick</code>
+            <code>$value</code>
+            <code>$htmlToDiv</code>
+            <code>$id</code>
+            <code>$class</code>
+            <code>$label</code>
+            <code>$content</code>
+            <code>$name</code>
+            <code>$label</code>
+            <code>$onClick</code>
+            <code>$isRaised</code>
+            <code>$isHidden</code>
+            <code>$asHtml</code>
+            <code>$isColoured</code>
+            <code>$isDisabled</code>
+            <code>$additionalClasses</code>
+            <code>$id</code>
+            <code>$isSubmit</code>
+            <code>$value</code>
+            <code>$isAccent</code>
+            <code>$id</code>
+            <code>$label</code>
+            <code>$hint</code>
+            <code>$name</code>
+            <code>$label</code>
+            <code>$value</code>
+            <code>$isChecked</code>
+            <code>$returnAsHtml</code>
+            <code>$isDisabled</code>
+            <code>$count</code>
+            <code>$count</code>
+            <code>$html</code>
+            <code>$html</code>
+        </MissingParamType>
+        <MissingPropertyType occurrences="45">
+            <code>$name</code>
+            <code>$id</code>
+            <code>$label</code>
+            <code>$editorUi</code>
+            <code>$onClick</code>
+            <code>$isRaised</code>
+            <code>$isHidden</code>
+            <code>$isColoured</code>
+            <code>$isDisabled</code>
+            <code>$additionalClasses</code>
+            <code>$isSubmit</code>
+            <code>$value</code>
+            <code>$isAccent</code>
+            <code>$name</code>
+            <code>$label</code>
+            <code>$value</code>
+            <code>$editorUi</code>
+            <code>$pattern</code>
+            <code>$type</code>
+            <code>$disabled</code>
+            <code>$autocompleteEntries</code>
+            <code>$autocompleteEntriesLinked</code>
+            <code>$autocompleteRunAjax</code>
+            <code>$required</code>
+            <code>$minmax</code>
+            <code>$maxlength</code>
+            <code>$minlength</code>
+            <code>$capitalize</code>
+            <code>$onfocusout</code>
+            <code>$isTimeInput</code>
+            <code>$onkeyup</code>
+            <code>$floatingLabel</code>
+            <code>$placeHolder</code>
+            <code>$onKeyPress</code>
+            <code>$width</code>
+            <code>$formId</code>
+            <code>$items</code>
+            <code>$linkedItems</code>
+            <code>$linkedTarget</code>
+            <code>$runAjax</code>
+            <code>$htmlOutput</code>
+            <code>$autoComplete</code>
+            <code>$checkBoxes</code>
+            <code>$createForm</code>
+            <code>$hasTimeInput</code>
+        </MissingPropertyType>
+        <MissingReturnType occurrences="48">
+            <code>setId</code>
+            <code>setOnClick</code>
+            <code>setRaised</code>
+            <code>setHidden</code>
+            <code>setIsColoured</code>
+            <code>setIsAccent</code>
+            <code>setDisabled</code>
+            <code>setAdditionalClasses</code>
+            <code>setSubmit</code>
+            <code>setValue</code>
+            <code>generate</code>
+            <code>pattern</code>
+            <code>type</code>
+            <code>disabled</code>
+            <code>autocompleteEntries</code>
+            <code>required</code>
+            <code>setDefault</code>
+            <code>minmax</code>
+            <code>maxlength</code>
+            <code>setWidth</code>
+            <code>minlength</code>
+            <code>capitalize</code>
+            <code>setPlaceholder</code>
+            <code>onfocusout</code>
+            <code>onKeyUp</code>
+            <code>onKeyPress</code>
+            <code>setFloatingLabel</code>
+            <code>generate</code>
+            <code>getHtml</code>
+            <code>buildEditField</code>
+            <code>buildButton</code>
+            <code>addTableClass</code>
+            <code>addEditFieldInternal</code>
+            <code>addHiddenField</code>
+            <code>addSelectBox</code>
+            <code>addUploadButton</code>
+            <code>addCheckbox</code>
+            <code>addSubmitButton</code>
+            <code>addDiv</code>
+            <code>addCollapsable</code>
+            <code>addButton</code>
+            <code>addErrorMessage</code>
+            <code>addRadioButton</code>
+            <code>addLineBreak</code>
+            <code>addSpaces</code>
+            <code>addHtml</code>
+            <code>addScript</code>
+            <code>getHtml</code>
+        </MissingReturnType>
+    </file>
+    <file src="incl/websocket/ScreenApplication.php">
+        <MissingPropertyType occurrences="2">
+            <code>$currentBBMode</code>
+            <code>$allowedModes</code>
+        </MissingPropertyType>
+    </file>
+    <file src="incl/websocket/ScreenApplication1.0.php">
+        <MissingParamType occurrences="6">
+            <code>$client</code>
+            <code>$client</code>
+            <code>$data</code>
+            <code>$client</code>
+            <code>$data</code>
+            <code>$client</code>
+        </MissingParamType>
+        <MissingPropertyType occurrences="3">
+            <code>$currentBBMode</code>
+            <code>$allowedModes</code>
+            <code>$_clients</code>
+        </MissingPropertyType>
+        <MissingReturnType occurrences="4">
+            <code>onConnect</code>
+            <code>onDisconnect</code>
+            <code>onData</code>
+            <code>onBinaryData</code>
+        </MissingReturnType>
+        <UndefinedMethod occurrences="1">
+            <code>encodeData</code>
+        </UndefinedMethod>
+    </file>
+    <file src="incl/websocket/client_internal.php">
+        <MissingParamType occurrences="3">
+            <code>$resultValue</code>
+            <code>$name</code>
+            <code>$newState</code>
+        </MissingParamType>
+        <MissingPropertyType occurrences="3">
+            <code>$CONFIG-&gt;PORT_WEBSOCKET_SERVER</code>
+            <code>$CONFIG-&gt;PORT_WEBSOCKET_SERVER</code>
+            <code>$CONFIG-&gt;PORT_WEBSOCKET_SERVER</code>
+        </MissingPropertyType>
+        <MissingReturnType occurrences="4">
+            <code>sendWSResult</code>
+            <code>requestSavedState</code>
+            <code>sendNewState</code>
+            <code>getClient</code>
+        </MissingReturnType>
+        <UndefinedFunction occurrences="3">
+            <code>getClient()</code>
+            <code>getClient()</code>
+            <code>getClient()</code>
+        </UndefinedFunction>
+    </file>
+    <file src="incl/websocket/php-websocket-1.0/class.websocket_client.php">
+        <InvalidScalarArgument occurrences="1">
+            <code>$frameHead[$i]</code>
+        </InvalidScalarArgument>
+        <MissingParamType occurrences="14">
+            <code>$data</code>
+            <code>$type</code>
+            <code>$masked</code>
+            <code>$host</code>
+            <code>$port</code>
+            <code>$path</code>
+            <code>$origin</code>
+            <code>$length</code>
+            <code>$addSpaces</code>
+            <code>$addNumbers</code>
+            <code>$payload</code>
+            <code>$type</code>
+            <code>$masked</code>
+            <code>$data</code>
+        </MissingParamType>
+        <MissingPropertyType occurrences="6">
+            <code>$_host</code>
+            <code>$_port</code>
+            <code>$_path</code>
+            <code>$_origin</code>
+            <code>$_Socket</code>
+            <code>$_connected</code>
+        </MissingPropertyType>
+        <MissingReturnType occurrences="8">
+            <code>sendData</code>
+            <code>connect</code>
+            <code>checkConnection</code>
+            <code>disconnect</code>
+            <code>reconnect</code>
+            <code>_generateRandomString</code>
+            <code>_hybi10Encode</code>
+            <code>_hybi10Decode</code>
+        </MissingReturnType>
+        <PossiblyUndefinedVariable occurrences="1">
+            <code>$mask</code>
+        </PossiblyUndefinedVariable>
+        <UndefinedMethod occurrences="1">
+            <code>close</code>
+        </UndefinedMethod>
+    </file>
+    <file src="incl/websocket/php-websocket-1.0/server/lib/SplClassLoader.php">
+        <InvalidReturnStatement occurrences="1">
+            <code>$this-&gt;_namespaceSeparator</code>
+        </InvalidReturnStatement>
+        <MissingParamType occurrences="1">
+            <code>$includePath</code>
+        </MissingParamType>
+        <MissingPropertyType occurrences="4">
+            <code>$_fileExtension</code>
+            <code>$_namespace</code>
+            <code>$_includePath</code>
+            <code>$_namespaceSeparator</code>
+        </MissingPropertyType>
+        <MissingReturnType occurrences="5">
+            <code>setNamespaceSeparator</code>
+            <code>setIncludePath</code>
+            <code>setFileExtension</code>
+            <code>register</code>
+            <code>unregister</code>
+        </MissingReturnType>
+        <UnresolvableInclude occurrences="1">
+            <code>require ($this-&gt;_includePath !== null ? $this-&gt;_includePath . DIRECTORY_SEPARATOR : '') . $fileName</code>
+        </UnresolvableInclude>
+    </file>
+    <file src="incl/websocket/php-websocket-1.0/server/lib/WebSocket/Application/Application.php">
+        <MissingParamType occurrences="7">
+            <code>$connection</code>
+            <code>$connection</code>
+            <code>$data</code>
+            <code>$client</code>
+            <code>$data</code>
+            <code>$action</code>
+            <code>$data</code>
+        </MissingParamType>
+        <MissingPropertyType occurrences="1">
+            <code>$instances</code>
+        </MissingPropertyType>
+        <MissingReturnType occurrences="6">
+            <code>getInstance</code>
+            <code>onConnect</code>
+            <code>onDisconnect</code>
+            <code>onData</code>
+            <code>_decodeData</code>
+            <code>_encodeData</code>
+        </MissingReturnType>
+    </file>
+    <file src="incl/websocket/php-websocket-1.0/server/lib/WebSocket/Application/DemoApplication.php">
+        <MissingParamType occurrences="8">
+            <code>$client</code>
+            <code>$client</code>
+            <code>$data</code>
+            <code>$client</code>
+            <code>$data</code>
+            <code>$client</code>
+            <code>$text</code>
+            <code>$filename</code>
+        </MissingParamType>
+        <MissingPropertyType occurrences="2">
+            <code>$_clients</code>
+            <code>$_filename</code>
+        </MissingPropertyType>
+        <MissingReturnType occurrences="6">
+            <code>onConnect</code>
+            <code>onDisconnect</code>
+            <code>onData</code>
+            <code>onBinaryData</code>
+            <code>_actionEcho</code>
+            <code>_actionSetFilename</code>
+        </MissingReturnType>
+        <PossiblyFalseArgument occurrences="1">
+            <code>strpos(__FILE__, 'server')</code>
+        </PossiblyFalseArgument>
+        <PossiblyFalseOperand occurrences="2">
+            <code>strrpos($filename, '\\')</code>
+            <code>strrpos($filename, '/')</code>
+        </PossiblyFalseOperand>
+    </file>
+    <file src="incl/websocket/php-websocket-1.0/server/lib/WebSocket/Application/StatusApplication.php">
+        <MissingParamType occurrences="14">
+            <code>$client</code>
+            <code>$client</code>
+            <code>$data</code>
+            <code>$client</code>
+            <code>$serverInfo</code>
+            <code>$ip</code>
+            <code>$port</code>
+            <code>$ip</code>
+            <code>$port</code>
+            <code>$port</code>
+            <code>$text</code>
+            <code>$type</code>
+            <code>$client</code>
+            <code>$encodedData</code>
+        </MissingParamType>
+        <MissingPropertyType occurrences="4">
+            <code>$_clients</code>
+            <code>$_serverClients</code>
+            <code>$_serverInfo</code>
+            <code>$_serverClientCount</code>
+        </MissingPropertyType>
+        <MissingReturnType occurrences="10">
+            <code>onConnect</code>
+            <code>onDisconnect</code>
+            <code>onData</code>
+            <code>setServerInfo</code>
+            <code>clientConnected</code>
+            <code>clientDisconnected</code>
+            <code>clientActivity</code>
+            <code>statusMsg</code>
+            <code>_sendServerinfo</code>
+            <code>_sendAll</code>
+        </MissingReturnType>
+    </file>
+    <file src="incl/websocket/php-websocket-1.0/server/lib/WebSocket/Connection.php">
+        <InvalidScalarArgument occurrences="3">
+            <code>bindec($payload[0])</code>
+            <code>bindec($payload[1])</code>
+            <code>$frameHead[$i]</code>
+        </InvalidScalarArgument>
+        <MissingParamType occurrences="16">
+            <code>$server</code>
+            <code>$socket</code>
+            <code>$data</code>
+            <code>$httpStatusCode</code>
+            <code>$data</code>
+            <code>$data</code>
+            <code>$payload</code>
+            <code>$type</code>
+            <code>$masked</code>
+            <code>$statusCode</code>
+            <code>$message</code>
+            <code>$type</code>
+            <code>$payload</code>
+            <code>$type</code>
+            <code>$masked</code>
+            <code>$data</code>
+        </MissingParamType>
+        <MissingPropertyType occurrences="9">
+            <code>$server</code>
+            <code>$socket</code>
+            <code>$handshaked</code>
+            <code>$application</code>
+            <code>$ip</code>
+            <code>$port</code>
+            <code>$connectionId</code>
+            <code>$waitingForData</code>
+            <code>$_dataBuffer</code>
+        </MissingPropertyType>
+        <MissingReturnType occurrences="15">
+            <code>handshake</code>
+            <code>sendHttpResponse</code>
+            <code>onData</code>
+            <code>handle</code>
+            <code>send</code>
+            <code>close</code>
+            <code>onDisconnect</code>
+            <code>log</code>
+            <code>hybi10Encode</code>
+            <code>hybi10Decode</code>
+            <code>getClientIp</code>
+            <code>getClientPort</code>
+            <code>getClientId</code>
+            <code>getClientSocket</code>
+            <code>getClientApplication</code>
+        </MissingReturnType>
+        <PossiblyUndefinedVariable occurrences="1">
+            <code>$mask</code>
+        </PossiblyUndefinedVariable>
+    </file>
+    <file src="incl/websocket/php-websocket-1.0/server/lib/WebSocket/Server.php">
+        <DocblockTypeContradiction occurrences="3">
+            <code>is_bool($doOriginCheck) === false</code>
+            <code>is_int($limit)</code>
+            <code>is_int($limit)</code>
+        </DocblockTypeContradiction>
+        <FalsableReturnStatement occurrences="2">
+            <code>false</code>
+            <code>false</code>
+        </FalsableReturnStatement>
+        <InvalidArgument occurrences="1">
+            <code>$this-&gt;master</code>
+        </InvalidArgument>
+        <MissingParamType occurrences="3">
+            <code>$host</code>
+            <code>$port</code>
+            <code>$ssl</code>
+        </MissingParamType>
+        <MissingPropertyType occurrences="9">
+            <code>$clients</code>
+            <code>$applications</code>
+            <code>$_ipStorage</code>
+            <code>$_requestStorage</code>
+            <code>$_checkOrigin</code>
+            <code>$_allowedOrigins</code>
+            <code>$_maxClients</code>
+            <code>$_maxConnectionsPerIp</code>
+            <code>$_maxRequestsPerMinute</code>
+        </MissingPropertyType>
+        <MissingReturnType occurrences="6">
+            <code>run</code>
+            <code>registerApplication</code>
+            <code>log</code>
+            <code>removeClientOnClose</code>
+            <code>removeClientOnError</code>
+            <code>_addIpToStorage</code>
+        </MissingReturnType>
+        <PossiblyFalseArgument occurrences="1">
+            <code>$ressource</code>
+        </PossiblyFalseArgument>
+        <RedundantConditionGivenDocblockType occurrences="5">
+            <code>$this-&gt;getApplication('status') !== false</code>
+            <code>$this-&gt;getApplication('status') !== false</code>
+            <code>$this-&gt;getApplication('status') !== false</code>
+            <code>$this-&gt;getApplication('status') !== false</code>
+            <code>is_bool($doOriginCheck)</code>
+        </RedundantConditionGivenDocblockType>
+        <TypeDoesNotContainType occurrences="1">
+            <code>$socket == $this-&gt;master</code>
+        </TypeDoesNotContainType>
+        <UndefinedDocblockClass occurrences="2">
+            <code>sting</code>
+            <code>in</code>
+        </UndefinedDocblockClass>
+    </file>
+    <file src="incl/websocket/php-websocket-1.0/server/lib/WebSocket/Socket.php">
+        <EmptyArrayAccess occurrences="2">
+            <code>$pem[0]</code>
+            <code>$pem[1]</code>
+        </EmptyArrayAccess>
+        <InvalidPropertyAssignmentValue occurrences="1">
+            <code>stream_socket_server($url, $errno, $err, STREAM_SERVER_BIND|STREAM_SERVER_LISTEN, $this-&gt;context)</code>
+        </InvalidPropertyAssignmentValue>
+        <InvalidScalarArgument occurrences="1">
+            <code>true</code>
+        </InvalidScalarArgument>
+        <MissingParamType occurrences="6">
+            <code>$host</code>
+            <code>$port</code>
+            <code>$ssl</code>
+            <code>$resource</code>
+            <code>$resource</code>
+            <code>$string</code>
+        </MissingParamType>
+        <MissingPropertyType occurrences="2">
+            <code>$context</code>
+            <code>$ssl</code>
+        </MissingPropertyType>
+        <MissingReturnType occurrences="4">
+            <code>createSocket</code>
+            <code>applySSLContext</code>
+            <code>readBuffer</code>
+            <code>writeBuffer</code>
+        </MissingReturnType>
+        <PossiblyUndefinedVariable occurrences="1">
+            <code>$metadata</code>
+        </PossiblyUndefinedVariable>
+    </file>
+    <file src="incl/websocket/php-websocket-1.0/server/server.php">
+        <InvalidArgument occurrences="2">
+            <code>100</code>
+            <code>'foo.lh'</code>
+        </InvalidArgument>
+        <InvalidScalarArgument occurrences="1">
+            <code>1</code>
+        </InvalidScalarArgument>
+    </file>
+    <file src="incl/websocket/php-websocket/src/Application/StatusApplication.php">
+        <RedundantCondition occurrences="1">
+            <code>is_array($serverInfo)</code>
+        </RedundantCondition>
+    </file>
+    <file src="incl/websocket/php-websocket/src/Client.php">
+        <InvalidPropertyAssignmentValue occurrences="2">
+            <code>$this-&gt;socket</code>
+            <code>$this-&gt;socket</code>
+        </InvalidPropertyAssignmentValue>
+        <MissingConstructor occurrences="1">
+            <code>$host</code>
+        </MissingConstructor>
+        <PossiblyInvalidArgument occurrences="1">
+            <code>$frameHead[$i]</code>
+        </PossiblyInvalidArgument>
+        <PossiblyNullPropertyAssignmentValue occurrences="1">
+            <code>null</code>
+        </PossiblyNullPropertyAssignmentValue>
+        <PossiblyUndefinedVariable occurrences="1">
+            <code>$mask</code>
+        </PossiblyUndefinedVariable>
+        <RedundantConditionGivenDocblockType occurrences="1">
+            <code>is_resource($this-&gt;socket)</code>
+        </RedundantConditionGivenDocblockType>
+        <TypeDoesNotContainType occurrences="2">
+            <code>is_string($data)</code>
+            <code>is_array($response)</code>
+        </TypeDoesNotContainType>
+    </file>
+    <file src="incl/websocket/php-websocket/src/Connection.php">
+        <MissingPropertyType occurrences="5">
+            <code>$waitingForData</code>
+            <code>$CONFIG-&gt;IS_DEBUG</code>
+            <code>$CONFIG-&gt;IS_DEBUG</code>
+            <code>$CONFIG-&gt;IS_DEBUG</code>
+            <code>$CONFIG-&gt;IS_DEBUG</code>
+        </MissingPropertyType>
+        <PossiblyInvalidArgument occurrences="3">
+            <code>bindec($payload[0])</code>
+            <code>bindec($payload[1])</code>
+            <code>$frameHead[$i]</code>
+        </PossiblyInvalidArgument>
+        <PossiblyNullPropertyAssignmentValue occurrences="1">
+            <code>null</code>
+        </PossiblyNullPropertyAssignmentValue>
+        <PossiblyUndefinedVariable occurrences="1">
+            <code>$mask</code>
+        </PossiblyUndefinedVariable>
+        <RedundantConditionGivenDocblockType occurrences="1">
+            <code>$this-&gt;application</code>
+        </RedundantConditionGivenDocblockType>
+        <UndefinedInterfaceMethod occurrences="2">
+            <code>clientConnected</code>
+            <code>clientActivity</code>
+        </UndefinedInterfaceMethod>
+    </file>
+    <file src="incl/websocket/php-websocket/src/Server.php">
+        <DocblockTypeContradiction occurrences="1">
+            <code>is_object($client)</code>
+        </DocblockTypeContradiction>
+        <MissingPropertyType occurrences="1">
+            <code>$client-&gt;waitingForData</code>
+        </MissingPropertyType>
+        <PossiblyFalseArgument occurrences="2">
+            <code>$ressource</code>
+            <code>strpos($domain, '/')</code>
+        </PossiblyFalseArgument>
+        <PossiblyNullReference occurrences="1">
+            <code>onDisconnect</code>
+        </PossiblyNullReference>
+        <RedundantCondition occurrences="1">
+            <code>is_bool($doOriginCheck)</code>
+        </RedundantCondition>
+        <TypeDoesNotContainType occurrences="3">
+            <code>is_bool($doOriginCheck) === false</code>
+            <code>is_int($limit)</code>
+            <code>is_int($limit)</code>
+        </TypeDoesNotContainType>
+        <UndefinedInterfaceMethod occurrences="5">
+            <code>statusMsg</code>
+            <code>statusMsg</code>
+            <code>setServerInfo</code>
+            <code>clientDisconnected</code>
+            <code>clientDisconnected</code>
+        </UndefinedInterfaceMethod>
+    </file>
+    <file src="incl/websocket/php-websocket/src/Socket.php">
+        <MissingParamType occurrences="2">
+            <code>$resource</code>
+            <code>$resource</code>
+        </MissingParamType>
+        <PossiblyNullPropertyAssignmentValue occurrences="1">
+            <code>null</code>
+        </PossiblyNullPropertyAssignmentValue>
+        <PossiblyUndefinedVariable occurrences="1">
+            <code>$metadata</code>
+        </PossiblyUndefinedVariable>
+    </file>
+    <file src="incl/websocketconnection.inc.php">
+        <InvalidOperand occurrences="2">
+            <code>$version[0]</code>
+            <code>$version[1]</code>
+        </InvalidOperand>
+        <MissingParamType occurrences="4">
+            <code>$resultText</code>
+            <code>$websocketEnabled</code>
+            <code>$resultCode</code>
+            <code>$newState</code>
+        </MissingParamType>
+        <MissingReturnType occurrences="4">
+            <code>sendWebsocketMessage</code>
+            <code>requestCurrentState</code>
+            <code>sendWebsocketStateChange</code>
+            <code>isNewServerSupported</code>
+        </MissingReturnType>
+        <PossiblyUndefinedVariable occurrences="3">
+            <code>$version</code>
+            <code>$version</code>
+            <code>$version</code>
+        </PossiblyUndefinedVariable>
+        <UndefinedFunction occurrences="3">
+            <code>sendWSResult($resultCode, $resultText)</code>
+            <code>requestSavedState()</code>
+            <code>sendNewState($newState)</code>
+        </UndefinedFunction>
+    </file>
+    <file src="incl/webui.inc.php">
+        <MissingParamType occurrences="12">
+            <code>$text</code>
+            <code>$link</code>
+            <code>$id</code>
+            <code>$menu</code>
+            <code>$html</code>
+            <code>$js</code>
+            <code>$title</code>
+            <code>$html</code>
+            <code>$links</code>
+            <code>$additionalHeader</code>
+            <code>$tableHeadItems</code>
+            <code>$html</code>
+        </MissingParamType>
+        <MissingPropertyType occurrences="10">
+            <code>$itemText</code>
+            <code>$itemLink</code>
+            <code>$itemId</code>
+            <code>$htmlOutput</code>
+            <code>$menu</code>
+            <code>$htmlOutput</code>
+            <code>$CONFIG-&gt;HIDE_LINK_GROCY</code>
+            <code>$CONFIG-&gt;EXTERNAL_GROCY_URL</code>
+            <code>$CONFIG-&gt;HIDE_LINK_SCREEN</code>
+            <code>$CONFIG-&gt;DISABLE_AUTHENTICATION</code>
+        </MissingPropertyType>
+        <MissingReturnType occurrences="14">
+            <code>hideGetPostParameters</code>
+            <code>setText</code>
+            <code>setLink</code>
+            <code>setId</code>
+            <code>addHtml</code>
+            <code>addScript</code>
+            <code>printHtml</code>
+            <code>addCard</code>
+            <code>addHeader</code>
+            <code>addFooter</code>
+            <code>startRow</code>
+            <code>addCell</code>
+            <code>endRow</code>
+            <code>getHtml</code>
+        </MissingReturnType>
+        <UndefinedConstant occurrences="1">
+            <code>MENU_GENERIC</code>
+        </UndefinedConstant>
+    </file>
+    <file src="index.php">
+        <MissingParamType occurrences="3">
+            <code>$barcodes</code>
+            <code>$barcodes</code>
+            <code>$barcodes</code>
+        </MissingParamType>
+        <MissingReturnType occurrences="5">
+            <code>processButtons</code>
+            <code>getHtmlMainMenuReqActions</code>
+            <code>getHtmlMainMenuTableKnown</code>
+            <code>getHtmlMainMenuTableUnknown</code>
+            <code>getHtmlLogTextArea</code>
+        </MissingReturnType>
+        <ParadoxicalCondition occurrences="1">
+            <code>isset($_POST["button_delete"])</code>
+        </ParadoxicalCondition>
+    </file>
+    <file src="login.php">
+        <MissingParamType occurrences="2">
+            <code>$result</code>
+            <code>$result</code>
+        </MissingParamType>
+        <MissingReturnType occurrences="4">
+            <code>login</code>
+            <code>createUser</code>
+            <code>getHtmlCreateUser</code>
+            <code>getHtmlLogin</code>
+        </MissingReturnType>
+        <UndefinedClass occurrences="2">
+            <code>\Delight\Auth\UnknownUsernameException</code>
+            <code>\Delight\Auth\Role</code>
+        </UndefinedClass>
+    </file>
+    <file src="menu/admin.php">
+        <MissingPropertyType occurrences="1">
+            <code>$CONFIG-&gt;DATABASE_PATH</code>
+        </MissingPropertyType>
+        <MissingReturnType occurrences="1">
+            <code>getHtmlAdminMenu</code>
+        </MissingReturnType>
+    </file>
+    <file src="menu/apimanagement.php">
+        <MissingPropertyType occurrences="1">
+            <code>$CONFIG-&gt;REQUIRE_API_KEY</code>
+        </MissingPropertyType>
+        <MissingReturnType occurrences="2">
+            <code>getMobileAppPage</code>
+            <code>getApiTable</code>
+        </MissingReturnType>
+    </file>
+    <file src="menu/chores.php">
+        <MissingReturnType occurrences="1">
+            <code>getHtmlChoreTable</code>
+        </MissingReturnType>
+    </file>
+    <file src="menu/quantities.php">
+        <MissingReturnType occurrences="1">
+            <code>printSettingsQuantityTable</code>
+        </MissingReturnType>
+    </file>
+    <file src="menu/settings.php">
+        <DocblockTypeContradiction occurrences="1">
+            <code>$result === true</code>
+        </DocblockTypeContradiction>
+        <InvalidOperand occurrences="1">
+            <code>$result</code>
+        </InvalidOperand>
+        <MissingReturnType occurrences="5">
+            <code>saveSettings</code>
+            <code>getHtmlSettingsGeneral</code>
+            <code>getHtmlSettingsGrocyApi</code>
+            <code>checkGrocyConnection</code>
+            <code>getHtmlSettingsWebsockets</code>
+        </MissingReturnType>
+    </file>
+    <file src="menu/tags.php">
+        <MissingReturnType occurrences="1">
+            <code>getHtmlTagTable</code>
+        </MissingReturnType>
+    </file>
+    <file src="plugins/EventReceiver.php">
+        <MissingParamType occurrences="2">
+            <code>$eventType</code>
+            <code>$log</code>
+        </MissingParamType>
+        <MissingReturnType occurrences="1">
+            <code>pluginEventReceiver_processEvent</code>
+        </MissingReturnType>
+    </file>
+    <file src="screen.php">
+        <UndefinedGlobalVariable occurrences="1">
+            <code>$BBCONFIG</code>
+        </UndefinedGlobalVariable>
+    </file>
+    <file src="setup.php">
+        <UndefinedGlobalVariable occurrences="1">
+            <code>$BBCONFIG</code>
+        </UndefinedGlobalVariable>
+    </file>
+    <file src="wsserver.php">
+        <InvalidArgument occurrences="1">
+            <code>100</code>
+        </InvalidArgument>
+        <MissingFile occurrences="1">
+            <code>require __DIR__ . '/php-websocket/src/Application/StatusApplication.php'</code>
+        </MissingFile>
+        <MissingPropertyType occurrences="2">
+            <code>$CONFIG-&gt;PORT_WEBSOCKET_SERVER</code>
+            <code>$CONFIG-&gt;PORT_WEBSOCKET_SERVER</code>
+        </MissingPropertyType>
+        <TypeDoesNotContainType occurrences="3">
+            <code>ENABLE_STATISTICS</code>
+            <code>ENABLE_STATISTICS</code>
+            <code>ENABLE_STATISTICS</code>
+        </TypeDoesNotContainType>
+    </file>
+</files>

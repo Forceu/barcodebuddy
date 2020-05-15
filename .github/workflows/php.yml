@@ -16,5 +16,5 @@ jobs:
       - run: composer require --dev vimeo/psalm
         name: Install Psalm
 
-      - run: vendor/bin/psalm --output-format=github --config=.github/workflows/psalm.xml
+      - run: vendor/bin/psalm --output-format=github --config=.github/workflows/psalm.xml --show-info=true
         name: Run Psalm

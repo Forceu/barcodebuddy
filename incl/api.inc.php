@@ -55,6 +55,7 @@ class CurlGenerator {
     
     function __construct($url, $method = METHOD_GET, $jasonData = null, $loginOverride = null, $noApiCall = false) {
         global $CONFIG;
+        global $BBCONFIG;
         
         $this->method  = $method;
         $this->urlApi  = $url;
@@ -62,7 +63,6 @@ class CurlGenerator {
 
         if ($loginOverride == null) {
             require_once __DIR__ . "/db.inc.php";
-            global $BBCONFIG;
             $apiKey = $BBCONFIG["GROCY_API_KEY"];
             $apiUrl = $BBCONFIG["GROCY_API_URL"];
         } else {
@@ -98,8 +98,9 @@ class CurlGenerator {
     }
     
     function execute($decode = false) {
+        global $db;
+
         if (DISPLAY_DEBUG) {
-            global $db;
             $startTime = microtime(true);
             $db->saveLog("<i>Executing API call: " . $this->urlApi. "</i>", false, false, true);
         }

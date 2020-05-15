@@ -663,8 +663,7 @@ class API {
     public static function logError($errorMessage, $isFatal = true) {
         require_once __DIR__ . "/db.inc.php";
         global $db;
-        if ($db != null)
-            $db->saveError($errorMessage, $isFatal);
+        $db->saveError($errorMessage, $isFatal);
     }
     
 }

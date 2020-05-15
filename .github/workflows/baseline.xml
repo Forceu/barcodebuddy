@@ -167,11 +167,6 @@
       <code>$result</code>
     </InvalidOperand>
   </file>
-  <file src="screen.php">
-    <UndefinedGlobalVariable occurrences="1">
-      <code>$BBCONFIG</code>
-    </UndefinedGlobalVariable>
-  </file>
   <file src="setup.php">
     <UndefinedGlobalVariable occurrences="1">
       <code>$BBCONFIG</code>

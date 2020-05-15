@@ -17,4 +17,7 @@
             <directory name="./vendor"/>
         </ignoreFiles>
     </projectFiles>
+    <globals>
+        <var name="BBCONFIG" type="array" />
+    </globals>
 </psalm>

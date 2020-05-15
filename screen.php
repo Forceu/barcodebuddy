@@ -18,9 +18,6 @@
 require_once __DIR__ . "/incl/configProcessing.inc.php";
 require_once __DIR__ . "/incl/db.inc.php";
 
-global $BBCONFIG;
-
-
 $CONFIG->checkIfAuthenticated(true);
 
 ?>

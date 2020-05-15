@@ -12,7 +12,6 @@
   </file>
   <file src="incl/api.inc.php">
     <InvalidGlobal occurrences="2">
-      <code>global $BBCONFIG;</code>
       <code>global $db;</code>
     </InvalidGlobal>
     <InvalidReturnStatement occurrences="8">
@@ -166,11 +165,6 @@
     <InvalidOperand occurrences="1">
       <code>$result</code>
     </InvalidOperand>
-  </file>
-  <file src="setup.php">
-    <UndefinedGlobalVariable occurrences="1">
-      <code>$BBCONFIG</code>
-    </UndefinedGlobalVariable>
   </file>
   <file src="wsserver.php">
     <MissingFile occurrences="1">

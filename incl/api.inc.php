@@ -221,9 +221,10 @@ class API {
     /**
      *   Check if API details are correct
      * 
-     * @param  String URL to Grocy API
-     * @param  String API key
-     * @return Returns String with error or true if connection could be established
+     * @param String $givenurl URL to Grocy API
+     * @param String $apikey   API key
+     *
+     * @return String | true Returns String with error or true if connection could be established
      */
     public static function checkApiConnection($givenurl, $apikey) {
         $loginInfo = array(LOGIN_URL => $givenurl, LOGIN_API_KEY => $apikey);

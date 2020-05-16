@@ -128,7 +128,10 @@ private $db = null;
         if (sizeof($BBCONFIG) == 0) {
             die("DB Error: Could not get configuration");
         }
-        $BBCONFIG["GROCY_BASE_URL"] = strrtrim($BBCONFIG["GROCY_API_URL"], "api/");
+        $BBCONFIG["GROCY_BASE_URL"] = $CONFIG->EXTERNAL_GROCY_URL != null ? $CONFIG->EXTERNAL_GROCY_URL : strrtrim($BBCONFIG["GROCY_API_URL"], "api/");
+        if (substr($BBCONFIG["GROCY_BASE_URL"], -1) != "/") {
+            $BBCONFIG["GROCY_BASE_URL"] .= "/";
+        }
     }
     
     //Sets the config key with new value

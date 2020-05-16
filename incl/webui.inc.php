@@ -184,11 +184,8 @@ class WebUiGenerator {
         if ($this->menu != MENU_SETUP && $this->menu != MENU_ERROR && $this->menu != MENU_LOGIN) {
             $this->addHtml('<nav class="mdl-navigation mdl-layout--always">');
             if (!$CONFIG->HIDE_LINK_GROCY)
-                if ($CONFIG->EXTERNAL_GROCY_URL != null)
-                $this->addHtml('<a class="mdl-navigation__link" target="_blank" href="' . $CONFIG->EXTERNAL_GROCY_URL . '">Grocy</a>');
-                    else
-                $this->addHtml('<a class="mdl-navigation__link" target="_blank" href="' . str_replace("api/", "", $BBCONFIG["GROCY_API_URL"]) . '">Grocy</a>');
-
+                $this->addHtml('<a class="mdl-navigation__link" target="_blank" href="' . $BBCONFIG["GROCY_BASE_URL"] . '">Grocy</a>');
+              
             if (!$CONFIG->HIDE_LINK_SCREEN)
                 $this->addHtml('<a class="mdl-navigation__link" target="_blank" href="' . $folder . 'screen.php">Screen</a>');
             $this->addHtml('</nav>');

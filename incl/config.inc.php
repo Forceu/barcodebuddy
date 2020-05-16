@@ -30,7 +30,18 @@ class BBConfig implements ArrayAccess
         if (sizeof($this->container) == 0) {
             die("DB Error: Could not get configuration");
         }
-        $this->container["GROCY_BASE_URL"] = strrtrim($this->container["GROCY_API_URL"], "api/");
+
+        if ($CONFIG->EXTERNAL_GROCY_URL != null)
+            $this->container["GROCY_BASE_URL"] = $CONFIG->EXTERNAL_GROCY_URL;
+        else
+            $this->container["GROCY_BASE_URL"] = strrtrim($this->container["GROCY_API_URL"], "api/");
+
+        if (substr($this->container["GROCY_BASE_URL"], -1) != "/") {
+            if (substr($this->container["GROCY_BASE_URL"], -1) != "/") {
+                $this->container["GROCY_BASE_URL"] .= "/";
+                $this->container["GROCY_BASE_URL"] .= "/";
+            }
+        }
     }
 
     /**

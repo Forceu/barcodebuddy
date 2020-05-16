@@ -27,6 +27,7 @@
 
 require_once __DIR__ . "/configProcessing.inc.php";
 require_once __DIR__ . "/uiEditor.inc.php";
+require_once __DIR__ . "/config.inc.php";
 
 const MENU_GENERIC = 0;
 const MENU_MAIN = 1;
@@ -117,8 +118,6 @@ class WebUiGenerator {
     }
 
     function addHeader($additionalHeader = null) {
-        require_once __DIR__ . "/db.inc.php";
-        global $BBCONFIG;
         global $CONFIG;
         
         if ($this->menu == MENU_SETTINGS || $this->menu === MENU_GENERIC) {
@@ -187,7 +186,7 @@ class WebUiGenerator {
                 if ($CONFIG->EXTERNAL_GROCY_URL != null)
                 $this->addHtml('<a class="mdl-navigation__link" target="_blank" href="' . $CONFIG->EXTERNAL_GROCY_URL . '">Grocy</a>');
                     else
-                $this->addHtml('<a class="mdl-navigation__link" target="_blank" href="' . str_replace("api/", "", $BBCONFIG["GROCY_API_URL"]) . '">Grocy</a>');
+                $this->addHtml('<a class="mdl-navigation__link" target="_blank" href="' . str_replace("api/", "", BBConfig::getInstance()["GROCY_API_URL"]) . '">Grocy</a>');
 
             if (!$CONFIG->HIDE_LINK_SCREEN)
                 $this->addHtml('<a class="mdl-navigation__link" target="_blank" href="' . $folder . 'screen.php">Screen</a>');

@@ -48,9 +48,6 @@
     </UndefinedDocblockClass>
   </file>
   <file src="incl/authentication/authentication.inc.php">
-    <InvalidGlobal occurrences="1">
-      <code>global $CONFIG;</code>
-    </InvalidGlobal>
     <UndefinedClass occurrences="3">
       <code>\Delight\Db\PdoDsn</code>
       <code>\Delight\Auth\Auth</code>
@@ -61,9 +58,6 @@
     <ForbiddenCode occurrences="1">
       <code>var_dump($variable)</code>
     </ForbiddenCode>
-    <InvalidGlobal occurrences="1">
-      <code>global $CONFIG;</code>
-    </InvalidGlobal>
     <InvalidOperand occurrences="1">
       <code>$subnetMask</code>
     </InvalidOperand>

@@ -16,7 +16,7 @@
  */
 
 require_once __DIR__ . "/incl/configProcessing.inc.php";
-require_once __DIR__ . "/incl/db.inc.php";
+require_once __DIR__ . "/incl/config.inc.php";
 
 $CONFIG->checkIfAuthenticated(true);
 
@@ -204,11 +204,11 @@ $CONFIG->checkIfAuthenticated(true);
           wakeLockEnabled = true;
           document.getElementById('beep_success').muted=false;
           document.getElementById('beep_nosuccess').muted=false;
-          <?php if ($BBCONFIG["WS_FULLSCREEN"]) { echo " document.documentElement.requestFullscreen();"; }?>
+          <?php if (BBConfig::getInstance()["WS_FULLSCREEN"]) { echo " document.documentElement.requestFullscreen();"; }?>
           document.getElementById("muteimg").src = "incl/img/unmute.svg";
               } else {
                 noSleep.disable();
-          <?php if ($BBCONFIG["WS_FULLSCREEN"]) { echo " document.exitFullscreen();"; } ?>
+          <?php if (BBConfig::getInstance()["WS_FULLSCREEN"]) { echo " document.exitFullscreen();"; } ?>
                 wakeLockEnabled = false;
           document.getElementById('beep_success').muted=true;
           document.getElementById('beep_nosuccess').muted=true;

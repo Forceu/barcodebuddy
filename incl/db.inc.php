@@ -77,6 +77,9 @@ class DatabaseConnection {
 
     const DB_INT_VALUES = array("REVERT_TIME");
 
+    /**
+     * @var SQLite3
+     */
     private $db = null;
     private static $_ConnectionInstance = null;
     private static $_StartingConnection = false;
@@ -113,7 +116,6 @@ class DatabaseConnection {
     
     //Initiate database and create global variable for config
     private function initDb() {
-        global $BBCONFIG;
         global $CONFIG;
         
         self::checkPermissions();
@@ -128,11 +130,10 @@ class DatabaseConnection {
         $this->db->exec("CREATE TABLE IF NOT EXISTS Quantities(id INTEGER PRIMARY KEY, barcode TEXT NOT NULL UNIQUE, quantitiy INTEGER NOT NULL, product TEXT)");
         $this->db->exec("CREATE TABLE IF NOT EXISTS ApiKeys(id INTEGER PRIMARY KEY, key TEXT NOT NULL UNIQUE, lastused INTEGER NOT NULL)");
         $this->insertDefaultValues();
-        $this->getConfig();
-        $previousVersion = $BBCONFIG["version"];
+        $previousVersion = BBConfig::getInstance($this)["version"];
         if ($previousVersion < BB_VERSION) {
             $this->upgradeBarcodeBuddy($previousVersion);
-            $this->getConfig();
+            BBConfig::forceRefresh();
         }
     }
     
@@ -145,35 +146,7 @@ class DatabaseConnection {
             $this->db->exec("INSERT INTO BBConfig(data,value) SELECT \"" . $name . "\", \"" . $value . "\" WHERE NOT EXISTS(SELECT 1 FROM BBConfig WHERE data = '$name')");
         }
     }
-    
-    //Reads  Barcode Buddy Config from DB
-    private function getConfig() {
-        global $BBCONFIG;
-        global $CONFIG;
-        $BBCONFIG = array();
-        $res      = $this->db->query("SELECT * FROM BBConfig");
-        while ($row = $res->fetchArray()) {
-            if (isset($CONFIG->OVERRIDDEN_USER_CONFIG[$row['data']]))
-                $BBCONFIG[$row['data']] = $CONFIG->OVERRIDDEN_USER_CONFIG[$row['data']];
-            else
-                $BBCONFIG[$row['data']] = $row['value'];
-        }
-        if (sizeof($BBCONFIG) == 0) {
-            die("DB Error: Could not get configuration");
-        }
-        $BBCONFIG["GROCY_BASE_URL"] = strrtrim($BBCONFIG["GROCY_API_URL"], "api/");
-    }
-    
-    //Sets the config key with new value
-    public function updateConfig($key, $value) {
-        global $BBCONFIG;
-        if (in_array($key, self::DB_INT_VALUES)) {
-            checkIfNumeric($value);
-        }
-        $this->db->exec("UPDATE BBConfig SET value='" . $value . "' WHERE data='$key'");
-        $BBCONFIG[$key] = $value;
-    }
-    
+
     //Save last used barcode into DB
     public function saveLastBarcode($barcode, $name = null) {
         $this->updateConfig("LAST_BARCODE", $barcode);
@@ -225,7 +198,6 @@ class DatabaseConnection {
     
     //Is called after updating Barcode Buddy to a new version
     private function upgradeBarcodeBuddy($previousVersion) {
-        global $BBCONFIG;
         global $ERROR_MESSAGE;
         //We update version before the actual update routine, as otherwise the user cannot
         //reenter setup. As the login gets invalidated in such a case, the Grocy version
@@ -233,11 +205,11 @@ class DatabaseConnection {
         $this->db->exec("UPDATE BBConfig SET value='" . BB_VERSION . "' WHERE data='version'");
         //Place for future update protocols
         if ($previousVersion < 1211) {
-            $this->getConfig();
-            $this->updateConfig("BARCODE_C", strtoupper($BBCONFIG["BARCODE_C"]));
-            $this->updateConfig("BARCODE_O", strtoupper($BBCONFIG["BARCODE_O"]));
-            $this->updateConfig("BARCODE_P", strtoupper($BBCONFIG["BARCODE_P"]));
-            $this->updateConfig("BARCODE_CS", strtoupper($BBCONFIG["BARCODE_CS"]));
+            $config = BBConfig::getInstance();
+            $this->updateConfig("BARCODE_C", strtoupper($config["BARCODE_C"]));
+            $this->updateConfig("BARCODE_O", strtoupper($config["BARCODE_O"]));
+            $this->updateConfig("BARCODE_P", strtoupper($config["BARCODE_P"]));
+            $this->updateConfig("BARCODE_CS", strtoupper($config["BARCODE_CS"]));
         }
         if ($previousVersion < 1303) {
             $this->isSupportedGrocyVersionOrDie();
@@ -273,8 +245,6 @@ class DatabaseConnection {
     
     //Getting the state TODO change date
     public function getTransactionState() {
-        global $BBCONFIG;
-        
         $res = $this->db->query("SELECT * FROM TransactionState");
         if ($row = $res->fetchArray()) {
             $state = $row["currentState"];
@@ -285,7 +255,7 @@ class DatabaseConnection {
                 $stateSet            = strtotime($since);
                 $now                 = strtotime($this->getDbTimeInLC());
                 $differenceInMinutes = round(abs($now - $stateSet) / 60, 0);
-                if ($differenceInMinutes > $BBCONFIG["REVERT_TIME"]) {
+                if ($differenceInMinutes > BBConfig::getInstance()["REVERT_TIME"]) {
                     $this->setTransactionState(STATE_CONSUME);
                     return STATE_CONSUME;
                 } else {
@@ -597,8 +567,7 @@ class DatabaseConnection {
 
     //Save a log
     public function saveLog($log, $isVerbose = false, $isError = false, $isDebug = false) {
-        global $BBCONFIG;
-        if ($isVerbose == false || $BBCONFIG["MORE_VERBOSE"] == true) {
+        if ($isVerbose == false || BBConfig::getInstance()["MORE_VERBOSE"] == true) {
             $date = date('Y-m-d H:i:s');
             if ($isError || $isDebug) {
                 $logEntry = $date .': ' . $log;
@@ -655,5 +624,20 @@ class DatabaseConnection {
         }
         return $query;
     }
-    
+
+    /**
+     * @return mixed
+     */
+    function getRawConfig() {
+        return $this->db->query("SELECT * FROM BBConfig");
+    }
+
+    //Sets the config key with new value
+    public function updateConfig($key, $value) {
+        if (in_array($key, self::DB_INT_VALUES)) {
+            checkIfNumeric($value);
+        }
+        $this->db->exec("UPDATE BBConfig SET value='" . $value . "' WHERE data='$key'");
+        BBConfig::getInstance()[$key] = $value;
+    }
 }

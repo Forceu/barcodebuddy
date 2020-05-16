@@ -19,6 +19,7 @@
 
 require_once __DIR__ . "/configProcessing.inc.php";
 require_once __DIR__ . "/db.inc.php";
+require_once __DIR__ . "/config.inc.php";
 
 const API_O_PRODUCTS     = 'objects/products';
 const API_PRODUCTS       = 'stock/products';
@@ -56,15 +57,16 @@ class CurlGenerator {
     
     function __construct($url, $method = METHOD_GET, $jasonData = null, $loginOverride = null, $noApiCall = false) {
         global $CONFIG;
-        global $BBCONFIG;
+
+        $config = BBConfig::getInstance();
         
         $this->method  = $method;
         $this->urlApi  = $url;
         $this->ch      = curl_init();
 
         if ($loginOverride == null) {
-            $apiKey = $BBCONFIG["GROCY_API_KEY"];
-            $apiUrl = $BBCONFIG["GROCY_API_URL"];
+            $apiKey = $config["GROCY_API_KEY"];
+            $apiUrl = $config["GROCY_API_URL"];
         } else {
             $apiKey = $loginOverride[LOGIN_API_KEY];
             $apiUrl = $loginOverride[LOGIN_URL];
@@ -313,8 +315,6 @@ class API {
      * @return false if default best before date not set
      */
     public static function purchaseProduct($id, $amount, $bestbefore = null, $price = null, &$fileLock = null, $defaultBestBefore = null) {
-        global $BBCONFIG;
-        
         $daysBestBefore = 0;
         $data = array(
             'amount' => $amount,
@@ -345,7 +345,7 @@ class API {
         }
         if ($fileLock != null)
             $fileLock->removeLock();
-        if ($BBCONFIG["SHOPPINGLIST_REMOVE"]) {
+        if (BBConfig::getInstance()["SHOPPINGLIST_REMOVE"]) {
             self::removeFromShoppinglist($id, $amount);
         }
         return ($daysBestBefore != 0);
@@ -486,8 +486,6 @@ class API {
      * @return [String]          Returns product name or "N/A" if not found
      */
     public static function lookupNameByBarcodeInOpenFoodFacts($barcode) {
-        global $BBCONFIG;
-        
         $url = "https://world.openfoodfacts.org/api/v0/product/" . $barcode . ".json";
 
         $curl = new CurlGenerator($url, METHOD_GET, null, null, true);
@@ -519,7 +517,7 @@ class API {
             $productName = sanitizeString($result["product"]["product_name"]);
         }
 
-        if ($BBCONFIG["USE_GENERIC_NAME"]) {
+        if (BBConfig::getInstance()["USE_GENERIC_NAME"]) {
             if ($genericName != null)
                 return $genericName;
             if ($productName != null)

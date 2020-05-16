@@ -21,6 +21,7 @@
 require_once __DIR__ . "/../incl/configProcessing.inc.php";
 require_once __DIR__ . "/../incl/db.inc.php";
 require_once __DIR__ . "/../incl/processing.inc.php";
+require_once __dir__ . "/../incl/config.inc.php";
 
 //removes Get paramterss
 $requestedUrl = strtok($_SERVER["REQUEST_URI"], '?');
@@ -152,16 +153,16 @@ class BBuddyApi {
         }));
         
         $this->addRoute(new ApiRoute("/system/barcodes", function() {
-            global $BBCONFIG;
+            $config = BBConfig::getInstance();
             return self::createResultArray(array(
-                "BARCODE_C" => $BBCONFIG["BARCODE_C"],
-                "BARCODE_CS" => $BBCONFIG["BARCODE_CS"],
-                "BARCODE_P" => $BBCONFIG["BARCODE_P"],
-                "BARCODE_O" => $BBCONFIG["BARCODE_O"],
-                "BARCODE_GS" => $BBCONFIG["BARCODE_GS"],
-                "BARCODE_Q" => $BBCONFIG["BARCODE_Q"],
-                "BARCODE_AS" => $BBCONFIG["BARCODE_AS"],
-                "BARCODE_CA" => $BBCONFIG["BARCODE_CA"]
+                "BARCODE_C" => $config["BARCODE_C"],
+                "BARCODE_CS" => $config["BARCODE_CS"],
+                "BARCODE_P" => $config["BARCODE_P"],
+                "BARCODE_O" => $config["BARCODE_O"],
+                "BARCODE_GS" => $config["BARCODE_GS"],
+                "BARCODE_Q" => $config["BARCODE_Q"],
+                "BARCODE_AS" => $config["BARCODE_AS"],
+                "BARCODE_CA" => $config["BARCODE_CA"]
             ));
         }));
         

@@ -27,7 +27,7 @@ require_once __DIR__ . "/incl/internalChecking.inc.php";
 
 
 $CONFIG->checkIfAuthenticated(true);
-
+$db = DatabaseConnection::getInstance();
 
 $result = true;
 

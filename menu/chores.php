@@ -24,7 +24,7 @@ require_once __DIR__ . "/../incl/db.inc.php";
 require_once __DIR__ . "/../incl/processing.inc.php";
 require_once __DIR__ . "/../incl/webui.inc.php";
 
-
+$db = DatabaseConnection::getInstance();
 $CONFIG->checkIfAuthenticated(true, true);
 
 

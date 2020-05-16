@@ -52,7 +52,7 @@ $webUi->printHtml();
 //is saved as a database entry
 function saveSettings() {
     global $BBCONFIG;
-    global $db;
+    $db = DatabaseConnection::getInstance();
     foreach ($BBCONFIG as $key => $value) {
         if (isset($_POST[$key])) {
             if ($_POST[$key] != $value) {

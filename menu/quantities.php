@@ -25,7 +25,7 @@ require_once __DIR__ . "/../incl/processing.inc.php";
 require_once __DIR__ . "/../incl/websocketconnection.inc.php";
 require_once __DIR__ . "/../incl/webui.inc.php";
 
-
+$db = DatabaseConnection::getInstance();
 $CONFIG->checkIfAuthenticated(true, true);
 
 //Delete Quantitiy 
@@ -51,8 +51,7 @@ $webUi->printHtml();
 
 
 function printSettingsQuantityTable(){
-    global $db;
-    $quantities = $db->getQuantities();
+    $quantities = DatabaseConnection::getInstance()->getQuantities();
     $html = new UiEditor();
     if (sizeof($quantities) == 0) {
         $html->addHtml("No saved quantities yet.");

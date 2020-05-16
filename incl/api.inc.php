@@ -98,11 +98,9 @@ class CurlGenerator {
     }
     
     function execute($decode = false) {
-        global $db;
-
         if (DISPLAY_DEBUG) {
             $startTime = microtime(true);
-            $db->saveLog("<i>Executing API call: " . $this->urlApi. "</i>", false, false, true);
+            DatabaseConnection::getInstance()->saveLog("<i>Executing API call: " . $this->urlApi. "</i>", false, false, true);
         }
         $curlResult   = curl_exec($this->ch);
         $this->checkForErrorsAndThrow($curlResult);
@@ -123,7 +121,7 @@ class CurlGenerator {
         }
         if (DISPLAY_DEBUG) {
             $totalTimeMs = round((microtime(true)- $startTime) * 1000);
-            $db->saveLog("<i>Executing took " . $totalTimeMs . "ms</i>", false, false, true);
+            DatabaseConnection::getInstance()->saveLog("<i>Executing took " . $totalTimeMs . "ms</i>", false, false, true);
         }
         if ($decode)
             return $jsonDecoded;
@@ -661,11 +659,10 @@ class API {
     }
 
     public static function logError($errorMessage, $isFatal = true) {
-
-        global $db;
-        $db->saveError($errorMessage, $isFatal);
+        try {
+            DatabaseConnection::getInstance()->saveError($errorMessage, $isFatal);
+        } catch (DbConnectionDuringEstablishException $_) {
+            // Error occured during the DB connection. As such, DB is not available to log the error.
+        }
     }
-    
 }
-
-?>

@@ -19,6 +19,5 @@
     </projectFiles>
     <globals>
         <var name="BBCONFIG" type="array" />
-        <var name="db" type="\DatabaseConnection"/>
     </globals>
 </psalm>

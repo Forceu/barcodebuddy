@@ -83,7 +83,7 @@ if (isset($_GET["text"])) {
 // Only one row can be processed at a time
 processButtons();
 
-$barcodes = $db->getStoredBarcodes();
+$barcodes = DatabaseConnection::getInstance()->getStoredBarcodes();
 if (sizeof($barcodes['known']) > 0 || sizeof($barcodes['unknown']) > 0 || sizeof($barcodes['tare']) > 0) {
     $productinfo = API::getProductInfo();
 }
@@ -130,7 +130,7 @@ $webUi->printHtml();
 
 //Check if a button on the web ui was pressed and process
 function processButtons() {
-    global $db;
+    $db = DatabaseConnection::getInstance();
 
     if (isset($_GET["delete"])) {
         $db->deleteAll($_GET["delete"]);

@@ -40,12 +40,20 @@ const SECTION_LOGS             = "log";
 
 const LEGACY_DATABASE_PATH = __DIR__ . '/../barcodebuddy.db';
 
-// Creates a database connection and offers DB functions
+/**
+ * Thrown when a database connection is already being setup and a new connection is requested
+ */
+class DbConnectionDuringEstablishException extends Exception {
+
+}
+
+/**
+ * Creates a database connection and offers DB functions
+ */
 class DatabaseConnection {
 
-
-/* 1 is used for true and 0 for false, as PHP interpretes the String "false" as Boolean "true" */
-const DEFAULT_VALUES      = array(
+    /* 1 is used for true and 0 for false, as PHP interprets the String "false" as Boolean "true" */
+    const DEFAULT_VALUES      = array(
                 "DEFAULT_BARCODE_C"              => "BBUDDY-C",
                 "DEFAULT_BARCODE_CS"             => "BBUDDY-CS",
                 "DEFAULT_BARCODE_CA"             => "BBUDDY-CA",
@@ -67,16 +75,41 @@ const DEFAULT_VALUES      = array(
                 "DEFAULT_CONSUME_SAVED_QUANTITY" => "0",
                 "DEFAULT_USE_GROCY_QU_FACTOR"    => "0");
 
+    const DB_INT_VALUES = array("REVERT_TIME");
 
-const DB_INT_VALUES = array("REVERT_TIME");
+    private $db = null;
+    private static $_ConnectionInstance = null;
+    private static $_StartingConnection = false;
 
-private $db = null;
-
-
-    function __construct() {
+    private function __construct() {
         $this->initDb();
     }
-    
+
+    /**
+     * Get an instance of DatabaseConnection
+     * If an existing instance is available, it will be used.
+     * If not available, and no instance is being created, a new connection will be established.
+     * Otherwise (such as during an ongoing upgrade in this php instance) an error will be thrown
+     *
+     * @return DatabaseConnection
+     *
+     * @throws DbConnectionDuringEstablishException
+     */
+    static function getInstance() {
+        if(self::$_StartingConnection)
+        {
+            throw new DbConnectionDuringEstablishException();
+        }
+
+        if(self::$_ConnectionInstance != null) {
+            return self::$_ConnectionInstance;
+        }
+
+        self::$_StartingConnection = true;
+        self::$_ConnectionInstance = new DatabaseConnection();
+        self::$_StartingConnection = false;
+        return self::$_ConnectionInstance;
+    }
     
     //Initiate database and create global variable for config
     private function initDb() {
@@ -624,10 +657,3 @@ private $db = null;
     }
     
 }
-
-
-// Initiates the database variable
-if (!isset($db)) {
-    $db = new DatabaseConnection();
-}
-?>

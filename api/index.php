@@ -44,7 +44,6 @@ class BBuddyApi {
     private $routes = array();
     
     function checkIfAuthorized() {
-        global $db;
         global $CONFIG;
         
         if ($CONFIG->checkIfAuthenticated(false))
@@ -59,7 +58,7 @@ class BBuddyApi {
         if ($apiKey == "")
             self::sendUnauthorizedAndDie();
         
-        if ($db->isValidApiKey($apiKey))
+        if (DatabaseConnection::getInstance()->isValidApiKey($apiKey))
             return true;
         else
             self::sendUnauthorizedAndDie();
@@ -137,19 +136,17 @@ class BBuddyApi {
         }));
         
         $this->addRoute(new ApiRoute("/state/getmode", function() {
-            global $db;
             return self::createResultArray(array(
-                "mode" => $db->getTransactionState()
+                "mode" => DatabaseConnection::getInstance()->getTransactionState()
             ));
         }));
         
         $this->addRoute(new ApiRoute("/state/setmode", function() {
-            global $db;
             //Also check if value is a valid range (STATE_CONSUME the lowest and STATE_CONSUME_ALL the highest value)
             if (!isset($_POST["state"]) || !is_numeric($_POST["state"]) || $_POST["state"] < STATE_CONSUME || $_POST["state"] > STATE_CONSUME_ALL)
                 return self::createResultArray(null, "Invalid state provided", 400);
             else {
-                $db->setTransactionState(intval($_POST["state"]));
+                DatabaseConnection::getInstance()->setTransactionState(intval($_POST["state"]));
                 return self::createResultArray();
             }
         }));

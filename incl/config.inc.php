@@ -1,8 +1,12 @@
 <?php
 
+include_once __DIR__ . "/processing.inc.php";
 
 class BBConfig implements ArrayAccess
 {
+    /**
+     * @var null|BBConfig
+     */
     private static $_BBConfigInstance = null;
 
     private $container = array();
@@ -35,7 +39,7 @@ class BBConfig implements ArrayAccess
      * If not available, and no instance is being created, a new connection will be established.
      * Otherwise (such as during an ongoing upgrade in this php instance) an error will be thrown
      *
-     * @param null $db
+     * @param null|DatabaseConnection $db
      *
      * @return BBConfig
      */
@@ -59,7 +63,7 @@ class BBConfig implements ArrayAccess
     /**
      * Set a key to the given value in the running copy of the DB-stored config
      *
-     * @param string $offset Configuration Key
+     * @param null|string $offset Configuration Key
      *
      * @param string $value Configuration Value
      *

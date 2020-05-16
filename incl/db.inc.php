@@ -80,7 +80,7 @@ class DatabaseConnection {
     /**
      * @var SQLite3
      */
-    private $db = null;
+    private $db;
     private static $_ConnectionInstance = null;
     private static $_StartingConnection = false;
 

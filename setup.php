@@ -28,7 +28,6 @@ require_once __DIR__ . "/incl/config.inc.php";
 
 
 $CONFIG->checkIfAuthenticated(true);
-$db = DatabaseConnection::getInstance();
 
 $result = true;
 
@@ -50,8 +49,8 @@ if (isset($_POST["GROCY_API_URL"])) {
     $apiWithTrailingSlash = rtrim($_POST["GROCY_API_URL"], '/') . '/';
     $result = API::checkApiConnection($apiWithTrailingSlash, $_POST["GROCY_API_KEY"]);
     if ($result === true) {
-        $db->updateConfig("GROCY_API_URL", sanitizeString($apiWithTrailingSlash));
-        $db->updateConfig("GROCY_API_KEY", sanitizeString($_POST["GROCY_API_KEY"]));
+        DatabaseConnection::getInstance()->updateConfig("GROCY_API_URL", sanitizeString($apiWithTrailingSlash));
+        DatabaseConnection::getInstance()->updateConfig("GROCY_API_KEY", sanitizeString($_POST["GROCY_API_KEY"]));
         header("Location: index.php");
         die();
     } 

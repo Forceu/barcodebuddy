@@ -25,14 +25,13 @@ require_once __DIR__ . "/../incl/processing.inc.php";
 require_once __DIR__ . "/../incl/websocketconnection.inc.php";
 require_once __DIR__ . "/../incl/webui.inc.php";
 
-$db = DatabaseConnection::getInstance();
 $CONFIG->checkIfAuthenticated(true, true);
 
 //Delete Quantitiy 
 if (isset($_POST["button_delete"])) {
         $id = $_POST["button_delete"];
         checkIfNumeric($id);
-        $db->deleteQuantitiy($id);
+        DatabaseConnection::getInstance()->deleteQuantitiy($id);
         //Hide POST, so we can refresh
         header("Location: " . $_SERVER["PHP_SELF"]);
         die();

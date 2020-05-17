@@ -25,7 +25,7 @@
 
 
 require_once __DIR__ . "/configProcessing.inc.php";
-require_once __DIR__ . "config.inc.php";
+require_once __DIR__ . "/config.inc.php";
 
 const RESULT_ALL_INSTALLED = 0;
 const RESULT_OPT_MISSING   = 1;

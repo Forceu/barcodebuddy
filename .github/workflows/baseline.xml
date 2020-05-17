@@ -11,19 +11,11 @@
     </UnresolvableInclude>
   </file>
   <file src="incl/api.inc.php">
-    <InvalidReturnStatement occurrences="8">
-      <code>"Could not connect to server&lt;br&gt;"</code>
-      <code>"Error: ". $e-&gt;getMessage()</code>
-      <code>"Invalid API key&lt;br&gt;"</code>
-      <code>"Invalid SSL certificate!&lt;br&gt;If you are using a self-signed certificate, you can disable the check in config.php&lt;br&gt;"</code>
-      <code>"Grocy " . MIN_GROCY_VERSION . " or newer required. You are running " . $version . ", please upgrade your Grocy instance.&lt;br&gt;"</code>
-      <code>true</code>
-      <code>"Invalid response. Are you using the correct URL?&lt;br&gt;"</code>
+    <InvalidReturnStatement occurrences="1">
       <code>$daysBestBefore != 0</code>
     </InvalidReturnStatement>
-    <InvalidReturnType occurrences="6">
+    <InvalidReturnType occurrences="5">
       <code>none</code>
-      <code>Returns</code>
       <code>false</code>
       <code>none</code>
       <code>none</code>
@@ -39,25 +31,41 @@
     <PossiblyUndefinedVariable occurrences="1">
       <code>$startTime</code>
     </PossiblyUndefinedVariable>
-    <UndefinedDocblockClass occurrences="5">
+    <UndefinedConstant occurrences="1">
+      <code>METHOD_GET</code>
+    </UndefinedConstant>
+    <UndefinedDocblockClass occurrences="4">
       <code>none</code>
-      <code>Returns</code>
       <code>none</code>
       <code>none</code>
       <code>none</code>
     </UndefinedDocblockClass>
   </file>
   <file src="incl/authentication/authentication.inc.php">
+    <InvalidGlobal occurrences="1">
+      <code>global $CONFIG;</code>
+    </InvalidGlobal>
     <UndefinedClass occurrences="3">
       <code>\Delight\Db\PdoDsn</code>
       <code>\Delight\Auth\Auth</code>
       <code>\Delight\Auth\Role</code>
     </UndefinedClass>
+    <UndefinedFunction occurrences="1">
+      <code>getInitialSetupSql()</code>
+    </UndefinedFunction>
+  </file>
+  <file src="incl/config.inc.php">
+    <InvalidReturnStatement occurrences="1">
+      <code>next($this-&gt;container)</code>
+    </InvalidReturnStatement>
   </file>
   <file src="incl/configProcessing.inc.php">
     <ForbiddenCode occurrences="1">
       <code>var_dump($variable)</code>
     </ForbiddenCode>
+    <InvalidGlobal occurrences="1">
+      <code>global $CONFIG;</code>
+    </InvalidGlobal>
     <InvalidOperand occurrences="1">
       <code>$subnetMask</code>
     </InvalidOperand>
@@ -71,7 +79,7 @@
       <code>$subnet</code>
       <code>$subnet</code>
     </MissingClosureParamType>
-    <UndefinedConstant occurrences="16">
+    <UndefinedConstant occurrences="18">
       <code>PORT_WEBSOCKET_SERVER</code>
       <code>DATABASE_PATH</code>
       <code>CURL_TIMEOUT_S</code>
@@ -88,7 +96,30 @@
       <code>SCREEN_TOUCH_BUTTONS</code>
       <code>AUTHENTICATION_BYPASS_NETS</code>
       <code>TRUSTED_PROXIES</code>
+      <code>CONFIG_PATH</code>
+      <code>AUTHDB_PATH</code>
     </UndefinedConstant>
+    <UndefinedFunction occurrences="2">
+      <code>createConfigPhp($configPath)</code>
+      <code>isUserSetUp()</code>
+    </UndefinedFunction>
+  </file>
+  <file src="incl/db.inc.php">
+    <DeprecatedMethod occurrences="1">
+      <code>BBConfig::getInstance()</code>
+    </DeprecatedMethod>
+    <PossiblyNullArgument occurrences="4">
+      <code>$config["BARCODE_C"]</code>
+      <code>$config["BARCODE_O"]</code>
+      <code>$config["BARCODE_P"]</code>
+      <code>$config["BARCODE_CS"]</code>
+    </PossiblyNullArgument>
+    <UndefinedFunction occurrences="1">
+      <code>sendWebsocketStateChange($state)</code>
+    </UndefinedFunction>
+    <UndefinedMethod occurrences="1">
+      <code>getConfig</code>
+    </UndefinedMethod>
   </file>
   <file src="incl/processing.inc.php">
     <InvalidScalarArgument occurrences="1">
@@ -97,8 +128,12 @@
     <PossiblyFalseArgument occurrences="1">
       <code>strpos($url, $removeAfter)</code>
     </PossiblyFalseArgument>
-    <UndefinedFunction occurrences="1">
+    <PossiblyNullArgument occurrences="1">
+      <code>$config["BARCODE_Q"]</code>
+    </PossiblyNullArgument>
+    <UndefinedFunction occurrences="2">
       <code>pluginEventReceiver_processEvent($eventType, $log)</code>
+      <code>sendWebsocketMessage($websocketText, $websocketEnabled, $websocketResultCode)</code>
     </UndefinedFunction>
   </file>
   <file src="incl/sse/sse_data.php">
@@ -147,12 +182,10 @@
     </UndefinedClass>
   </file>
   <file src="menu/settings.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>$result === true</code>
-    </DocblockTypeContradiction>
-    <InvalidOperand occurrences="1">
-      <code>$result</code>
-    </InvalidOperand>
+    <PossiblyNullArgument occurrences="2">
+      <code>$config["GROCY_API_URL"]</code>
+      <code>$config["GROCY_API_KEY"]</code>
+    </PossiblyNullArgument>
   </file>
   <file src="wsserver.php">
     <MissingFile occurrences="1">

@@ -20,6 +20,7 @@
 require_once __DIR__ . "/incl/configProcessing.inc.php";
 require_once __DIR__ . "/incl/api.inc.php";
 require_once __DIR__ . "/incl/db.inc.php";
+require_once __DIR__ . "/incl/config.inc.php";
 require_once __DIR__ . "/incl/internalChecking.inc.php";
 require_once __DIR__ . "/incl/processing.inc.php";
 require_once __DIR__ . "/incl/websocketconnection.inc.php";
@@ -83,7 +84,7 @@ if (isset($_GET["text"])) {
 // Only one row can be processed at a time
 processButtons();
 
-$barcodes = $db->getStoredBarcodes();
+$barcodes = DatabaseConnection::getInstance()->getStoredBarcodes();
 if (sizeof($barcodes['known']) > 0 || sizeof($barcodes['unknown']) > 0 || sizeof($barcodes['tare']) > 0) {
     $productinfo = API::getProductInfo();
 }
@@ -130,7 +131,7 @@ $webUi->printHtml();
 
 //Check if a button on the web ui was pressed and process
 function processButtons() {
-    global $db;
+    $db = DatabaseConnection::getInstance();
 
     if (isset($_GET["delete"])) {
         $db->deleteAll($_GET["delete"]);
@@ -244,8 +245,6 @@ function processButtons() {
 
 //Generate the table with barcodes that require actions
 function getHtmlMainMenuReqActions($barcodes) {
-    global $productinfo;
-    global $BBCONFIG;
     $html = new UiEditor(true, null, "f4");
     if (sizeof($barcodes['tare']) == 0) {
         return "null";
@@ -259,7 +258,6 @@ function getHtmlMainMenuReqActions($barcodes) {
         ));
         foreach ($barcodes['tare'] as $item) {
             $product = API::getProductByBardcode($item['barcode']);
-            $itemId  = $item['id'];
             $totalWeight = $product['stockAmount'] + $product['tareWeight'];
             $table->startRow();
             $table->addCell($product["name"]);
@@ -289,7 +287,7 @@ function getHtmlMainMenuReqActions($barcodes) {
 //Generate the table with barcodes
 function getHtmlMainMenuTableKnown($barcodes) {
     global $productinfo;
-    global $BBCONFIG;
+
     $html = new UiEditor(true, null, "f1");
     if (sizeof($barcodes['known']) == 0) {
         $html->addHtml("No known barcodes yet.");
@@ -334,7 +332,7 @@ function getHtmlMainMenuTableKnown($barcodes) {
                                 ->generate(true));
             $table->addCell(explodeWordsAndMakeCheckboxes($item['name'], $itemId));
             $table->addCell($html->buildButton("button_createproduct", "Create Product")
-                                                ->setOnClick('openNewTab(\''.$BBCONFIG["GROCY_BASE_URL"].'product/new?closeAfterCreation&prefillname='.rawurlencode(htmlspecialchars_decode($item['name'],ENT_QUOTES)).'&prefillbarcode='.$item['barcode'].'\', \''.$item['barcode'].'\')')
+                                                ->setOnClick('openNewTab(\''.BBConfig::getInstance()["GROCY_BASE_URL"].'product/new?closeAfterCreation&prefillname='.rawurlencode(htmlspecialchars_decode($item['name'],ENT_QUOTES)).'&prefillbarcode='.$item['barcode'].'\', \''.$item['barcode'].'\')')
                                                 ->generate(true));
             $table->addCell($html->buildButton("button_delete", "Remove")->setSubmit()->setValue($item['id'])->generate(true));
             $table->endRow();
@@ -348,7 +346,6 @@ function getHtmlMainMenuTableKnown($barcodes) {
 
 //Generate the table with barcodes
 function getHtmlMainMenuTableUnknown($barcodes) {
-    global $BBCONFIG;
     global $productinfo;
     $html = new UiEditor(true, null, "f2");
     if (sizeof($barcodes['unknown']) == 0) {
@@ -392,7 +389,7 @@ function getHtmlMainMenuTableUnknown($barcodes) {
                                 ->setId('button_consume_' . $item['id'])
                                 ->generate(true));
             $table->addCell($html->buildButton("button_createproduct", "Create Product")
-                                                ->setOnClick('openNewTab(\''.$BBCONFIG["GROCY_BASE_URL"].'product/new?closeAfterCreation&prefillbarcode='.$item['barcode'].'\', \''.$item['barcode'].'\')')
+                                                ->setOnClick('openNewTab(\''.BBConfig::getInstance()["GROCY_BASE_URL"].'product/new?closeAfterCreation&prefillbarcode='.$item['barcode'].'\', \''.$item['barcode'].'\')')
                                                 ->generate(true));
             $table->addCell($html->buildButton("button_delete", "Remove")->setSubmit()->setValue($item['id'])->generate(true));
             $table->endRow();
@@ -406,7 +403,7 @@ function getHtmlMainMenuTableUnknown($barcodes) {
 
 //outputs stored logs to the textarea
 function getHtmlLogTextArea() {
-    global $db;
+    $db = DatabaseConnection::getInstance();
     $logs = $db->getLogs();
     $html = new UiEditor(true, null, "f3");
     if (sizeof($logs) == 0) {

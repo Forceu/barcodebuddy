@@ -11,10 +11,6 @@
     </UnresolvableInclude>
   </file>
   <file src="incl/api.inc.php">
-    <InvalidGlobal occurrences="2">
-      <code>global $BBCONFIG;</code>
-      <code>global $db;</code>
-    </InvalidGlobal>
     <InvalidReturnStatement occurrences="8">
       <code>"Could not connect to server&lt;br&gt;"</code>
       <code>"Error: ". $e-&gt;getMessage()</code>
@@ -50,14 +46,8 @@
       <code>none</code>
       <code>none</code>
     </UndefinedDocblockClass>
-    <UndefinedVariable occurrences="1">
-      <code>$db</code>
-    </UndefinedVariable>
   </file>
   <file src="incl/authentication/authentication.inc.php">
-    <InvalidGlobal occurrences="1">
-      <code>global $CONFIG;</code>
-    </InvalidGlobal>
     <UndefinedClass occurrences="3">
       <code>\Delight\Db\PdoDsn</code>
       <code>\Delight\Auth\Auth</code>
@@ -68,9 +58,6 @@
     <ForbiddenCode occurrences="1">
       <code>var_dump($variable)</code>
     </ForbiddenCode>
-    <InvalidGlobal occurrences="1">
-      <code>global $CONFIG;</code>
-    </InvalidGlobal>
     <InvalidOperand occurrences="1">
       <code>$subnetMask</code>
     </InvalidOperand>
@@ -166,16 +153,6 @@
     <InvalidOperand occurrences="1">
       <code>$result</code>
     </InvalidOperand>
-  </file>
-  <file src="screen.php">
-    <UndefinedGlobalVariable occurrences="1">
-      <code>$BBCONFIG</code>
-    </UndefinedGlobalVariable>
-  </file>
-  <file src="setup.php">
-    <UndefinedGlobalVariable occurrences="1">
-      <code>$BBCONFIG</code>
-    </UndefinedGlobalVariable>
   </file>
   <file src="wsserver.php">
     <MissingFile occurrences="1">

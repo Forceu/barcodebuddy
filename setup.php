@@ -24,10 +24,10 @@ require_once __DIR__ . "/incl/webui.inc.php";
 require_once __DIR__ . "/incl/api.inc.php";
 require_once __DIR__ . "/incl/processing.inc.php";
 require_once __DIR__ . "/incl/internalChecking.inc.php";
+require_once __DIR__ . "/incl/config.inc.php";
 
 
 $CONFIG->checkIfAuthenticated(true);
-
 
 $result = true;
 
@@ -38,7 +38,7 @@ $result = true;
 //If the problem is fixed and he clicks "Refresh", redirect him to index.php
 //instead of showing the setup again
 if (isset($_POST["was_internal_check"])) {
-	if ($BBCONFIG["GROCY_API_URL"] != null && $BBCONFIG["GROCY_API_KEY"] != null) {
+	if (BBConfig::getInstance()["GROCY_API_URL"] != null && BBConfig::getInstance()["GROCY_API_KEY"] != null) {
         header("Location: index.php");
         die();
 	}
@@ -49,8 +49,8 @@ if (isset($_POST["GROCY_API_URL"])) {
     $apiWithTrailingSlash = rtrim($_POST["GROCY_API_URL"], '/') . '/';
     $result = API::checkApiConnection($apiWithTrailingSlash, $_POST["GROCY_API_KEY"]);
     if ($result === true) {
-        $db->updateConfig("GROCY_API_URL", sanitizeString($apiWithTrailingSlash));
-        $db->updateConfig("GROCY_API_KEY", sanitizeString($_POST["GROCY_API_KEY"]));
+        DatabaseConnection::getInstance()->updateConfig("GROCY_API_URL", sanitizeString($apiWithTrailingSlash));
+        DatabaseConnection::getInstance()->updateConfig("GROCY_API_KEY", sanitizeString($_POST["GROCY_API_KEY"]));
         header("Location: index.php");
         die();
     } 
@@ -73,15 +73,15 @@ $webUi->printHtml();
 
 
 function getHtmlSetupTable($result) {
-    global $BBCONFIG;
+    $config = BBConfig::getInstance();
     $html = new UiEditor();
     $html->addHtml('Welcome to Barcode Buddy! Please enter your Grocy API details below. For more information, please visit the <a target="_blank" href="https://barcodebuddy-documentation.readthedocs.io/en/latest/">documentation</a>.');
     $html->addLineBreak(3);
     $editValue = "";
     if (isset($_POST["GROCY_API_URL"])) 
         $editValue = $_POST["GROCY_API_URL"];
-    else if ($BBCONFIG["GROCY_API_URL"] != null) 
-       		$editValue = $BBCONFIG["GROCY_API_URL"];
+    else if ($config["GROCY_API_URL"] != null)
+       		$editValue = $config["GROCY_API_URL"];
     $html->buildEditField('GROCY_API_URL', 'Grocy API URL',  $editValue)
     						->pattern('https://.*/api/|http://.*/api/|https://.*/api|http://.*/api')
     						->setPlaceholder('e.g. https://your.grocy.com/api/')

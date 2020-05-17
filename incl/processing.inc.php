@@ -17,50 +17,51 @@
  */
 
 require_once __DIR__ . "/lockGenerator.inc.php";
+require_once __DIR__ . "/db.inc.php";
+require_once __DIR__ . "/config.inc.php";
 
 
 // Function that is called when a barcode is passed on
 function processNewBarcode($barcodeInput, $websocketEnabled = true, $bestBeforeInDays = null, $price = null) {
-    require_once __DIR__ . "/db.inc.php";
-    global $db;
-    global $BBCONFIG;
+    $db = DatabaseConnection::getInstance();
+    $config = BBConfig::getInstance();
     
     $barcode = strtoupper($barcodeInput);
-    if ($barcode == $BBCONFIG["BARCODE_C"]) {
+    if ($barcode == $config["BARCODE_C"]) {
         $db->setTransactionState(STATE_CONSUME);
         return outputLog("Set state to Consume", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
     }
-    if ($barcode == $BBCONFIG["BARCODE_CS"]) {
+    if ($barcode == $config["BARCODE_CS"]) {
         $db->setTransactionState(STATE_CONSUME_SPOILED);
         return outputLog("Set state to Consume (spoiled)", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
     }
-    if ($barcode == $BBCONFIG["BARCODE_CA"]) {
+    if ($barcode == $config["BARCODE_CA"]) {
         $db->setTransactionState(STATE_CONSUME_ALL);
         return outputLog("Set state to Consume all", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
     }
-    if ($barcode == $BBCONFIG["BARCODE_P"]) {
+    if ($barcode == $config["BARCODE_P"]) {
         $db->setTransactionState(STATE_PURCHASE);
         return outputLog("Set state to Purchase", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
     }
-    if ($barcode == $BBCONFIG["BARCODE_O"]) {
+    if ($barcode == $config["BARCODE_O"]) {
         $db->setTransactionState(STATE_OPEN);
         return outputLog("Set state to Open", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
     }
-    if ($barcode == $BBCONFIG["BARCODE_GS"]) {
+    if ($barcode == $config["BARCODE_GS"]) {
         $db->setTransactionState(STATE_GETSTOCK);
         return outputLog("Set state to Inventory", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
     }
-    if ($barcode == $BBCONFIG["BARCODE_AS"]) {
+    if ($barcode == $config["BARCODE_AS"]) {
         $db->setTransactionState(STATE_ADD_SL);
         return outputLog("Set state to Shopping list", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
     }
-    if (stringStartsWith($barcode, $BBCONFIG["BARCODE_Q"])) {
-        $quantitiy = str_replace($BBCONFIG["BARCODE_Q"], "", $barcode);
+    if (stringStartsWith($barcode, $config["BARCODE_Q"])) {
+        $quantitiy = str_replace($config["BARCODE_Q"], "", $barcode);
         checkIfNumeric($quantitiy);
-        if ($BBCONFIG["LAST_PRODUCT"] != null) {
-            $lastBarcode = $BBCONFIG["LAST_BARCODE"] . " (" . $BBCONFIG["LAST_PRODUCT"] . ")";
+        if ($config["LAST_PRODUCT"] != null) {
+            $lastBarcode = $config["LAST_BARCODE"] . " (" . $config["LAST_PRODUCT"] . ")";
         } else {
-            $lastBarcode = $BBCONFIG["LAST_BARCODE"];
+            $lastBarcode = $config["LAST_BARCODE"];
         }
         changeQuantityAfterScan($quantitiy);
         return outputLog("Set quantitiy to $quantitiy for barcode $lastBarcode", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
@@ -120,10 +121,9 @@ const WS_RESULT_ERROR                 = 'E';
 
 //Save a log input to the database or submit websocket
 function outputLog($log, $eventType, $isVerbose = false, $websocketEnabled = true, $websocketResultCode = WS_RESULT_PRODUCT_FOUND, $websocketText = null) {
-    require_once __DIR__ . "/db.inc.php";
     global $LOADED_PLUGINS;
-    global $db;
-    $db->saveLog($log, $isVerbose);
+
+    DatabaseConnection::getInstance()->saveLog($log, $isVerbose);
     if ($websocketText == null) {
         $websocketText = $log;
     }
@@ -136,9 +136,7 @@ function outputLog($log, $eventType, $isVerbose = false, $websocketEnabled = tru
 
 //Execute a chore when chore barcode was submitted
 function processChoreBarcode($barcode) {
-    require_once __DIR__ . "/db.inc.php";
-    global $db;
-    $id = $db->getChoreBarcode(sanitizeString($barcode))['choreId'];
+    $id = DatabaseConnection::getInstance()->getChoreBarcode(sanitizeString($barcode))['choreId'];
     checkIfNumeric($id);
     API::executeChore( $id);
     return sanitizeString(API::getChoresInfo($id)["name"]);
@@ -146,8 +144,7 @@ function processChoreBarcode($barcode) {
 
 //If grocy does not know this barcode
 function processUnknownBarcode($barcode, $websocketEnabled, &$fileLock, $bestBeforeInDays, $price) {
-    require_once __DIR__ . "/db.inc.php";
-    global $db;
+    $db = DatabaseConnection::getInstance();
     $amount = 1;
     if ($db->getTransactionState() == STATE_PURCHASE) {
         $amount = $db->getQuantityByBarcode($barcode);
@@ -218,8 +215,7 @@ function changeWeightTareItem($barcode, $newWeight) {
 
 //Change mode if was supplied by GET parameter
 function processModeChangeGetParameter($modeParameter) {
-    require_once __DIR__ . "/db.inc.php";
-    global $db;
+    $db = DatabaseConnection::getInstance();
     switch (trim($modeParameter)) {
         case "consume":
         $db->setTransactionState(STATE_CONSUME);
@@ -245,11 +241,9 @@ function processModeChangeGetParameter($modeParameter) {
 
 //This will be called when a new grocy product is created from BB and the grocy tab is closed
 function processRefreshedBarcode($barcode) {
-    require_once __DIR__ . "/db.inc.php";
-    global $db;
     $productInfo = API::getProductByBardcode($barcode);
     if ($productInfo != null) {
-        $db->updateSavedBarcodeMatch($barcode, $productInfo["id"]);
+        DatabaseConnection::getInstance()->updateSavedBarcodeMatch($barcode, $productInfo["id"]);
     }
 }
 
@@ -258,9 +252,8 @@ const USE_NEW_INVENTORY_API = false;
 
     // Process a barcode that Grocy already knows
 function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLock, $bestBeforeInDays, $price) {
-    require_once __DIR__ . "/db.inc.php";
-    global $BBCONFIG;
-    global $db;
+    $config = BBConfig::getInstance();
+    $db = DatabaseConnection::getInstance();
 
     $output = "Undefined";
 
@@ -297,7 +290,7 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
             } else {
                 $output = outputLog("Product found. None in stock, not consuming: " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Product found. None in stock, not consuming: " . $productInfo["name"]);
             }
-            if ($BBCONFIG["REVERT_SINGLE"]) {
+            if ($config["REVERT_SINGLE"]) {
                 $db->saveLog("Reverting back to Consume", true);
                 $db->setTransactionState(STATE_CONSUME);
             }
@@ -307,7 +300,7 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
             $output = outputLog("Product found. Consuming 1 spoiled " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Consuming 1 spoiled " . $productInfo["unit"] . " of " . $productInfo["name"]);
             API::consumeProduct($productInfo["id"], 1, true);
             $fileLock->removeLock();
-            if ($BBCONFIG["REVERT_SINGLE"]) {
+            if ($config["REVERT_SINGLE"]) {
                 $db->saveLog("Reverting back to Consume", true);
                 $db->setTransactionState(STATE_CONSUME);
             }
@@ -319,7 +312,6 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
             else
                 $additionalLog = "";
             $output = outputLog("Product found. Adding  $amount " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode . $additionalLog, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Adding $amount " . $productInfo["unit"] . " of " . $productInfo["name"] . $additionalLog);
-            $isBestBeforeSet = API::purchaseProduct($productInfo["id"], $amount, $bestBeforeInDays, $price, $fileLock, $productInfo["defaultBestBefore"]);
             //no $fileLock->removeLock() needed, as it is done in API::purchaseProduct
             return $output;
         case STATE_OPEN:
@@ -330,7 +322,7 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
                 $output = outputLog("Product found. None in stock, not opening: " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Product found. None in stock, not opening: " . $productInfo["name"]);
             }
             $fileLock->removeLock();
-            if ($BBCONFIG["REVERT_SINGLE"]) {
+            if ($config["REVERT_SINGLE"]) {
                 $db->saveLog("Reverting back to Consume", true);
                 $db->setTransactionState(STATE_CONSUME);
             }
@@ -357,14 +349,13 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
 }
 
 function getQuantitiyForBarcode($barcode, $isConsume, $productInfo) {
-    global $BBCONFIG;
-    global $db;
+    $config = BBConfig::getInstance();
 
-    if ($isConsume && !$BBCONFIG["CONSUME_SAVED_QUANTITY"])
+    if ($isConsume && !$config["CONSUME_SAVED_QUANTITY"])
         return 1;
-    if ($BBCONFIG["USE_GROCY_QU_FACTOR"])
+    if ($config["USE_GROCY_QU_FACTOR"])
         return intval($productInfo["quFactor"]);
-    return $amount = $db->getQuantityByBarcode($barcode);
+    return $amount = DatabaseConnection::getInstance()->getQuantityByBarcode($barcode);
 }
 
 
@@ -406,8 +397,6 @@ function checkIfNumeric($input) {
 
 //Generate checkboxes for web ui
 function explodeWordsAndMakeCheckboxes($words, $id) {
-    require_once __DIR__ . "/db.inc.php";
-    global $db;
     if ($words == "N/A") {
         return "";
     }
@@ -416,7 +405,7 @@ function explodeWordsAndMakeCheckboxes($words, $id) {
     $i           = 0;
     foreach ($cleanWords as $str) {
     $tagWord = trim($str);
-        if (strlen($tagWord) > 0 && $db->tagNotUsedYet($tagWord)) {
+        if (strlen($tagWord) > 0 && DatabaseConnection::getInstance()->tagNotUsedYet($tagWord)) {
             $selections = $selections . '<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-' . $id . '_' . $i . '">
   <input type="checkbox"  value="' . $tagWord . '" name="tags[' . $id . '][' . $i . ']" id="checkbox-' . $id . '_' . $i . '" class="mdl-checkbox__input">
   <span class="mdl-checkbox__label">' . $tagWord . '</span>
@@ -435,12 +424,12 @@ function cleanNameForTagLookup($input) {
 
 //If a quantity barcode was scanned, add the quantitiy and process further
 function changeQuantityAfterScan($amount) {
-    require_once __DIR__ . "/db.inc.php";
-    global $BBCONFIG;
-    global $db;
-    $barcode = sanitizeString($BBCONFIG["LAST_BARCODE"]);
-    if ($BBCONFIG["LAST_PRODUCT"] != null) {
-        $db->addUpdateQuantitiy($barcode, $amount, $BBCONFIG["LAST_PRODUCT"]);
+    $config = BBConfig::getInstance();
+
+    $db = DatabaseConnection::getInstance();
+    $barcode = sanitizeString($config["LAST_BARCODE"]);
+    if ($config["LAST_PRODUCT"] != null) {
+        $db->addUpdateQuantitiy($barcode, $amount, $config["LAST_PRODUCT"]);
     } else {
         $product = API::getProductByBardcode($barcode);
         if ($product != null) {
@@ -457,9 +446,7 @@ function changeQuantityAfterScan($amount) {
 
 //Merge tags and product info
 function getAllTags() {
-    require_once __DIR__ . "/db.inc.php";
-    global $db;
-    $tags       = $db->getStoredTags();
+    $tags       = DatabaseConnection::getInstance()->getStoredTags();
     $products   = API::getProductInfo();
     $returnTags = array();
     
@@ -490,10 +477,8 @@ function sortChores($a,$b) {
 
 //Merges chores with chore info
 function getAllChores() {
-    require_once __DIR__ . "/db.inc.php";
-    global $db;
     $chores = API::getChoresInfo();
-    $barcodes = $db->getStoredChoreBarcodes();
+    $barcodes = DatabaseConnection::getInstance()->getStoredChoreBarcodes();
     $returnChores = array();
 
     foreach ($chores as $chore) {

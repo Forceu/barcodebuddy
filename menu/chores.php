@@ -24,7 +24,6 @@ require_once __DIR__ . "/../incl/db.inc.php";
 require_once __DIR__ . "/../incl/processing.inc.php";
 require_once __DIR__ . "/../incl/webui.inc.php";
 
-
 $CONFIG->checkIfAuthenticated(true, true);
 
 
@@ -34,9 +33,9 @@ if (isset($_POST["button_edit"])) {
         checkIfNumeric($id);
         $barcode = sanitizeString($_POST["barcode_".$id]);
         if ($barcode=="") {
-              $db->deleteChoreBarcode($id);
+              DatabaseConnection::getInstance()->deleteChoreBarcode($id);
         } else {
-              $db->updateChoreBarcode($id, $barcode);
+              DatabaseConnection::getInstance()->updateChoreBarcode($id, $barcode);
         }
         //Hide POST, so we can refresh
         header("Location: " . $_SERVER["PHP_SELF"]);

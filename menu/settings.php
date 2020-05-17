@@ -23,7 +23,7 @@ require_once __DIR__ . "/../incl/processing.inc.php";
 require_once __DIR__ . "/../incl/websocketconnection.inc.php";
 require_once __DIR__ . "/../incl/sse/websocket_client.php"; 
 require_once __DIR__ . "/../incl/webui.inc.php";
-
+require_once __DIR__ . "/../incl/config.inc.php";
 
 $CONFIG->checkIfAuthenticated(true, true);
 
@@ -51,9 +51,9 @@ $webUi->printHtml();
 //Called when settings were saved. For each input, the setting
 //is saved as a database entry
 function saveSettings() {
-    global $BBCONFIG;
-    global $db;
-    foreach ($BBCONFIG as $key => $value) {
+    $db = DatabaseConnection::getInstance();
+    $config = BBConfig::getInstance();
+    foreach ($config as $key => $value) {
         if (isset($_POST[$key])) {
             if ($_POST[$key] != $value) {
                 $value = sanitizeString($_POST[$key]);
@@ -75,18 +75,18 @@ function saveSettings() {
 
 
 function getHtmlSettingsGeneral() {
-    global $BBCONFIG;
+    $config = BBConfig::getInstance();
     $html = new UiEditor(true, null, "settings1");
     $html->addHtml('<div class="flex-settings">');
-    $html->addDiv($html->buildEditField("BARCODE_C", "Barcode: Consume", $BBCONFIG["BARCODE_C"])->generate(true), null, "flex-settings-child");
-    $html->addDiv($html->buildEditField("BARCODE_CS", "Barcode: Consume (spoiled)", $BBCONFIG["BARCODE_CS"])->generate(true), null, "flex-settings-child");
-    $html->addDiv($html->buildEditField("BARCODE_CA", "Barcode: Consume all", $BBCONFIG["BARCODE_CA"])->generate(true), null, "flex-settings-child");
-    $html->addDiv($html->buildEditField("BARCODE_P", "Barcode: Purchase", $BBCONFIG["BARCODE_P"])->generate(true), null, "flex-settings-child");
-    $html->addDiv($html->buildEditField("BARCODE_O", "Barcode: Open", $BBCONFIG["BARCODE_O"])->generate(true), null, "flex-settings-child");
-    $html->addDiv($html->buildEditField("BARCODE_GS", "Barcode: Inventory", $BBCONFIG["BARCODE_GS"])->generate(true), null, "flex-settings-child");
-    $html->addDiv($html->buildEditField("BARCODE_Q", "Barcode: Quantity", $BBCONFIG["BARCODE_Q"])->generate(true), null, "flex-settings-child");
-    $html->addDiv($html->buildEditField("BARCODE_AS", "Barcode: Add to shopping list", $BBCONFIG["BARCODE_AS"])->generate(true), null, "flex-settings-child");
-    $html->addDiv($html->buildEditField("REVERT_TIME", "Revert state to &quot;Consume&quot; after time passed in minutes", $BBCONFIG["REVERT_TIME"])
+    $html->addDiv($html->buildEditField("BARCODE_C", "Barcode: Consume", $config["BARCODE_C"])->generate(true), null, "flex-settings-child");
+    $html->addDiv($html->buildEditField("BARCODE_CS", "Barcode: Consume (spoiled)", $config["BARCODE_CS"])->generate(true), null, "flex-settings-child");
+    $html->addDiv($html->buildEditField("BARCODE_CA", "Barcode: Consume all", $config["BARCODE_CA"])->generate(true), null, "flex-settings-child");
+    $html->addDiv($html->buildEditField("BARCODE_P", "Barcode: Purchase", $config["BARCODE_P"])->generate(true), null, "flex-settings-child");
+    $html->addDiv($html->buildEditField("BARCODE_O", "Barcode: Open", $config["BARCODE_O"])->generate(true), null, "flex-settings-child");
+    $html->addDiv($html->buildEditField("BARCODE_GS", "Barcode: Inventory", $config["BARCODE_GS"])->generate(true), null, "flex-settings-child");
+    $html->addDiv($html->buildEditField("BARCODE_Q", "Barcode: Quantity", $config["BARCODE_Q"])->generate(true), null, "flex-settings-child");
+    $html->addDiv($html->buildEditField("BARCODE_AS", "Barcode: Add to shopping list", $config["BARCODE_AS"])->generate(true), null, "flex-settings-child");
+    $html->addDiv($html->buildEditField("REVERT_TIME", "Revert state to &quot;Consume&quot; after time passed in minutes", $config["REVERT_TIME"])
                                             ->pattern('-?[0-9]*(\.[0-9]+)?')
                                             ->onKeyPress('return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57')
                                             ->generate(true)
@@ -94,13 +94,13 @@ function getHtmlSettingsGeneral() {
     $html->addHtml('</div>');
     $html->addLineBreak();
 
-    $html->addCheckbox("REVERT_SINGLE", "Revert after single item scan in &quot;Open&quot; or &quot;Spoiled&quot; mode", $BBCONFIG["REVERT_SINGLE"], false, false);
-    $html->addCheckbox("SHOPPINGLIST_REMOVE", "Remove purchased items from shoppinglist", $BBCONFIG["SHOPPINGLIST_REMOVE"], false, false);
-    $html->addCheckbox("CONSUME_SAVED_QUANTITY", "Consume amount of quantity saved for barcode", $BBCONFIG["CONSUME_SAVED_QUANTITY"], false, false);
-    $html->addCheckbox("USE_GROCY_QU_FACTOR", "Use Grocys quantitiy conversion", $BBCONFIG["USE_GROCY_QU_FACTOR"], false, false);
-    $html->addCheckbox("WS_FULLSCREEN", "Show Screen module in fullscreen", $BBCONFIG["WS_FULLSCREEN"], false, false);
-    $html->addCheckbox("USE_GENERIC_NAME", "Use generic names for lookup", $BBCONFIG["USE_GENERIC_NAME"], false, false);
-    $html->addCheckbox("MORE_VERBOSE", "More verbose logs", $BBCONFIG["MORE_VERBOSE"], false, false);
+    $html->addCheckbox("REVERT_SINGLE", "Revert after single item scan in &quot;Open&quot; or &quot;Spoiled&quot; mode", $config["REVERT_SINGLE"], false, false);
+    $html->addCheckbox("SHOPPINGLIST_REMOVE", "Remove purchased items from shoppinglist", $config["SHOPPINGLIST_REMOVE"], false, false);
+    $html->addCheckbox("CONSUME_SAVED_QUANTITY", "Consume amount of quantity saved for barcode", $config["CONSUME_SAVED_QUANTITY"], false, false);
+    $html->addCheckbox("USE_GROCY_QU_FACTOR", "Use Grocys quantitiy conversion", $config["USE_GROCY_QU_FACTOR"], false, false);
+    $html->addCheckbox("WS_FULLSCREEN", "Show Screen module in fullscreen", $config["WS_FULLSCREEN"], false, false);
+    $html->addCheckbox("USE_GENERIC_NAME", "Use generic names for lookup", $config["USE_GENERIC_NAME"], false, false);
+    $html->addCheckbox("MORE_VERBOSE", "More verbose logs", $config["MORE_VERBOSE"], false, false);
     $html->addLineBreak(2);
     $html->addHtml('<small><i>Hint: You can find picture files of the default barcodes in the &quot;example&quot; folder or <a style="color: inherit;" href="https://github.com/Forceu/barcodebuddy/tree/master/example/defaultBarcodes">online</a></i></small>');
     $html->addHiddenField("isSaved", "1");
@@ -110,14 +110,13 @@ function getHtmlSettingsGeneral() {
 
 
 function getHtmlSettingsGrocyApi() {
-    global $BBCONFIG;
+    $config = BBConfig::getInstance();
     $html = new UiEditor(true, null, "settings2");
-    $html->buildEditField('GROCY_API_URL', 'Grocy API URL',  $BBCONFIG["GROCY_API_URL"])
+    $html->buildEditField('GROCY_API_URL', 'Grocy API URL',  $config["GROCY_API_URL"])
                             ->pattern('https://.*/api/|http://.*/api/|https://.*/api|http://.*/api')
                             ->setPlaceholder('e.g. https://your.grocy.com/api/')
                             ->generate();
-    $editValue = "";
-    $html->buildEditField('GROCY_API_KEY', 'Grocy API Key',  $BBCONFIG["GROCY_API_KEY"])
+    $html->buildEditField('GROCY_API_KEY', 'Grocy API Key',  $config["GROCY_API_KEY"])
                             ->pattern('[A-Za-z0-9]{50}')
                             ->generate();
     $html->addLineBreak(2);
@@ -127,8 +126,8 @@ function getHtmlSettingsGrocyApi() {
 
 
 function checkGrocyConnection() {
-    global $BBCONFIG;
-    $result = API::checkApiConnection($BBCONFIG["GROCY_API_URL"], $BBCONFIG["GROCY_API_KEY"]);
+    $config = BBConfig::getInstance();
+    $result = API::checkApiConnection($config["GROCY_API_URL"], $config["GROCY_API_KEY"]);
     if ($result === true) {
         return  '<span style="color:green">Successfully connected to Grocy, valid API key.</span>';
     } else {

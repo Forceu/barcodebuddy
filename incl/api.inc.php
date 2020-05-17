@@ -18,6 +18,8 @@
 
 
 require_once __DIR__ . "/configProcessing.inc.php";
+require_once __DIR__ . "/db.inc.php";
+require_once __DIR__ . "/config.inc.php";
 
 const API_O_PRODUCTS     = 'objects/products';
 const API_PRODUCTS       = 'stock/products';
@@ -55,16 +57,16 @@ class CurlGenerator {
     
     function __construct($url, $method = METHOD_GET, $jasonData = null, $loginOverride = null, $noApiCall = false) {
         global $CONFIG;
+
+        $config = BBConfig::getInstance();
         
         $this->method  = $method;
         $this->urlApi  = $url;
         $this->ch      = curl_init();
 
         if ($loginOverride == null) {
-            require_once __DIR__ . "/db.inc.php";
-            global $BBCONFIG;
-            $apiKey = $BBCONFIG["GROCY_API_KEY"];
-            $apiUrl = $BBCONFIG["GROCY_API_URL"];
+            $apiKey = $config["GROCY_API_KEY"];
+            $apiUrl = $config["GROCY_API_URL"];
         } else {
             $apiKey = $loginOverride[LOGIN_API_KEY];
             $apiUrl = $loginOverride[LOGIN_URL];
@@ -99,9 +101,8 @@ class CurlGenerator {
     
     function execute($decode = false) {
         if (DISPLAY_DEBUG) {
-            global $db;
             $startTime = microtime(true);
-            $db->saveLog("<i>Executing API call: " . $this->urlApi. "</i>", false, false, true);
+            DatabaseConnection::getInstance()->saveLog("<i>Executing API call: " . $this->urlApi. "</i>", false, false, true);
         }
         $curlResult   = curl_exec($this->ch);
         $this->checkForErrorsAndThrow($curlResult);
@@ -122,7 +123,7 @@ class CurlGenerator {
         }
         if (DISPLAY_DEBUG) {
             $totalTimeMs = round((microtime(true)- $startTime) * 1000);
-            $db->saveLog("<i>Executing took " . $totalTimeMs . "ms</i>", false, false, true);
+            DatabaseConnection::getInstance()->saveLog("<i>Executing took " . $totalTimeMs . "ms</i>", false, false, true);
         }
         if ($decode)
             return $jsonDecoded;
@@ -221,9 +222,10 @@ class API {
     /**
      *   Check if API details are correct
      * 
-     * @param  String URL to Grocy API
-     * @param  String API key
-     * @return Returns String with error or true if connection could be established
+     * @param String $givenurl URL to Grocy API
+     * @param String $apikey   API key
+     *
+     * @return String | true Returns String with error or true if connection could be established
      */
     public static function checkApiConnection($givenurl, $apikey) {
         $loginInfo = array(LOGIN_URL => $givenurl, LOGIN_API_KEY => $apikey);
@@ -313,9 +315,6 @@ class API {
      * @return false if default best before date not set
      */
     public static function purchaseProduct($id, $amount, $bestbefore = null, $price = null, &$fileLock = null, $defaultBestBefore = null) {
-        require_once __DIR__ . "/db.inc.php";
-        global $BBCONFIG;
-        
         $daysBestBefore = 0;
         $data = array(
             'amount' => $amount,
@@ -346,7 +345,7 @@ class API {
         }
         if ($fileLock != null)
             $fileLock->removeLock();
-        if ($BBCONFIG["SHOPPINGLIST_REMOVE"]) {
+        if (BBConfig::getInstance()["SHOPPINGLIST_REMOVE"]) {
             self::removeFromShoppinglist($id, $amount);
         }
         return ($daysBestBefore != 0);
@@ -487,8 +486,6 @@ class API {
      * @return [String]          Returns product name or "N/A" if not found
      */
     public static function lookupNameByBarcodeInOpenFoodFacts($barcode) {
-        global $BBCONFIG;
-        
         $url = "https://world.openfoodfacts.org/api/v0/product/" . $barcode . ".json";
 
         $curl = new CurlGenerator($url, METHOD_GET, null, null, true);
@@ -520,7 +517,7 @@ class API {
             $productName = sanitizeString($result["product"]["product_name"]);
         }
 
-        if ($BBCONFIG["USE_GENERIC_NAME"]) {
+        if (BBConfig::getInstance()["USE_GENERIC_NAME"]) {
             if ($genericName != null)
                 return $genericName;
             if ($productName != null)
@@ -660,12 +657,10 @@ class API {
     }
 
     public static function logError($errorMessage, $isFatal = true) {
-        require_once __DIR__ . "/db.inc.php";
-        global $db;
-        if ($db != null)
-            $db->saveError($errorMessage, $isFatal);
+        try {
+            DatabaseConnection::getInstance()->saveError($errorMessage, $isFatal);
+        } catch (DbConnectionDuringEstablishException $_) {
+            // Error occured during the DB connection. As such, DB is not available to log the error.
+        }
     }
-    
 }
-
-?>

@@ -40,12 +40,20 @@ const SECTION_LOGS             = "log";
 
 const LEGACY_DATABASE_PATH = __DIR__ . '/../barcodebuddy.db';
 
-// Creates a database connection and offers DB functions
+/**
+ * Thrown when a database connection is already being setup and a new connection is requested
+ */
+class DbConnectionDuringEstablishException extends Exception {
+
+}
+
+/**
+ * Creates a database connection and offers DB functions
+ */
 class DatabaseConnection {
 
-
-/* 1 is used for true and 0 for false, as PHP interpretes the String "false" as Boolean "true" */
-const DEFAULT_VALUES      = array(
+    /* 1 is used for true and 0 for false, as PHP interprets the String "false" as Boolean "true" */
+    const DEFAULT_VALUES      = array(
                 "DEFAULT_BARCODE_C"              => "BBUDDY-C",
                 "DEFAULT_BARCODE_CS"             => "BBUDDY-CS",
                 "DEFAULT_BARCODE_CA"             => "BBUDDY-CA",
@@ -67,20 +75,47 @@ const DEFAULT_VALUES      = array(
                 "DEFAULT_CONSUME_SAVED_QUANTITY" => "0",
                 "DEFAULT_USE_GROCY_QU_FACTOR"    => "0");
 
+    const DB_INT_VALUES = array("REVERT_TIME");
 
-const DB_INT_VALUES = array("REVERT_TIME");
+    /**
+     * @var SQLite3
+     */
+    private $db;
+    private static $_ConnectionInstance = null;
+    private static $_StartingConnection = false;
 
-private $db = null;
-
-
-    function __construct() {
+    private function __construct() {
         $this->initDb();
     }
-    
+
+    /**
+     * Get an instance of DatabaseConnection
+     * If an existing instance is available, it will be used.
+     * If not available, and no instance is being created, a new connection will be established.
+     * Otherwise (such as during an ongoing upgrade in this php instance) an error will be thrown
+     *
+     * @return DatabaseConnection
+     *
+     * @throws DbConnectionDuringEstablishException
+     */
+    static function getInstance() {
+        if(self::$_StartingConnection)
+        {
+            throw new DbConnectionDuringEstablishException();
+        }
+
+        if(self::$_ConnectionInstance != null) {
+            return self::$_ConnectionInstance;
+        }
+
+        self::$_StartingConnection = true;
+        self::$_ConnectionInstance = new DatabaseConnection();
+        self::$_StartingConnection = false;
+        return self::$_ConnectionInstance;
+    }
     
     //Initiate database and create global variable for config
     private function initDb() {
-        global $BBCONFIG;
         global $CONFIG;
         
         self::checkPermissions();
@@ -95,11 +130,10 @@ private $db = null;
         $this->db->exec("CREATE TABLE IF NOT EXISTS Quantities(id INTEGER PRIMARY KEY, barcode TEXT NOT NULL UNIQUE, quantitiy INTEGER NOT NULL, product TEXT)");
         $this->db->exec("CREATE TABLE IF NOT EXISTS ApiKeys(id INTEGER PRIMARY KEY, key TEXT NOT NULL UNIQUE, lastused INTEGER NOT NULL)");
         $this->insertDefaultValues();
-        $this->getConfig();
-        $previousVersion = $BBCONFIG["version"];
+        $previousVersion = BBConfig::getInstance($this)["version"];
         if ($previousVersion < BB_VERSION) {
             $this->upgradeBarcodeBuddy($previousVersion);
-            $this->getConfig();
+            BBConfig::forceRefresh();
         }
     }
     
@@ -112,41 +146,7 @@ private $db = null;
             $this->db->exec("INSERT INTO BBConfig(data,value) SELECT \"" . $name . "\", \"" . $value . "\" WHERE NOT EXISTS(SELECT 1 FROM BBConfig WHERE data = '$name')");
         }
     }
-    
-    //Reads  Barcode Buddy Config from DB
-    private function getConfig() {
-        global $BBCONFIG;
-        global $CONFIG;
-        $BBCONFIG = array();
-        $res      = $this->db->query("SELECT * FROM BBConfig");
-        while ($row = $res->fetchArray()) {
-            if (isset($CONFIG->OVERRIDDEN_USER_CONFIG[$row['data']]))
-                $BBCONFIG[$row['data']] = $CONFIG->OVERRIDDEN_USER_CONFIG[$row['data']];
-            else
-                $BBCONFIG[$row['data']] = $row['value'];
-        }
-        if (sizeof($BBCONFIG) == 0) {
-            die("DB Error: Could not get configuration");
-        }
-        if ($CONFIG->EXTERNAL_GROCY_URL != null)
-            $BBCONFIG["GROCY_BASE_URL"] = $CONFIG->EXTERNAL_GROCY_URL;
-        else
-            $BBCONFIG["GROCY_BASE_URL"] = strrtrim($BBCONFIG["GROCY_API_URL"], "api/");
-        if (substr($BBCONFIG["GROCY_BASE_URL"], -1) != "/") {
-            $BBCONFIG["GROCY_BASE_URL"] .= "/";
-        }
-    }
-    
-    //Sets the config key with new value
-    public function updateConfig($key, $value) {
-        global $BBCONFIG;
-        if (in_array($key, self::DB_INT_VALUES)) {
-            checkIfNumeric($value);
-        }
-        $this->db->exec("UPDATE BBConfig SET value='" . $value . "' WHERE data='$key'");
-        $BBCONFIG[$key] = $value;
-    }
-    
+
     //Save last used barcode into DB
     public function saveLastBarcode($barcode, $name = null) {
         $this->updateConfig("LAST_BARCODE", $barcode);
@@ -198,7 +198,6 @@ private $db = null;
     
     //Is called after updating Barcode Buddy to a new version
     private function upgradeBarcodeBuddy($previousVersion) {
-        global $BBCONFIG;
         global $ERROR_MESSAGE;
         //We update version before the actual update routine, as otherwise the user cannot
         //reenter setup. As the login gets invalidated in such a case, the Grocy version
@@ -206,11 +205,11 @@ private $db = null;
         $this->db->exec("UPDATE BBConfig SET value='" . BB_VERSION . "' WHERE data='version'");
         //Place for future update protocols
         if ($previousVersion < 1211) {
-            $this->getConfig();
-            $this->updateConfig("BARCODE_C", strtoupper($BBCONFIG["BARCODE_C"]));
-            $this->updateConfig("BARCODE_O", strtoupper($BBCONFIG["BARCODE_O"]));
-            $this->updateConfig("BARCODE_P", strtoupper($BBCONFIG["BARCODE_P"]));
-            $this->updateConfig("BARCODE_CS", strtoupper($BBCONFIG["BARCODE_CS"]));
+            $config = BBConfig::getInstance();
+            $this->updateConfig("BARCODE_C", strtoupper($config["BARCODE_C"]));
+            $this->updateConfig("BARCODE_O", strtoupper($config["BARCODE_O"]));
+            $this->updateConfig("BARCODE_P", strtoupper($config["BARCODE_P"]));
+            $this->updateConfig("BARCODE_CS", strtoupper($config["BARCODE_CS"]));
         }
         if ($previousVersion < 1303) {
             $this->isSupportedGrocyVersionOrDie();
@@ -246,8 +245,6 @@ private $db = null;
     
     //Getting the state TODO change date
     public function getTransactionState() {
-        global $BBCONFIG;
-        
         $res = $this->db->query("SELECT * FROM TransactionState");
         if ($row = $res->fetchArray()) {
             $state = $row["currentState"];
@@ -258,7 +255,7 @@ private $db = null;
                 $stateSet            = strtotime($since);
                 $now                 = strtotime($this->getDbTimeInLC());
                 $differenceInMinutes = round(abs($now - $stateSet) / 60, 0);
-                if ($differenceInMinutes > $BBCONFIG["REVERT_TIME"]) {
+                if ($differenceInMinutes > BBConfig::getInstance()["REVERT_TIME"]) {
                     $this->setTransactionState(STATE_CONSUME);
                     return STATE_CONSUME;
                 } else {
@@ -570,8 +567,7 @@ private $db = null;
 
     //Save a log
     public function saveLog($log, $isVerbose = false, $isError = false, $isDebug = false) {
-        global $BBCONFIG;
-        if ($isVerbose == false || $BBCONFIG["MORE_VERBOSE"] == true) {
+        if ($isVerbose == false || BBConfig::getInstance()["MORE_VERBOSE"] == true) {
             $date = date('Y-m-d H:i:s');
             if ($isError || $isDebug) {
                 $logEntry = $date .': ' . $log;
@@ -628,12 +624,20 @@ private $db = null;
         }
         return $query;
     }
-    
-}
 
+    /**
+     * @return mixed
+     */
+    function getRawConfig() {
+        return $this->db->query("SELECT * FROM BBConfig");
+    }
 
-// Initiates the database variable
-if (!isset($db)) {
-    $db = new DatabaseConnection();
+    //Sets the config key with new value
+    public function updateConfig($key, $value) {
+        if (in_array($key, self::DB_INT_VALUES)) {
+            checkIfNumeric($value);
+        }
+        $this->db->exec("UPDATE BBConfig SET value='" . $value . "' WHERE data='$key'");
+        BBConfig::getInstance()[$key] = $value;
+    }
 }
-?>

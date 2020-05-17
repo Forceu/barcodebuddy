@@ -22,6 +22,7 @@ require_once __DIR__ . "/../incl/db.inc.php";
 require_once __DIR__ . "/../incl/webui.inc.php";
 require_once __DIR__ . "/../incl/processing.inc.php";
 
+$db = DatabaseConnection::getInstance();
 
 $CONFIG->checkIfAuthenticated(true, true);
 
@@ -97,9 +98,9 @@ function getMobileAppPage() {
 
 
 function getApiTable() {
-	global $db;
     global $CONFIG;
-    $apikeys = $db->getStoredApiKeys();
+
+    $apikeys = DatabaseConnection::getInstance()->getStoredApiKeys();
     $html = new UiEditor();
     $html->addHtml("Management of API keys. For more information about the Barcode Buddy API, click <a  target='_blank' href='../api/'>here</a>.");
     if (!$CONFIG->REQUIRE_API_KEY) {

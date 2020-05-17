@@ -14,6 +14,11 @@ function sleep (time) {
 
 
 function checkAndReturn() {
+		 var button = document.getElementById("save-settings");
+
+		button.setAttribute("disabled","");
+        componentHandler.upgradeElement(button);
+
 		 var form1 = document.getElementById("settings1_form");
 		 var form2 = document.getElementById("settings2_form");
 
@@ -21,9 +26,19 @@ function checkAndReturn() {
 
 		var xhr = new XMLHttpRequest();
 		  xhr.onreadystatechange = function() {
-		    if (this.readyState == 4 && this.status == 200) {
-			window.location.href = 'settings.php';
-		    }
+            if (this.readyState == 4) {
+                if (this.status == 200) {
+				//window.location.href = 'settings.php';
+					if (xhr.responseText == "OK")
+						showToast("Settings saved.");
+					else 
+						showToast("Settings not saved, unknown response!");
+					button.removeAttribute("disabled");
+			        componentHandler.upgradeElement(button);
+		    	} else {
+					showToast("Error communicating, settings not saved!");
+				}
+			}
 		  };
 		xhr.open("POST", 'settings.php', true);
   		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -81,6 +96,13 @@ function openNewTab(url, barcode) {
 		    window.location = "index.php?refreshbarcode="+barcode;
 		}
 	}, 500);
+}
+
+function showToast(messageText) {
+    var snackbarContainer = document.querySelector('#snackbar');
+    snackbarContainer.MaterialSnackbar.showSnackbar({
+        message: messageText
+    });
 }
 
 

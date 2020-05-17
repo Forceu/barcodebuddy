@@ -31,8 +31,8 @@ $CONFIG->checkIfAuthenticated(true, true);
 //Save settings
 if (isset($_POST["isSaved"])) {
         saveSettings(); 
-        //is done with AJAX call, therefore no output is needed
-        //header("Location: " . $_SERVER["PHP_SELF"]);
+        //is done with AJAX call, therefore only "OK" is sent
+        echo "OK";
         die();
     }
 

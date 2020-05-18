@@ -20,9 +20,9 @@ require_once __DIR__ . "/../api.inc.php";
 class ProviderOpenFoodFacts extends LookupProvider {
     
     
-    function __construct($useGenericName) {
-        parent::__construct($useGenericName);
-        $this->useGenericName = "OpenFoodFacts";
+    function __construct($useGenericName, $apiKey = null) {
+        parent::__construct($useGenericName, $apiKey);
+        $this->providerName = "OpenFoodFacts";
     }
     
     /**

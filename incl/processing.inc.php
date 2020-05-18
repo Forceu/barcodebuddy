@@ -19,6 +19,7 @@
 require_once __DIR__ . "/lockGenerator.inc.php";
 require_once __DIR__ . "/db.inc.php";
 require_once __DIR__ . "/config.inc.php";
+require_once __DIR__ . "/lookupProviders/BarcodeLookup.class.php";
 
 
 // Function that is called when a barcode is passed on
@@ -156,7 +157,7 @@ function processUnknownBarcode($barcode, $websocketEnabled, &$fileLock, $bestBef
     } else {
         $productname = "N/A";
         if (is_numeric($barcode)) {
-            $productname = API::lookupNameByBarcodeWithProviders($barcode);
+            $productname = BarcodeLookup::lookup($barcode);
         }
         if ($productname != "N/A") {
             $db->insertUnrecognizedBarcode($barcode,  $amount, $bestBeforeInDays, $price, $productname, $db->checkNameForTags($productname));

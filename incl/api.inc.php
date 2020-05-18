@@ -20,6 +20,7 @@
 require_once __DIR__ . "/configProcessing.inc.php";
 require_once __DIR__ . "/db.inc.php";
 require_once __DIR__ . "/config.inc.php";
+require_once __DIR__ . "/lookupProviders/LookupProvider.class.php";
 
 const API_O_PRODUCTS     = 'objects/products';
 const API_PRODUCTS       = 'stock/products';
@@ -481,53 +482,17 @@ class API {
     
     
     /**
-     * Look up a barcode using openfoodfacts
+     * Look up a barcode using providers
      * @param  [String] $barcode Input barcode
      * @return [String]          Returns product name or "N/A" if not found
      */
-    public static function lookupNameByBarcodeInOpenFoodFacts($barcode) {
-        $url = "https://world.openfoodfacts.org/api/v0/product/" . $barcode . ".json";
+    public static function lookupNameByBarcodeWithProviders($barcode) {
 
-        $curl = new CurlGenerator($url, METHOD_GET, null, null, true);
-        try {
-            $result = $curl->execute(true);
-        } catch (InvalidServerResponseException $e) {
-            self::logError("Could not connect to OpenFoodFacts.", false);
-            return "N/A";
-        } catch (UnauthorizedException $e) {
-            self::logError("Could not connect to OpenFoodFacts - unauthorized");
-            return "N/A";
-        } catch (InvalidJsonResponseException $e) {
-            self::logError("Error parsing OpenFoodFacts response: ".$e->getMessage(), false);
-            return "N/A";
-        } catch (InvalidSSLException $e) {
-            self::logError("Could not connect to OpenFoodFacts - invalid SSL certificate");
-            return "N/A";
-        }
-        if (!isset($result["status"]) || $result["status"] !== 1) {
-            return "N/A";
-        }
+        $useGenericName = BBConfig::getInstance()["USE_GENERIC_NAME"];
 
-        $genericName = null;
-        $productName = null;
-        if (isset($result["product"]["generic_name"]) && $result["product"]["generic_name"] != "") {
-            $genericName = sanitizeString($result["product"]["generic_name"]);
-        }
-        if (isset($result["product"]["product_name"]) && $result["product"]["product_name"] != "") {
-            $productName = sanitizeString($result["product"]["product_name"]);
-        }
-
-        if (BBConfig::getInstance()["USE_GENERIC_NAME"]) {
-            if ($genericName != null)
-                return $genericName;
-            if ($productName != null)
-                return $productName;
-        } else {
-            if ($productName != null)
-                return $productName;
-            if ($genericName != null)
-                return $genericName;
-        }
+        $resultOpenFoodFacts = (new ProviderOpenFoodFacts($useGenericName))->lookupBarcode($barcode);
+        if ($resultOpenFoodFacts != null)
+            return $resultOpenFoodFacts;
         return "N/A";
     }
     

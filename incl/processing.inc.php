@@ -156,7 +156,7 @@ function processUnknownBarcode($barcode, $websocketEnabled, &$fileLock, $bestBef
     } else {
         $productname = "N/A";
         if (is_numeric($barcode)) {
-            $productname = API::lookupNameByBarcodeInOpenFoodFacts($barcode);
+            $productname = API::lookupNameByBarcodeWithProviders($barcode);
         }
         if ($productname != "N/A") {
             $db->insertUnrecognizedBarcode($barcode,  $amount, $bestBeforeInDays, $price, $productname, $db->checkNameForTags($productname));

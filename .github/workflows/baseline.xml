@@ -155,8 +155,8 @@
       <code>$product["name"]</code>
     </PossiblyNullArrayAccess>
     <UndefinedFunction occurrences="2">
-      <code>pluginEventReceiver_processEvent($eventType, $log)</code>
-      <code>sendWebsocketMessage($websocketText, $websocketEnabled, $websocketResultCode)</code>
+      <code>pluginEventReceiver_processEvent($this-&gt;eventType, $this-&gt;logText)</code>
+      <code>sendWebsocketMessage($this-&gt;websocketText, $this-&gt;websocketResultCode)</code>
     </UndefinedFunction>
   </file>
   <file src="incl/sse/sse_data.php">

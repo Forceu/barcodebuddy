@@ -135,7 +135,7 @@ class BBuddyApi {
                     else
                         return self::createResultArray(null, "Invalid parameter price: needs to be type float", 400);
                 }
-                $result = processNewBarcode(sanitizeString($barcode), true, $bestBefore, $price);
+                $result = processNewBarcode(sanitizeString($barcode), $bestBefore, $price);
                 return self::createResultArray(array("result" => sanitizeString($result)));
             }
         }));

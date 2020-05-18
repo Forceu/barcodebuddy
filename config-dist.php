@@ -91,7 +91,8 @@ const OVERRIDDEN_USER_CONFIG       = array(
                                          //"SHOPPINGLIST_REMOVE"         => "1",
                                          //"USE_GENERIC_NAME"            => "1",
                                          //"CONSUME_SAVED_QUANTITY"      => "0",
-                                         //"DEFAULT_USE_GROCY_QU_FACTOR" => "0"
+                                         //"USE_GROCY_QU_FACTOR"         => "0",
+                                         //"SHOW_STOCK_ON_SCAN"          => "0"
                                          );
 
 

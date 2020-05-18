@@ -23,57 +23,60 @@ require_once __DIR__ . "/lookupProviders/BarcodeLookup.class.php";
 
 
 // Function that is called when a barcode is passed on
-function processNewBarcode($barcodeInput, $websocketEnabled = true, $bestBeforeInDays = null, $price = null) {
+function processNewBarcode($barcodeInput, $bestBeforeInDays = null, $price = null) {
     $db     = DatabaseConnection::getInstance();
     $config = BBConfig::getInstance();
 
     $barcode = strtoupper($barcodeInput);
     if ($barcode == $config["BARCODE_C"]) {
         $db->setTransactionState(STATE_CONSUME);
-        return outputLog("Set state to Consume", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
+        return createLogModeChange(STATE_CONSUME);
     }
     if ($barcode == $config["BARCODE_CS"]) {
         $db->setTransactionState(STATE_CONSUME_SPOILED);
-        return outputLog("Set state to Consume (spoiled)", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
+        return createLogModeChange(STATE_CONSUME_SPOILED);
     }
     if ($barcode == $config["BARCODE_CA"]) {
         $db->setTransactionState(STATE_CONSUME_ALL);
-        return outputLog("Set state to Consume all", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
+        return createLogModeChange(STATE_CONSUME_ALL);
     }
     if ($barcode == $config["BARCODE_P"]) {
         $db->setTransactionState(STATE_PURCHASE);
-        return outputLog("Set state to Purchase", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
+        return createLogModeChange(STATE_PURCHASE);
     }
     if ($barcode == $config["BARCODE_O"]) {
         $db->setTransactionState(STATE_OPEN);
-        return outputLog("Set state to Open", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
+        return createLogModeChange(STATE_OPEN);
     }
     if ($barcode == $config["BARCODE_GS"]) {
         $db->setTransactionState(STATE_GETSTOCK);
-        return outputLog("Set state to Inventory", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
+        return createLogModeChange(STATE_GETSTOCK);
     }
     if ($barcode == $config["BARCODE_AS"]) {
         $db->setTransactionState(STATE_ADD_SL);
-        return outputLog("Set state to Shopping list", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
+        return createLogModeChange(STATE_ADD_SL);
     }
     if (stringStartsWith($barcode, $config["BARCODE_Q"])) {
-        $quantitiy = str_replace($config["BARCODE_Q"], "", $barcode);
-        checkIfNumeric($quantitiy);
+        $quantity = str_replace($config["BARCODE_Q"], "", $barcode);
+        checkIfNumeric($quantity);
         if ($config["LAST_PRODUCT"] != null) {
             $lastBarcode = $config["LAST_BARCODE"] . " (" . $config["LAST_PRODUCT"] . ")";
         } else {
             $lastBarcode = $config["LAST_BARCODE"];
         }
-        changeQuantityAfterScan($quantitiy);
-        return outputLog("Set quantitiy to $quantitiy for barcode $lastBarcode", EVENT_TYPE_MODE_CHANGE, true, $websocketEnabled);
+        changeQuantityAfterScan($quantity);
+        $log = new LogOutput("Set quantity to $quantity for barcode $lastBarcode", EVENT_TYPE_MODE_CHANGE);
+        return $log->setVerbose()->createLog();
     }
     if (trim($barcode) == "") {
-        return outputLog("Invalid barcode found", EVENT_TYPE_ERROR, true, $websocketEnabled, WS_RESULT_PRODUCT_UNKNOWN);
+        $log = new LogOutput("Invalid barcode found", EVENT_TYPE_ERROR);
+        return $log->setVerbose()->setWebsocketResultCode(WS_RESULT_PRODUCT_UNKNOWN)->createLog();
     }
 
     if ($db->isChoreBarcode($barcode)) {
         $choreText = processChoreBarcode($barcode);
-        return outputLog("Executed chore: " . $choreText, EVENT_TYPE_EXEC_CHORE, true, $websocketEnabled);
+        $log       = new LogOutput("Executed chore: " . $choreText, EVENT_TYPE_EXEC_CHORE);
+        return $log->setVerbose()->createLog();
     }
 
     $sanitizedBarcode = sanitizeString($barcode);
@@ -82,11 +85,42 @@ function processNewBarcode($barcodeInput, $websocketEnabled = true, $bestBeforeI
     $productInfo = API::getProductByBardcode($sanitizedBarcode);
     if ($productInfo == null) {
         $db->saveLastBarcode($sanitizedBarcode);
-        return processUnknownBarcode($sanitizedBarcode, $websocketEnabled, $lockGenerator, $bestBeforeInDays, $price);
+        return processUnknownBarcode($sanitizedBarcode, true, $lockGenerator, $bestBeforeInDays, $price);
     } else {
         $db->saveLastBarcode($sanitizedBarcode, $productInfo["name"]);
-        return processKnownBarcode($productInfo, $sanitizedBarcode, $websocketEnabled, $lockGenerator, $bestBeforeInDays, $price);
+        return processKnownBarcode($productInfo, $sanitizedBarcode, true, $lockGenerator, $bestBeforeInDays, $price);
     }
+}
+
+function createLogModeChange($state) {
+    $text = "Set state to ";
+    switch ($state) {
+        case STATE_CONSUME:
+            $text .= "Consume";
+            break;
+        case STATE_CONSUME_SPOILED:
+            $text .= "Consume (spoiled)";
+            break;
+        case STATE_PURCHASE:
+            $text .= "Purchase";
+            break;
+        case STATE_OPEN:
+            $text .= "Open";
+            break;
+        case STATE_GETSTOCK:
+            $text .= "Inventory";
+            break;
+        case STATE_ADD_SL:
+            $text .= "Shopping List";
+            break;
+        case STATE_CONSUME_ALL:
+            $text .= "Consume all";
+            break;
+        default:
+            throw new Exception("Invalid state");
+    }
+    $log = new LogOutput($text, EVENT_TYPE_MODE_CHANGE);
+    return $log->setVerbose()->createLog();
 }
 
 
@@ -113,27 +147,12 @@ const EVENT_TYPE_ACTION_REQUIRED     = 17;
 const EVENT_TYPE_CONSUME_ALL_PRODUCT = 18;
 
 
-const WS_RESULT_PRODUCT_FOUND         = 0;
-const WS_RESULT_PRODUCT_LOOKED_UP     = 1;
-const WS_RESULT_PRODUCT_UNKNOWN       = 2;
-const WS_RESULT_MODE_CHANGE           = 4;
-const WS_RESULT_ERROR                 = 'E';
+const WS_RESULT_PRODUCT_FOUND     = 0;
+const WS_RESULT_PRODUCT_LOOKED_UP = 1;
+const WS_RESULT_PRODUCT_UNKNOWN   = 2;
+const WS_RESULT_MODE_CHANGE       = 4;
+const WS_RESULT_ERROR             = 'E';
 
-
-//Save a log input to the database or submit websocket
-function outputLog($log, $eventType, $isVerbose = false, $websocketEnabled = true, $websocketResultCode = WS_RESULT_PRODUCT_FOUND, $websocketText = null) {
-    global $LOADED_PLUGINS;
-
-    DatabaseConnection::getInstance()->saveLog($log, $isVerbose);
-    if ($websocketText == null) {
-        $websocketText = $log;
-    }
-    sendWebsocketMessage($websocketText, $websocketEnabled, $websocketResultCode);
-    if (in_array("EventReceiver", $LOADED_PLUGINS)) {
-        pluginEventReceiver_processEvent($eventType, $log);
-    }
-    return $log;
-}
 
 //Execute a chore when chore barcode was submitted
 function processChoreBarcode($barcode) {
@@ -153,7 +172,12 @@ function processUnknownBarcode($barcode, $websocketEnabled, &$fileLock, $bestBef
     if ($db->isUnknownBarcodeAlreadyStored($barcode)) {
         //Unknown barcode already in local database
         $db->addQuantitiyToUnknownBarcode($barcode, $amount);
-        $output = outputLog("Unknown product already scanned. Increasing quantitiy. Barcode: " . $barcode, EVENT_TYPE_ADD_NEW_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_LOOKED_UP);
+        $log    = new LogOutput("Unknown product already scanned. Increasing quantity.", EVENT_TYPE_ADD_NEW_BARCODE, $barcode);
+        $output = $log
+            ->insertBarcodeInWebsocketText()
+            ->setSendWebsocket($websocketEnabled)
+            ->setWebsocketResultCode(WS_RESULT_PRODUCT_LOOKED_UP)
+            ->createLog();
     } else {
         $productname = "N/A";
         if (is_numeric($barcode)) {
@@ -161,10 +185,22 @@ function processUnknownBarcode($barcode, $websocketEnabled, &$fileLock, $bestBef
         }
         if ($productname != "N/A") {
             $db->insertUnrecognizedBarcode($barcode, $amount, $bestBeforeInDays, $price, $productname, $db->checkNameForTags($productname));
-            $output = outputLog("Unknown barcode looked up, found name: " . $productname . ". Barcode: " . $barcode, EVENT_TYPE_ADD_NEW_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_LOOKED_UP, $productname);
+            $log    = new LogOutput("Unknown barcode looked up, found name: " . $productname, EVENT_TYPE_ADD_NEW_BARCODE, $barcode);
+            $output = $log
+                ->insertBarcodeInWebsocketText()
+                ->setSendWebsocket($websocketEnabled)
+                ->setCustomWebsocketText($productname)
+                ->setWebsocketResultCode(WS_RESULT_PRODUCT_LOOKED_UP)
+                ->createLog();
         } else {
             $db->insertUnrecognizedBarcode($barcode, $amount, $bestBeforeInDays, $price);
-            $output = outputLog("Unknown barcode could not be looked up. Barcode: " . $barcode, EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_UNKNOWN, $barcode);
+            $log    = new LogOutput("Unknown barcode could not be looked up.", EVENT_TYPE_ADD_UNKNOWN_BARCODE, $barcode);
+            $output = $log
+                ->insertBarcodeInWebsocketText()
+                ->setSendWebsocket($websocketEnabled)
+                ->setCustomWebsocketText($barcode)
+                ->setWebsocketResultCode(WS_RESULT_PRODUCT_UNKNOWN)
+                ->createLog();
         }
     }
     $fileLock->removeLock();
@@ -176,7 +212,7 @@ function processUnknownBarcode($barcode, $websocketEnabled, &$fileLock, $bestBef
 function stateToString($state) {
     $allowedModes = array(
         STATE_CONSUME => "Consume",
-        STATE_CONSUME_SPOILED => "Consume (spoiled)",
+        STATE_CONSUME_SPOILED => "Consume(spoiled)",
         STATE_PURCHASE => "Purchase",
         STATE_OPEN => "Open",
         STATE_GETSTOCK => "Inventory",
@@ -197,11 +233,13 @@ function changeWeightTareItem($barcode, $newWeight) {
     $product = API::getProductByBardcode($barcode);
 
     if (($product["stockAmount"] + $product["tareWeight"]) == $newWeight) {
-        outputLog("Weight unchanged for: " . $product["name"], EVENT_TYPE_ACTION_REQUIRED, true, false);
+        $log = new LogOutput("Weight unchanged for: " . $product["name"], EVENT_TYPE_ACTION_REQUIRED);
+        $log->setVerbose()->dontSendWebsocket()->createLog();
         return true;
     }
     if ($newWeight < $product["tareWeight"]) {
-        outputLog("Entered weight for " . $product["name"] . " is below tare weight (" . $product["tareWeight"] . ")", EVENT_TYPE_ADD_UNKNOWN_BARCODE, false, false);
+        $log = new LogOutput("Entered weight for " . $product["name"] . " is below tare weight(" . $product["tareWeight"] . ")", EVENT_TYPE_ACTION_REQUIRED);
+        $log->setVerbose()->dontSendWebsocket()->createLog();
         return false;
     }
 
@@ -210,7 +248,8 @@ function changeWeightTareItem($barcode, $newWeight) {
     } else {
         API::purchaseProduct($product["id"], $newWeight);
     }
-    outputLog("Weight set to " . $newWeight . " for: " . $product["name"], EVENT_TYPE_ACTION_REQUIRED, true, false);
+    $log = new LogOutput("Weight set to " . $newWeight . " for: " . $product["name"], EVENT_TYPE_ACTION_REQUIRED);
+    $log->setVerbose()->dontSendWebsocket()->createLog();
     return true;
 }
 
@@ -256,13 +295,12 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
     $config = BBConfig::getInstance();
     $db     = DatabaseConnection::getInstance();
 
-    $output = "Undefined";
-
     if ($productInfo["isTare"]) {
         if (!$db->isUnknownBarcodeAlreadyStored($barcode))
             $db->insertActionRequiredBarcode($barcode, $bestBeforeInDays, $price);
         $fileLock->removeLock();
-        return outputLog("Action required: Enter weight for " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ACTION_REQUIRED, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Action required: Enter weight for " . $productInfo["name"]);
+        $log = new LogOutput("Action required: Enter weight for " . $productInfo["name"], EVENT_TYPE_ACTION_REQUIRED, $barcode);
+        return $log->setWebsocketResultCode(WS_RESULT_PRODUCT_FOUND)->createLog();
     }
 
 
@@ -275,21 +313,39 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
             if ($productInfo["stockAmount"] > 0) {
                 if ($productInfo["stockAmount"] < $amountToConsume)
                     $amountToConsume = $productInfo["stockAmount"];
-                $output = outputLog("Product found. Consuming " . $amountToConsume . " " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Consuming " . $amountToConsume . " " . $productInfo["unit"] . " of " . $productInfo["name"]);
+                $log    = new LogOutput("Consuming " . $amountToConsume . " " . $productInfo["unit"] . " of " . $productInfo["name"], EVENT_TYPE_ADD_KNOWN_BARCODE, $barcode);
+                $output = $log
+                    ->addStockToText($productInfo["stockAmount"] - $amountToConsume)
+                    ->setWebsocketResultCode(WS_RESULT_PRODUCT_FOUND)
+                    ->addProductFoundText()
+                    ->createLog();
                 API::consumeProduct($productInfo["id"], $amountToConsume, false);
                 $fileLock->removeLock();
                 return $output;
             } else {
                 $fileLock->removeLock();
-                return outputLog("Product found. None in stock, not consuming: " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Product found. None in stock, not consuming: " . $productInfo["name"]);
+                $log = new LogOutput("None in stock, not consuming: " . $productInfo["name"], EVENT_TYPE_ADD_KNOWN_BARCODE, $barcode);
+                return $log
+                    ->setWebsocketResultCode(WS_RESULT_PRODUCT_FOUND)
+                    ->addProductFoundText()
+                    ->createLog();
             }
         case STATE_CONSUME_ALL:
             $amountToConsume = $productInfo["stockAmount"];
             if ($productInfo["stockAmount"] > 0) {
-                $output = outputLog("Product found. Consuming " . $amountToConsume . " " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Consuming " . $amountToConsume . " " . $productInfo["unit"] . " of " . $productInfo["name"]);
+                $log    = new LogOutput("Consuming all" . $amountToConsume . " " . $productInfo["unit"] . " of " . $productInfo["name"], EVENT_TYPE_ADD_KNOWN_BARCODE, $barcode);
+                $output = $log
+                    ->setWebsocketResultCode(WS_RESULT_PRODUCT_FOUND)
+                    ->addProductFoundText()
+                    ->createLog();
+
                 API::consumeProduct($productInfo["id"], $amountToConsume, false);
             } else {
-                $output = outputLog("Product found. None in stock, not consuming: " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Product found. None in stock, not consuming: " . $productInfo["name"]);
+                $log    = new LogOutput("None in stock, not consuming: " . $productInfo["name"], EVENT_TYPE_ADD_KNOWN_BARCODE, $barcode);
+                $output = $log
+                    ->setWebsocketResultCode(WS_RESULT_PRODUCT_FOUND)
+                    ->addProductFoundText()
+                    ->createLog();
             }
             if ($config["REVERT_SINGLE"]) {
                 $db->saveLog("Reverting back to Consume", true);
@@ -298,8 +354,22 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
             $fileLock->removeLock();
             return $output;
         case STATE_CONSUME_SPOILED:
-            $output = outputLog("Product found. Consuming 1 spoiled " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Consuming 1 spoiled " . $productInfo["unit"] . " of " . $productInfo["name"]);
-            API::consumeProduct($productInfo["id"], 1, true);
+            //TODO respect quantity factor
+            if ($productInfo["stockAmount"] > 0) {
+                $log    = new LogOutput("Consuming 1 spoiled " . $productInfo["unit"] . " of " . $productInfo["name"], EVENT_TYPE_ADD_KNOWN_BARCODE, $barcode);
+                $output = $log
+                    ->addStockToText($productInfo["stockAmount"] - 1)
+                    ->setWebsocketResultCode(WS_RESULT_PRODUCT_FOUND)
+                    ->addProductFoundText()
+                    ->createLog();
+                API::consumeProduct($productInfo["id"], 1, true);
+            } else {
+                $log    = new LogOutput("Product found . None in stock, not consuming: " . $productInfo["name"], EVENT_TYPE_ADD_KNOWN_BARCODE, $barcode);
+                $output = $log
+                    ->setWebsocketResultCode(WS_RESULT_PRODUCT_FOUND)
+                    ->addProductFoundText()
+                    ->createLog();
+            }
             $fileLock->removeLock();
             if ($config["REVERT_SINGLE"]) {
                 $db->saveLog("Reverting back to Consume", true);
@@ -312,15 +382,29 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
                 $additionalLog = " [WARNING]: No default best before date set!";
             else
                 $additionalLog = "";
-            $output = outputLog("Product found. Adding  $amount " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode . $additionalLog, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Adding $amount " . $productInfo["unit"] . " of " . $productInfo["name"] . $additionalLog);
+            $log    = new LogOutput("Adding  $amount " . $productInfo["unit"] . " of " . $productInfo["name"] . $additionalLog, EVENT_TYPE_ADD_KNOWN_BARCODE, $barcode);
+            $output = $log
+                ->addStockToText($productInfo["stockAmount"] + $amount)
+                ->setWebsocketResultCode(WS_RESULT_PRODUCT_FOUND)
+                ->addProductFoundText()
+                ->createLog();
             //no $fileLock->removeLock() needed, as it is done in API::purchaseProduct
             return $output;
         case STATE_OPEN:
             if ($productInfo["stockAmount"] > 0) {
-                $output = outputLog("Product found. Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"]);
+                $log    = new LogOutput("Opening 1 " . $productInfo["unit"] . " of " . $productInfo["name"], EVENT_TYPE_ADD_KNOWN_BARCODE, $barcode);
+                $output = $log
+                    ->addStockToText($productInfo["stockAmount"])
+                    ->setWebsocketResultCode(WS_RESULT_PRODUCT_FOUND)
+                    ->addProductFoundText()
+                    ->createLog();
                 API::openProduct($productInfo["id"]);
             } else {
-                $output = outputLog("Product found. None in stock, not opening: " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Product found. None in stock, not opening: " . $productInfo["name"]);
+                $log    = new LogOutput("Product found . None in stock, not opening: " . $productInfo["name"], EVENT_TYPE_ADD_KNOWN_BARCODE, $barcode);
+                $output = $log
+                    ->setWebsocketResultCode(WS_RESULT_PRODUCT_FOUND)
+                    ->addProductFoundText()
+                    ->createLog();
             }
             $fileLock->removeLock();
             if ($config["REVERT_SINGLE"]) {
@@ -339,11 +423,10 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
                     }
                 }
             }
-            return outputLog($log, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled);
+            return (new LogOutput($log, EVENT_TYPE_ADD_KNOWN_BARCODE))->createLog();
         case STATE_ADD_SL:
             $fileLock->removeLock();
-            $output = outputLog("Added to shopping list: 1 " . $productInfo["unit"] . " of " . $productInfo["name"],
-                EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled);
+            return (new LogOutput("Added to shopping list: 1 " . $productInfo["unit"] . " of " . $productInfo["name"], EVENT_TYPE_ADD_KNOWN_BARCODE))->createLog();
             API::addToShoppinglist($productInfo["id"], 1);
             return $output;
         default:
@@ -371,7 +454,7 @@ function printSelections($selected, $productinfo) {
     }
     natcasesort($selections);
 
-    $optionscontent = "<option value=\"0\" >= None =</option>";
+    $optionscontent = " < option value = \"0\" >= None =</option>";
     foreach ($selections as $key => $val) {
         if ($key != $selected) {
             $optionscontent = $optionscontent . "<option value=\"" . $key . "\">" . $val . "</option>";
@@ -533,4 +616,92 @@ function showErrorNotWritable($error = "DB Error") {
     die($error . ": Database file cannot be created, as folder or database file is not writable. Please check your permissions.<br>
              Have a look at this link to find out how to do this:
              <a href='https://github.com/olab/Open-Labyrinth/wiki/How-do-I-make-files-and-folders-writable-for-the-web-server%3F'>" . "How do I make files and folders writable for the web server?</a>");
+}
+
+class LogOutput {
+
+    private $logText;
+    private $eventType;
+    private $barcode = null;
+    private $isVerbose = false;
+    private $sendWebsocketMessage = true;
+    private $websocketResultCode = WS_RESULT_PRODUCT_FOUND;
+    private $websocketText;
+
+    function __construct($logText, $eventType, $barcode = null) {
+        $this->logText       = $logText;
+        $this->eventType     = $eventType;
+        $this->websocketText = $logText;
+        $this->barcode       = $barcode;
+
+        if ($barcode != null)
+            $this->logText .= " Barcode: $barcode";
+    }
+
+    public function setVerbose() {
+        $this->isVerbose = true;
+        return $this;
+    }
+
+    public function insertBarcodeInWebsocketText() {
+        if ($this->barcode != null)
+            $this->websocketText .= " Barcode: $this->barcode";
+        return $this;
+    }
+
+    public function dontSendWebsocket() {
+        $this->sendWebsocketMessage = false;
+        return $this;
+    }
+
+    public function addStockToText($amount) {
+        if (!BBConfig::getInstance()["SHOW_STOCK_ON_SCAN"])
+            return $this;
+        //Do not have "." at the beginning if last character was "!"
+        if (substr($this->logText, -1) != "!")
+            $this->logText .= ".";
+        if (substr($this->websocketText, -1) != "!")
+            $this->websocketText .= ".";
+        $text = " In Stock: $amount";
+
+        $this->logText       .= $text;
+        $this->websocketText .= $text;
+        return $this;
+    }
+
+
+    public function addProductFoundText() {
+        $this->logText = "Product found. " . $this->logText;
+        return $this;
+    }
+
+    public function setSendWebsocket($sendWebsocket) {
+        $this->sendWebsocketMessage = $sendWebsocket;
+        return $this;
+    }
+
+    public function setWebsocketResultCode($code) {
+        $this->websocketResultCode = $code;
+        return $this;
+    }
+
+    public function setCustomWebsocketText($text) {
+        $this->websocketText = $text;
+        return $this;
+    }
+
+    public function createLog() {
+        global $LOADED_PLUGINS;
+
+        DatabaseConnection::getInstance()->saveLog($this->logText, $this->isVerbose);
+        if ($this->sendWebsocketMessage) {
+            sendWebsocketMessage($this->websocketText, $this->websocketResultCode);
+        }
+        if (in_array("EventReceiver", $LOADED_PLUGINS)) {
+            pluginEventReceiver_processEvent($this->eventType, $this->logText);
+        }
+        return $this->logText;
+    }
+
+
 }

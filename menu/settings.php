@@ -42,6 +42,7 @@ $webUi = new WebUiGenerator(MENU_SETTINGS);
 $webUi->addHeader();
 $webUi->addCard("General Settings",getHtmlSettingsGeneral());
 $webUi->addCard("Grocy API",getHtmlSettingsGrocyApi());
+//$webUi->addCard("UPC DB API",getHtmlSettingsUpcDb()); TODO
 $webUi->addCard("Websocket Server Status",getHtmlSettingsWebsockets());
 $webUi->addFooter();
 $webUi->printHtml();
@@ -122,6 +123,10 @@ function getHtmlSettingsGrocyApi() {
     $html->addLineBreak(2);
     $html->addHtml(checkGrocyConnection());
     return $html->getHtml();
+}
+
+function getHtmlSettingsUpcDb() {
+    //TODO
 }
 
 

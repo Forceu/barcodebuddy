@@ -45,7 +45,7 @@ class LookupProvider {
         try {
             $result = $curl->execute(true);
         }
-        catch (Excepption $e) {
+        catch (Exception $e) {
             $class = get_class($e);
             switch ($class) {
                 case 'InvalidServerResponseException':

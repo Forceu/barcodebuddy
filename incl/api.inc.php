@@ -45,24 +45,31 @@ class InvalidServerResponseException extends Exception { }
 class UnauthorizedException          extends Exception { }
 class InvalidJsonResponseException   extends Exception { }
 class InvalidSSLException            extends Exception { }
+class InvalidParameterException      extends Exception { }
+class NotFoundException              extends Exception { }
+class LimitExceededException         extends Exception { }
+class InternalServerErrorException   extends Exception { }
 
 class CurlGenerator {
     private $ch = null;
     private $method = METHOD_GET;
     private $urlApi;
+    private $ignoredResultCodes = array(400);
 
     const IGNORED_API_ERRORS_REGEX = array(
         '/No product with barcode .+ found/'
     );
     
-    function __construct($url, $method = METHOD_GET, $jasonData = null, $loginOverride = null, $noApiCall = false) {
+    function __construct($url, $method = METHOD_GET, $jasonData = null, $loginOverride = null, $noApiCall = false, $ignoredResultCodes = null) {
         global $CONFIG;
 
         $config = BBConfig::getInstance();
         
-        $this->method  = $method;
-        $this->urlApi  = $url;
-        $this->ch      = curl_init();
+        $this->method                    = $method;
+        $this->urlApi                    = $url;
+        $this->ch                        = curl_init();
+        if ($ignoredResultCodes != null)
+            $this->ignoredResultCodes    = $ignoredResultCodes;
 
         if ($loginOverride == null) {
             $apiKey = $config["GROCY_API_KEY"];
@@ -131,12 +138,32 @@ class CurlGenerator {
             return $curlResult;
     }
 
+
+
     private function checkForErrorsAndThrow($curlResult) {
         $curlError    = curl_errno($this->ch);
         $responseCode = curl_getinfo($this->ch, CURLINFO_RESPONSE_CODE);
 
-        if ($responseCode == 401)
-            throw new UnauthorizedException();
+        if (in_array($responseCode, $this->ignoredResultCodes))
+            return;
+
+        switch ($responseCode) {
+            case 400: 
+                 throw new InvalidParameterException();
+                 break;
+            case 401:
+                 throw new UnauthorizedException();
+                 break;
+            case 404:
+                 throw new NotFoundException();
+                 break;
+            case 429:
+                 throw new LimitExceededException();
+                 break;
+            case 500:
+                 throw new InternalServerErrorException();
+                 break;
+        }
         if ($curlResult === false) {
             if (self::isErrorSslRelated($curlError))
                 throw new InvalidSSLException();
@@ -241,6 +268,14 @@ class API {
             return "Invalid API key<br>";
         } catch (InvalidSSLException $e) {
             return "Invalid SSL certificate!<br>If you are using a self-signed certificate, you can disable the check in config.php<br>";
+        } catch (InvalidParameterException $e) {
+            return "Internal error: Invalid parameter passed<br>";
+        } catch (NotFoundException $e) {
+            return "Path not found - check if correct URL was entered<br>";
+        } catch (LimitExceededException $e) {
+            return "Connection limits exceeded<br>";
+        } catch (InternalServerErrorException $e) {
+            return "Grocy reported internal error.<br>";
         }
         if (isset($result["grocy_version"]["Version"])) {
             $version = $result["grocy_version"]["Version"];
@@ -481,58 +516,6 @@ class API {
     
     
     /**
-     * Look up a barcode using openfoodfacts
-     * @param  [String] $barcode Input barcode
-     * @return [String]          Returns product name or "N/A" if not found
-     */
-    public static function lookupNameByBarcodeInOpenFoodFacts($barcode) {
-        $url = "https://world.openfoodfacts.org/api/v0/product/" . $barcode . ".json";
-
-        $curl = new CurlGenerator($url, METHOD_GET, null, null, true);
-        try {
-            $result = $curl->execute(true);
-        } catch (InvalidServerResponseException $e) {
-            self::logError("Could not connect to OpenFoodFacts.", false);
-            return "N/A";
-        } catch (UnauthorizedException $e) {
-            self::logError("Could not connect to OpenFoodFacts - unauthorized");
-            return "N/A";
-        } catch (InvalidJsonResponseException $e) {
-            self::logError("Error parsing OpenFoodFacts response: ".$e->getMessage(), false);
-            return "N/A";
-        } catch (InvalidSSLException $e) {
-            self::logError("Could not connect to OpenFoodFacts - invalid SSL certificate");
-            return "N/A";
-        }
-        if (!isset($result["status"]) || $result["status"] !== 1) {
-            return "N/A";
-        }
-
-        $genericName = null;
-        $productName = null;
-        if (isset($result["product"]["generic_name"]) && $result["product"]["generic_name"] != "") {
-            $genericName = sanitizeString($result["product"]["generic_name"]);
-        }
-        if (isset($result["product"]["product_name"]) && $result["product"]["product_name"] != "") {
-            $productName = sanitizeString($result["product"]["product_name"]);
-        }
-
-        if (BBConfig::getInstance()["USE_GENERIC_NAME"]) {
-            if ($genericName != null)
-                return $genericName;
-            if ($productName != null)
-                return $productName;
-        } else {
-            if ($productName != null)
-                return $productName;
-            if ($genericName != null)
-                return $genericName;
-        }
-        return "N/A";
-    }
-    
-    
-    /**
      * Get a Grocy product by barcode
      * @param  [String] $barcode barcode to lookup
      * @return [Array]           Array if product info or null if barcode
@@ -651,7 +634,19 @@ class API {
                 self::logError("Invalid JSON: " . $errorMessage . " " . $e->getMessage());
                 break;
             case 'InvalidSSLException':
-                self::logError("Invalid API key: " . $errorMessage);
+                self::logError("Invalid SSL certificate: " . $errorMessage);
+                break;
+            case 'InvalidParameterException':
+                self::logError("Internal error: Invalid parameter passed: " . $errorMessage);
+                break;
+            case 'NotFoundException':
+                self::logError("Server reported path not found: " . $errorMessage);
+                break;
+            case 'LimitExceededException':
+                self::logError("Connection limits exceeded: " . $errorMessage);
+                break;
+            case 'InternalServerErrorException':
+                self::logError("Grocy reported internal error: " . $errorMessage);
                 break;
         }
     }

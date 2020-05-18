@@ -24,8 +24,8 @@ class BarcodeLookup {
 
     /**
      * Look up a barcode using providers
-     * @param  [String] $barcode Input barcode
-     * @return [String]          Returns product name or "N/A" if not found
+     * @param string $barcode Input barcode
+     * @return string Returns product name or "N/A" if not found
      */
 	public static function lookUp($barcode) {
 		$useGenericName = BBConfig::getInstance()["USE_GENERIC_NAME"];
@@ -41,5 +41,3 @@ class BarcodeLookup {
         return "N/A";
 	}
 }
-
-?>

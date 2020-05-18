@@ -59,5 +59,3 @@ class ProviderOpenFoodFacts extends LookupProvider {
         return null;
     }
 }
-
-?>

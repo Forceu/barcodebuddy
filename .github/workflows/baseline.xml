@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="3.11.4@58e1d8e68e5098bf4fbfdfb420c38d563f882549">
   <file src="api/index.php">
+    <InvalidNullableReturnType occurrences="1">
+      <code>bool</code>
+    </InvalidNullableReturnType>
     <PossiblyFalseArgument occurrences="1">
       <code>strpos($requestedUrl, '/api')</code>
     </PossiblyFalseArgument>
@@ -79,7 +82,7 @@
       <code>$subnet</code>
       <code>$subnet</code>
     </MissingClosureParamType>
-    <UndefinedConstant occurrences="18">
+    <UndefinedConstant occurrences="17">
       <code>PORT_WEBSOCKET_SERVER</code>
       <code>DATABASE_PATH</code>
       <code>CURL_TIMEOUT_S</code>
@@ -93,7 +96,6 @@
       <code>HIDE_LINK_GROCY</code>
       <code>HIDE_LINK_SCREEN</code>
       <code>EXTERNAL_GROCY_URL</code>
-      <code>SCREEN_TOUCH_BUTTONS</code>
       <code>AUTHENTICATION_BYPASS_NETS</code>
       <code>TRUSTED_PROXIES</code>
       <code>CONFIG_PATH</code>
@@ -122,15 +124,36 @@
     </UndefinedMethod>
   </file>
   <file src="incl/processing.inc.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>ceil($length/strlen($x))</code>
+    <InvalidScalarArgument occurrences="2">
+      <code>$barcode</code>
+      <code>ceil($length / strlen($x))</code>
     </InvalidScalarArgument>
     <PossiblyFalseArgument occurrences="1">
       <code>strpos($url, $removeAfter)</code>
     </PossiblyFalseArgument>
+    <PossiblyInvalidArrayOffset occurrences="1">
+      <code>API::getChoresInfo($id)["name"]</code>
+    </PossiblyInvalidArrayOffset>
+    <PossiblyInvalidIterator occurrences="2">
+      <code>$locationInfo</code>
+      <code>$chores</code>
+    </PossiblyInvalidIterator>
     <PossiblyNullArgument occurrences="1">
       <code>$config["BARCODE_Q"]</code>
     </PossiblyNullArgument>
+    <PossiblyNullArrayAccess occurrences="11">
+      <code>$product["stockAmount"]</code>
+      <code>$product["tareWeight"]</code>
+      <code>$product["name"]</code>
+      <code>$product["tareWeight"]</code>
+      <code>$product["name"]</code>
+      <code>$product["tareWeight"]</code>
+      <code>$product["stockAmount"]</code>
+      <code>$product["tareWeight"]</code>
+      <code>$product["id"]</code>
+      <code>$product["id"]</code>
+      <code>$product["name"]</code>
+    </PossiblyNullArrayAccess>
     <UndefinedFunction occurrences="2">
       <code>pluginEventReceiver_processEvent($eventType, $log)</code>
       <code>sendWebsocketMessage($websocketText, $websocketEnabled, $websocketResultCode)</code>
@@ -174,6 +197,11 @@
     <ParadoxicalCondition occurrences="1">
       <code>isset($_POST["button_delete"])</code>
     </ParadoxicalCondition>
+    <PossiblyNullArrayAccess occurrences="3">
+      <code>$product['stockAmount']</code>
+      <code>$product['tareWeight']</code>
+      <code>$product["name"]</code>
+    </PossiblyNullArrayAccess>
   </file>
   <file src="login.php">
     <UndefinedClass occurrences="2">
@@ -188,11 +216,7 @@
     </PossiblyNullArgument>
   </file>
   <file src="wsserver.php">
-    <MissingFile occurrences="1">
-      <code>require __DIR__ . '/php-websocket/src/Application/StatusApplication.php'</code>
-    </MissingFile>
-    <UndefinedClass occurrences="3">
-      <code>\Bloatless\WebSocket\Application\StatusApplication</code>
+    <UndefinedClass occurrences="2">
       <code>\WebSocket\Server</code>
       <code>\WebSocket\Application\DemoApplication</code>
     </UndefinedClass>

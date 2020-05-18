@@ -150,5 +150,3 @@ function getHtmlSettingsWebsockets() {
         return  '<span style="color:red">Websocket server is not running! '.$errorstr.'</span>';
     }
 }
-
-?>

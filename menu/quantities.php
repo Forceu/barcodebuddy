@@ -27,7 +27,7 @@ require_once __DIR__ . "/../incl/webui.inc.php";
 
 $CONFIG->checkIfAuthenticated(true, true);
 
-//Delete Quantitiy 
+//Delete Quantity
 if (isset($_POST["button_delete"])) {
         $id = $_POST["button_delete"];
         checkIfNumeric($id);
@@ -60,7 +60,7 @@ function printSettingsQuantityTable(){
         $table        = new TableGenerator(array(
             "Product",
             "Barcode",
-            "Quantitiy",
+            "Quantity",
             "Action"
         ));
         
@@ -68,7 +68,7 @@ function printSettingsQuantityTable(){
             $table->startRow();
             $table->addCell($quantity['product']);
             $table->addCell($quantity['barcode']);
-            $table->addCell($quantity['quantitiy']);
+            $table->addCell($quantity['quantity']);
             $table->addCell($html->buildButton("button_delete", "Delete")
                                 ->setSubmit()
                                 ->setValue($quantity['id'])
@@ -80,4 +80,3 @@ function printSettingsQuantityTable(){
     }
 
 }
-?>

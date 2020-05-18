@@ -23,7 +23,7 @@ require_once __DIR__ . "/../incl/db.inc.php";
 require_once __DIR__ . "/../incl/processing.inc.php";
 require_once __dir__ . "/../incl/config.inc.php";
 
-//removes Get paramterss
+//removes Get parameters
 $requestedUrl = strtok($_SERVER["REQUEST_URI"], '?');
 
 //removes everything before "/api"
@@ -43,7 +43,11 @@ $api->execute($requestedUrl);
 class BBuddyApi {
     
     private $routes = array();
-    
+
+    /**
+     * Checks if authorized
+     * @return bool True if authorized, or dies if not
+     */
     function checkIfAuthorized() {
         global $CONFIG;
         
@@ -201,5 +205,3 @@ class ApiRoute {
         BBuddyApi::sendResult($result, $result["result"]["http_code"]);
     }
 }
-
-?>

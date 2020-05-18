@@ -61,5 +61,3 @@ function getHtmlAdminMenu() {
                             ->generate();
     return $html->getHtml();
 }
-
-?>

@@ -485,9 +485,9 @@ class API {
             self::processError($e, "Could not set Grocy barcode");
         }
     }
-    
-    
-    
+
+
+
     /**
      * Formats the amount of days into future date
      * @param  [int] $days  Amount of days a product is consumable, or -1 if it does not expire
@@ -501,7 +501,7 @@ class API {
             return date('Y-m-d', strtotime($date . " + $days days"));
         }
     }
-    
+
     /**
      * Retrieves the default best before date for a product
      * @param  [int] $id Product id
@@ -513,12 +513,12 @@ class API {
         checkIfNumeric($days);
         return $days;
     }
-    
-    
+
+
     /**
      * Get a Grocy product by barcode
      * @param  [String] $barcode barcode to lookup
-     * @return [Array]           Array if product info or null if barcode
+     * @return array|null        Array if product info or null if barcode
      *                           is not associated with a product
      */
     public static function getProductByBardcode($barcode) {
@@ -554,11 +554,10 @@ class API {
     }
 
 
-
     /**
      * Gets location and amount of stock of a product
      * @param  [String] $productid  Product id
-     * @return [Array]              Array with location info, null if none in stock
+     * @return bool|array              Array with location info, null if none in stock
      */
     public static function getProductLocations($productid) {
         
@@ -573,14 +572,12 @@ class API {
         }
         return $result;
     }
-    
-    
-    
-    
+
+
     /**
      * Getting info of a Grocy chore
-     * @param  string $choreId  Chore ID. If not passed, all chores are looked up
-     * @return [array]          Either chore if ID, or all chores
+     * @param string $choreId Chore ID. If not passed, all chores are looked up
+     * @return bool|mixed|string       Either chore if ID, or all chores
      */
     public static function getChoresInfo($choreId = "") {
         
@@ -595,6 +592,7 @@ class API {
             $result = $curl->execute(true);
         } catch (Exception $e) {
             self::processError($e, "Could not get chore info");
+            return null;
         }
         return $result;
     }

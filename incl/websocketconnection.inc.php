@@ -61,4 +61,3 @@ function isNewServerSupported() {
     return (PHP_VERSION_ID >= 70200);
 }
 
-?>

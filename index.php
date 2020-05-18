@@ -428,5 +428,3 @@ function getHtmlLogTextArea() {
     }
 }
 
-
-?>

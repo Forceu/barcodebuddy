@@ -29,11 +29,12 @@ class LookupProvider {
         $this->useGenericName = $useGenericName;
         $this->apiKey         = $apiKey;
     }
-    
+
     /**
      * Looks up a barcode
-     * @param  string $barcode     The barcode to lookup
+     * @param string $barcode The barcode to lookup
      * @return null|string         Name of product, null if none found
+     * @throws Exception
      */
     public function lookupBarcode($barcode) {
         throw new Exception('lookupBarcode needs to be overriden!');
@@ -72,10 +73,11 @@ class LookupProvider {
                 case 'InternalServerErrorException':
                     API::logError($this->providerName . " reported internal error.");
                     return null;
+                default:
+                    API::logError("Unknown error with ". $this->providerName . ": ".$e->getMessage());
+                    return null;
             }
         }
         return $result;
     }
 }
-
-?>

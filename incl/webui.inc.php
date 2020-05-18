@@ -389,6 +389,3 @@ function hideGetPostParameters() {
   header("Location: " . $_SERVER["PHP_SELF"]);
   die();
 }
-
-
-?>

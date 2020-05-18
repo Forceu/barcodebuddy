@@ -46,7 +46,7 @@ if (isset($_POST["generate_app"])) {
     $mobileKey = $db->generateApiKey();
 }
 if (isset($_GET["deleteall"])) {
-    $mobileKey = $db->deleteAllApiKeys();
+    $db->deleteAllApiKeys();
     hideGetPostParameters();
 }
 
@@ -154,7 +154,3 @@ function getApiTable() {
         });");
     return $html->getHtml();
 }
-
-
-
-?>

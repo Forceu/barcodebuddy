@@ -71,7 +71,7 @@ const TRUSTED_PROXIES              = array(
                                         );
 
 //If you need to manually override a config value, you can do so with this array.
-//Any overriden value cannot be changed through the UI anymore!
+//Any overridden value cannot be changed through the UI anymore!
 const OVERRIDDEN_USER_CONFIG       = array(
                                          //"BARCODE_C"                   => "BBUDDY-C",
                                          //"BARCODE_CS"                  => "BBUDDY-CS",
@@ -97,5 +97,3 @@ const OVERRIDDEN_USER_CONFIG       = array(
 
 // Currently not in use
 const IS_DOCKER                    = false;
-
-?>

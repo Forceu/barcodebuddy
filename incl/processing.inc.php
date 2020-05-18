@@ -7,7 +7,7 @@
  * LICENSE: This source file is subject to version 3.0 of the GNU General
  * Public License v3.0 that is attached to this project.
  *
- * 
+ *
  * Helper file for processing functions
  *
  * @author     Marc Ole Bulling
@@ -24,9 +24,9 @@ require_once __DIR__ . "/lookupProviders/BarcodeLookup.class.php";
 
 // Function that is called when a barcode is passed on
 function processNewBarcode($barcodeInput, $websocketEnabled = true, $bestBeforeInDays = null, $price = null) {
-    $db = DatabaseConnection::getInstance();
+    $db     = DatabaseConnection::getInstance();
     $config = BBConfig::getInstance();
-    
+
     $barcode = strtoupper($barcodeInput);
     if ($barcode == $config["BARCODE_C"]) {
         $db->setTransactionState(STATE_CONSUME);
@@ -70,12 +70,12 @@ function processNewBarcode($barcodeInput, $websocketEnabled = true, $bestBeforeI
     if (trim($barcode) == "") {
         return outputLog("Invalid barcode found", EVENT_TYPE_ERROR, true, $websocketEnabled, WS_RESULT_PRODUCT_UNKNOWN);
     }
-    
+
     if ($db->isChoreBarcode($barcode)) {
         $choreText = processChoreBarcode($barcode);
         return outputLog("Executed chore: " . $choreText, EVENT_TYPE_EXEC_CHORE, true, $websocketEnabled);
     }
-    
+
     $sanitizedBarcode = sanitizeString($barcode);
     $lockGenerator    = new LockGenerator();
     $lockGenerator->createLock();
@@ -91,32 +91,32 @@ function processNewBarcode($barcodeInput, $websocketEnabled = true, $bestBeforeI
 
 
 //Event types used for plugins
-const EVENT_TYPE_ERROR                = -1;
-const EVENT_TYPE_MODE_CHANGE          =  0;
-const EVENT_TYPE_CONSUME              =  1;
-const EVENT_TYPE_CONSUME_S            =  2;
-const EVENT_TYPE_PURCHASE             =  3;
-const EVENT_TYPE_OPEN                 =  4;
-const EVENT_TYPE_INVENTORY            =  5;
-const EVENT_TYPE_EXEC_CHORE           =  6;
-const EVENT_TYPE_ADD_KNOWN_BARCODE    =  7;
-const EVENT_TYPE_ADD_NEW_BARCODE      =  8;
-const EVENT_TYPE_ADD_UNKNOWN_BARCODE  =  9;
-const EVENT_TYPE_CONSUME_PRODUCT      = 10;
-const EVENT_TYPE_CONSUME_S_PRODUCT    = 11;
-const EVENT_TYPE_PURCHASE_PRODUCT     = 12;
-const EVENT_TYPE_OPEN_PRODUCT         = 13;
-const EVENT_TYPE_GET_STOCK_PRODUCT    = 14;
-const EVENT_TYPE_ADD_TO_SHOPPINGLIST  = 15;
-const EVENT_TYPE_ASSOCIATE_PRODUCT    = 16;
-const EVENT_TYPE_ACTION_REQUIRED      = 17;
-const EVENT_TYPE_CONSUME_ALL_PRODUCT  = 18;
+const EVENT_TYPE_ERROR               = -1;
+const EVENT_TYPE_MODE_CHANGE         = 0;
+const EVENT_TYPE_CONSUME             = 1;
+const EVENT_TYPE_CONSUME_S           = 2;
+const EVENT_TYPE_PURCHASE            = 3;
+const EVENT_TYPE_OPEN                = 4;
+const EVENT_TYPE_INVENTORY           = 5;
+const EVENT_TYPE_EXEC_CHORE          = 6;
+const EVENT_TYPE_ADD_KNOWN_BARCODE   = 7;
+const EVENT_TYPE_ADD_NEW_BARCODE     = 8;
+const EVENT_TYPE_ADD_UNKNOWN_BARCODE = 9;
+const EVENT_TYPE_CONSUME_PRODUCT     = 10;
+const EVENT_TYPE_CONSUME_S_PRODUCT   = 11;
+const EVENT_TYPE_PURCHASE_PRODUCT    = 12;
+const EVENT_TYPE_OPEN_PRODUCT        = 13;
+const EVENT_TYPE_GET_STOCK_PRODUCT   = 14;
+const EVENT_TYPE_ADD_TO_SHOPPINGLIST = 15;
+const EVENT_TYPE_ASSOCIATE_PRODUCT   = 16;
+const EVENT_TYPE_ACTION_REQUIRED     = 17;
+const EVENT_TYPE_CONSUME_ALL_PRODUCT = 18;
 
 
-const WS_RESULT_PRODUCT_FOUND         =  0;
-const WS_RESULT_PRODUCT_LOOKED_UP     =  1;
-const WS_RESULT_PRODUCT_UNKNOWN       =  2;
-const WS_RESULT_MODE_CHANGE           =  4;
+const WS_RESULT_PRODUCT_FOUND         = 0;
+const WS_RESULT_PRODUCT_LOOKED_UP     = 1;
+const WS_RESULT_PRODUCT_UNKNOWN       = 2;
+const WS_RESULT_MODE_CHANGE           = 4;
 const WS_RESULT_ERROR                 = 'E';
 
 
@@ -139,13 +139,13 @@ function outputLog($log, $eventType, $isVerbose = false, $websocketEnabled = tru
 function processChoreBarcode($barcode) {
     $id = DatabaseConnection::getInstance()->getChoreBarcode(sanitizeString($barcode))['choreId'];
     checkIfNumeric($id);
-    API::executeChore( $id);
+    API::executeChore($id);
     return sanitizeString(API::getChoresInfo($id)["name"]);
 }
 
 //If grocy does not know this barcode
 function processUnknownBarcode($barcode, $websocketEnabled, &$fileLock, $bestBeforeInDays, $price) {
-    $db = DatabaseConnection::getInstance();
+    $db     = DatabaseConnection::getInstance();
     $amount = 1;
     if ($db->getTransactionState() == STATE_PURCHASE) {
         $amount = $db->getQuantityByBarcode($barcode);
@@ -160,7 +160,7 @@ function processUnknownBarcode($barcode, $websocketEnabled, &$fileLock, $bestBef
             $productname = BarcodeLookup::lookup($barcode);
         }
         if ($productname != "N/A") {
-            $db->insertUnrecognizedBarcode($barcode,  $amount, $bestBeforeInDays, $price, $productname, $db->checkNameForTags($productname));
+            $db->insertUnrecognizedBarcode($barcode, $amount, $bestBeforeInDays, $price, $productname, $db->checkNameForTags($productname));
             $output = outputLog("Unknown barcode looked up, found name: " . $productname . ". Barcode: " . $barcode, EVENT_TYPE_ADD_NEW_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_LOOKED_UP, $productname);
         } else {
             $db->insertUnrecognizedBarcode($barcode, $amount, $bestBeforeInDays, $price);
@@ -195,7 +195,7 @@ function getProductByIdFromVariable($id, $products) {
 
 function changeWeightTareItem($barcode, $newWeight) {
     $product = API::getProductByBardcode($barcode);
-    
+
     if (($product["stockAmount"] + $product["tareWeight"]) == $newWeight) {
         outputLog("Weight unchanged for: " . $product["name"], EVENT_TYPE_ACTION_REQUIRED, true, false);
         return true;
@@ -210,7 +210,7 @@ function changeWeightTareItem($barcode, $newWeight) {
     } else {
         API::purchaseProduct($product["id"], $newWeight);
     }
-    outputLog("Weight set to ".$newWeight." for: " . $product["name"], EVENT_TYPE_ACTION_REQUIRED, true, false);
+    outputLog("Weight set to " . $newWeight . " for: " . $product["name"], EVENT_TYPE_ACTION_REQUIRED, true, false);
     return true;
 }
 
@@ -219,22 +219,22 @@ function processModeChangeGetParameter($modeParameter) {
     $db = DatabaseConnection::getInstance();
     switch (trim($modeParameter)) {
         case "consume":
-        $db->setTransactionState(STATE_CONSUME);
+            $db->setTransactionState(STATE_CONSUME);
             break;
         case "consume_s":
-        $db->setTransactionState(STATE_CONSUME_SPOILED);
+            $db->setTransactionState(STATE_CONSUME_SPOILED);
             break;
         case "purchase":
-        $db->setTransactionState(STATE_PURCHASE);
+            $db->setTransactionState(STATE_PURCHASE);
             break;
         case "open":
-        $db->setTransactionState(STATE_OPEN);
+            $db->setTransactionState(STATE_OPEN);
             break;
         case "inventory":
-        $db->setTransactionState(STATE_GETSTOCK);
+            $db->setTransactionState(STATE_GETSTOCK);
             break;
         case "shoppinglist":
-        $db->setTransactionState(STATE_ADD_SL);
+            $db->setTransactionState(STATE_ADD_SL);
             break;
     }
 }
@@ -251,15 +251,15 @@ function processRefreshedBarcode($barcode) {
 //We are using the old inventory API until the next Grocy version is officially released
 const USE_NEW_INVENTORY_API = false;
 
-    // Process a barcode that Grocy already knows
+// Process a barcode that Grocy already knows
 function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLock, $bestBeforeInDays, $price) {
     $config = BBConfig::getInstance();
-    $db = DatabaseConnection::getInstance();
+    $db     = DatabaseConnection::getInstance();
 
     $output = "Undefined";
 
     if ($productInfo["isTare"]) {
-        if (!$db->isUnknownBarcodeAlreadyStored($barcode)) 
+        if (!$db->isUnknownBarcodeAlreadyStored($barcode))
             $db->insertActionRequiredBarcode($barcode, $bestBeforeInDays, $price);
         $fileLock->removeLock();
         return outputLog("Action required: Enter weight for " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ACTION_REQUIRED, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Action required: Enter weight for " . $productInfo["name"]);
@@ -267,15 +267,15 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
 
 
     $state = $db->getTransactionState();
-    
+
     switch ($state) {
         case STATE_CONSUME:
-            $amountToConsume = getQuantitiyForBarcode($barcode, true, $productInfo);
+            $amountToConsume = getQuantityForBarcode($barcode, true, $productInfo);
 
-            if ($productInfo["stockAmount"] > 0) { 
+            if ($productInfo["stockAmount"] > 0) {
                 if ($productInfo["stockAmount"] < $amountToConsume)
                     $amountToConsume = $productInfo["stockAmount"];
-                $output = outputLog("Product found. Consuming ".$amountToConsume." " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Consuming ".$amountToConsume." " . $productInfo["unit"] . " of " . $productInfo["name"]);
+                $output = outputLog("Product found. Consuming " . $amountToConsume . " " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Consuming " . $amountToConsume . " " . $productInfo["unit"] . " of " . $productInfo["name"]);
                 API::consumeProduct($productInfo["id"], $amountToConsume, false);
                 $fileLock->removeLock();
                 return $output;
@@ -285,8 +285,8 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
             }
         case STATE_CONSUME_ALL:
             $amountToConsume = $productInfo["stockAmount"];
-            if ($productInfo["stockAmount"] > 0) { 
-                $output = outputLog("Product found. Consuming ".$amountToConsume." " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Consuming ".$amountToConsume." " . $productInfo["unit"] . " of " . $productInfo["name"]);
+            if ($productInfo["stockAmount"] > 0) {
+                $output = outputLog("Product found. Consuming " . $amountToConsume . " " . $productInfo["unit"] . " of " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Consuming " . $amountToConsume . " " . $productInfo["unit"] . " of " . $productInfo["name"]);
                 API::consumeProduct($productInfo["id"], $amountToConsume, false);
             } else {
                 $output = outputLog("Product found. None in stock, not consuming: " . $productInfo["name"] . ". Barcode: " . $barcode, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled, WS_RESULT_PRODUCT_FOUND, "Product found. None in stock, not consuming: " . $productInfo["name"]);
@@ -307,7 +307,7 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
             }
             return $output;
         case STATE_PURCHASE:
-            $amount = getQuantitiyForBarcode($barcode, false, $productInfo);
+            $amount = getQuantityForBarcode($barcode, false, $productInfo);
             if ($productInfo["defaultBestBefore"] == 0 && $bestBeforeInDays == null)
                 $additionalLog = " [WARNING]: No default best before date set!";
             else
@@ -335,21 +335,23 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
                 if ($productInfo["stockAmount"] > 0) {
                     $locationInfo = API::getProductLocations($productInfo["id"]);
                     foreach ($locationInfo as $location) {
-                        $log = $log . "\nLocation ". $location["location_name"] . ": ".$location["amount"]. " " . $productInfo["unit"];
+                        $log = $log . "\nLocation " . $location["location_name"] . ": " . $location["amount"] . " " . $productInfo["unit"];
                     }
-                } 
+                }
             }
             return outputLog($log, EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled);
         case STATE_ADD_SL:
             $fileLock->removeLock();
             $output = outputLog("Added to shopping list: 1 " . $productInfo["unit"] . " of " . $productInfo["name"],
-                                EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled);
+                EVENT_TYPE_ADD_KNOWN_BARCODE, false, $websocketEnabled);
             API::addToShoppinglist($productInfo["id"], 1);
-            return $output; 
+            return $output;
+        default:
+            throw new Exception("Unknown state");
     }
 }
 
-function getQuantitiyForBarcode($barcode, $isConsume, $productInfo) {
+function getQuantityForBarcode($barcode, $isConsume, $productInfo) {
     $config = BBConfig::getInstance();
 
     if ($isConsume && !$config["CONSUME_SAVED_QUANTITY"])
@@ -362,13 +364,13 @@ function getQuantitiyForBarcode($barcode, $isConsume, $productInfo) {
 
 //Function for generating the <select> elements in the web ui
 function printSelections($selected, $productinfo) {
-    
+
     $selections = array();
     foreach ($productinfo as $product) {
         $selections[$product["id"]] = $product["name"];
     }
     natcasesort($selections);
-    
+
     $optionscontent = "<option value=\"0\" >= None =</option>";
     foreach ($selections as $key => $val) {
         if ($key != $selected) {
@@ -401,11 +403,11 @@ function explodeWordsAndMakeCheckboxes($words, $id) {
     if ($words == "N/A") {
         return "";
     }
-    $selections  = "";
+    $selections = "";
     $cleanWords = cleanNameForTagLookup($words);
-    $i           = 0;
+    $i          = 0;
     foreach ($cleanWords as $str) {
-    $tagWord = trim($str);
+        $tagWord = trim($str);
         if (strlen($tagWord) > 0 && DatabaseConnection::getInstance()->tagNotUsedYet($tagWord)) {
             $selections = $selections . '<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-' . $id . '_' . $i . '">
   <input type="checkbox"  value="' . $tagWord . '" name="tags[' . $id . '][' . $i . ']" id="checkbox-' . $id . '_' . $i . '" class="mdl-checkbox__input">
@@ -418,7 +420,7 @@ function explodeWordsAndMakeCheckboxes($words, $id) {
 }
 
 function cleanNameForTagLookup($input) {
-    $ignoreChars = array(",", ".", "-", ":","(",")");
+    $ignoreChars = array(",", ".", "-", ":", "(", ")");
     $cleanWords  = str_replace($ignoreChars, " ", $input);
     return explode(' ', $cleanWords);
 }
@@ -427,7 +429,7 @@ function cleanNameForTagLookup($input) {
 function changeQuantityAfterScan($amount) {
     $config = BBConfig::getInstance();
 
-    $db = DatabaseConnection::getInstance();
+    $db      = DatabaseConnection::getInstance();
     $barcode = sanitizeString($config["LAST_BARCODE"]);
     if ($config["LAST_PRODUCT"] != null) {
         $db->addUpdateQuantitiy($barcode, $amount, $config["LAST_PRODUCT"]);
@@ -450,13 +452,13 @@ function getAllTags() {
     $tags       = DatabaseConnection::getInstance()->getStoredTags();
     $products   = API::getProductInfo();
     $returnTags = array();
-    
+
     foreach ($tags as $tag) {
         foreach ($products as $product) {
             if ($product["id"] == $tag["itemId"]) {
                 $tag["item"] = $product["name"];
                 array_push($returnTags, $tag);
-        break;
+                break;
             }
         }
     }
@@ -465,21 +467,21 @@ function getAllTags() {
 }
 
 //Sorts the tags by name
-function sortTags($a,$b) {
-          return $a['item']>$b['item'];
-     }
+function sortTags($a, $b) {
+    return $a['item'] > $b['item'];
+}
 
 
 //Sorts the chores by name
-function sortChores($a,$b) {
-          return $a['name']>$b['name'];
-     }
+function sortChores($a, $b) {
+    return $a['name'] > $b['name'];
+}
 
 
 //Merges chores with chore info
 function getAllChores() {
-    $chores = API::getChoresInfo();
-    $barcodes = DatabaseConnection::getInstance()->getStoredChoreBarcodes();
+    $chores       = API::getChoresInfo();
+    $barcodes     = DatabaseConnection::getInstance()->getStoredChoreBarcodes();
     $returnChores = array();
 
     foreach ($chores as $chore) {
@@ -504,33 +506,31 @@ function stringStartsWith($string, $startString) {
 
 
 //Trim string
-function strrtrim($message, $strip) { 
+function strrtrim($message, $strip) {
     // break message apart by strip string 
-    $lines = explode($strip, $message); 
-    $last  = ''; 
+    $lines = explode($strip, $message);
+    $last  = '';
     // pop off empty strings at the end 
-    do { 
-        $last = array_pop($lines); 
-    } while (empty($last) && (count($lines))); 
+    do {
+        $last = array_pop($lines);
+    } while (empty($last) && (count($lines)));
     // re-assemble what remains 
-    return implode($strip, array_merge($lines, array($last))); 
-} 
+    return implode($strip, array_merge($lines, array($last)));
+}
 
 function generateRandomString($length = 30) {
-    return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
+    return substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
 }
 
 function getApiUrl($removeAfter) {
     $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
 
     $url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-    return $requestedUrl = trim(substr($url, 0, strpos($url, $removeAfter)))."api/";
+    return $requestedUrl = trim(substr($url, 0, strpos($url, $removeAfter))) . "api/";
 }
 
-function showErrorNotWritable($error="DB Error") {
+function showErrorNotWritable($error = "DB Error") {
     die($error . ": Database file cannot be created, as folder or database file is not writable. Please check your permissions.<br>
              Have a look at this link to find out how to do this:
              <a href='https://github.com/olab/Open-Labyrinth/wiki/How-do-I-make-files-and-folders-writable-for-the-web-server%3F'>" . "How do I make files and folders writable for the web server?</a>");
 }
-
-?>

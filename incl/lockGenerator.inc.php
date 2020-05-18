@@ -37,5 +37,3 @@ class LockGenerator {
 		$this->isLocked = false;
 	}
 }
-
-?>

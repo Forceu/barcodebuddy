@@ -105,5 +105,3 @@ function getInitialSetupSql() {
 			CREATE INDEX "users_throttling.expires_at" ON "users_throttling" ("expires_at");
 			COMMIT;';
 }
-
-?>

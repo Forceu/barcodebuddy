@@ -75,4 +75,3 @@ function getClient() {
         return new WebsocketClient;
     }
 }
-?>

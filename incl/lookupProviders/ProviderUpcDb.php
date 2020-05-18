@@ -43,5 +43,3 @@ class ProviderUpcDb extends LookupProvider {
             return null;
     }
 }
-
-?>

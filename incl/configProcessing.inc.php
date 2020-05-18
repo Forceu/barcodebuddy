@@ -75,7 +75,6 @@ function checkForMissingConstants() {
                         "HIDE_LINK_SCREEN"             => false,
                         "EXTERNAL_GROCY_URL"           => null,
                         "OVERRIDDEN_USER_CONFIG"       => array(),
-                        "SCREEN_TOUCH_BUTTONS"         => false,
                         "AUTHENTICATION_BYPASS_NETS"   => array(),
                         "TRUSTED_PROXIES"              => array()
                         );
@@ -102,7 +101,6 @@ class GlobalConfig {
     public $HIDE_LINK_GROCY              = HIDE_LINK_GROCY;
     public $HIDE_LINK_SCREEN             = HIDE_LINK_SCREEN;
     public $EXTERNAL_GROCY_URL           = EXTERNAL_GROCY_URL;
-    public $SCREEN_TOUCH_BUTTONS         = SCREEN_TOUCH_BUTTONS;
     public $AUTHENTICATION_BYPASS_NETS   = AUTHENTICATION_BYPASS_NETS;
     public $TRUSTED_PROXIES              = TRUSTED_PROXIES;
 

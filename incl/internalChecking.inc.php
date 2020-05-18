@@ -37,8 +37,8 @@ const OPTIONAL_EXTENSIONS  = array();
 
 /**
  * Checks if the required PHP extensions are installed and active
- * 
- * @return [array] Returns an array for all modules. $return["result"] is
+ *
+ * @return array  Returns an array for all modules. $return["result"] is
  *                 RESULT_ALL_INSTALLED, RESULT_OPT_MISSING or RESULT_REQ_MISSING
  */
 function checkExtensionsInstalled() {

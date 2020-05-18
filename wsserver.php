@@ -47,7 +47,7 @@ if (isNewServerSupported()) {
     require __DIR__ . '/incl/websocket/php-websocket/src/Application/Application.php';
     require __DIR__ . '/incl/websocket/ScreenApplication.php';
     if (ENABLE_STATISTICS) {
-        require __DIR__ . '/php-websocket/src/Application/StatusApplication.php';
+        require __DIR__ . '/incl/websocket/php-websocket/src/Application/StatusApplication.php';
     }
     
     $server = new \Bloatless\WebSocket\Server('127.0.0.1', $CONFIG->PORT_WEBSOCKET_SERVER);

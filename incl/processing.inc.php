@@ -454,7 +454,7 @@ function printSelections($selected, $productinfo) {
     }
     natcasesort($selections);
 
-    $optionscontent = " < option value = \"0\" >= None =</option>";
+    $optionscontent = " <option value = \"0\" >= None =</option>";
     foreach ($selections as $key => $val) {
         if ($key != $selected) {
             $optionscontent = $optionscontent . "<option value=\"" . $key . "\">" . $val . "</option>";

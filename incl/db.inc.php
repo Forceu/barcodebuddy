@@ -54,27 +54,29 @@ class DatabaseConnection {
 
     /* 1 is used for true and 0 for false, as PHP interprets the String "false" as Boolean "true" */
     const DEFAULT_VALUES = array(
-        "DEFAULT_BARCODE_C" => "BBUDDY-C",
-        "DEFAULT_BARCODE_CS" => "BBUDDY-CS",
-        "DEFAULT_BARCODE_CA" => "BBUDDY-CA",
-        "DEFAULT_BARCODE_P" => "BBUDDY-P",
-        "DEFAULT_BARCODE_O" => "BBUDDY-O",
-        "DEFAULT_BARCODE_GS" => "BBUDDY-I",
-        "DEFAULT_BARCODE_Q" => "BBUDDY-Q-",
-        "DEFAULT_BARCODE_AS" => "BBUDDY-AS",
-        "DEFAULT_REVERT_TIME" => "10",
-        "DEFAULT_REVERT_SINGLE" => "1",
-        "DEFAULT_MORE_VERBOSE" => "1",
-        "DEFAULT_GROCY_API_URL" => null,
-        "DEFAULT_GROCY_API_KEY" => null,
-        "DEFAULT_LAST_BARCODE" => null,
-        "DEFAULT_LAST_PRODUCT" => null,
-        "DEFAULT_WS_FULLSCREEN" => "0",
-        "DEFAULT_SHOPPINGLIST_REMOVE" => "1",
-        "DEFAULT_USE_GENERIC_NAME" => "1",
-        "DEFAULT_CONSUME_SAVED_QUANTITY" => "0",
-        "DEFAULT_USE_GROCY_QU_FACTOR" => "0",
-        "DEFAULT_SHOW_STOCK_ON_SCAN" => "0");
+        "BARCODE_C"              => "BBUDDY-C",
+        "BARCODE_CS"             => "BBUDDY-CS",
+        "BARCODE_CA"             => "BBUDDY-CA",
+        "BARCODE_P"              => "BBUDDY-P",
+        "BARCODE_O"              => "BBUDDY-O",
+        "BARCODE_GS"             => "BBUDDY-I",
+        "BARCODE_Q"              => "BBUDDY-Q-",
+        "BARCODE_AS"             => "BBUDDY-AS",
+        "REVERT_TIME"            => "10",
+        "REVERT_SINGLE"          => "1",
+        "MORE_VERBOSE"           => "1",
+        "GROCY_API_URL"          => null,
+        "GROCY_API_KEY"          => null,
+        "LAST_BARCODE"           => null,
+        "LAST_PRODUCT"           => null,
+        "WS_FULLSCREEN"          => "0",
+        "SHOPPINGLIST_REMOVE"    => "1",
+        "USE_GENERIC_NAME"       => "1",
+        "CONSUME_SAVED_QUANTITY" => "0",
+        "USE_GROCY_QU_FACTOR"    => "0",
+        "SHOW_STOCK_ON_SCAN"     => "0",
+        "LOOKUP_USE_OFF"         => "1",
+        "LOOKUP_USE_UPC"         => "1");
 
     const DB_INT_VALUES = array("REVERT_TIME");
 
@@ -142,8 +144,7 @@ class DatabaseConnection {
         $this->db->exec("INSERT INTO TransactionState(id,currentState,since) SELECT 1, 0, datetime('now','localtime') WHERE NOT EXISTS(SELECT 1 FROM TransactionState WHERE id = 1)");
         $this->db->exec("INSERT INTO BBConfig(id,data,value) SELECT 1, \"version\", \"" . BB_VERSION . "\" WHERE NOT EXISTS(SELECT 1 FROM BBConfig WHERE id = 1)");
         foreach (self::DEFAULT_VALUES as $key => $value) {
-            $name = str_replace("DEFAULT_", "", $key);
-            $this->db->exec("INSERT INTO BBConfig(data,value) SELECT \"" . $name . "\", \"" . $value . "\" WHERE NOT EXISTS(SELECT 1 FROM BBConfig WHERE data = '$name')");
+            $this->db->exec("INSERT INTO BBConfig(data,value) SELECT \"" . $key . "\", \"" . $value . "\" WHERE NOT EXISTS(SELECT 1 FROM BBConfig WHERE data = '$key')");
         }
     }
 
@@ -198,7 +199,6 @@ class DatabaseConnection {
 
     //Is called after updating Barcode Buddy to a new version
     private function upgradeBarcodeBuddy($previousVersion) {
-        global $ERROR_MESSAGE;
         //We update version before the actual update routine, as otherwise the user cannot
         //reenter setup. As the login gets invalidated in such a case, the Grocy version
         //will be checked upon reentering.
@@ -224,10 +224,10 @@ class DatabaseConnection {
         }
     }
 
+
     private function isSupportedGrocyVersionOrDie() {
         global $ERROR_MESSAGE;
         $ERROR_MESSAGE = null;
-        $this->getConfig();
         $version = API::getGrocyVersion();
         if ($version == null) {
             $ERROR_MESSAGE = "Unable to communicate with Grocy and get Grocy version.";
@@ -274,6 +274,7 @@ class DatabaseConnection {
 
     //Setting the state
     public function setTransactionState($state) {
+        /** @noinspection SqlWithoutWhere */
         $this->db->exec("UPDATE TransactionState SET currentState=$state, since=datetime('now','localtime')");
         sendWebsocketStateChange($state);
     }
@@ -320,8 +321,7 @@ class DatabaseConnection {
     //gets barcode stored in DB by ID
     public function getBarcodeById($id) {
         $res = $this->db->query("SELECT * FROM Barcodes WHERE id='$id'");
-        $row = $res->fetchArray();
-        return $row;
+        return $res->fetchArray();
     }
 
 
@@ -344,7 +344,6 @@ class DatabaseConnection {
     //Gets quantity for stored barcode quantities
     public function getQuantityByBarcode($barcode) {
         $res      = $this->db->query("SELECT * FROM Quantities WHERE barcode='$barcode'");
-        $barcodes = array();
         if ($row = $res->fetchArray()) {
             return $row['quantitiy'];
         } else {
@@ -356,7 +355,6 @@ class DatabaseConnection {
     //Save product name if already stored as Quantity
     public function refreshQuantityProductName($barcode, $productname) {
         $res      = $this->db->query("SELECT * FROM Quantities WHERE barcode='$barcode'");
-        $barcodes = array();
         if ($row = $res->fetchArray()) {
             $this->db->exec("UPDATE Quantities SET product='$productname' WHERE barcode='$barcode'");
         }
@@ -541,6 +539,7 @@ class DatabaseConnection {
 
     //Deletes API key
     public function deleteAllApiKeys() {
+        /** @noinspection SqlWithoutWhere */
         $this->db->exec("DELETE FROM ApiKeys");
     }
 
@@ -602,6 +601,7 @@ class DatabaseConnection {
                 $this->db->exec("DELETE FROM Barcodes WHERE requireWeight='1'");
                 break;
             case SECTION_LOGS:
+                /** @noinspection SqlWithoutWhere */
                 $this->db->exec("DELETE FROM BarcodeLogs");
                 break;
         }

@@ -15,13 +15,12 @@
  */
 
 
-
 require_once __DIR__ . "/../incl/configProcessing.inc.php";
 require_once __DIR__ . "/../incl/api.inc.php";
 require_once __DIR__ . "/../incl/db.inc.php";
 require_once __DIR__ . "/../incl/processing.inc.php";
 require_once __DIR__ . "/../incl/websocketconnection.inc.php";
-require_once __DIR__ . "/../incl/sse/websocket_client.php"; 
+require_once __DIR__ . "/../incl/sse/websocket_client.php";
 require_once __DIR__ . "/../incl/webui.inc.php";
 require_once __DIR__ . "/../incl/config.inc.php";
 
@@ -30,29 +29,27 @@ $CONFIG->checkIfAuthenticated(true, true);
 
 //Save settings
 if (isset($_POST["isSaved"])) {
-        saveSettings(); 
-        //is done with AJAX call, therefore only "OK" is sent
-        echo "OK";
-        die();
-    }
-
+    saveSettings();
+    //is done with AJAX call, therefore only "OK" is sent
+    echo "OK";
+    die();
+}
 
 
 $webUi = new WebUiGenerator(MENU_SETTINGS);
 $webUi->addHeader();
-$webUi->addCard("General Settings",getHtmlSettingsGeneral());
-$webUi->addCard("Grocy API",getHtmlSettingsGrocyApi());
-//$webUi->addCard("UPC DB API",getHtmlSettingsUpcDb()); TODO
-$webUi->addCard("Websocket Server Status",getHtmlSettingsWebsockets());
+$webUi->addCard("General Settings", getHtmlSettingsGeneral());
+$webUi->addCard("Barcode Lookup Providers", getHtmlSettingsBarcodeLookup());
+$webUi->addCard("Grocy API", getHtmlSettingsGrocyApi());
+$webUi->addCard("Websocket Server Status", getHtmlSettingsWebsockets());
 $webUi->addFooter();
 $webUi->printHtml();
-
 
 
 //Called when settings were saved. For each input, the setting
 //is saved as a database entry
 function saveSettings() {
-    $db = DatabaseConnection::getInstance();
+    $db     = DatabaseConnection::getInstance();
     $config = BBConfig::getInstance();
     foreach ($config as $key => $value) {
         if (isset($_POST[$key])) {
@@ -73,11 +70,9 @@ function saveSettings() {
 }
 
 
-
-
 function getHtmlSettingsGeneral() {
     $config = BBConfig::getInstance();
-    $html = new UiEditor(true, null, "settings1");
+    $html   = new UiEditor(true, null, "settings1");
     $html->addHtml('<div class="flex-settings">');
     $html->addDiv($html->buildEditField("BARCODE_C", "Barcode: Consume", $config["BARCODE_C"])->generate(true), null, "flex-settings-child");
     $html->addDiv($html->buildEditField("BARCODE_CS", "Barcode: Consume (spoiled)", $config["BARCODE_CS"])->generate(true), null, "flex-settings-child");
@@ -88,17 +83,17 @@ function getHtmlSettingsGeneral() {
     $html->addDiv($html->buildEditField("BARCODE_Q", "Barcode: Quantity", $config["BARCODE_Q"])->generate(true), null, "flex-settings-child");
     $html->addDiv($html->buildEditField("BARCODE_AS", "Barcode: Add to shopping list", $config["BARCODE_AS"])->generate(true), null, "flex-settings-child");
     $html->addDiv($html->buildEditField("REVERT_TIME", "Revert state to &quot;Consume&quot; after time passed in minutes", $config["REVERT_TIME"])
-                                            ->pattern('-?[0-9]*(\.[0-9]+)?')
-                                            ->onKeyPress('return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57')
-                                            ->generate(true)
-                                        , null, "flex-settings-child");
+        ->pattern('-?[0-9]*(\.[0-9]+)?')
+        ->onKeyPress('return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57')
+        ->generate(true)
+        , null, "flex-settings-child");
     $html->addHtml('</div>');
     $html->addLineBreak();
 
     $html->addCheckbox("REVERT_SINGLE", "Revert after single item scan in &quot;Open&quot; or &quot;Spoiled&quot; mode", $config["REVERT_SINGLE"], false, false);
     $html->addCheckbox("SHOPPINGLIST_REMOVE", "Remove purchased items from shoppinglist", $config["SHOPPINGLIST_REMOVE"], false, false);
     $html->addCheckbox("CONSUME_SAVED_QUANTITY", "Consume amount of quantity saved for barcode", $config["CONSUME_SAVED_QUANTITY"], false, false);
-    $html->addCheckbox("USE_GROCY_QU_FACTOR", "Use Grocys quantitiy conversion", $config["USE_GROCY_QU_FACTOR"], false, false);
+    $html->addCheckbox("USE_GROCY_QU_FACTOR", "Use Grocys quantity conversion", $config["USE_GROCY_QU_FACTOR"], false, false);
     $html->addCheckbox("WS_FULLSCREEN", "Show Screen module in fullscreen", $config["WS_FULLSCREEN"], false, false);
     $html->addCheckbox("USE_GENERIC_NAME", "Use generic names for lookup", $config["USE_GENERIC_NAME"], false, false);
     $html->addCheckbox("SHOW_STOCK_ON_SCAN", "Show stock amount on scan", $config["SHOW_STOCK_ON_SCAN"], false, false);
@@ -113,21 +108,26 @@ function getHtmlSettingsGeneral() {
 
 function getHtmlSettingsGrocyApi() {
     $config = BBConfig::getInstance();
-    $html = new UiEditor(true, null, "settings2");
-    $html->buildEditField('GROCY_API_URL', 'Grocy API URL',  $config["GROCY_API_URL"])
-                            ->pattern('https://.*/api/|http://.*/api/|https://.*/api|http://.*/api')
-                            ->setPlaceholder('e.g. https://your.grocy.com/api/')
-                            ->generate();
-    $html->buildEditField('GROCY_API_KEY', 'Grocy API Key',  $config["GROCY_API_KEY"])
-                            ->pattern('[A-Za-z0-9]{50}')
-                            ->generate();
+    $html   = new UiEditor(true, null, "settings2");
+    $html->buildEditField('GROCY_API_URL', 'Grocy API URL', $config["GROCY_API_URL"])
+        ->pattern('https://.*/api/|http://.*/api/|https://.*/api|http://.*/api')
+        ->setPlaceholder('e.g. https://your.grocy.com/api/')
+        ->generate();
+    $html->buildEditField('GROCY_API_KEY', 'Grocy API Key', $config["GROCY_API_KEY"])
+        ->pattern('[A-Za-z0-9]{50}')
+        ->generate();
     $html->addLineBreak(2);
     $html->addHtml(checkGrocyConnection());
     return $html->getHtml();
 }
 
-function getHtmlSettingsUpcDb() {
-    //TODO
+function getHtmlSettingsBarcodeLookup() {
+    $config = BBConfig::getInstance();
+    $html   = new UiEditor(true, null, "settings3");
+    $html->addCheckbox('LOOKUP_USE_OFF', 'Use OpenFoodFacts.org', $config["LOOKUP_USE_OFF"]);
+    $html->addLineBreak();
+    $html->addCheckbox('LOOKUP_USE_UPC', 'Use UPCitemDB.com', $config["LOOKUP_USE_UPC"]);
+    return $html->getHtml();
 }
 
 
@@ -135,9 +135,9 @@ function checkGrocyConnection() {
     $config = BBConfig::getInstance();
     $result = API::checkApiConnection($config["GROCY_API_URL"], $config["GROCY_API_KEY"]);
     if ($result === true) {
-        return  '<span style="color:green">Successfully connected to Grocy, valid API key.</span>';
+        return '<span style="color:green">Successfully connected to Grocy, valid API key.</span>';
     } else {
-        return  '<span style="color:red">Unable to connect to Grocy! '.$result .'</span>';
+        return '<span style="color:red">Unable to connect to Grocy! ' . $result . '</span>';
     }
 }
 
@@ -146,8 +146,8 @@ function getHtmlSettingsWebsockets() {
     global $CONFIG;
     $sp = websocket_open('localhost', $CONFIG->PORT_WEBSOCKET_SERVER, '', $errorstr, 5);
     if ($sp !== false) {
-        return  '<span style="color:green">Websocket server is running.</span>';
+        return '<span style="color:green">Websocket server is running.</span>';
     } else {
-        return  '<span style="color:red">Websocket server is not running! '.$errorstr.'</span>';
+        return '<span style="color:red">Websocket server is not running! ' . $errorstr . '</span>';
     }
 }

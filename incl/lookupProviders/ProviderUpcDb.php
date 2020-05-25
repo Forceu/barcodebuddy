@@ -18,25 +18,29 @@
 require_once __DIR__ . "/../api.inc.php";
 
 class ProviderUpcDb extends LookupProvider {
-    
-    
-    function __construct($useGenericName = true, $apiKey = null) {
-        parent::__construct($useGenericName, $apiKey);
+
+
+    function __construct($apiKey = null) {
+        parent::__construct($apiKey);
         $this->providerName       = "UPC Item DB";
+        $this->providerConfigKey = "LOOKUP_USE_UPC";
         $this->ignoredResultCodes = array(400, 404);
     }
-    
+
     /**
      * Looks up a barcode
-     * @param  string $barcode     The barcode to lookup
+     * @param string $barcode The barcode to lookup
      * @return null|string         Name of product, null if none found
      */
     public function lookupBarcode($barcode) {
+        if (!$this->isProviderEnabled())
+            return null;
+
         $url    = "https://api.upcitemdb.com/prod/trial/lookup?upc=" . $barcode;
         $result = $this->execute($url);
         if (!isset($result["code"]) || $result["code"] != "OK")
             return null;
-        
+
         if (isset($result["items"][0]["title"]) && $result["items"][0]["title"] != "") {
             return sanitizeString($result["items"][0]["title"]);
         } else

@@ -19,15 +19,22 @@ require_once __DIR__ . "/ProviderOpenFoodFacts.php";
 require_once __DIR__ . "/ProviderUpcDb.php";
 
 class LookupProvider {
-    
+
     protected $useGenericName;
     protected $apiKey;
     protected $providerName;
     protected $ignoredResultCodes = null;
-    
-    function __construct($useGenericName = true, $apiKey = null) {
-        $this->useGenericName = $useGenericName;
+    protected $providerConfigKey = null;
+
+    function __construct($apiKey = null) {
+        $this->useGenericName = BBConfig::getInstance()["USE_GENERIC_NAME"];
         $this->apiKey         = $apiKey;
+    }
+
+    protected function isProviderEnabled() {
+        if ($this->providerConfigKey == null)
+            throw new Exception('providerConfigKey needs to be overriden!');
+        return BBConfig::getInstance()[$this->providerConfigKey];
     }
 
     /**
@@ -39,14 +46,13 @@ class LookupProvider {
     public function lookupBarcode($barcode) {
         throw new Exception('lookupBarcode needs to be overriden!');
     }
-    
-    
+
+
     protected function execute($url) {
         $curl = new CurlGenerator($url, METHOD_GET, null, null, true, $this->ignoredResultCodes);
         try {
             $result = $curl->execute(true);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $class = get_class($e);
             switch ($class) {
                 case 'InvalidServerResponseException':
@@ -74,7 +80,7 @@ class LookupProvider {
                     API::logError($this->providerName . " reported internal error.");
                     return null;
                 default:
-                    API::logError("Unknown error with ". $this->providerName . ": ".$e->getMessage());
+                    API::logError("Unknown error with " . $this->providerName . ": " . $e->getMessage());
                     return null;
             }
         }

@@ -18,24 +18,28 @@
 require_once __DIR__ . "/../api.inc.php";
 
 class ProviderOpenFoodFacts extends LookupProvider {
-    
-    
-    function __construct($useGenericName, $apiKey = null) {
-        parent::__construct($useGenericName, $apiKey);
-        $this->providerName = "OpenFoodFacts";
+
+
+    function __construct($apiKey = null) {
+        parent::__construct($apiKey);
+        $this->providerName      = "OpenFoodFacts";
+        $this->providerConfigKey = "LOOKUP_USE_OFF";
     }
-    
+
     /**
      * Looks up a barcode
-     * @param  string $barcode     The barcode to lookup
+     * @param string $barcode The barcode to lookup
      * @return null|string         Name of product, null if none found
      */
     public function lookupBarcode($barcode) {
+        if (!$this->isProviderEnabled())
+            return null;
+
         $url    = "https://world.openfoodfacts.org/api/v0/product/" . $barcode . ".json";
         $result = $this->execute($url);
         if (!isset($result["status"]) || $result["status"] !== 1)
             return null;
-        
+
         $genericName = null;
         $productName = null;
         if (isset($result["product"]["generic_name"]) && $result["product"]["generic_name"] != "") {
@@ -44,7 +48,7 @@ class ProviderOpenFoodFacts extends LookupProvider {
         if (isset($result["product"]["product_name"]) && $result["product"]["product_name"] != "") {
             $productName = sanitizeString($result["product"]["product_name"]);
         }
-        
+
         if ($this->useGenericName) {
             if ($genericName != null)
                 return $genericName;

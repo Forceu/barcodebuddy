@@ -19,10 +19,11 @@ function checkAndReturn() {
 		button.setAttribute("disabled","");
         componentHandler.upgradeElement(button);
 
-		 var form1 = document.getElementById("settings1_form");
-		 var form2 = document.getElementById("settings2_form");
+		var form1 = document.getElementById("settings1_form");
+		var form2 = document.getElementById("settings2_form");
+		var form3 = document.getElementById("settings3_form");
 
-		 var postString = serialize(form1)+'&'+serialize(form2);
+		var postString = serialize(form1)+'&'+serialize(form2)+'&'+serialize(form3);
 
 		var xhr = new XMLHttpRequest();
 		  xhr.onreadystatechange = function() {

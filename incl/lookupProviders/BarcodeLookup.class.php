@@ -19,7 +19,6 @@ require_once __DIR__ . "/../db.inc.php";
 require_once __DIR__ . "/../config.inc.php";
 
 
-
 class BarcodeLookup {
 
     /**
@@ -27,17 +26,16 @@ class BarcodeLookup {
      * @param string $barcode Input barcode
      * @return string Returns product name or "N/A" if not found
      */
-	public static function lookUp($barcode) {
-		$useGenericName = BBConfig::getInstance()["USE_GENERIC_NAME"];
+    public static function lookUp($barcode) {
 
-        $resultOpenFoodFacts = (new ProviderOpenFoodFacts($useGenericName))->lookupBarcode($barcode);
+        $resultOpenFoodFacts = (new ProviderOpenFoodFacts())->lookupBarcode($barcode);
         if ($resultOpenFoodFacts != null)
             return $resultOpenFoodFacts;
-        
-        $resultUpcDb = (new ProviderUpcDb($useGenericName))->lookupBarcode($barcode);
+
+        $resultUpcDb = (new ProviderUpcDb())->lookupBarcode($barcode);
         if ($resultUpcDb != null)
             return $resultUpcDb;
 
         return "N/A";
-	}
+    }
 }

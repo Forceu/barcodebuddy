@@ -43,7 +43,7 @@ If you are using a reverse proxy, please make sure to disable caching, see [docu
 ## Acknowledgments
 
 * Thanks to Bernd Bestel for creating the amazing [Grocy](https://github.com/grocy/grocy) Project!
-* openfoodfacts.org for providing the barcode lookup API
+* openfoodfacts.org/upcitemdb.com for providing the barcode lookup API
 * [PHP-Websocket](https://github.com/bloatless/php-websocket)
 * [NoSleep.js](https://github.com/richtr/NoSleep.js)
 * [PHP-Auth](https://github.com/delight-im/PHP-Auth)

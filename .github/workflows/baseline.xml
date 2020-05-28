@@ -14,6 +14,12 @@
     </UnresolvableInclude>
   </file>
   <file src="incl/api.inc.php">
+    <DocblockTypeContradiction occurrences="4">
+      <code>$price != null</code>
+      <code>$bestbefore != null</code>
+      <code>$defaultBestBefore != null</code>
+      <code>$fileLock != null</code>
+    </DocblockTypeContradiction>
     <InvalidReturnStatement occurrences="1">
       <code>$daysBestBefore != 0</code>
     </InvalidReturnStatement>
@@ -119,9 +125,6 @@
     <UndefinedFunction occurrences="1">
       <code>sendWebsocketStateChange($state)</code>
     </UndefinedFunction>
-    <UndefinedMethod occurrences="1">
-      <code>getConfig</code>
-    </UndefinedMethod>
   </file>
   <file src="incl/processing.inc.php">
     <InvalidScalarArgument occurrences="2">

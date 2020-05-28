@@ -39,3 +39,21 @@ function updateQrCode() {
 	qrData["key"] = document.getElementById("qr_key").value;
 	generateAppQrCode(qrData);
 }
+
+
+function addCollapsables() {
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+
+    for (i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function() {
+            this.classList.toggle("fl-hidden"); //originally "active", so that it is still visible
+            var content = this.nextElementSibling;
+            if (content.style.maxHeight){
+                content.style.maxHeight = null;
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+            }
+        });
+    }
+}

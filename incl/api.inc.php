@@ -337,20 +337,21 @@ class API {
         self::logError("Grocy did not provide version number");
         return null;
     }
-    
-    
+
+
     /**
      *
      *  Adds a Grocy product.
-     * 
-     * @param  String id of product
-     * @param  int amount of product
-     * @param  String Date of best before Default: null (requests default BestBefore date from grocy)
-     * @param  String price of product Default: null
+     *
+     * @param $id
+     * @param $amount
+     * @param null $bestbefore
+     * @param null $price
+     * @param null $fileLock
+     * @param null $defaultBestBefore
      * @return false if default best before date not set
      */
     public static function purchaseProduct($id, $amount, $bestbefore = null, $price = null, &$fileLock = null, $defaultBestBefore = null) {
-        $daysBestBefore = 0;
         $data = array(
             'amount' => $amount,
             'transaction_type' => 'purchase'

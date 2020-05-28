@@ -388,6 +388,7 @@ function processKnownBarcode($productInfo, $barcode, $websocketEnabled, &$fileLo
                 ->setWebsocketResultCode(WS_RESULT_PRODUCT_FOUND)
                 ->addProductFoundText()
                 ->createLog();
+            API::purchaseProduct($productInfo["id"], $amount, $bestBeforeInDays, $price, $fileLock, $productInfo["defaultBestBefore"]);
             //no $fileLock->removeLock() needed, as it is done in API::purchaseProduct
             return $output;
         case STATE_OPEN:

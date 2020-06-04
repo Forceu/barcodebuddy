@@ -70,6 +70,9 @@ const TRUSTED_PROXIES              = array(
                                          // "127.0.0.1"
                                         );
 
+// Replace with another searchengine for manual barcode lookup through UI
+const SEARCH_ENGINE               = "http://google.com/search?q=";
+
 //If you need to manually override a config value, you can do so with this array.
 //Any overridden value cannot be changed through the UI anymore!
 const OVERRIDDEN_USER_CONFIG       = array(
@@ -100,3 +103,4 @@ const OVERRIDDEN_USER_CONFIG       = array(
 
 // Currently not in use
 const IS_DOCKER                    = false;
+

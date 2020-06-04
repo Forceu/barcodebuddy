@@ -346,6 +346,7 @@ function getHtmlMainMenuTableKnown($barcodes) {
 //Generate the table with barcodes
 function getHtmlMainMenuTableUnknown($barcodes) {
     global $productinfo;
+    global $CONFIG;
     $html = new UiEditor(true, null, "f2");
     if (sizeof($barcodes['unknown']) == 0) {
         $html->addHtml("No unknown barcodes yet.");
@@ -368,7 +369,7 @@ function getHtmlMainMenuTableUnknown($barcodes) {
             $itemId = $item['id'];
             $table->startRow();
             $table->addCell($item['barcode']);
-            $table->addCell('<a href="http://google.com/search?q=' . $item['barcode'] . '" target="_blank">Search for barcode</a>');
+            $table->addCell('<a href="' . $CONFIG->SEARCH_ENGINE . $item['barcode'] . '" target="_blank">Search for barcode</a>');
             $table->addCell($item['amount']);
             $table->addCell('<select style="max-width: 20em;" onchange=\'enableButton("select_' . $itemId . '", "button_add_' . $item['id'] . '", "button_consume_' . $item['id'] . '")\' id="select_' . $itemId . '" name="select_' . $itemId . '">' . printSelections($item['match'], $productinfo) . '</select>');
             $table->addCell($html->buildButton("button_add", "Add")

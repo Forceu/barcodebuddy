@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="3.11.4@58e1d8e68e5098bf4fbfdfb420c38d563f882549">
   <file src="api/index.php">
+    <InvalidNullableReturnType occurrences="1">
+      <code>bool</code>
+    </InvalidNullableReturnType>
     <PossiblyFalseArgument occurrences="1">
       <code>strpos($requestedUrl, '/api')</code>
     </PossiblyFalseArgument>
@@ -11,23 +14,17 @@
     </UnresolvableInclude>
   </file>
   <file src="incl/api.inc.php">
-    <InvalidGlobal occurrences="2">
-      <code>global $BBCONFIG;</code>
-      <code>global $db;</code>
-    </InvalidGlobal>
-    <InvalidReturnStatement occurrences="8">
-      <code>"Could not connect to server&lt;br&gt;"</code>
-      <code>"Error: ". $e-&gt;getMessage()</code>
-      <code>"Invalid API key&lt;br&gt;"</code>
-      <code>"Invalid SSL certificate!&lt;br&gt;If you are using a self-signed certificate, you can disable the check in config.php&lt;br&gt;"</code>
-      <code>"Grocy " . MIN_GROCY_VERSION . " or newer required. You are running " . $version . ", please upgrade your Grocy instance.&lt;br&gt;"</code>
-      <code>true</code>
-      <code>"Invalid response. Are you using the correct URL?&lt;br&gt;"</code>
+    <DocblockTypeContradiction occurrences="4">
+      <code>$price != null</code>
+      <code>$bestbefore != null</code>
+      <code>$defaultBestBefore != null</code>
+      <code>$fileLock != null</code>
+    </DocblockTypeContradiction>
+    <InvalidReturnStatement occurrences="1">
       <code>$daysBestBefore != 0</code>
     </InvalidReturnStatement>
-    <InvalidReturnType occurrences="6">
+    <InvalidReturnType occurrences="5">
       <code>none</code>
-      <code>Returns</code>
       <code>false</code>
       <code>none</code>
       <code>none</code>
@@ -43,16 +40,15 @@
     <PossiblyUndefinedVariable occurrences="1">
       <code>$startTime</code>
     </PossiblyUndefinedVariable>
-    <UndefinedDocblockClass occurrences="5">
+    <UndefinedConstant occurrences="1">
+      <code>METHOD_GET</code>
+    </UndefinedConstant>
+    <UndefinedDocblockClass occurrences="4">
       <code>none</code>
-      <code>Returns</code>
       <code>none</code>
       <code>none</code>
       <code>none</code>
     </UndefinedDocblockClass>
-    <UndefinedVariable occurrences="1">
-      <code>$db</code>
-    </UndefinedVariable>
   </file>
   <file src="incl/authentication/authentication.inc.php">
     <InvalidGlobal occurrences="1">
@@ -63,6 +59,14 @@
       <code>\Delight\Auth\Auth</code>
       <code>\Delight\Auth\Role</code>
     </UndefinedClass>
+    <UndefinedFunction occurrences="1">
+      <code>getInitialSetupSql()</code>
+    </UndefinedFunction>
+  </file>
+  <file src="incl/config.inc.php">
+    <InvalidReturnStatement occurrences="1">
+      <code>next($this-&gt;container)</code>
+    </InvalidReturnStatement>
   </file>
   <file src="incl/configProcessing.inc.php">
     <ForbiddenCode occurrences="1">
@@ -84,7 +88,7 @@
       <code>$subnet</code>
       <code>$subnet</code>
     </MissingClosureParamType>
-    <UndefinedConstant occurrences="16">
+    <UndefinedConstant occurrences="17">
       <code>PORT_WEBSOCKET_SERVER</code>
       <code>DATABASE_PATH</code>
       <code>CURL_TIMEOUT_S</code>
@@ -98,20 +102,64 @@
       <code>HIDE_LINK_GROCY</code>
       <code>HIDE_LINK_SCREEN</code>
       <code>EXTERNAL_GROCY_URL</code>
-      <code>SCREEN_TOUCH_BUTTONS</code>
       <code>AUTHENTICATION_BYPASS_NETS</code>
       <code>TRUSTED_PROXIES</code>
+      <code>CONFIG_PATH</code>
+      <code>AUTHDB_PATH</code>
     </UndefinedConstant>
+    <UndefinedFunction occurrences="2">
+      <code>createConfigPhp($configPath)</code>
+      <code>isUserSetUp()</code>
+    </UndefinedFunction>
+  </file>
+  <file src="incl/db.inc.php">
+    <DeprecatedMethod occurrences="1">
+      <code>BBConfig::getInstance()</code>
+    </DeprecatedMethod>
+    <PossiblyNullArgument occurrences="4">
+      <code>$config["BARCODE_C"]</code>
+      <code>$config["BARCODE_O"]</code>
+      <code>$config["BARCODE_P"]</code>
+      <code>$config["BARCODE_CS"]</code>
+    </PossiblyNullArgument>
+    <UndefinedFunction occurrences="1">
+      <code>sendWebsocketStateChange($state)</code>
+    </UndefinedFunction>
   </file>
   <file src="incl/processing.inc.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>ceil($length/strlen($x))</code>
+    <InvalidScalarArgument occurrences="2">
+      <code>$barcode</code>
+      <code>ceil($length / strlen($x))</code>
     </InvalidScalarArgument>
     <PossiblyFalseArgument occurrences="1">
       <code>strpos($url, $removeAfter)</code>
     </PossiblyFalseArgument>
-    <UndefinedFunction occurrences="1">
-      <code>pluginEventReceiver_processEvent($eventType, $log)</code>
+    <PossiblyInvalidArrayOffset occurrences="1">
+      <code>API::getChoresInfo($id)["name"]</code>
+    </PossiblyInvalidArrayOffset>
+    <PossiblyInvalidIterator occurrences="2">
+      <code>$locationInfo</code>
+      <code>$chores</code>
+    </PossiblyInvalidIterator>
+    <PossiblyNullArgument occurrences="1">
+      <code>$config["BARCODE_Q"]</code>
+    </PossiblyNullArgument>
+    <PossiblyNullArrayAccess occurrences="11">
+      <code>$product["stockAmount"]</code>
+      <code>$product["tareWeight"]</code>
+      <code>$product["name"]</code>
+      <code>$product["tareWeight"]</code>
+      <code>$product["name"]</code>
+      <code>$product["tareWeight"]</code>
+      <code>$product["stockAmount"]</code>
+      <code>$product["tareWeight"]</code>
+      <code>$product["id"]</code>
+      <code>$product["id"]</code>
+      <code>$product["name"]</code>
+    </PossiblyNullArrayAccess>
+    <UndefinedFunction occurrences="2">
+      <code>pluginEventReceiver_processEvent($this-&gt;eventType, $this-&gt;logText)</code>
+      <code>sendWebsocketMessage($this-&gt;websocketText, $this-&gt;websocketResultCode)</code>
     </UndefinedFunction>
   </file>
   <file src="incl/sse/sse_data.php">
@@ -152,6 +200,11 @@
     <ParadoxicalCondition occurrences="1">
       <code>isset($_POST["button_delete"])</code>
     </ParadoxicalCondition>
+    <PossiblyNullArrayAccess occurrences="3">
+      <code>$product['stockAmount']</code>
+      <code>$product['tareWeight']</code>
+      <code>$product["name"]</code>
+    </PossiblyNullArrayAccess>
   </file>
   <file src="login.php">
     <UndefinedClass occurrences="2">
@@ -160,29 +213,13 @@
     </UndefinedClass>
   </file>
   <file src="menu/settings.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>$result === true</code>
-    </DocblockTypeContradiction>
-    <InvalidOperand occurrences="1">
-      <code>$result</code>
-    </InvalidOperand>
-  </file>
-  <file src="screen.php">
-    <UndefinedGlobalVariable occurrences="1">
-      <code>$BBCONFIG</code>
-    </UndefinedGlobalVariable>
-  </file>
-  <file src="setup.php">
-    <UndefinedGlobalVariable occurrences="1">
-      <code>$BBCONFIG</code>
-    </UndefinedGlobalVariable>
+    <PossiblyNullArgument occurrences="2">
+      <code>$config["GROCY_API_URL"]</code>
+      <code>$config["GROCY_API_KEY"]</code>
+    </PossiblyNullArgument>
   </file>
   <file src="wsserver.php">
-    <MissingFile occurrences="1">
-      <code>require __DIR__ . '/php-websocket/src/Application/StatusApplication.php'</code>
-    </MissingFile>
-    <UndefinedClass occurrences="3">
-      <code>\Bloatless\WebSocket\Application\StatusApplication</code>
+    <UndefinedClass occurrences="2">
       <code>\WebSocket\Server</code>
       <code>\WebSocket\Application\DemoApplication</code>
     </UndefinedClass>

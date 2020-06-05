@@ -16,7 +16,6 @@
 
 
 require_once __DIR__ . "/../incl/configProcessing.inc.php";
-require_once __DIR__ . "/../incl/db.inc.php";
 require_once __DIR__ . "/../incl/processing.inc.php";
 require_once __DIR__ . "/../incl/webui.inc.php";
 
@@ -62,5 +61,3 @@ function getHtmlAdminMenu() {
                             ->generate();
     return $html->getHtml();
 }
-
-?>

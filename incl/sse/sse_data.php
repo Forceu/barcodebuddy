@@ -69,5 +69,3 @@ function initStream() {
     header('Access-Control-Allow-Methods: GET');
     header('Access-Control-Expose-Headers: X-Events');
 }
-
-?>

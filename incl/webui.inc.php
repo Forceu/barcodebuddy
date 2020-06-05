@@ -27,6 +27,7 @@
 
 require_once __DIR__ . "/configProcessing.inc.php";
 require_once __DIR__ . "/uiEditor.inc.php";
+require_once __DIR__ . "/config.inc.php";
 
 const MENU_GENERIC = 0;
 const MENU_MAIN = 1;
@@ -41,7 +42,6 @@ class MenuItemLink {
     public $itemText;
     public $itemLink;
     public $itemId;
-
 
     function __construct() {
         $this->itemId = 'btn'.rand();
@@ -117,8 +117,6 @@ class WebUiGenerator {
     }
 
     function addHeader($additionalHeader = null) {
-        require_once __DIR__ . "/db.inc.php";
-        global $BBCONFIG;
         global $CONFIG;
         
         if ($this->menu == MENU_SETTINGS || $this->menu === MENU_GENERIC) {
@@ -184,8 +182,8 @@ class WebUiGenerator {
         if ($this->menu != MENU_SETUP && $this->menu != MENU_ERROR && $this->menu != MENU_LOGIN) {
             $this->addHtml('<nav class="mdl-navigation mdl-layout--always">');
             if (!$CONFIG->HIDE_LINK_GROCY)
-                $this->addHtml('<a class="mdl-navigation__link" target="_blank" href="' . $BBCONFIG["GROCY_BASE_URL"] . '">Grocy</a>');
-              
+                $this->addHtml('<a class="mdl-navigation__link" target="_blank" href="' . BBConfig::getInstance()["GROCY_BASE_URL"] . '">Grocy</a>');
+
             if (!$CONFIG->HIDE_LINK_SCREEN)
                 $this->addHtml('<a class="mdl-navigation__link" target="_blank" href="' . $folder . 'screen.php">Screen</a>');
             $this->addHtml('</nav>');
@@ -223,9 +221,9 @@ class WebUiGenerator {
 
         $this->addHtml(' <section class="section--footer mdl-grid">
           </section>
-<div aria-live="assertive" aria-atomic="true" aria-relevant="text" class="mdl-snackbar mdl-js-snackbar">
-    <div class="mdl-snackbar__text"></div>
-    <button type="button" class="mdl-snackbar__action"></button>
+<div id="snackbar" class="mdl-js-snackbar mdl-snackbar">
+  <div class="mdl-snackbar__text"></div>
+  <button class="mdl-snackbar__action" type="button"></button>
 </div>
 
 
@@ -391,6 +389,3 @@ function hideGetPostParameters() {
   header("Location: " . $_SERVER["PHP_SELF"]);
   die();
 }
-
-
-?>

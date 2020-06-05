@@ -34,4 +34,3 @@ foreach (glob(__DIR__ . "/../plugins/*.php") as $filename) {
 }
 
 
-?>

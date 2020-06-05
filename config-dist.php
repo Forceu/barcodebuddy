@@ -70,8 +70,11 @@ const TRUSTED_PROXIES              = array(
                                          // "127.0.0.1"
                                         );
 
+// Replace with another searchengine for manual barcode lookup through UI
+const SEARCH_ENGINE               = "http://google.com/search?q=";
+
 //If you need to manually override a config value, you can do so with this array.
-//Any overriden value cannot be changed through the UI anymore!
+//Any overridden value cannot be changed through the UI anymore!
 const OVERRIDDEN_USER_CONFIG       = array(
                                          //"BARCODE_C"                   => "BBUDDY-C",
                                          //"BARCODE_CS"                  => "BBUDDY-CS",
@@ -91,11 +94,13 @@ const OVERRIDDEN_USER_CONFIG       = array(
                                          //"SHOPPINGLIST_REMOVE"         => "1",
                                          //"USE_GENERIC_NAME"            => "1",
                                          //"CONSUME_SAVED_QUANTITY"      => "0",
-                                         //"DEFAULT_USE_GROCY_QU_FACTOR" => "0"
+                                         //"USE_GROCY_QU_FACTOR"         => "0",
+                                         //"SHOW_STOCK_ON_SCAN"          => "0",
+                                         // "LOOKUP_USE_OFF"             => "1",
+                                         // "LOOKUP_USE_UPC"             => "1"
                                          );
 
 
 // Currently not in use
 const IS_DOCKER                    = false;
 
-?>

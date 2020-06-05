@@ -21,8 +21,9 @@
 require_once __DIR__ . "/../incl/configProcessing.inc.php";
 require_once __DIR__ . "/../incl/db.inc.php";
 require_once __DIR__ . "/../incl/processing.inc.php";
+require_once __dir__ . "/../incl/config.inc.php";
 
-//removes Get paramterss
+//removes Get parameters
 $requestedUrl = strtok($_SERVER["REQUEST_URI"], '?');
 
 //removes everything before "/api"
@@ -42,9 +43,12 @@ $api->execute($requestedUrl);
 class BBuddyApi {
     
     private $routes = array();
-    
+
+    /**
+     * Checks if authorized
+     * @return bool True if authorized, or dies if not
+     */
     function checkIfAuthorized() {
-        global $db;
         global $CONFIG;
         
         if ($CONFIG->checkIfAuthenticated(false))
@@ -59,7 +63,7 @@ class BBuddyApi {
         if ($apiKey == "")
             self::sendUnauthorizedAndDie();
         
-        if ($db->isValidApiKey($apiKey))
+        if (DatabaseConnection::getInstance()->isValidApiKey($apiKey))
             return true;
         else
             self::sendUnauthorizedAndDie();
@@ -131,40 +135,38 @@ class BBuddyApi {
                     else
                         return self::createResultArray(null, "Invalid parameter price: needs to be type float", 400);
                 }
-                $result = processNewBarcode(sanitizeString($barcode), true, $bestBefore, $price);
+                $result = processNewBarcode(sanitizeString($barcode), $bestBefore, $price);
                 return self::createResultArray(array("result" => sanitizeString($result)));
             }
         }));
         
         $this->addRoute(new ApiRoute("/state/getmode", function() {
-            global $db;
             return self::createResultArray(array(
-                "mode" => $db->getTransactionState()
+                "mode" => DatabaseConnection::getInstance()->getTransactionState()
             ));
         }));
         
         $this->addRoute(new ApiRoute("/state/setmode", function() {
-            global $db;
             //Also check if value is a valid range (STATE_CONSUME the lowest and STATE_CONSUME_ALL the highest value)
             if (!isset($_POST["state"]) || !is_numeric($_POST["state"]) || $_POST["state"] < STATE_CONSUME || $_POST["state"] > STATE_CONSUME_ALL)
                 return self::createResultArray(null, "Invalid state provided", 400);
             else {
-                $db->setTransactionState(intval($_POST["state"]));
+                DatabaseConnection::getInstance()->setTransactionState(intval($_POST["state"]));
                 return self::createResultArray();
             }
         }));
         
         $this->addRoute(new ApiRoute("/system/barcodes", function() {
-            global $BBCONFIG;
+            $config = BBConfig::getInstance();
             return self::createResultArray(array(
-                "BARCODE_C" => $BBCONFIG["BARCODE_C"],
-                "BARCODE_CS" => $BBCONFIG["BARCODE_CS"],
-                "BARCODE_P" => $BBCONFIG["BARCODE_P"],
-                "BARCODE_O" => $BBCONFIG["BARCODE_O"],
-                "BARCODE_GS" => $BBCONFIG["BARCODE_GS"],
-                "BARCODE_Q" => $BBCONFIG["BARCODE_Q"],
-                "BARCODE_AS" => $BBCONFIG["BARCODE_AS"],
-                "BARCODE_CA" => $BBCONFIG["BARCODE_CA"]
+                "BARCODE_C" => $config["BARCODE_C"],
+                "BARCODE_CS" => $config["BARCODE_CS"],
+                "BARCODE_P" => $config["BARCODE_P"],
+                "BARCODE_O" => $config["BARCODE_O"],
+                "BARCODE_GS" => $config["BARCODE_GS"],
+                "BARCODE_Q" => $config["BARCODE_Q"],
+                "BARCODE_AS" => $config["BARCODE_AS"],
+                "BARCODE_CA" => $config["BARCODE_CA"]
             ));
         }));
         
@@ -203,5 +205,3 @@ class ApiRoute {
         BBuddyApi::sendResult($result, $result["result"]["http_code"]);
     }
 }
-
-?>

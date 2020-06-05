@@ -16,8 +16,7 @@
  */
 
 require_once __DIR__ . "/incl/configProcessing.inc.php";
-require_once __DIR__ . "/incl/db.inc.php";
-
+require_once __DIR__ . "/incl/config.inc.php";
 
 $CONFIG->checkIfAuthenticated(true);
 
@@ -146,7 +145,7 @@ $CONFIG->checkIfAuthenticated(true);
             width: 2em;
         }
 
-        @media only screen and (orientation: portrait) and not (display-mode: fullscreen) {
+        @media only screen and (orientation: portrait)  not (display-mode: fullscreen) {
             .sound {
                 padding: 2em 4em;
             }
@@ -203,12 +202,10 @@ $CONFIG->checkIfAuthenticated(true);
             display: none !important;
         }
     </style>
-
 </head>
 <body>
     <script src="./incl/js/nosleep.min.js"></script>
     <script src="./incl/js/he.js"></script>
-
     <div class="main-container">
         <div id="header" class="header">
             <span class="hdr-right h4">
@@ -216,6 +213,7 @@ $CONFIG->checkIfAuthenticated(true);
             </span>
             <span id="mode" class="h1 hdr-left" onclick="showModeButtons()"></span>
         </div>
+
         <div id="content" class="content">
             <p id="scan-result" class="h2">If you see this for more than a couple of seconds, please check if the websocket server has been started and is available</p>
             <div id="log">

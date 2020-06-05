@@ -615,4 +615,3 @@ class UiEditor {
     }
 }
 
-?>

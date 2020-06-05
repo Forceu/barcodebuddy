@@ -44,5 +44,3 @@ $webUi->addFooter();
 $webUi->printHtml();
 
 
-
-?>

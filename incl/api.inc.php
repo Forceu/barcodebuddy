@@ -18,6 +18,8 @@
 
 
 require_once __DIR__ . "/configProcessing.inc.php";
+require_once __DIR__ . "/db.inc.php";
+require_once __DIR__ . "/config.inc.php";
 
 const API_O_PRODUCTS     = 'objects/products';
 const API_PRODUCTS       = 'stock/products';
@@ -43,28 +45,35 @@ class InvalidServerResponseException extends Exception { }
 class UnauthorizedException          extends Exception { }
 class InvalidJsonResponseException   extends Exception { }
 class InvalidSSLException            extends Exception { }
+class InvalidParameterException      extends Exception { }
+class NotFoundException              extends Exception { }
+class LimitExceededException         extends Exception { }
+class InternalServerErrorException   extends Exception { }
 
 class CurlGenerator {
     private $ch = null;
     private $method = METHOD_GET;
     private $urlApi;
+    private $ignoredResultCodes = array(400);
 
     const IGNORED_API_ERRORS_REGEX = array(
         '/No product with barcode .+ found/'
     );
     
-    function __construct($url, $method = METHOD_GET, $jasonData = null, $loginOverride = null, $noApiCall = false) {
+    function __construct($url, $method = METHOD_GET, $jasonData = null, $loginOverride = null, $noApiCall = false, $ignoredResultCodes = null) {
         global $CONFIG;
+
+        $config = BBConfig::getInstance();
         
-        $this->method  = $method;
-        $this->urlApi  = $url;
-        $this->ch      = curl_init();
+        $this->method                    = $method;
+        $this->urlApi                    = $url;
+        $this->ch                        = curl_init();
+        if ($ignoredResultCodes != null)
+            $this->ignoredResultCodes    = $ignoredResultCodes;
 
         if ($loginOverride == null) {
-            require_once __DIR__ . "/db.inc.php";
-            global $BBCONFIG;
-            $apiKey = $BBCONFIG["GROCY_API_KEY"];
-            $apiUrl = $BBCONFIG["GROCY_API_URL"];
+            $apiKey = $config["GROCY_API_KEY"];
+            $apiUrl = $config["GROCY_API_URL"];
         } else {
             $apiKey = $loginOverride[LOGIN_API_KEY];
             $apiUrl = $loginOverride[LOGIN_URL];
@@ -99,9 +108,8 @@ class CurlGenerator {
     
     function execute($decode = false) {
         if (DISPLAY_DEBUG) {
-            global $db;
             $startTime = microtime(true);
-            $db->saveLog("<i>Executing API call: " . $this->urlApi. "</i>", false, false, true);
+            DatabaseConnection::getInstance()->saveLog("<i>Executing API call: " . $this->urlApi. "</i>", false, false, true);
         }
         $curlResult   = curl_exec($this->ch);
         $this->checkForErrorsAndThrow($curlResult);
@@ -122,7 +130,7 @@ class CurlGenerator {
         }
         if (DISPLAY_DEBUG) {
             $totalTimeMs = round((microtime(true)- $startTime) * 1000);
-            $db->saveLog("<i>Executing took " . $totalTimeMs . "ms</i>", false, false, true);
+            DatabaseConnection::getInstance()->saveLog("<i>Executing took " . $totalTimeMs . "ms</i>", false, false, true);
         }
         if ($decode)
             return $jsonDecoded;
@@ -130,12 +138,32 @@ class CurlGenerator {
             return $curlResult;
     }
 
+
+
     private function checkForErrorsAndThrow($curlResult) {
         $curlError    = curl_errno($this->ch);
         $responseCode = curl_getinfo($this->ch, CURLINFO_RESPONSE_CODE);
 
-        if ($responseCode == 401)
-            throw new UnauthorizedException();
+        if (in_array($responseCode, $this->ignoredResultCodes))
+            return;
+
+        switch ($responseCode) {
+            case 400: 
+                 throw new InvalidParameterException();
+                 break;
+            case 401:
+                 throw new UnauthorizedException();
+                 break;
+            case 404:
+                 throw new NotFoundException();
+                 break;
+            case 429:
+                 throw new LimitExceededException();
+                 break;
+            case 500:
+                 throw new InternalServerErrorException();
+                 break;
+        }
         if ($curlResult === false) {
             if (self::isErrorSslRelated($curlError))
                 throw new InvalidSSLException();
@@ -221,9 +249,10 @@ class API {
     /**
      *   Check if API details are correct
      * 
-     * @param  String URL to Grocy API
-     * @param  String API key
-     * @return Returns String with error or true if connection could be established
+     * @param String $givenurl URL to Grocy API
+     * @param String $apikey   API key
+     *
+     * @return String | true Returns String with error or true if connection could be established
      */
     public static function checkApiConnection($givenurl, $apikey) {
         $loginInfo = array(LOGIN_URL => $givenurl, LOGIN_API_KEY => $apikey);
@@ -239,6 +268,14 @@ class API {
             return "Invalid API key<br>";
         } catch (InvalidSSLException $e) {
             return "Invalid SSL certificate!<br>If you are using a self-signed certificate, you can disable the check in config.php<br>";
+        } catch (InvalidParameterException $e) {
+            return "Internal error: Invalid parameter passed<br>";
+        } catch (NotFoundException $e) {
+            return "Path not found - check if correct URL was entered<br>";
+        } catch (LimitExceededException $e) {
+            return "Connection limits exceeded<br>";
+        } catch (InternalServerErrorException $e) {
+            return "Grocy reported internal error.<br>";
         }
         if (isset($result["grocy_version"]["Version"])) {
             $version = $result["grocy_version"]["Version"];
@@ -300,23 +337,21 @@ class API {
         self::logError("Grocy did not provide version number");
         return null;
     }
-    
-    
+
+
     /**
      *
      *  Adds a Grocy product.
-     * 
-     * @param  String id of product
-     * @param  int amount of product
-     * @param  String Date of best before Default: null (requests default BestBefore date from grocy)
-     * @param  String price of product Default: null
+     *
+     * @param $id
+     * @param $amount
+     * @param null $bestbefore
+     * @param null $price
+     * @param null $fileLock
+     * @param null $defaultBestBefore
      * @return false if default best before date not set
      */
     public static function purchaseProduct($id, $amount, $bestbefore = null, $price = null, &$fileLock = null, $defaultBestBefore = null) {
-        require_once __DIR__ . "/db.inc.php";
-        global $BBCONFIG;
-        
-        $daysBestBefore = 0;
         $data = array(
             'amount' => $amount,
             'transaction_type' => 'purchase'
@@ -346,7 +381,7 @@ class API {
         }
         if ($fileLock != null)
             $fileLock->removeLock();
-        if ($BBCONFIG["SHOPPINGLIST_REMOVE"]) {
+        if (BBConfig::getInstance()["SHOPPINGLIST_REMOVE"]) {
             self::removeFromShoppinglist($id, $amount);
         }
         return ($daysBestBefore != 0);
@@ -451,9 +486,9 @@ class API {
             self::processError($e, "Could not set Grocy barcode");
         }
     }
-    
-    
-    
+
+
+
     /**
      * Formats the amount of days into future date
      * @param  [int] $days  Amount of days a product is consumable, or -1 if it does not expire
@@ -467,7 +502,7 @@ class API {
             return date('Y-m-d', strtotime($date . " + $days days"));
         }
     }
-    
+
     /**
      * Retrieves the default best before date for a product
      * @param  [int] $id Product id
@@ -479,66 +514,12 @@ class API {
         checkIfNumeric($days);
         return $days;
     }
-    
-    
-    /**
-     * Look up a barcode using openfoodfacts
-     * @param  [String] $barcode Input barcode
-     * @return [String]          Returns product name or "N/A" if not found
-     */
-    public static function lookupNameByBarcodeInOpenFoodFacts($barcode) {
-        global $BBCONFIG;
-        
-        $url = "https://world.openfoodfacts.org/api/v0/product/" . $barcode . ".json";
 
-        $curl = new CurlGenerator($url, METHOD_GET, null, null, true);
-        try {
-            $result = $curl->execute(true);
-        } catch (InvalidServerResponseException $e) {
-            self::logError("Could not connect to OpenFoodFacts.", false);
-            return "N/A";
-        } catch (UnauthorizedException $e) {
-            self::logError("Could not connect to OpenFoodFacts - unauthorized");
-            return "N/A";
-        } catch (InvalidJsonResponseException $e) {
-            self::logError("Error parsing OpenFoodFacts response: ".$e->getMessage(), false);
-            return "N/A";
-        } catch (InvalidSSLException $e) {
-            self::logError("Could not connect to OpenFoodFacts - invalid SSL certificate");
-            return "N/A";
-        }
-        if (!isset($result["status"]) || $result["status"] !== 1) {
-            return "N/A";
-        }
 
-        $genericName = null;
-        $productName = null;
-        if (isset($result["product"]["generic_name"]) && $result["product"]["generic_name"] != "") {
-            $genericName = sanitizeString($result["product"]["generic_name"]);
-        }
-        if (isset($result["product"]["product_name"]) && $result["product"]["product_name"] != "") {
-            $productName = sanitizeString($result["product"]["product_name"]);
-        }
-
-        if ($BBCONFIG["USE_GENERIC_NAME"]) {
-            if ($genericName != null)
-                return $genericName;
-            if ($productName != null)
-                return $productName;
-        } else {
-            if ($productName != null)
-                return $productName;
-            if ($genericName != null)
-                return $genericName;
-        }
-        return "N/A";
-    }
-    
-    
     /**
      * Get a Grocy product by barcode
      * @param  [String] $barcode barcode to lookup
-     * @return [Array]           Array if product info or null if barcode
+     * @return array|null        Array if product info or null if barcode
      *                           is not associated with a product
      */
     public static function getProductByBardcode($barcode) {
@@ -574,11 +555,10 @@ class API {
     }
 
 
-
     /**
      * Gets location and amount of stock of a product
      * @param  [String] $productid  Product id
-     * @return [Array]              Array with location info, null if none in stock
+     * @return bool|array              Array with location info, null if none in stock
      */
     public static function getProductLocations($productid) {
         
@@ -593,14 +573,12 @@ class API {
         }
         return $result;
     }
-    
-    
-    
-    
+
+
     /**
      * Getting info of a Grocy chore
-     * @param  string $choreId  Chore ID. If not passed, all chores are looked up
-     * @return [array]          Either chore if ID, or all chores
+     * @param string $choreId Chore ID. If not passed, all chores are looked up
+     * @return bool|mixed|string       Either chore if ID, or all chores
      */
     public static function getChoresInfo($choreId = "") {
         
@@ -615,6 +593,7 @@ class API {
             $result = $curl->execute(true);
         } catch (Exception $e) {
             self::processError($e, "Could not get chore info");
+            return null;
         }
         return $result;
     }
@@ -654,18 +633,28 @@ class API {
                 self::logError("Invalid JSON: " . $errorMessage . " " . $e->getMessage());
                 break;
             case 'InvalidSSLException':
-                self::logError("Invalid API key: " . $errorMessage);
+                self::logError("Invalid SSL certificate: " . $errorMessage);
+                break;
+            case 'InvalidParameterException':
+                self::logError("Internal error: Invalid parameter passed: " . $errorMessage);
+                break;
+            case 'NotFoundException':
+                self::logError("Server reported path not found: " . $errorMessage);
+                break;
+            case 'LimitExceededException':
+                self::logError("Connection limits exceeded: " . $errorMessage);
+                break;
+            case 'InternalServerErrorException':
+                self::logError("Grocy reported internal error: " . $errorMessage);
                 break;
         }
     }
 
     public static function logError($errorMessage, $isFatal = true) {
-        require_once __DIR__ . "/db.inc.php";
-        global $db;
-        if ($db != null)
-            $db->saveError($errorMessage, $isFatal);
+        try {
+            DatabaseConnection::getInstance()->saveError($errorMessage, $isFatal);
+        } catch (DbConnectionDuringEstablishException $_) {
+            // Error occured during the DB connection. As such, DB is not available to log the error.
+        }
     }
-    
 }
-
-?>

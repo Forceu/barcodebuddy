@@ -149,7 +149,7 @@ function getHtmlLogin($result) {
     						->generate();
     if ($result != null) {
   		$html->addLineBreak(2);
-        $html->addHtml('<font color="red">'.$result.'</font>');
+        $html->addHtml('<span style="color: red; ">' .$result. '</span>');
     }
     $html->addLineBreak(2);
     $html->buildButton("button_login", "Login")
@@ -163,7 +163,3 @@ function getHtmlLogin($result) {
                         ->generate();
     return $html->getHtml();
 }
-
-
-
-?>

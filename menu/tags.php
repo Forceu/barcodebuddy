@@ -24,18 +24,17 @@ require_once __DIR__ . "/../incl/processing.inc.php";
 require_once __DIR__ . "/../incl/websocketconnection.inc.php";
 require_once __DIR__ . "/../incl/webui.inc.php";
 
-
 $CONFIG->checkIfAuthenticated(true, true);
 
 //Delete tag
 if (isset($_POST["button_delete"])) {
-        $id = $_POST["button_delete"];
-        checkIfNumeric($id);
-        $db->deleteTag($id);
-        //Hide POST, so we can refresh
-        header("Location: " . $_SERVER["PHP_SELF"]);
-        die();
-    }
+    $id = $_POST["button_delete"];
+    checkIfNumeric($id);
+    DatabaseConnection::getInstance()->deleteTag($id);
+    //Hide POST, so we can refresh
+    header("Location: " . $_SERVER["PHP_SELF"]);
+    die();
+}
 
 
 
@@ -79,5 +78,3 @@ function getHtmlTagTable() {
     }
 }
 
-
-?>

@@ -37,4 +37,3 @@ function pluginEventReceiver_processEvent($eventType, $log) {
 }
 
 
-?>

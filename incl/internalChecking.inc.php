@@ -25,6 +25,7 @@
 
 
 require_once __DIR__ . "/configProcessing.inc.php";
+require_once __DIR__ . "/config.inc.php";
 
 const RESULT_ALL_INSTALLED = 0;
 const RESULT_OPT_MISSING   = 1;
@@ -36,8 +37,8 @@ const OPTIONAL_EXTENSIONS  = array();
 
 /**
  * Checks if the required PHP extensions are installed and active
- * 
- * @return [array] Returns an array for all modules. $return["result"] is
+ *
+ * @return array  Returns an array for all modules. $return["result"] is
  *                 RESULT_ALL_INSTALLED, RESULT_OPT_MISSING or RESULT_REQ_MISSING
  */
 function checkExtensionsInstalled() {
@@ -70,9 +71,6 @@ function isExtensionInstalled($name) {
 
 //Check if Grocy API config is set in the database
 function isGrocyApiSet() {
-    require_once __DIR__ . "/db.inc.php";
-    global $BBCONFIG;
-    return ($BBCONFIG["GROCY_API_URL"] != null && $BBCONFIG["GROCY_API_KEY"] != null);
+    $config = BBConfig::getInstance();
+    return ($config["GROCY_API_URL"] != null && $config["GROCY_API_KEY"] != null);
 }
-
-?>

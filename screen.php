@@ -176,7 +176,9 @@ $CONFIG->checkIfAuthenticated(true);
             margin: 5px;
             border-color: #46b8da;
 
-            font: bold 4em arial;
+            font-size:calc(30vh / 3);
+            font-family: Arial, sans-serif;
+            font-weight: bold;
             text-align: center;
 
             display: flex;

@@ -19,6 +19,7 @@ require_once __DIR__ . "/incl/configProcessing.inc.php";
 require_once __DIR__ . "/incl/config.inc.php";
 
 $CONFIG->checkIfAuthenticated(true);
+$BBCONFIG = BBConfig::getInstance();
 
 ?>
 <!DOCTYPE html>

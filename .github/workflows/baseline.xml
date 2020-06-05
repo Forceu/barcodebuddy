@@ -51,6 +51,9 @@
     </UndefinedDocblockClass>
   </file>
   <file src="incl/authentication/authentication.inc.php">
+    <InvalidGlobal occurrences="1">
+      <code>global $CONFIG;</code>
+    </InvalidGlobal>
     <UndefinedClass occurrences="3">
       <code>\Delight\Db\PdoDsn</code>
       <code>\Delight\Auth\Auth</code>
@@ -69,6 +72,9 @@
     <ForbiddenCode occurrences="1">
       <code>var_dump($variable)</code>
     </ForbiddenCode>
+    <InvalidGlobal occurrences="1">
+      <code>global $CONFIG;</code>
+    </InvalidGlobal>
     <InvalidOperand occurrences="1">
       <code>$subnetMask</code>
     </InvalidOperand>
@@ -107,6 +113,9 @@
     </UndefinedFunction>
   </file>
   <file src="incl/db.inc.php">
+    <DeprecatedMethod occurrences="1">
+      <code>BBConfig::getInstance()</code>
+    </DeprecatedMethod>
     <PossiblyNullArgument occurrences="4">
       <code>$config["BARCODE_C"]</code>
       <code>$config["BARCODE_O"]</code>
@@ -202,6 +211,12 @@
       <code>\Delight\Auth\UnknownUsernameException</code>
       <code>\Delight\Auth\Role</code>
     </UndefinedClass>
+  </file>
+  <file src="menu/settings.php">
+    <PossiblyNullArgument occurrences="2">
+      <code>$config["GROCY_API_URL"]</code>
+      <code>$config["GROCY_API_KEY"]</code>
+    </PossiblyNullArgument>
   </file>
   <file src="wsserver.php">
     <UndefinedClass occurrences="2">

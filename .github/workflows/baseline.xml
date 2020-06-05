@@ -88,7 +88,7 @@
       <code>$subnet</code>
       <code>$subnet</code>
     </MissingClosureParamType>
-    <UndefinedConstant occurrences="17">
+    <UndefinedConstant occurrences="18">
       <code>PORT_WEBSOCKET_SERVER</code>
       <code>DATABASE_PATH</code>
       <code>CURL_TIMEOUT_S</code>

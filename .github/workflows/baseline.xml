@@ -106,6 +106,7 @@
       <code>TRUSTED_PROXIES</code>
       <code>CONFIG_PATH</code>
       <code>AUTHDB_PATH</code>
+      <code>SEARCH_ENGINE</code>
     </UndefinedConstant>
     <UndefinedFunction occurrences="2">
       <code>createConfigPhp($configPath)</code>

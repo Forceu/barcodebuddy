@@ -113,9 +113,6 @@
     </UndefinedFunction>
   </file>
   <file src="incl/db.inc.php">
-    <DeprecatedMethod occurrences="1">
-      <code>BBConfig::getInstance()</code>
-    </DeprecatedMethod>
     <PossiblyNullArgument occurrences="4">
       <code>$config["BARCODE_C"]</code>
       <code>$config["BARCODE_O"]</code>

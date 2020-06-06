@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <psalm xmlns="https://getpsalm.org/schema/config"
        errorBaseline=".github/workflows/baseline.xml">
-<issueHandlers>
-  <MissingParamType errorLevel="suppress" />
-  <MissingReturnType  errorLevel="suppress" />
-  <MissingClosureReturnType errorLevel="suppress" />
-  <MissingPropertyType errorLevel="suppress" />
-  <TypeDoesNotContainType errorLevel="info" />
-  <InvalidDocblock errorLevel="info" />
-</issueHandlers>
+    <issueHandlers>
+        <MissingParamType errorLevel="suppress" />
+        <MissingReturnType  errorLevel="suppress" />
+        <MissingClosureReturnType errorLevel="suppress" />
+        <MissingPropertyType errorLevel="suppress" />
+        <TypeDoesNotContainType errorLevel="info" />
+        <InvalidDocblock errorLevel="info" />
+    </issueHandlers>
     <projectFiles>
         <directory name="."/>
         <ignoreFiles>
@@ -17,7 +17,4 @@
             <directory name="./vendor"/>
         </ignoreFiles>
     </projectFiles>
-    <globals>
-        <var name="BBCONFIG" type="array" />
-    </globals>
 </psalm>

@@ -177,7 +177,6 @@ $BBCONFIG = BBConfig::getInstance();
             margin: 5px;
             border-color: #46b8da;
 
-            font-size:calc(30vh / 3);
             font-family: Arial, sans-serif;
             font-weight: bold;
             text-align: center;
@@ -192,12 +191,20 @@ $BBCONFIG = BBConfig::getInstance();
                 grid-template-columns: 50vw 50vw;
                 grid-template-rows: 33vh 33vh 33vh;
             }
+            
+            .modeButton {
+                font-size:calc(30vh / 6);
+            }
         }
 
         @media only screen and (orientation: landscape){
             #modeButtonContainer {
                 grid-template-columns: 33vw 33vw 33vw;
                 grid-template-rows: 50vh 50vh;
+            }
+            
+            .modeButton {
+                font-size:calc(30vh / 3);
             }
         }
 

@@ -251,7 +251,7 @@ class WebUiGenerator {
             <h2>Add barcode</h2>
 
         Enter your barcodes below, one each line.&nbsp;<br><br>
-        <form name="form" onsubmit="disableSSE()" method="post" action="' . $_SERVER['PHP_SELF'] . '" >
+        <form name="form" onsubmit="disableSSE()" method="post" action=".' . $_SERVER['PHP_SELF'] . '" >
         <textarea name="newbarcodes" id="newbarcodes" class="mdl-textfield__input" rows="15"></textarea>
 
         <br>
@@ -385,6 +385,6 @@ class TableGenerator {
 
 
 function hideGetPostParameters() {
-  header("Location: " . $_SERVER["PHP_SELF"]);
+  header("Location: ." . $_SERVER["PHP_SELF"]);
   die();
 }

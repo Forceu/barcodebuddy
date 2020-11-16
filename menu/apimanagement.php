@@ -56,7 +56,7 @@ $webUi->addHtml('<script src="../incl/js/qrcode.js"></script>');
 $link = (new MenuItemLink())
             ->setId("btn_apilinks")
             ->setText("Revoke all")
-            ->setLink('window.location.href=\''.$_SERVER['PHP_SELF'].'?deleteall\'');
+            ->setLink('window.location.href=\'.'.$_SERVER['PHP_SELF'].'?deleteall\'');
 if ($mobileKey == null) 
     $webUi->addCard("API Keys", getApiTable(), $link);
 else

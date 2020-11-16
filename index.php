@@ -105,24 +105,24 @@ $webUi->addHeader('<link rel="stylesheet" href="./incl/css/styleMain.css">');
 
 $link = (new MenuItemLink())
     ->setText("Delete all")
-    ->setLink('window.location.href=\'' . $_SERVER['PHP_SELF'] . '?delete=req_actions\'');
+    ->setLink('window.location.href=\'.' . $_SERVER['PHP_SELF'] . '?delete=req_actions\'');
 if (sizeof($barcodes['tare']) > 0) {
     $webUi->addCard("Action required", getHtmlMainMenuReqActions($barcodes), $link);
 }
 
 $link = (new MenuItemLink())
     ->setText("Delete all")
-    ->setLink('window.location.href=\'' . $_SERVER['PHP_SELF'] . '?delete=known\'');
+    ->setLink('window.location.href=\'.' . $_SERVER['PHP_SELF'] . '?delete=known\'');
 $webUi->addCard("New Barcodes", getHtmlMainMenuTableKnown($barcodes), $link);
 
 $link = (new MenuItemLink())
     ->setText("Delete all")
-    ->setLink('window.location.href=\'' . $_SERVER['PHP_SELF'] . '?delete=unknown\'');
+    ->setLink('window.location.href=\'.' . $_SERVER['PHP_SELF'] . '?delete=unknown\'');
 $webUi->addCard("Unknown Barcodes", getHtmlMainMenuTableUnknown($barcodes), $link);
 
 $link = (new MenuItemLink())
     ->setText("Clear log")
-    ->setLink('window.location.href=\'' . $_SERVER['PHP_SELF'] . '?delete=log\'');
+    ->setLink('window.location.href=\'.' . $_SERVER['PHP_SELF'] . '?delete=log\'');
 $webUi->addCard("Processed Barcodes", getHtmlLogTextArea(), $link);
 $webUi->addFooter();
 $webUi->printHtml();
@@ -135,7 +135,7 @@ function processButtons() {
     if (isset($_GET["delete"])) {
         $db->deleteAll($_GET["delete"]);
         //Hide get
-        header("Location: " . $_SERVER["PHP_SELF"]);
+        header("Location: ." . $_SERVER["PHP_SELF"]);
         die();
     }
 
@@ -144,7 +144,7 @@ function processButtons() {
         checkIfNumeric($id);
         $db->deleteBarcode($id);
         //Hide POST, so we can refresh
-        header("Location: " . $_SERVER["PHP_SELF"]);
+        header("Location: ." . $_SERVER["PHP_SELF"]);
         die();
     }
 
@@ -158,7 +158,7 @@ function processButtons() {
                 $db->deleteBarcode($id);
             }
         }
-        header("Location: " . $_SERVER["PHP_SELF"]);
+        header("Location: ." . $_SERVER["PHP_SELF"]);
     }
 
 
@@ -167,7 +167,7 @@ function processButtons() {
         checkIfNumeric($id);
         $db->deleteBarcode($id);
         //Hide POST, so we can refresh
-        header("Location: " . $_SERVER["PHP_SELF"]);
+        header("Location: ." . $_SERVER["PHP_SELF"]);
         die();
     }
 
@@ -183,7 +183,7 @@ function processButtons() {
         }
 
         //Hide POST, so we can refresh
-        header("Location: " . $_SERVER["PHP_SELF"]);
+        header("Location: ." . $_SERVER["PHP_SELF"]);
         die();
     }
 
@@ -238,7 +238,7 @@ function processButtons() {
             }
         }
         //Hide POST, so we can refresh
-        header("Location: " . $_SERVER["PHP_SELF"]);
+        header("Location: ." . $_SERVER["PHP_SELF"]);
         die();
     }
 }

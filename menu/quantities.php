@@ -33,7 +33,7 @@ if (isset($_POST["button_delete"])) {
         checkIfNumeric($id);
         DatabaseConnection::getInstance()->deleteQuantitiy($id);
         //Hide POST, so we can refresh
-        header("Location: " . $_SERVER["PHP_SELF"]);
+        header("Location: ." . $_SERVER["PHP_SELF"]);
         die();
     }
 
@@ -56,7 +56,7 @@ function printSettingsQuantityTable(){
         $html->addHtml("No saved quantities yet.");
         return $html->getHtml();
     } else {
-        $returnString = '<form name="form" method="post" action="' . $_SERVER['PHP_SELF'] . '" >';
+        $returnString = '<form name="form" method="post" action=".' . $_SERVER['PHP_SELF'] . '" >';
         $table        = new TableGenerator(array(
             "Product",
             "Barcode",

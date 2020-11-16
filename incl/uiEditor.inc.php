@@ -292,7 +292,7 @@ class UiEditor {
                 $name         = 'editform' . rand();
             else
                 $name         =  $formname;
-            $this->htmlOutput = '<div id="' . $name . '"> <form enctype="multipart/form-data" name="' . $name . '" ' . $onSubmitHtml . ' id="' . $name . '_form" method="post" action="' . $_SERVER['PHP_SELF'] . '" >';
+            $this->htmlOutput = '<div id="' . $name . '"> <form enctype="multipart/form-data" name="' . $name . '" ' . $onSubmitHtml . ' id="' . $name . '_form" method="post" action=".' . $_SERVER['PHP_SELF'] . '" >';
         }
         $this->autoComplete = array();
         $this->checkBoxes   = array();

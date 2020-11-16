@@ -32,7 +32,7 @@ if (isset($_POST["button_delete"])) {
     checkIfNumeric($id);
     DatabaseConnection::getInstance()->deleteTag($id);
     //Hide POST, so we can refresh
-    header("Location: " . $_SERVER["PHP_SELF"]);
+    header("Location: ." . $_SERVER["PHP_SELF"]);
     die();
 }
 

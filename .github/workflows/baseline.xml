@@ -88,7 +88,7 @@
       <code>$subnet</code>
       <code>$subnet</code>
     </MissingClosureParamType>
-    <UndefinedConstant occurrences="18">
+    <UndefinedConstant occurrences="19">
       <code>PORT_WEBSOCKET_SERVER</code>
       <code>DATABASE_PATH</code>
       <code>CURL_TIMEOUT_S</code>
@@ -104,9 +104,10 @@
       <code>EXTERNAL_GROCY_URL</code>
       <code>AUTHENTICATION_BYPASS_NETS</code>
       <code>TRUSTED_PROXIES</code>
+      <code>SEARCH_ENGINE</code>
+      <code>BASEURL</code>
       <code>CONFIG_PATH</code>
       <code>AUTHDB_PATH</code>
-      <code>SEARCH_ENGINE</code>
     </UndefinedConstant>
     <UndefinedFunction occurrences="2">
       <code>createConfigPhp($configPath)</code>

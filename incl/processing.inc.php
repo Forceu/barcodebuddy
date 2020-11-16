@@ -211,12 +211,12 @@ function processUnknownBarcode($barcode, $websocketEnabled, &$fileLock, $bestBef
 //Convert state to string for websocket server
 function stateToString($state) {
     $allowedModes = array(
-        STATE_CONSUME => "Consume",
+        STATE_CONSUME         => "Consume",
         STATE_CONSUME_SPOILED => "Consume(spoiled)",
-        STATE_PURCHASE => "Purchase",
-        STATE_OPEN => "Open",
-        STATE_GETSTOCK => "Inventory",
-        STATE_ADD_SL => "Add to shoppinglist"
+        STATE_PURCHASE        => "Purchase",
+        STATE_OPEN            => "Open",
+        STATE_GETSTOCK        => "Inventory",
+        STATE_ADD_SL          => "Add to shoppinglist"
     );
     return $allowedModes[$state];
 }
@@ -490,14 +490,16 @@ function explodeWordsAndMakeCheckboxes($words, $id) {
     $selections = "";
     $cleanWords = cleanNameForTagLookup($words);
     $i          = 0;
+    $addedWords = array(); // Check if word is used multiple times when creating possible tags
     foreach ($cleanWords as $str) {
         $tagWord = trim($str);
-        if (strlen($tagWord) > 0 && DatabaseConnection::getInstance()->tagNotUsedYet($tagWord)) {
+        if (strlen($tagWord) > 0 && !in_array(strtolower($tagWord), $addedWords) && DatabaseConnection::getInstance()->tagNotUsedYet($tagWord)) {
             $selections = $selections . '<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-' . $id . '_' . $i . '">
   <input type="checkbox"  value="' . $tagWord . '" name="tags[' . $id . '][' . $i . ']" id="checkbox-' . $id . '_' . $i . '" class="mdl-checkbox__input">
   <span class="mdl-checkbox__label">' . $tagWord . '</span>
 </label>';
             $i++;
+            array_push($addedWords, strtolower($tagWord));
         }
     }
     return $selections;

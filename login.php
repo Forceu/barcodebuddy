@@ -36,7 +36,7 @@ if (isset($_POST["button_login"])) {
 
 
 if ($CONFIG->checkIfAuthenticated(false)) {
-    header("Location: index.php");
+    header("Location: ./index.php");
     die();
 }
 
@@ -59,7 +59,7 @@ function login() {
 
     try {
     $auth->loginWithUsername($_POST['username'], $_POST['password'], (int) (60 * 60 * 24 * 365.25));
-        header("Location: index.php");
+        header("Location: ./index.php");
         die();
     }
     catch (\Delight\Auth\UnknownUsernameException $e) {
@@ -94,7 +94,7 @@ function createUser() {
         $auth->admin()->changePasswordForUserById(1, $_POST['password']);
         $auth->admin()->addRoleForUserById(1, \Delight\Auth\Role::ADMIN);
         $auth->admin()->logInAsUserById(1);
-        header("Location: index.php");
+        header("Location: ./index.php");
         die();
     }
 }

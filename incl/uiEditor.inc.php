@@ -15,6 +15,8 @@
  */
 
 
+require_once __DIR__ . "/configProcessing.inc.php";
+
 class ButtonBuilder {
     private $name = null;
     private $id = null;
@@ -297,6 +299,7 @@ class UiEditor {
 
 
     function __construct($createForm = true, $onSubmit = null, $formname = null) {
+        global $CONFIG;
         $onSubmitHtml = "";
         if ($onSubmit != null) {
             $onSubmitHtml = "onsubmit=\"$onSubmit\"";
@@ -306,7 +309,7 @@ class UiEditor {
                 $name = 'editform' . rand();
             else
                 $name = $formname;
-            $this->htmlOutput = '<div id="' . $name . '"> <form enctype="multipart/form-data" name="' . $name . '" ' . $onSubmitHtml . ' id="' . $name . '_form" method="post" action="' . $_SERVER['PHP_SELF'] . '" >';
+             $this->htmlOutput = '<div id="' . $name . '"> <form enctype="multipart/form-data" name="' . $name . '" ' . $onSubmitHtml . ' id="' . $name . '_form" method="post" action="' . $CONFIG->getPhpSelfWithBaseUrl() . '" >';
         }
         $this->autoComplete = array();
         $this->checkBoxes   = array();

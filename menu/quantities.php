@@ -11,7 +11,7 @@
  *
  *
  * Change quantities
- * 
+ *
  * @author     Marc Ole Bulling
  * @copyright  2019 Marc Ole Bulling
  * @license    https://www.gnu.org/licenses/gpl-3.0.en.html  GNU GPL v3.0
@@ -29,50 +29,47 @@ $CONFIG->checkIfAuthenticated(true, true);
 
 //Delete Quantity
 if (isset($_POST["button_delete"])) {
-        $id = $_POST["button_delete"];
-        checkIfNumeric($id);
-        DatabaseConnection::getInstance()->deleteQuantitiy($id);
-        //Hide POST, so we can refresh
-        header("Location: " . $_SERVER["PHP_SELF"]);
-        die();
-    }
-
+    $id = $_POST["button_delete"];
+    checkIfNumeric($id);
+    DatabaseConnection::getInstance()->deleteQuantitiy($id);
+    //Hide POST, so we can refresh
+    header("Location: " . $CONFIG->getPhpSelfWithBaseUrl());
+    die();
+}
 
 
 $webUi = new WebUiGenerator(MENU_GENERIC);
 $webUi->addHeader();
-$webUi->addCard("Saved Quantities",printSettingsQuantityTable());
+$webUi->addCard("Saved Quantities", printSettingsQuantityTable());
 $webUi->addFooter();
 $webUi->printHtml();
 
 
-
-
-
-function printSettingsQuantityTable(){
+function printSettingsQuantityTable() {
+    global $CONFIG;
     $quantities = DatabaseConnection::getInstance()->getQuantities();
-    $html = new UiEditor();
+    $html       = new UiEditor();
     if (sizeof($quantities) == 0) {
         $html->addHtml("No saved quantities yet.");
         return $html->getHtml();
     } else {
-        $returnString = '<form name="form" method="post" action="' . $_SERVER['PHP_SELF'] . '" >';
+        $returnString = '<form name="form" method="post" action="' . $CONFIG->getPhpSelfWithBaseUrl() . '" >';
         $table        = new TableGenerator(array(
             "Product",
             "Barcode",
             "Quantity",
             "Action"
         ));
-        
+
         foreach ($quantities as $quantity) {
             $table->startRow();
             $table->addCell($quantity['product']);
             $table->addCell($quantity['barcode']);
             $table->addCell($quantity['quantity']);
             $table->addCell($html->buildButton("button_delete", "Delete")
-                                ->setSubmit()
-                                ->setValue($quantity['id'])
-                                ->generate(true));
+                ->setSubmit()
+                ->setValue($quantity['id'])
+                ->generate(true));
             $table->endRow();
         }
         $html->addTableClass($table);

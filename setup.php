@@ -39,7 +39,7 @@ $result = true;
 //instead of showing the setup again
 if (isset($_POST["was_internal_check"])) {
 	if (BBConfig::getInstance()["GROCY_API_URL"] != null && BBConfig::getInstance()["GROCY_API_KEY"] != null) {
-        header("Location: index.php");
+        header("Location: ./index.php");
         die();
 	}
 }
@@ -51,7 +51,7 @@ if (isset($_POST["GROCY_API_URL"])) {
     if ($result === true) {
         DatabaseConnection::getInstance()->updateConfig("GROCY_API_URL", sanitizeString($apiWithTrailingSlash));
         DatabaseConnection::getInstance()->updateConfig("GROCY_API_KEY", sanitizeString($_POST["GROCY_API_KEY"]));
-        header("Location: index.php");
+        header("Location: ./index.php");
         die();
     } 
     

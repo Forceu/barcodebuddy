@@ -43,7 +43,7 @@ $CONFIG->checkIfAuthenticated(true);
 
 //If invalid settings are set, load setup
 if (checkExtensionsInstalled()["result"] == RESULT_REQ_MISSING || !isGrocyApiSet()) {
-    header("Location: setup.php");
+    header("Location: ./setup.php");
     die();
 }
 
@@ -105,24 +105,24 @@ $webUi->addHeader('<link rel="stylesheet" href="./incl/css/styleMain.css">');
 
 $link = (new MenuItemLink())
     ->setText("Delete all")
-    ->setLink('window.location.href=\'' . $_SERVER['PHP_SELF'] . '?delete=req_actions\'');
+    ->setLink('window.location.href=\'' . $CONFIG->getPhpSelfWithBaseUrl() . '?delete=req_actions\'');
 if (sizeof($barcodes['tare']) > 0) {
     $webUi->addCard("Action required", getHtmlMainMenuReqActions($barcodes), $link);
 }
 
 $link = (new MenuItemLink())
     ->setText("Delete all")
-    ->setLink('window.location.href=\'' . $_SERVER['PHP_SELF'] . '?delete=known\'');
+    ->setLink('window.location.href=\'' . $CONFIG->getPhpSelfWithBaseUrl() . '?delete=known\'');
 $webUi->addCard("New Barcodes", getHtmlMainMenuTableKnown($barcodes), $link);
 
 $link = (new MenuItemLink())
     ->setText("Delete all")
-    ->setLink('window.location.href=\'' . $_SERVER['PHP_SELF'] . '?delete=unknown\'');
+    ->setLink('window.location.href=\'' . $CONFIG->getPhpSelfWithBaseUrl() . '?delete=unknown\'');
 $webUi->addCard("Unknown Barcodes", getHtmlMainMenuTableUnknown($barcodes), $link);
 
 $link = (new MenuItemLink())
     ->setText("Clear log")
-    ->setLink('window.location.href=\'' . $_SERVER['PHP_SELF'] . '?delete=log\'');
+    ->setLink('window.location.href=\'' . $CONFIG->getPhpSelfWithBaseUrl() . '?delete=log\'');
 $webUi->addCard("Processed Barcodes", getHtmlLogTextArea(), $link);
 $webUi->addFooter();
 $webUi->printHtml();
@@ -130,12 +130,13 @@ $webUi->printHtml();
 
 //Check if a button on the web ui was pressed and process
 function processButtons() {
+    global $CONFIG;
     $db = DatabaseConnection::getInstance();
 
     if (isset($_GET["delete"])) {
         $db->deleteAll($_GET["delete"]);
         //Hide get
-        header("Location: " . $_SERVER["PHP_SELF"]);
+        header("Location: " . $CONFIG->getPhpSelfWithBaseUrl());
         die();
     }
 
@@ -144,7 +145,7 @@ function processButtons() {
         checkIfNumeric($id);
         $db->deleteBarcode($id);
         //Hide POST, so we can refresh
-        header("Location: " . $_SERVER["PHP_SELF"]);
+        header("Location: " . $CONFIG->getPhpSelfWithBaseUrl());
         die();
     }
 
@@ -158,7 +159,7 @@ function processButtons() {
                 $db->deleteBarcode($id);
             }
         }
-        header("Location: " . $_SERVER["PHP_SELF"]);
+        header("Location: " . $CONFIG->getPhpSelfWithBaseUrl());
     }
 
 
@@ -167,7 +168,7 @@ function processButtons() {
         checkIfNumeric($id);
         $db->deleteBarcode($id);
         //Hide POST, so we can refresh
-        header("Location: " . $_SERVER["PHP_SELF"]);
+        header("Location: " . $CONFIG->getPhpSelfWithBaseUrl());
         die();
     }
 
@@ -183,7 +184,7 @@ function processButtons() {
         }
 
         //Hide POST, so we can refresh
-        header("Location: " . $_SERVER["PHP_SELF"]);
+        header("Location: " . $CONFIG->getPhpSelfWithBaseUrl());
         die();
     }
 
@@ -238,7 +239,7 @@ function processButtons() {
             }
         }
         //Hide POST, so we can refresh
-        header("Location: " . $_SERVER["PHP_SELF"]);
+        header("Location: " . $CONFIG->getPhpSelfWithBaseUrl());
         die();
     }
 }

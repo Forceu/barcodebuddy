@@ -57,11 +57,11 @@ class ButtonBuilder {
         return $this;
     }
 
-    function setIsColoured($isColoured = true) {  
+    function setIsColoured($isColoured = true) {
         $this->isColoured = $isColoured;
         return $this;
     }
-    function setIsAccent($isAccent = true) { 
+    function setIsAccent($isAccent = true) {
         $this->isColoured = true;
         $this->isAccent   = $isAccent;
         return $this;
@@ -101,7 +101,7 @@ class ButtonBuilder {
     }
 
 }
-    
+
 
 class EditFieldBuilder {
     //required
@@ -506,7 +506,7 @@ class UiEditor {
 
         if ($id == null)
             $id = $name;
-        if ($value == null) 
+        if ($value == null)
             $value = $label;
         $raisedHtml = "";
         if ($isRaised) {
@@ -598,6 +598,11 @@ class UiEditor {
     function addScript($html) {
         $this->htmlOutput = $this->htmlOutput . "\n" . "<script>" . $html . "</script>\n";
     }
+
+    static function addTextWrap($text, $size) {
+        return '<div style="max-width: '.$size.'em; overflow-wrap: break-word; white-space: normal; overflow: auto;">'.$text.'</div>';
+    }
+
     function getHtml() {
         if ($this->createForm) {
             $result = $this->htmlOutput . '</form></div>';

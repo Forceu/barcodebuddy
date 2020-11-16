@@ -347,7 +347,6 @@ class WebUiGenerator {
         $this->addHtml('</body>
     </html>');
     }
-
 }
 
 class TableGenerator {

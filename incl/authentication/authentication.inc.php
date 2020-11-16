@@ -27,6 +27,7 @@ if (!file_exists($CONFIG->AUTHDB_PATH))
 
 $db_auth = new \Delight\Db\PdoDsn('sqlite:' . $CONFIG->AUTHDB_PATH);
 $auth    = new \Delight\Auth\Auth($db_auth);
+\header_remove('X-Frame-Options');
 
 
 function isUserSetUp() {

@@ -43,7 +43,7 @@ $CONFIG->checkIfAuthenticated(true);
 
 //If invalid settings are set, load setup
 if (checkExtensionsInstalled()["result"] == RESULT_REQ_MISSING || !isGrocyApiSet()) {
-    header("Location: setup.php");
+    header("Location: ./setup.php");
     die();
 }
 

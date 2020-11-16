@@ -32,7 +32,7 @@
  *  with the error message.
  */ 
 if (!isset($ERROR_MESSAGE)) {
-    header("Location: index.php");
+    header("Location: ./index.php");
 }
 
 require_once __DIR__ . "/incl/webui.inc.php";

@@ -310,7 +310,7 @@ function getHtmlMainMenuTableKnown($barcodes) {
             }
             $itemId = $item['id'];
             $table->startRow();
-            $table->addCell(UiEditor::addTextWrap($item['name'], 12));
+            $table->addCell(UiEditor::addTextWrap($item['name'], 15));
             $table->addCell($item['barcode']);
             $table->addCell($item['amount']);
             $table->addCell('<select style="max-width: 20em;" onchange=\'enableButton("select_' . $itemId . '", "button_add_' . $item['id'] . '", "button_consume_' . $item['id'] . '")\' id="select_' . $itemId . '" name="select_' . $itemId . '">' . printSelections($item['match'], $productinfo) . '</select>');

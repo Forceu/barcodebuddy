@@ -77,7 +77,8 @@ function checkForMissingConstants() {
         "OVERRIDDEN_USER_CONFIG"       => array(),
         "AUTHENTICATION_BYPASS_NETS"   => array(),
         "TRUSTED_PROXIES"              => array(),
-        "SEARCH_ENGINE"                => "http://google.com/search?q="
+        "SEARCH_ENGINE"                => "http://google.com/search?q=",
+        "BASEURL"                      => "/"
     );
     foreach ($defaultValues as $key => $value) {
         if (!defined($key))
@@ -105,9 +106,14 @@ class GlobalConfig {
     public $AUTHENTICATION_BYPASS_NETS = AUTHENTICATION_BYPASS_NETS;
     public $TRUSTED_PROXIES = TRUSTED_PROXIES;
     public $SEARCH_ENGINE = SEARCH_ENGINE;
+    public $BASEURL = BASEURL;
 
     function __construct() {
         $this->loadConfig();
+    }
+
+    function getPhpSelfWithBaseUrl() {
+        return rtrim($this->BASEURL, "/") . $_SERVER['PHP_SELF'];
     }
 
     //Gets all the public variables declared above and checks if there
@@ -223,7 +229,7 @@ class GlobalConfig {
 
         $isLoggedIn = $auth->isLoggedIn();
         if (!$isLoggedIn && $redirect) {
-            $location = "login.php";
+            $location = "./login.php";
             if ($ismenu)
                 $location = "../login.php";
             header("Location: $location");

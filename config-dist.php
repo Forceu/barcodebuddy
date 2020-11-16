@@ -101,6 +101,10 @@ const OVERRIDDEN_USER_CONFIG       = array(
                                          );
 
 
+
+// If you are running Barcode Buddy behind a proxy and need to change the baseurl
+const BASEURL                      = "/";
+
 // Currently not in use
 const IS_DOCKER                    = false;
 

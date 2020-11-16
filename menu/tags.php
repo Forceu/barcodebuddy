@@ -8,7 +8,7 @@
  * LICENSE: This source file is subject to version 3.0 of the GNU General
  * Public License v3.0 that is attached to this project.
  *
- * 
+ *
  * List all tags
  *
  * @author     Marc Ole Bulling
@@ -32,22 +32,16 @@ if (isset($_POST["button_delete"])) {
     checkIfNumeric($id);
     DatabaseConnection::getInstance()->deleteTag($id);
     //Hide POST, so we can refresh
-    header("Location: ." . $_SERVER["PHP_SELF"]);
+    header("Location: " . $CONFIG->getPhpSelfWithBaseUrl());
     die();
 }
 
 
-
-
 $webUi = new WebUiGenerator(MENU_GENERIC);
 $webUi->addHeader();
-$webUi->addCard("Stored Tags",getHtmlTagTable());
+$webUi->addCard("Stored Tags", getHtmlTagTable());
 $webUi->addFooter();
 $webUi->printHtml();
-
-
-
-
 
 
 function getHtmlTagTable() {
@@ -57,20 +51,20 @@ function getHtmlTagTable() {
         $html->addHtml("No tags yet.");
         return $html->getHtml();
     } else {
-        $table        = new TableGenerator(array(
+        $table = new TableGenerator(array(
             "Tag",
             "Product",
             "Action"
         ));
-        
+
         foreach ($tags as $tag) {
             $table->startRow();
             $table->addCell($tag['name']);
             $table->addCell($tag['item']);
             $table->addCell($html->buildButton("button_delete", "Delete")
-                                ->setSubmit()
-                                ->setValue($tag['id'])
-                                ->generate(true));
+                ->setSubmit()
+                ->setValue($tag['id'])
+                ->generate(true));
             $table->endRow();
         }
         $html->addTableClass($table);

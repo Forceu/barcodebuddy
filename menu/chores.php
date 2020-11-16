@@ -38,7 +38,7 @@ if (isset($_POST["button_edit"])) {
               DatabaseConnection::getInstance()->updateChoreBarcode($id, $barcode);
         }
         //Hide POST, so we can refresh
-        header("Location: ." . $_SERVER["PHP_SELF"]);
+        header("Location: " . $CONFIG->getPhpSelfWithBaseUrl());
         die();
     }
 

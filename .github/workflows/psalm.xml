@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <psalm xmlns="https://getpsalm.org/schema/config"
-       errorBaseline=".github/workflows/baseline.xml">
+       errorBaseline="baseline.xml">
     <issueHandlers>
         <MissingParamType errorLevel="suppress" />
         <MissingReturnType  errorLevel="suppress" />
@@ -10,11 +10,11 @@
         <InvalidDocblock errorLevel="info" />
     </issueHandlers>
     <projectFiles>
-        <directory name="."/>
+        <directory name="../../"/>
         <ignoreFiles>
-            <directory name="./incl/authentication/composer/vendor"/>
-            <directory name="./incl/websocket"/>
-            <directory name="./vendor"/>
+            <directory name="../../incl/authentication/composer/vendor"/>
+            <directory name="../../incl/websocket"/>
+            <directory name="../../vendor"/>
         </ignoreFiles>
     </projectFiles>
 </psalm>

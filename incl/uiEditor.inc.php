@@ -309,7 +309,7 @@ class UiEditor {
                 $name = 'editform' . rand();
             else
                 $name = $formname;
-            $this->htmlOutput = '<div id="' . $name . '"> <form enctype="multipart/form-data" name="' . $name . '" ' . $onSubmitHtml . ' id="' . $name . '_form" method="post" action="' . $CONFIG->getPhpSelfWithBaseUrl() . '" >';
+             $this->htmlOutput = '<div id="' . $name . '"> <form enctype="multipart/form-data" name="' . $name . '" ' . $onSubmitHtml . ' id="' . $name . '_form" method="post" action="' . $CONFIG->getPhpSelfWithBaseUrl() . '" >';
         }
         $this->autoComplete = array();
         $this->checkBoxes   = array();
@@ -626,8 +626,8 @@ class UiEditor {
         $this->htmlOutput = $this->htmlOutput . "\n" . "<script>" . $html . "</script>\n";
     }
 
-    static function addTextWrap($text, $size) {
-        return '<div style="max-width: ' . $size . 'em; overflow-wrap: break-word; white-space: normal; overflow: auto;">' . $text . '</div>';
+    static function addTextWrap($text, $maxSize = 12, $minSize = 10) {
+        return '<div style="max-width: ' . $maxSize . 'em; min-width: ' . $minSize . 'em; overflow-wrap: break-word; white-space: normal; overflow: auto;">' . $text . '</div>';
     }
 
     function getHtml() {

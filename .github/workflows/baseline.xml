@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.11.4@58e1d8e68e5098bf4fbfdfb420c38d563f882549">
-  <file src="api/index.php">
+<files psalm-version="4.1.1@16bfbd9224698bd738c665f33039fade2a1a3977">
+  <file src="../../api/index.php">
     <InvalidNullableReturnType occurrences="1">
       <code>bool</code>
     </InvalidNullableReturnType>
@@ -8,24 +8,24 @@
       <code>strpos($requestedUrl, '/api')</code>
     </PossiblyFalseArgument>
   </file>
-  <file src="incl/PluginLoader.php">
+  <file src="../../incl/PluginLoader.php">
     <UnresolvableInclude occurrences="1">
       <code>include_once $filename</code>
     </UnresolvableInclude>
   </file>
-  <file src="incl/api.inc.php">
+  <file src="../../incl/api.inc.php">
     <DocblockTypeContradiction occurrences="4">
-      <code>$price != null</code>
       <code>$bestbefore != null</code>
       <code>$defaultBestBefore != null</code>
       <code>$fileLock != null</code>
+      <code>$price != null</code>
     </DocblockTypeContradiction>
     <InvalidReturnStatement occurrences="1">
       <code>$daysBestBefore != 0</code>
     </InvalidReturnStatement>
     <InvalidReturnType occurrences="5">
-      <code>none</code>
       <code>false</code>
+      <code>none</code>
       <code>none</code>
       <code>none</code>
       <code>none</code>
@@ -37,7 +37,26 @@
       <code>null</code>
       <code>null</code>
     </NullableReturnStatement>
-    <PossiblyUndefinedVariable occurrences="1">
+    <PossiblyUndefinedVariable occurrences="20">
+      <code>$result</code>
+      <code>$result</code>
+      <code>$result</code>
+      <code>$result</code>
+      <code>$result</code>
+      <code>$result</code>
+      <code>$result</code>
+      <code>$result</code>
+      <code>$result</code>
+      <code>$result</code>
+      <code>$result</code>
+      <code>$result</code>
+      <code>$result</code>
+      <code>$result</code>
+      <code>$result</code>
+      <code>$result</code>
+      <code>$result</code>
+      <code>$result</code>
+      <code>$result</code>
       <code>$startTime</code>
     </PossiblyUndefinedVariable>
     <UndefinedConstant occurrences="1">
@@ -50,25 +69,25 @@
       <code>none</code>
     </UndefinedDocblockClass>
   </file>
-  <file src="incl/authentication/authentication.inc.php">
+  <file src="../../incl/authentication/authentication.inc.php">
     <InvalidGlobal occurrences="1">
       <code>global $CONFIG;</code>
     </InvalidGlobal>
     <UndefinedClass occurrences="3">
-      <code>\Delight\Db\PdoDsn</code>
       <code>\Delight\Auth\Auth</code>
       <code>\Delight\Auth\Role</code>
+      <code>\Delight\Db\PdoDsn</code>
     </UndefinedClass>
     <UndefinedFunction occurrences="1">
       <code>getInitialSetupSql()</code>
     </UndefinedFunction>
   </file>
-  <file src="incl/config.inc.php">
+  <file src="../../incl/config.inc.php">
     <InvalidReturnStatement occurrences="1">
       <code>next($this-&gt;container)</code>
     </InvalidReturnStatement>
   </file>
-  <file src="incl/configProcessing.inc.php">
+  <file src="../../incl/configProcessing.inc.php">
     <ForbiddenCode occurrences="1">
       <code>var_dump($variable)</code>
     </ForbiddenCode>
@@ -79,56 +98,56 @@
       <code>$subnetMask</code>
     </InvalidOperand>
     <InvalidScalarArgument occurrences="4">
-      <code>1</code>
-      <code>1</code>
       <code>$subnetMask</code>
       <code>$subnetMask</code>
+      <code>1</code>
+      <code>1</code>
     </InvalidScalarArgument>
     <MissingClosureParamType occurrences="2">
       <code>$subnet</code>
       <code>$subnet</code>
     </MissingClosureParamType>
     <UndefinedConstant occurrences="19">
-      <code>PORT_WEBSOCKET_SERVER</code>
-      <code>DATABASE_PATH</code>
-      <code>CURL_TIMEOUT_S</code>
-      <code>CURL_ALLOW_INSECURE_SSL_CA</code>
-      <code>CURL_ALLOW_INSECURE_SSL_HOST</code>
-      <code>IS_DOCKER</code>
-      <code>REQUIRE_API_KEY</code>
-      <code>IS_DEBUG</code>
-      <code>OVERRIDDEN_USER_CONFIG</code>
-      <code>DISABLE_AUTHENTICATION</code>
-      <code>HIDE_LINK_GROCY</code>
-      <code>HIDE_LINK_SCREEN</code>
-      <code>EXTERNAL_GROCY_URL</code>
+      <code>AUTHDB_PATH</code>
       <code>AUTHENTICATION_BYPASS_NETS</code>
-      <code>TRUSTED_PROXIES</code>
-      <code>SEARCH_ENGINE</code>
       <code>BASEURL</code>
       <code>CONFIG_PATH</code>
-      <code>AUTHDB_PATH</code>
+      <code>CURL_ALLOW_INSECURE_SSL_CA</code>
+      <code>CURL_ALLOW_INSECURE_SSL_HOST</code>
+      <code>CURL_TIMEOUT_S</code>
+      <code>DATABASE_PATH</code>
+      <code>DISABLE_AUTHENTICATION</code>
+      <code>EXTERNAL_GROCY_URL</code>
+      <code>HIDE_LINK_GROCY</code>
+      <code>HIDE_LINK_SCREEN</code>
+      <code>IS_DEBUG</code>
+      <code>IS_DOCKER</code>
+      <code>OVERRIDDEN_USER_CONFIG</code>
+      <code>PORT_WEBSOCKET_SERVER</code>
+      <code>REQUIRE_API_KEY</code>
+      <code>SEARCH_ENGINE</code>
+      <code>TRUSTED_PROXIES</code>
     </UndefinedConstant>
     <UndefinedFunction occurrences="2">
       <code>createConfigPhp($configPath)</code>
       <code>isUserSetUp()</code>
     </UndefinedFunction>
   </file>
-  <file src="incl/db.inc.php">
+  <file src="../../incl/db.inc.php">
     <DeprecatedMethod occurrences="1">
       <code>BBConfig::getInstance()</code>
     </DeprecatedMethod>
     <PossiblyNullArgument occurrences="4">
       <code>$config["BARCODE_C"]</code>
+      <code>$config["BARCODE_CS"]</code>
       <code>$config["BARCODE_O"]</code>
       <code>$config["BARCODE_P"]</code>
-      <code>$config["BARCODE_CS"]</code>
     </PossiblyNullArgument>
     <UndefinedFunction occurrences="1">
       <code>sendWebsocketStateChange($state)</code>
     </UndefinedFunction>
   </file>
-  <file src="incl/processing.inc.php">
+  <file src="../../incl/processing.inc.php">
     <InvalidScalarArgument occurrences="2">
       <code>$barcode</code>
       <code>ceil($length / strlen($x))</code>
@@ -140,47 +159,48 @@
       <code>API::getChoresInfo($id)["name"]</code>
     </PossiblyInvalidArrayOffset>
     <PossiblyInvalidIterator occurrences="2">
-      <code>$locationInfo</code>
       <code>$chores</code>
+      <code>$locationInfo</code>
     </PossiblyInvalidIterator>
     <PossiblyNullArgument occurrences="1">
       <code>$config["BARCODE_Q"]</code>
     </PossiblyNullArgument>
     <PossiblyNullArrayAccess occurrences="11">
-      <code>$product["stockAmount"]</code>
-      <code>$product["tareWeight"]</code>
-      <code>$product["name"]</code>
-      <code>$product["tareWeight"]</code>
-      <code>$product["name"]</code>
-      <code>$product["tareWeight"]</code>
-      <code>$product["stockAmount"]</code>
-      <code>$product["tareWeight"]</code>
       <code>$product["id"]</code>
       <code>$product["id"]</code>
       <code>$product["name"]</code>
+      <code>$product["name"]</code>
+      <code>$product["name"]</code>
+      <code>$product["stockAmount"]</code>
+      <code>$product["stockAmount"]</code>
+      <code>$product["tareWeight"]</code>
+      <code>$product["tareWeight"]</code>
+      <code>$product["tareWeight"]</code>
+      <code>$product["tareWeight"]</code>
     </PossiblyNullArrayAccess>
     <UndefinedFunction occurrences="2">
       <code>pluginEventReceiver_processEvent($this-&gt;eventType, $this-&gt;logText)</code>
       <code>sendWebsocketMessage($this-&gt;websocketText, $this-&gt;websocketResultCode)</code>
     </UndefinedFunction>
   </file>
-  <file src="incl/sse/sse_data.php">
+  <file src="../../incl/sse/sse_data.php">
     <InvalidScalarArgument occurrences="4">
-      <code>1</code>
-      <code>85</code>
       <code>0</code>
       <code>1</code>
+      <code>1</code>
+      <code>85</code>
     </InvalidScalarArgument>
   </file>
-  <file src="incl/sse/websocket_client.php">
+  <file src="../../incl/sse/websocket_client.php">
     <PossiblyUndefinedVariable occurrences="1">
       <code>$mask</code>
     </PossiblyUndefinedVariable>
   </file>
-  <file src="incl/websocketconnection.inc.php">
-    <InvalidOperand occurrences="2">
+  <file src="../../incl/websocketconnection.inc.php">
+    <InvalidOperand occurrences="3">
       <code>$version[0]</code>
       <code>$version[1]</code>
+      <code>$version[2]</code>
     </InvalidOperand>
     <PossiblyUndefinedVariable occurrences="3">
       <code>$version</code>
@@ -188,42 +208,42 @@
       <code>$version</code>
     </PossiblyUndefinedVariable>
     <UndefinedFunction occurrences="3">
-      <code>sendWSResult($resultCode, $resultText)</code>
       <code>requestSavedState()</code>
       <code>sendNewState($newState)</code>
+      <code>sendWSResult($resultCode, $resultText)</code>
     </UndefinedFunction>
   </file>
-  <file src="incl/webui.inc.php">
+  <file src="../../incl/webui.inc.php">
     <UndefinedConstant occurrences="1">
       <code>MENU_GENERIC</code>
     </UndefinedConstant>
   </file>
-  <file src="index.php">
+  <file src="../../index.php">
     <ParadoxicalCondition occurrences="1">
       <code>isset($_POST["button_delete"])</code>
     </ParadoxicalCondition>
     <PossiblyNullArrayAccess occurrences="3">
+      <code>$product["name"]</code>
       <code>$product['stockAmount']</code>
       <code>$product['tareWeight']</code>
-      <code>$product["name"]</code>
     </PossiblyNullArrayAccess>
   </file>
-  <file src="login.php">
+  <file src="../../login.php">
     <UndefinedClass occurrences="2">
-      <code>\Delight\Auth\UnknownUsernameException</code>
       <code>\Delight\Auth\Role</code>
+      <code>\Delight\Auth\UnknownUsernameException</code>
     </UndefinedClass>
   </file>
-  <file src="menu/settings.php">
+  <file src="../../menu/settings.php">
     <PossiblyNullArgument occurrences="2">
-      <code>$config["GROCY_API_URL"]</code>
       <code>$config["GROCY_API_KEY"]</code>
+      <code>$config["GROCY_API_URL"]</code>
     </PossiblyNullArgument>
   </file>
-  <file src="wsserver.php">
+  <file src="../../wsserver.php">
     <UndefinedClass occurrences="2">
-      <code>\WebSocket\Server</code>
       <code>\WebSocket\Application\DemoApplication</code>
+      <code>\WebSocket\Server</code>
     </UndefinedClass>
   </file>
 </files>

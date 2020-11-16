@@ -71,7 +71,12 @@ const TRUSTED_PROXIES              = array(
                                         );
 
 // Replace with another searchengine for manual barcode lookup through UI
-const SEARCH_ENGINE               = "http://google.com/search?q=";
+const SEARCH_ENGINE               = "https://google.com/search?q=";
+
+
+// If you are running Barcode Buddy behind a proxy and need to change the baseurl
+const BASEURL                      = "/";
+
 
 //If you need to manually override a config value, you can do so with this array.
 //Any overridden value cannot be changed through the UI anymore!
@@ -100,10 +105,6 @@ const OVERRIDDEN_USER_CONFIG       = array(
                                          // "LOOKUP_USE_UPC"             => "1"
                                          );
 
-
-
-// If you are running Barcode Buddy behind a proxy and need to change the baseurl
-const BASEURL                      = "/";
 
 // Currently not in use
 const IS_DOCKER                    = false;

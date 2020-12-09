@@ -17,6 +17,7 @@
 
 require_once __DIR__ . "/ProviderOpenFoodFacts.php";
 require_once __DIR__ . "/ProviderUpcDb.php";
+require_once __DIR__ . "/ProviderJumbo.php";
 
 class LookupProvider {
 

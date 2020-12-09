@@ -28,13 +28,17 @@ class BarcodeLookup {
      */
     public static function lookUp($barcode) {
 
-        $resultOpenFoodFacts = (new ProviderOpenFoodFacts())->lookupBarcode($barcode);
-        if ($resultOpenFoodFacts != null)
-            return $resultOpenFoodFacts;
+        $result = (new ProviderOpenFoodFacts())->lookupBarcode($barcode);
+        if ($result != null)
+            return $result;
 
-        $resultUpcDb = (new ProviderUpcDb())->lookupBarcode($barcode);
-        if ($resultUpcDb != null)
-            return $resultUpcDb;
+        $result = (new ProviderUpcDb())->lookupBarcode($barcode);
+        if ($result != null)
+            return $result;
+
+        $result = (new ProviderJumbo())->lookupBarcode($barcode);
+        if ($result != null)
+            return $result;
 
         return "N/A";
     }

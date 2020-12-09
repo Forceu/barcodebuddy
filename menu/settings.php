@@ -127,6 +127,8 @@ function getHtmlSettingsBarcodeLookup() {
     $html->addCheckbox('LOOKUP_USE_OFF', 'Use OpenFoodFacts.org', $config["LOOKUP_USE_OFF"]);
     $html->addLineBreak();
     $html->addCheckbox('LOOKUP_USE_UPC', 'Use UPCitemDB.com', $config["LOOKUP_USE_UPC"]);
+    $html->addLineBreak();
+    $html->addCheckbox('LOOKUP_USE_JUMBO', 'Use Jumbo.com', $config["LOOKUP_USE_JUMBO"]);
     return $html->getHtml();
 }
 

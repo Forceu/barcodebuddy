@@ -448,14 +448,16 @@ function getQuantityForBarcode($barcode, $isConsume, $productInfo) {
 
 //Function for generating the <select> elements in the web ui
 function printSelections($selected, $productinfo) {
+    $optionscontent = " <option value = \"0\" >= None =</option>";
+    if (!isset($productinfo) || !sizeof($productinfo))
+        return $optionscontent;
 
     $selections = array();
     foreach ($productinfo as $product) {
         $selections[$product["id"]] = $product["name"];
     }
-    natcasesort($selections);
 
-    $optionscontent = " <option value = \"0\" >= None =</option>";
+    natcasesort($selections);
     foreach ($selections as $key => $val) {
         if ($key != $selected) {
             $optionscontent = $optionscontent . "<option value=\"" . $key . "\">" . $val . "</option>";
@@ -463,6 +465,7 @@ function printSelections($selected, $productinfo) {
             $optionscontent = $optionscontent . "<option value=\"" . $key . "\" selected >" . $val . "</option>";
         }
     }
+
     return $optionscontent;
 }
 

@@ -143,7 +143,7 @@ function getHtmlSettingsBarcodeLookup() {
             "function handleUPCDBChange(element) {
                 api_key_input = document.querySelector('#LOOKUP_UPC_DATABASE_KEY');
                 if (!api_key_input) {
-                    console.warn('Unable to fine element LOOKUP_UPC_DATABASE_KEY');
+                    console.warn('Unable to find element LOOKUP_UPC_DATABASE_KEY');
                 } else {
                     api_key_input.required = element.checked;
                 }

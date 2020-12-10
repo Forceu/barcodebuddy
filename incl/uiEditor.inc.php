@@ -32,8 +32,8 @@ class ElementBuilder {
         $this->editorUi = $editorUi;
     }
 
-    function addScript($script) {
-        if (!$script) {
+    function addScript(?string $script) {
+        if (!empty($script)) {
             return $this;
         }
         array_push($this->scripts, $script);

@@ -84,6 +84,12 @@ class ButtonBuilder extends ElementBuilder {
     private $additionalClasses = null;
     private $isSubmit = false;
     private $isAccent = false;
+    private $id = null;
+
+    function setId($id) {
+        $this->id = $id;
+        return $this;
+    }
 
     function setOnClick($onClick) {
         $this->onClick = $onClick;
@@ -141,7 +147,7 @@ class ButtonBuilder extends ElementBuilder {
             $this->isColoured,
             $this->isDisabled,
             $this->additionalClasses,
-            null,
+            $this->id,
             $this->isSubmit,
             $this->value,
             $this->isAccent);

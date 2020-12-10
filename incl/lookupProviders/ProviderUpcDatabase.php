@@ -23,7 +23,7 @@ class ProviderUpcDatabase extends LookupProvider {
     function __construct($apiKey = null) {
         parent::__construct($apiKey);
         $this->providerName       = "UPC Database";
-        $this->providerConfigKey  = "LOOKUP_UPC_DATABASE_KEY";
+        $this->providerConfigKey  = "LOOKUP_USE_UPC_DATABASE";
         $this->ignoredResultCodes = array();
     }
 
@@ -33,8 +33,8 @@ class ProviderUpcDatabase extends LookupProvider {
      * @return null|string         Name of product, null if none found
      */
     public function lookupBarcode($barcode) {
-        $upcdb_key = $this->isProviderEnabled();
-        if (!$upcdb_key)
+        $upcdb_key = BBConfig::getInstance()['LOOKUP_UPC_DATABASE_KEY'];
+        if (!$this->isProviderEnabled() || !$upcdb_key)
             return null;
 
         $url    = "https://api.upcdatabase.org/product/" . $barcode . "?apikey=" . $upcdb_key;

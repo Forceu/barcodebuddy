@@ -196,6 +196,7 @@ class API {
         }
 
         $curl = new CurlGenerator($apiurl);
+        $result = null;
         try {
             $result = $curl->execute(true);
         } catch (Exception $e) {

@@ -130,13 +130,38 @@ function getHtmlSettingsBarcodeLookup() {
     $html->addLineBreak();
     $html->addCheckbox('LOOKUP_USE_JUMBO', 'Use Jumbo.com', $config["LOOKUP_USE_JUMBO"]);
     $html->addLineBreak();;
-    $html->addCheckbox(
-        "LOOKUP_USE_UPC_DATABASE",
-        "Use UPC Database",
-        $config["LOOKUP_USE_UPC_DATABASE"]);
-    $html->buildEditField('LOOKUP_UPC_DATABASE_KEY', 'UPC Database API Key', $config["LOOKUP_UPC_DATABASE_KEY"])
-        ->pattern('[A-Za-z0-9]{50}')
-        ->generate();
+    $html->addHtml(
+        (
+        new CheckBoxBuilder(
+            "LOOKUP_USE_UPC_DATABASE",
+            "Use UPC Database",
+            $config["LOOKUP_USE_UPC_DATABASE"],
+            $html)
+        )
+            ->onCheckChanged(
+            "handleUPCDBChange(this)",
+            "function handleUPCDBChange(element) {
+                api_key_input = document.querySelector('#LOOKUP_UPC_DATABASE_KEY');
+                if (!api_key_input) {
+                    console.warn('Unable to fine element LOOKUP_UPC_DATABASE_KEY');
+                } else {
+                    api_key_input.required = element.checked;
+                }
+            }")
+            ->addSpaces()
+            ->generate(true)
+    );
+    $html->addHtml(
+        (new EditFieldBuilder(
+            'LOOKUP_UPC_DATABASE_KEY',
+            'UPC Database API Key',
+            $config["LOOKUP_UPC_DATABASE_KEY"],
+            $html)
+        )
+            ->required($config["LOOKUP_USE_UPC_DATABASE"])
+            ->pattern('[A-Za-z0-9]{32}')
+            ->generate(true)
+    );
 
     return $html->getHtml();
 }

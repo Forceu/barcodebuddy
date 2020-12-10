@@ -19,11 +19,11 @@ require_once __DIR__ . "/configProcessing.inc.php";
 
 class ElementBuilder {
     protected $name = null;
-    protected $id = null;
     protected $label = null;
     protected $value = null;
     protected $editorUi = null;
     protected $spaced = false;
+    protected $scripts = array();
 
     function __construct($name, $label, $value, $editorUi) {
         $this->name     = $name;
@@ -32,8 +32,11 @@ class ElementBuilder {
         $this->editorUi = $editorUi;
     }
 
-    function setId($id) {
-        $this->id = $id;
+    function addScript($script) {
+        if (!$script) {
+            return $this;
+        }
+        array_push($this->scripts, $script);
         return $this;
     }
 
@@ -44,7 +47,7 @@ class ElementBuilder {
 
     function generate($asHtml = false) {
         /** @noinspection PhpVoidFunctionResultUsedInspection */
-        $result = $this->generateInternal();
+        $result = $this->generateInternal() . $this->generateScript();
         if ($asHtml) {
             return $result;
         }
@@ -52,6 +55,20 @@ class ElementBuilder {
         $this->editorUi->addHtml($result);
         $this->spaced && $this->editorUi->addSpaces();
         return $this->editorUi;
+    }
+
+    private function generateScript() {
+        if (!$this->scripts || !count($this->scripts))
+            return "";
+
+        $wrapScript = function($script) {
+            return "\n<script type='application/javascript'>" . $script . "</script>\n";
+        };
+
+        return implode(array_map(
+            $wrapScript,
+            $this->scripts
+        ));
     }
 
     protected function generateInternal() {
@@ -147,9 +164,12 @@ class CheckBoxBuilder extends ElementBuilder {
         return $this;
     }
 
-    function onCheckChanged($onCheckChanged) {
+    function onCheckChanged(
+        $onCheckChanged,
+        $changeScript = null
+    ) {
         $this->onChanged = $onCheckChanged;
-        return $this;
+        return $this->addScript($changeScript);
     }
 
     protected function generateInternal()

@@ -35,18 +35,19 @@ class ProviderUpcDatabase extends LookupProvider {
     public function lookupBarcode($barcode) {
         $upcdb_key = BBConfig::getInstance()['LOOKUP_UPC_DATABASE_KEY'];
         if (!$this->isProviderEnabled() || !$upcdb_key)
-            return "NOT ENABLED " . $upcdb_key;
+            return null;
 
-        $url    = "https://api.upcdatabase.org/product/" . $barcode . "?apikey=" . $upcdb_key;
+        $paddedBarcode = str_pad($barcode, 13, "0", STR_PAD_LEFT);
+        $url = "https://api.upcdatabase.org/product/" . $paddedBarcode . "?apikey=" . $upcdb_key;
         $result = $this->execute($url);
         if (!isset($result["success"]) || !$result["success"] || (!isset($result["description"]) && !isset($result["title"])))
-            return "MISSING FIELDS " . $url;
+            return null;
 
         if (!empty($result["title"])) {
             return sanitizeString($result["title"]);
         } else if (!empty($result["description"])) {
             return sanitizeString($result["description"]);
         }
-        return "NO TITLE OR DESC " . $url;
+        return null;
     }
 }

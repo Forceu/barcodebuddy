@@ -129,6 +129,15 @@ function getHtmlSettingsBarcodeLookup() {
     $html->addCheckbox('LOOKUP_USE_UPC', 'Use UPCitemDB.com', $config["LOOKUP_USE_UPC"]);
     $html->addLineBreak();
     $html->addCheckbox('LOOKUP_USE_JUMBO', 'Use Jumbo.com', $config["LOOKUP_USE_JUMBO"]);
+    $html->addLineBreak();;
+    $html->addCheckbox(
+        "LOOKUP_USE_UPC_DATABASE",
+        "Use UPC Database",
+        $config["LOOKUP_USE_UPC_DATABASE"]);
+    $html->buildEditField('LOOKUP_UPC_DATABASE_KEY', 'UPC Database API Key', $config["LOOKUP_UPC_DATABASE_KEY"])
+        ->pattern('[A-Za-z0-9]{50}')
+        ->generate();
+
     return $html->getHtml();
 }
 

@@ -19,7 +19,6 @@ require_once __DIR__ . "/../api.inc.php";
 
 class ProviderOpenFoodFacts extends LookupProvider {
 
-
     function __construct($apiKey = null) {
         parent::__construct($apiKey);
         $this->providerName      = "OpenFoodFacts";

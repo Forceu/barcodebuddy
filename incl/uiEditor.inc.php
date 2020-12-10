@@ -46,7 +46,6 @@ class ElementBuilder {
     }
 
     function generate($asHtml = false) {
-        /** @noinspection PhpVoidFunctionResultUsedInspection */
         $result = $this->generateInternal() . $this->generateScript();
         if ($asHtml) {
             return $result;
@@ -142,7 +141,7 @@ class ButtonBuilder extends ElementBuilder {
             $this->isColoured,
             $this->isDisabled,
             $this->additionalClasses,
-            $this->id,
+            null,
             $this->isSubmit,
             $this->value,
             $this->isAccent);
@@ -389,7 +388,7 @@ class UiEditor {
     }
 
     function buildButton($name, $label) {
-        $editor = new ButtonBuilder($name, $label, $this);
+        $editor = new ButtonBuilder($name, $label, null, $this);
         return $editor;
     }
 
@@ -505,6 +504,7 @@ class UiEditor {
         } else {
             $this->addHtml($result);
             $this->addSpaces();
+            return $this;
         }
     }
 
@@ -512,9 +512,10 @@ class UiEditor {
         $html = '<input type="hidden" id="' . $name . '" value="' . $value . '" name="' . $name . '"/>';
         if ($asHtml) {
             return $html;
-        } else {
-            $this->addHtml($html);
         }
+
+        $this->addHtml($html);
+        return $this;
     }
 
     function addSelectBox($name, $label, $valueLabels, $values = null, $preselected = null) { //TODO disabled
@@ -526,7 +527,7 @@ class UiEditor {
                     <input id="' . $name . '_value" type="hidden" value="" name="' . $name . '">
                     <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
                     <label for="' . $name . '" class="mdl-textfield__label">' . $label . '</label>
-                    <ul for="' . $name . '" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">');
+                    <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu">');
         for ($i = 0; $i < count($values); $i++) {
             $preHtml = "";
             if ($preselected !== null && $i == $preselected) {
@@ -546,10 +547,10 @@ class UiEditor {
                     </label>';
         if ($asHtml) {
             return $result;
-        } else {
-            $this->addHtml($result);
-            $this->addSpaces();
         }
+        $this->addHtml($result);
+        $this->addSpaces();
+        return $this;
     }
 
     function addCheckbox($name, $label, $isChecked, $isDisabled = false, $useSpaces = true) {
@@ -590,10 +591,10 @@ class UiEditor {
         $result = '<button class="fullWidth mdl-button ' . $isColouredHtml . ' ' . $raisedHtml . ' mdl-js-button mdl-js-ripple-effect" ' . $onclickHtml . ' type="submit" name="' . $name . '" id="' . $name . '" ' . $valueHtml . '>' . $label . '</button>';
         if ($asHtml) {
             return $result;
-        } else {
-            $this->addHtml($result);
-            $this->addSpaces();
         }
+        $this->addHtml($result);
+        $this->addSpaces();
+        return $this;
     }
 
     function addDiv($htmlToDiv, $id = null, $class = null) {
@@ -661,10 +662,10 @@ class UiEditor {
 
         if ($asHtml) {
             return $result;
-        } else {
-            $this->addHtml($result);
-            $this->addSpaces();
         }
+        $this->addHtml($result);
+        $this->addSpaces();
+        return $result;
     }
 
     function addErrorMessage($id, $label, $hint) {
@@ -695,10 +696,10 @@ class UiEditor {
                 </label>';
         if ($returnAsHtml) {
             return $html;
-        } else {
-            $this->addHtml($html);
-            $this->addSpaces();
         }
+        $this->addHtml($html);
+        $this->addSpaces();
+        return $this;
     }
 
     function addLineBreak($count = 1) {

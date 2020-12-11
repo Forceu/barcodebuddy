@@ -195,6 +195,7 @@ class API {
             $apiurl = API_PRODUCTS . "/" . $productId;
         }
 
+        $result = null;  // Assure assignment in event curl throws exception.
         $curl = new CurlGenerator($apiurl);
         try {
             $result = $curl->execute(true);

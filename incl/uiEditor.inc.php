@@ -33,7 +33,7 @@ class ElementBuilder {
     }
 
     function addScript(?string $script) {
-        if (!empty($script)) {
+        if (empty($script)) {
             return $this;
         }
         array_push($this->scripts, $script);

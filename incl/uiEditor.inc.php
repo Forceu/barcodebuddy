@@ -416,7 +416,7 @@ class UiEditor {
                          id="' . $name . '" 
                          name="' . $name . '" 
                          onchange="' . $onChanged . '"
-                         class="mdl-checkbox__input" ' . ($isDisabled && "disabled") . ' ' . ($value && "checked") . '>
+                         class="mdl-checkbox__input" ' . ($isDisabled && "disabled") . ' ' . ($value == "1" ? "checked" : "") . '>
                   <span class="mdl-checkbox__label">' . $label . '</span>
                 </label><input type="hidden" value="0" name="' . $name . '_hidden"/>';
 

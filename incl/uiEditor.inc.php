@@ -160,12 +160,12 @@ class CheckBoxBuilder extends ElementBuilder {
     private $onChanged = null;
 
     function disabled($disabled) {
-        $this->isDisabled = $disabled;
+        $this->isDisabled = (bool) $disabled;
         return $this;
     }
 
     function useSpaces($useSpaces) {
-        $this->useSpaces = $useSpaces;
+        $this->useSpaces = (bool) $useSpaces;
         return $this;
     }
 
@@ -416,7 +416,7 @@ class UiEditor {
                          id="' . $name . '" 
                          name="' . $name . '" 
                          onchange="' . $onChanged . '"
-                         class="mdl-checkbox__input" ' . ($isDisabled && "disabled") . ' ' . ($value == "1" ? "checked" : "") . '>
+                         class="mdl-checkbox__input" ' . (((bool) $isDisabled) && "disabled") . ' ' . (((bool) $value) && "checked") . '>
                   <span class="mdl-checkbox__label">' . $label . '</span>
                 </label><input type="hidden" value="0" name="' . $name . '_hidden"/>';
 
@@ -425,7 +425,7 @@ class UiEditor {
         }
 
         $this->addHtml($html);
-        $useSpaces && $this->addSpaces();
+        ((bool) $useSpaces) && $this->addSpaces();
 
         return $this;
     }

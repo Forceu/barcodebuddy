@@ -132,7 +132,7 @@ function getHtmlSettingsBarcodeLookup() {
     $html->addLineBreak();;
     $html->addHtml((new CheckBoxBuilder(
         "LOOKUP_USE_UPC_DATABASE",
-        "Use UPC Database",
+        "Use UPCDatabase.org",
         $config["LOOKUP_USE_UPC_DATABASE"],
         $html)
     )->onCheckChanged(

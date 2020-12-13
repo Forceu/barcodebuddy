@@ -32,7 +32,7 @@ class ElementBuilder {
         $this->editorUi = $editorUi;
     }
 
-    function addScript(?string $script) {
+    function addScript(?string $script): ElementBuilder {
         if (empty($script)) {
             return $this;
         }
@@ -40,7 +40,7 @@ class ElementBuilder {
         return $this;
     }
 
-    function addSpaces() {
+    function addSpaces(): ElementBuilder {
         $this->spaced = true;
         return $this;
     }
@@ -56,15 +56,13 @@ class ElementBuilder {
         return $this->editorUi;
     }
 
-    private function generateScript() {
-        if (!$this->scripts || !count($this->scripts))
-            return "";
+    private function generateScript(): string {
+        $result = "";
+        foreach ($this->scripts as $script) {
+            $result = $result . "\n<script type='application/javascript'>" . $script . "</script>\n";
+        }
 
-        $wrapScript = function ($script) {
-            return "\n<script type='application/javascript'>" . $script . "</script>\n";
-        };
-
-        return implode(array_map($wrapScript, $this->scripts));
+        return $result;
     }
 
     protected function generateInternal() {

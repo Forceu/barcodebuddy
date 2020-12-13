@@ -32,15 +32,22 @@ class ProviderUpcDatabase extends LookupProvider {
      * @param string $barcode The barcode to lookup
      * @return null|string         Name of product, null if none found
      */
-    public function lookupBarcode($barcode) {
+    public function lookupBarcode($barcode): ?string {
         $upcdb_key = BBConfig::getInstance()['LOOKUP_UPC_DATABASE_KEY'];
         if (!$this->isProviderEnabled() || !$upcdb_key)
             return null;
 
         $paddedBarcode = str_pad($barcode, 13, "0", STR_PAD_LEFT);
-        $url = "https://api.upcdatabase.org/product/" . $paddedBarcode . "?apikey=" . $upcdb_key;
-        $result = $this->execute($url);
-        if (!isset($result["success"]) || !$result["success"] || (!isset($result["description"]) && !isset($result["title"])))
+        $url           = "https://api.upcdatabase.org/product/" . $paddedBarcode . "?apikey=" . $upcdb_key;
+        $result        = $this->execute($url);
+        if (!isset($result["success"]))
+            return null;
+        if (isset($result["error"])) {
+            if (isset($result["error"]["message"]) && strpos($result["error"]["message"], "API Key is invalid.") !== false)
+                DatabaseConnection::getInstance()->saveError("UPC Database API key is invalid!");
+            return null;
+        }
+        if (!isset($result["description"]) && !isset($result["title"]))
             return null;
 
         if (!empty($result["title"])) {

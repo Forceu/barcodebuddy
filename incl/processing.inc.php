@@ -82,7 +82,7 @@ function processNewBarcode($barcodeInput, $bestBeforeInDays = null, $price = nul
     $sanitizedBarcode = sanitizeString($barcode);
     $lockGenerator    = new LockGenerator();
     $lockGenerator->createLock();
-    $productInfo = API::getProductByBardcode($sanitizedBarcode);
+    $productInfo = API::getProductByBarcode($sanitizedBarcode);
     if ($productInfo == null) {
         $db->saveLastBarcode($sanitizedBarcode);
         return processUnknownBarcode($sanitizedBarcode, true, $lockGenerator, $bestBeforeInDays, $price);
@@ -230,7 +230,7 @@ function getProductByIdFromVariable($id, $products) {
 }
 
 function changeWeightTareItem($barcode, $newWeight) {
-    $product = API::getProductByBardcode($barcode);
+    $product = API::getProductByBarcode($barcode);
 
     if (($product["stockAmount"] + $product["tareWeight"]) == $newWeight) {
         $log = new LogOutput("Weight unchanged for: " . $product["name"], EVENT_TYPE_ACTION_REQUIRED);
@@ -281,7 +281,7 @@ function processModeChangeGetParameter($modeParameter) {
 
 //This will be called when a new grocy product is created from BB and the grocy tab is closed
 function processRefreshedBarcode($barcode) {
-    $productInfo = API::getProductByBardcode($barcode);
+    $productInfo = API::getProductByBarcode($barcode);
     if ($productInfo != null) {
         DatabaseConnection::getInstance()->updateSavedBarcodeMatch($barcode, $productInfo["id"]);
     }
@@ -523,7 +523,7 @@ function changeQuantityAfterScan($amount) {
     if ($config["LAST_PRODUCT"] != null) {
         $db->addUpdateQuantitiy($barcode, $amount, $config["LAST_PRODUCT"]);
     } else {
-        $product = API::getProductByBardcode($barcode);
+        $product = API::getProductByBarcode($barcode);
         if ($product != null) {
             $db->addUpdateQuantitiy($barcode, $amount, $product["name"]);
         } else {

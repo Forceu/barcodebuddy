@@ -217,7 +217,7 @@ class API {
         } catch (Exception $e) {
             self::processError($e, "Could not lookup Grocy product info");
         }
-        if ($productId != "") {
+        if ($result = !null && $productId != "") {
             if (isset($result["product"]["id"])) {
                 checkIfNumeric($result["product"]["id"]);
                 $resultArray                             = array();
@@ -516,6 +516,8 @@ class API {
      */
     private static function getDefaultBestBeforeDays(int $id): int {
         $info = self::getProductInfo($id);
+        if ($info == null)
+            return 0;
         $days = $info["default_best_before_days"];
         checkIfNumeric($days);
         return $days;

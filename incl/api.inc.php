@@ -486,7 +486,7 @@ class API {
             "barcode"    => $barcode
         ));
 
-        $curl = new CurlGenerator(API_O_BARCODES, METHOD_PUT, $data);
+        $curl = new CurlGenerator(API_O_BARCODES, METHOD_POST, $data);
         try {
             $curl->execute();
         } catch (Exception $e) {

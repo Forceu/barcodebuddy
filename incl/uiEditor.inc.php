@@ -33,7 +33,7 @@ class ElementBuilder {
     }
 
     function addScript(?string $script) {
-        if (!empty($script)) {
+        if (empty($script)) {
             return $this;
         }
         array_push($this->scripts, $script);
@@ -60,14 +60,11 @@ class ElementBuilder {
         if (!$this->scripts || !count($this->scripts))
             return "";
 
-        $wrapScript = function($script) {
+        $wrapScript = function ($script) {
             return "\n<script type='application/javascript'>" . $script . "</script>\n";
         };
 
-        return implode(array_map(
-            $wrapScript,
-            $this->scripts
-        ));
+        return implode(array_map($wrapScript, $this->scripts));
     }
 
     protected function generateInternal() {
@@ -169,20 +166,16 @@ class CheckBoxBuilder extends ElementBuilder {
         return $this;
     }
 
-    function onCheckChanged(
-        $onCheckChanged,
-        $changeScript = null
-    ) {
+    function onCheckChanged($onCheckChanged, $changeScript = null) {
         $this->onChanged = $onCheckChanged;
         return $this->addScript($changeScript);
     }
 
-    protected function generateInternal()
-    {
+    protected function generateInternal() {
         return $this->editorUi->addCheckBoxInternal(
             $this->name,
             $this->label,
-            $this->value,
+            ($this->value == 1),
             $this->isDisabled,
             $this->useSpaces,
             $this->onChanged,
@@ -313,8 +306,7 @@ class EditFieldBuilder extends ElementBuilder {
         return $this;
     }
 
-    protected function generateInternal()
-    {
+    protected function generateInternal() {
         return $this->editorUi->addEditFieldInternal(
             $this->name, $this->label, $this->value, $this->pattern,
             $this->type, $this->disabled, $this->autocompleteEntries,
@@ -381,7 +373,7 @@ class UiEditor {
                 $name = 'editform' . rand();
             else
                 $name = $formname;
-             $this->htmlOutput = '<div id="' . $name . '"> <form enctype="multipart/form-data" name="' . $name . '" ' . $onSubmitHtml . ' id="' . $name . '_form" method="post" action="' . $CONFIG->getPhpSelfWithBaseUrl() . '" >';
+            $this->htmlOutput = '<div id="' . $name . '"> <form enctype="multipart/form-data" name="' . $name . '" ' . $onSubmitHtml . ' id="' . $name . '_form" method="post" action="' . $CONFIG->getPhpSelfWithBaseUrl() . '" >';
         }
         $this->autoComplete = array();
         $this->checkBoxes   = array();
@@ -402,21 +394,20 @@ class UiEditor {
         $this->addHtml($table->getHtml());
     }
 
-    function addCheckBoxInternal(
-            $name,
-            $label,
-            $value,
-            $isDisabled = false,
-            $useSpaces = true,
-            $onChanged = "",
-            $asHtml = false) {
+    function addCheckBoxInternal($name, $label, $isChecked, $isDisabled = false, $useSpaces = true, $onChanged = "", $asHtml = false) {
+        $disabledHtml = "";
+        $checkedHtml  = "";
+        if ($isDisabled)
+            $disabledHtml = "disabled";
+        if ($isChecked)
+            $checkedHtml = "checked";
         $html = '<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="' . $name . '">
                   <input type="checkbox" 
                          value="1" 
                          id="' . $name . '" 
                          name="' . $name . '" 
                          onchange="' . $onChanged . '"
-                         class="mdl-checkbox__input" ' . ($isDisabled && "disabled") . ' ' . ($value && "checked") . '>
+                         class="mdl-checkbox__input" ' . $disabledHtml . ' ' . $checkedHtml . '>
                   <span class="mdl-checkbox__label">' . $label . '</span>
                 </label><input type="hidden" value="0" name="' . $name . '_hidden"/>';
 

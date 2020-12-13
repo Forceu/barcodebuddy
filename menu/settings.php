@@ -130,17 +130,14 @@ function getHtmlSettingsBarcodeLookup() {
     $html->addLineBreak();
     $html->addCheckbox('LOOKUP_USE_JUMBO', 'Use Jumbo.com', $config["LOOKUP_USE_JUMBO"]);
     $html->addLineBreak();;
-    $html->addHtml(
-        (
-        new CheckBoxBuilder(
-            "LOOKUP_USE_UPC_DATABASE",
-            "Use UPC Database",
-            $config["LOOKUP_USE_UPC_DATABASE"],
-            $html)
-        )
-            ->onCheckChanged(
-            "handleUPCDBChange(this)",
-            "function handleUPCDBChange(element) {
+    $html->addHtml((new CheckBoxBuilder(
+        "LOOKUP_USE_UPC_DATABASE",
+        "Use UPC Database",
+        $config["LOOKUP_USE_UPC_DATABASE"],
+        $html)
+    )->onCheckChanged(
+        "handleUPCDBChange(this)",
+        "function handleUPCDBChange(element) {
                 api_key_input = document.querySelector('#LOOKUP_UPC_DATABASE_KEY');
                 if (!api_key_input) {
                     console.warn('Unable to find element LOOKUP_UPC_DATABASE_KEY');
@@ -148,8 +145,8 @@ function getHtmlSettingsBarcodeLookup() {
                     api_key_input.required = element.checked;
                 }
             }")
-            ->addSpaces()
-            ->generate(true)
+        ->addSpaces()
+        ->generate(true)
     );
     $html->addHtml(
         (new EditFieldBuilder(

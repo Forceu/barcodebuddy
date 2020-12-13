@@ -217,7 +217,7 @@ class API {
         } catch (Exception $e) {
             self::processError($e, "Could not lookup Grocy product info");
         }
-        if ($result = !null && $productId != "") {
+        if ($result != null && $productId != "") {
             if (isset($result["product"]["id"])) {
                 checkIfNumeric($result["product"]["id"]);
                 $resultArray                             = array();

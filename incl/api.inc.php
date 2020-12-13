@@ -22,6 +22,7 @@ require_once __DIR__ . "/db.inc.php";
 require_once __DIR__ . "/config.inc.php";
 
 const API_O_PRODUCTS    = 'objects/products';
+const API_O_BARCODES    = 'objects/product_barcodes';
 const API_PRODUCTS      = 'stock/products';
 const API_SHOPPINGLIST  = 'stock/shoppinglist/';
 const API_CHORES        = 'objects/chores';
@@ -473,20 +474,19 @@ class API {
     }
 
     /**
-     * Sets barcode to a Grocy product (replaces all old ones,
-     *  so make sure to request them first)
+     * Sets barcode to a Grocy product (unlike in the old API, this does not
+     * replace previous barcodes)
      * @param int product id
-     * @param array of String barcode(s) to set
+     * @param string  barcode to be set
      */
-    public static function setBarcode($id, $barcode) {
+    public static function addBarcode($id, $barcode) {
 
         $data = json_encode(array(
-            'product_barcodes' => $barcode
+            "product_id" => $id,
+            "barcode"    => $barcode
         ));
 
-        $apiurl = API_O_PRODUCTS . "/" . $id;
-
-        $curl = new CurlGenerator($apiurl, METHOD_PUT, $data);
+        $curl = new CurlGenerator(API_O_BARCODES, METHOD_PUT, $data);
         try {
             $curl->execute();
         } catch (Exception $e) {

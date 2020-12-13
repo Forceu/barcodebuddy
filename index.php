@@ -209,16 +209,8 @@ function processButtons() {
                         $db->addTag(sanitizeString($tag), $gidSelected);
                     }
                 }
-                $product          = API::getProductInfo(sanitizeString($gidSelected));
-                $previousBarcodes = $product["barcode"];
-                if ($previousBarcodes == null) {
-                    API::setBarcode($gidSelected, array($barcode));
-                } else {
-                    if (!in_array($barcode, $previousBarcodes)) {
-                        array_push($previousBarcodes, $barcode);
-                        API::setBarcode($gidSelected, $previousBarcodes . "," . $barcode);
-                    }
-                }
+                $product = API::getProductInfo(sanitizeString($gidSelected));
+                API::addBarcode($gidSelected, $barcode);
                 $log = new LogOutput("Associated barcode $barcode with " . $product["name"], EVENT_TYPE_ASSOCIATE_PRODUCT);
                 $log->setVerbose()->dontSendWebsocket()->createLog();
                 $db->deleteBarcode($id);

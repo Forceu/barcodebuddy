@@ -10,12 +10,12 @@ jobs:
     - name: Build x64
       uses: wei/curl@v1
       with:
-        args: "-XPOST -u \"${{secrets.GITHUBUSER}}:${{secrets.ACCESS_TOKEN_REPO}}\" -H \"Accept: application/vnd.github.everest-preview+json\" -H \"Content-Type: application/json\" https://api.github.com/repos/forceu/barcodebuddy-docker/actions/workflows/docker-publish-x64.yaml/dispatches --data '{\"ref\": \"master\"}'"
+        args: -XPOST -u \"${{secrets.GITHUBUSER}}:${{secrets.ACCESS_TOKEN_REPO}}\" -H \"Accept: application/vnd.github.everest-preview+json\" -H \"Content-Type: application/json\" https://api.github.com/repos/forceu/barcodebuddy-docker/actions/workflows/docker-publish-x64.yaml/dispatches --data '{\"ref\": \"master\"}'
     - name: Build arm32
       uses: wei/curl@v1
       with:
-        args: "-XPOST -u \"${{secrets.GITHUBUSER}}:${{secrets.ACCESS_TOKEN_REPO}}\" -H \"Accept: application/vnd.github.everest-preview+json\" -H \"Content-Type: application/json\" https://api.github.com/repos/forceu/barcodebuddy-docker/actions/workflows/docker-publish-arm32.yaml/dispatches --data '{\"ref\": \"master\"}'"
+        args: -XPOST -u \"${{secrets.GITHUBUSER}}:${{secrets.ACCESS_TOKEN_REPO}}\" -H \"Accept: application/vnd.github.everest-preview+json\" -H \"Content-Type: application/json\" https://api.github.com/repos/forceu/barcodebuddy-docker/actions/workflows/docker-publish-arm32.yaml/dispatches --data '{\"ref\": \"master\"}'
     - name: Build arm64
       uses: wei/curl@v1
       with:
-        args: "-XPOST -u \"${{secrets.GITHUBUSER}}:${{secrets.ACCESS_TOKEN_REPO}}\" -H \"Accept: application/vnd.github.everest-preview+json\" -H \"Content-Type: application/json\" https://api.github.com/repos/forceu/barcodebuddy-docker/actions/workflows/docker-publish-arm64.yaml/dispatches --data '{\"ref\": \"master\"}'"
+        args: -XPOST -u \"${{secrets.GITHUBUSER}}:${{secrets.ACCESS_TOKEN_REPO}}\" -H \"Accept: application/vnd.github.everest-preview+json\" -H \"Content-Type: application/json\" https://api.github.com/repos/forceu/barcodebuddy-docker/actions/workflows/docker-publish-arm64.yaml/dispatches --data '{\"ref\": \"master\"}'

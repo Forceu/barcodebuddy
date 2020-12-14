@@ -206,7 +206,7 @@ function processButtons() {
                 checkIfNumeric($amount);
                 if (isset($_POST["tags"])) {
                     foreach ($_POST["tags"][$id] as $tag) {
-                        $db->addTag(sanitizeString($tag), $gidSelected);
+                        TagManager::add(sanitizeString($tag), $gidSelected);
                     }
                 }
                 $product          = API::getProductInfo(sanitizeString($gidSelected));

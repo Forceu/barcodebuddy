@@ -54,7 +54,7 @@ class ChoreManager {
      * @throws DbConnectionDuringEstablishException
      */
     public static function isChoreBarcode(string $barcode): bool {
-        return (ChoreManager::getChoreBarcode($barcode) != null);
+        return (self::getChoreBarcode($barcode) != null);
     }
 
 

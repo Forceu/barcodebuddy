@@ -30,7 +30,7 @@ $CONFIG->checkIfAuthenticated(true, true);
 if (isset($_POST["button_delete"])) {
     $id = $_POST["button_delete"];
     checkIfNumeric($id);
-    DatabaseConnection::getInstance()->deleteTag($id);
+    TagManager::delete($id);
     //Hide POST, so we can refresh
     header("Location: " . $CONFIG->getPhpSelfWithBaseUrl());
     die();
@@ -59,11 +59,11 @@ function getHtmlTagTable() {
 
         foreach ($tags as $tag) {
             $table->startRow();
-            $table->addCell($tag['name']);
-            $table->addCell($tag['item']);
+            $table->addCell($tag->name);
+            $table->addCell($tag->item);
             $table->addCell($html->buildButton("button_delete", "Delete")
                 ->setSubmit()
-                ->setValue($tag['id'])
+                ->setValue($tag->id)
                 ->generate(true));
             $table->endRow();
         }

@@ -22,7 +22,7 @@ require_once __DIR__ . "/PluginLoader.php";
 require_once __DIR__ . "/api.inc.php";
 require_once __DIR__ . "/websocketconnection.inc.php";
 require_once __DIR__ . "/configProcessing.inc.php";
-require_once __DIR__ . "/modules/tags.php";
+require_once __DIR__ . "/modules/tagManager.php";
 require_once __DIR__ . "/modules/choreManager.php";
 require_once __DIR__ . "/modules/quantityManager.php";
 
@@ -281,7 +281,7 @@ class DatabaseConnection {
         }
     }
 
-    //Gets the local tine wuth the DB function, more reliable than PHP
+    //Gets the local tine with the DB function, more reliable than PHP
     private function getDbTimeInLC() {
         return $this->db->querySingle("SELECT datetime('now','localtime');");
     }
@@ -339,32 +339,6 @@ class DatabaseConnection {
     }
 
 
-    //Gets an array of locally stored tags
-    public function getStoredTags() {
-        $res  = $this->db->query('SELECT * FROM Tags');
-        $tags = array();
-        while ($row = $res->fetchArray()) {
-            $item           = array();
-            $item['id']     = $row['id'];
-            $item['name']   = $row['tag'];
-            $item['itemId'] = $row['itemId'];
-            $item['item']   = "";
-            array_push($tags, $item);
-        }
-        return $tags;
-    }
-
-    //Adds tag to DB
-    public function addTag($tag, $itemid) {
-        $this->db->exec("INSERT INTO Tags(tag, itemId) VALUES('$tag', $itemid);");
-    }
-
-    //Returns true if $name is not saved as a tag yet
-    public function tagNotUsedYet($name) {
-        $count = $this->db->querySingle("SELECT COUNT(*) as count FROM Tags WHERE tag='" . $name . "'");
-        return ($count == 0);
-    }
-
     //Sets the possible match for a barcode that has a tag in its name
     public function updateSavedBarcodeMatch($barcode, $productId) {
         checkIfNumeric($productId);
@@ -404,17 +378,6 @@ class DatabaseConnection {
 
         $this->db->exec("INSERT INTO Barcodes(barcode, name, amount, possibleMatch, requireWeight, bestBeforeInDays, price)
                              VALUES('$barcode', 'N/A', 1, 0, 1, $bestBeforeInDays, '$price')");
-    }
-
-
-    //Check if the given name includes any words that are associated with a product
-    public function checkNameForTags($name) {
-        $res = $this->db->query(self::generateQueryFromName($name));
-        if ($row = $res->fetchArray()) {
-            return $row["itemId"];
-        } else {
-            return 0;
-        }
     }
 
     //Gets an array of BBuddy API keys
@@ -503,11 +466,6 @@ class DatabaseConnection {
     }
 
 
-    //Delete tag from local db 
-    public function deleteTag($id) {
-        $this->db->exec("DELETE FROM Tags WHERE id='$id'");
-    }
-
     //Delete all saved barcodes
     public function deleteAll($section) {
         switch ($section) {
@@ -527,22 +485,6 @@ class DatabaseConnection {
         }
     }
 
-
-    //Generates the SQL for word search
-    private function generateQueryFromName($name) {
-        $words = cleanNameForTagLookup($name);
-        $i     = 0;
-        $query = "SELECT itemId FROM Tags ";
-        while ($i < sizeof($words)) {
-            if ($i == 0) {
-                $query = $query . "WHERE tag LIKE '" . $words[$i] . "'";
-            } else {
-                $query = $query . " OR tag LIKE '" . $words[$i] . "'";
-            }
-            $i++;
-        }
-        return $query;
-    }
 
     /**
      * @return mixed

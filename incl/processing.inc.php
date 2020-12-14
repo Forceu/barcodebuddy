@@ -184,7 +184,7 @@ function processUnknownBarcode($barcode, $websocketEnabled, &$fileLock, $bestBef
             $productname = BarcodeLookup::lookup($barcode);
         }
         if ($productname != "N/A") {
-            $db->insertUnrecognizedBarcode($barcode, $amount, $bestBeforeInDays, $price, $productname, $db->checkNameForTags($productname));
+            $db->insertUnrecognizedBarcode($barcode, $amount, $bestBeforeInDays, $price, $productname, TagManager::getProductIdByPossibleTag($productname));
             $log    = new LogOutput("Unknown barcode looked up, found name: " . $productname, EVENT_TYPE_ADD_NEW_BARCODE, $barcode);
             $output = $log
                 ->insertBarcodeInWebsocketText()
@@ -496,7 +496,7 @@ function explodeWordsAndMakeCheckboxes($words, $id) {
     $addedWords = array(); // Check if word is used multiple times when creating possible tags
     foreach ($cleanWords as $str) {
         $tagWord = trim($str);
-        if (strlen($tagWord) > 0 && !in_array(strtolower($tagWord), $addedWords) && DatabaseConnection::getInstance()->tagNotUsedYet($tagWord)) {
+        if (strlen($tagWord) > 0 && !in_array(strtolower($tagWord), $addedWords) && TagManager::tagNotInUse($tagWord)) {
             $selections = $selections . '<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-' . $id . '_' . $i . '">
   <input type="checkbox"  value="' . $tagWord . '" name="tags[' . $id . '][' . $i . ']" id="checkbox-' . $id . '_' . $i . '" class="mdl-checkbox__input">
   <span class="mdl-checkbox__label">' . $tagWord . '</span>
@@ -536,16 +536,20 @@ function changeQuantityAfterScan($amount) {
 }
 
 
-//Merge tags and product info
-function getAllTags() {
-    $tags       = DatabaseConnection::getInstance()->getStoredTags();
+/**
+ * Merge tags and product info
+ * @return Tag[]
+ * @throws DbConnectionDuringEstablishException
+ */
+function getAllTags(): array {
+    $tags       = TagManager::getStoredTags();
     $products   = API::getProductInfo();
     $returnTags = array();
 
     foreach ($tags as $tag) {
         foreach ($products as $product) {
-            if ($product["id"] == $tag["itemId"]) {
-                $tag["item"] = $product["name"];
+            if ($product["id"] == $tag->itemId) {
+                $tag->setName($product["name"]);
                 array_push($returnTags, $tag);
                 break;
             }
@@ -556,11 +560,11 @@ function getAllTags() {
 }
 
 //Sorts the tags by name
-function sortTags($a, $b) {
-    return $a['item'] > $b['item'];
+function sortTags(Tag $a, Tag $b): bool {
+    return $a->compare($b);
 }
 
-
+//TODO
 //Sorts the chores by name
 function sortChores($a, $b) {
     return $a['name'] > $b['name'];

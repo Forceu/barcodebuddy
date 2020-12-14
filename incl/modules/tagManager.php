@@ -40,7 +40,7 @@ class TagManager {
      */
     public static function tagNotInUse($name): bool {
         $db    = DatabaseConnection::getInstance()->getDatabaseReference();
-        $count = $db->querySingle("SELECT COUNT(*) as count FROM Tags WHERE tag='" . $name . "'");
+        $count = $db->querySingle("SELECT COUNT(*) as count FROM Tags WHERE tag='" . $name . "' COLLATE NOCASE");
         return ($count == 0);
     }
 

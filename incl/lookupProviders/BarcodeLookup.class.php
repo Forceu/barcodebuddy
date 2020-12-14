@@ -22,6 +22,7 @@ require_once __DIR__ . "/../config.inc.php";
 class BarcodeLookup {
 
     private static $providers = array(
+        "ProviderDebug",
         "ProviderOpenFoodFacts",
         "ProviderUpcDb",
         "ProviderJumbo",

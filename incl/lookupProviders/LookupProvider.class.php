@@ -19,6 +19,7 @@ require_once __DIR__ . "/ProviderOpenFoodFacts.php";
 require_once __DIR__ . "/ProviderUpcDb.php";
 require_once __DIR__ . "/ProviderJumbo.php";
 require_once __DIR__ . "/ProviderUpcDatabase.php";
+require_once __DIR__ . "/ProviderDebug.php";
 
 class LookupProvider {
 
@@ -33,7 +34,7 @@ class LookupProvider {
         $this->apiKey         = $apiKey;
     }
 
-    protected function isProviderEnabled() {
+    protected function isProviderEnabled(): bool {
         if ($this->providerConfigKey == null)
             throw new Exception('providerConfigKey needs to be overriden!');
         return BBConfig::getInstance()[$this->providerConfigKey];

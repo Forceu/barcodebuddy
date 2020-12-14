@@ -73,7 +73,7 @@ function processNewBarcode($barcodeInput, $bestBeforeInDays = null, $price = nul
         return $log->setVerbose()->setWebsocketResultCode(WS_RESULT_PRODUCT_UNKNOWN)->createLog();
     }
 
-    if ($db->isChoreBarcode($barcode)) {
+    if (Chores::isChoreBarcode($barcode)) {
         $choreText = processChoreBarcode($barcode);
         $log       = new LogOutput("Executed chore: " . $choreText, EVENT_TYPE_EXEC_CHORE);
         return $log->setVerbose()->createLog();
@@ -156,7 +156,7 @@ const WS_RESULT_ERROR             = 'E';
 
 //Execute a chore when chore barcode was submitted
 function processChoreBarcode($barcode) {
-    $id = DatabaseConnection::getInstance()->getChoreBarcode(sanitizeString($barcode))['choreId'];
+    $id = Chores::getChoreBarcode(sanitizeString($barcode))['choreId'];
     checkIfNumeric($id);
     API::executeChore($id);
     return sanitizeString(API::getChoresInfo($id)["name"]);
@@ -570,7 +570,7 @@ function sortChores($a, $b) {
 //Merges chores with chore info
 function getAllChores() {
     $chores       = API::getChoresInfo();
-    $barcodes     = DatabaseConnection::getInstance()->getStoredChoreBarcodes();
+    $barcodes     = Chores::getBarcodes();
     $returnChores = array();
 
     foreach ($chores as $chore) {

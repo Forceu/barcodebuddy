@@ -8,7 +8,7 @@
  * LICENSE: This source file is subject to version 3.0 of the GNU General
  * Public License v3.0 that is attached to this project.
  *
- * 
+ *
  * List all chores
  *
  * @author     Marc Ole Bulling
@@ -29,41 +29,40 @@ $CONFIG->checkIfAuthenticated(true, true);
 
 //Save tag if edit button was pressed
 if (isset($_POST["button_edit"])) {
-        $id = $_POST["button_edit"];
-        checkIfNumeric($id);
-        $barcode = sanitizeString($_POST["barcode_".$id]);
-        if ($barcode=="") {
-              DatabaseConnection::getInstance()->deleteChoreBarcode($id);
-        } else {
-              DatabaseConnection::getInstance()->updateChoreBarcode($id, $barcode);
-        }
-        //Hide POST, so we can refresh
-        header("Location: " . $CONFIG->getPhpSelfWithBaseUrl());
-        die();
+    $id = $_POST["button_edit"];
+    checkIfNumeric($id);
+    $barcode = sanitizeString($_POST["barcode_" . $id]);
+    if ($barcode == "") {
+        Chores::deleteBarcode($id);
+    } else {
+        Chores::updateBarcode($id, $barcode);
     }
+    //Hide POST, so we can refresh
+    header("Location: " . $CONFIG->getPhpSelfWithBaseUrl());
+    die();
+}
 
 
 $webUi = new WebUiGenerator(MENU_GENERIC);
 $webUi->addHeader();
-$webUi->addCard("Chores",getHtmlChoreTable());
+$webUi->addCard("Chores", getHtmlChoreTable());
 $webUi->addFooter();
 $webUi->printHtml();
 
 
-
 function getHtmlChoreTable() {
     $chores = getAllChores();
-    $html = new UiEditor();
+    $html   = new UiEditor();
     if (sizeof($chores) == 0) {
         $html->addHtml("No chores yet.");
         return $html->getHtml();
     } else {
-        $table        = new TableGenerator(array(
+        $table = new TableGenerator(array(
             "Chore",
             "Barcode",
             "Action"
         ));
-        
+
         foreach ($chores as $chore) {
             $editText   = "Enter new barcode";
             $editValue  = "";
@@ -75,22 +74,22 @@ function getHtmlChoreTable() {
                 $buttonText = "Edit";
                 $editValue  = $chore['barcode'];
             }
-            
+
             $table->startRow();
             $table->addCell($chore['name']);
-            $table->addCell($html->buildEditField($labelId, $editText,  $editValue)
-                                    ->onKeyUp('enableButtonGen(\'' . $buttonId . '\', \'' . $labelId . '\', \'' . $editValue . '\')')
-                                    ->required(false)
-                                    ->setFloatingLabel(false)
-                                    ->generate(true));
+            $table->addCell($html->buildEditField($labelId, $editText, $editValue)
+                ->onKeyUp('enableButtonGen(\'' . $buttonId . '\', \'' . $labelId . '\', \'' . $editValue . '\')')
+                ->required(false)
+                ->setFloatingLabel(false)
+                ->generate(true));
             $table->addCell($html->buildButton("button_edit", $buttonText)
-                                    ->setDisabled()
-                                    ->setSubmit()
-                                    ->setId($buttonId)
-                                    ->setRaised()
-                                    ->setIsAccent()
-                                    ->setValue($chore['id'])
-                                    ->generate(true));
+                ->setDisabled()
+                ->setSubmit()
+                ->setId($buttonId)
+                ->setRaised()
+                ->setIsAccent()
+                ->setValue($chore['id'])
+                ->generate(true));
             $table->endRow();
         }
         $html->addTableClass($table);

@@ -408,26 +408,6 @@ class DatabaseConnection {
     }
 
 
-    //Gets an array of locally stored chore barcodes
-    public function getStoredChoreBarcodes() {
-        $res    = $this->db->query('SELECT * FROM ChoreBarcodes');
-        $chores = array();
-        while ($row = $res->fetchArray()) {
-            $item            = array();
-            $item['id']      = $row['id'];
-            $item['choreId'] = $row['choreId'];
-            $item['barcode'] = $row['barcode'];
-            array_push($chores, $item);
-        }
-        return $chores;
-    }
-
-    //Updates a chore barcode
-    public function updateChoreBarcode($choreId, $choreBarcode) {
-        checkIfNumeric($choreId);
-        $this->db->exec("REPLACE INTO ChoreBarcodes(choreId, barcode) VALUES(" . $choreId . ", '" . str_replace('&#39;', "", $choreBarcode) . "')");
-    }
-
     //Adds a default quantity for a barcode or updates the product
     public function addUpdateQuantity($barcode, $amount, $product = null) {
         checkIfNumeric($amount);
@@ -438,32 +418,11 @@ class DatabaseConnection {
         }
     }
 
-    //Deletes a barcode associated with a chore
-    public function deleteChoreBarcode($id) {
-        checkIfNumeric($id);
-        $this->db->exec("DELETE FROM ChoreBarcodes WHERE choreId='$id'");
-    }
-
 
     //Deletes Quantity barcode
     public function deleteQuantity($id) {
         checkIfNumeric($id);
         $this->db->exec("DELETE FROM Quantities WHERE id='$id'");
-    }
-
-    //Checks if barcode is associated with a chore
-    public function isChoreBarcode($barcode) {
-        return ($this->getChoreBarcode($barcode) != null);
-    }
-
-    //Get chore from barcode
-    public function getChoreBarcode($barcode) {
-        $res = $this->db->query("SELECT * FROM ChoreBarcodes WHERE barcode='$barcode'");
-        if ($row = $res->fetchArray()) {
-            return $row;
-        } else {
-            return null;
-        }
     }
 
     //Returns true if an unknown barcode is already in the list
@@ -652,5 +611,9 @@ class DatabaseConnection {
         }
         $this->db->exec("UPDATE BBConfig SET value='" . $value . "' WHERE data='$key'");
         BBConfig::getInstance()[$key] = $value;
+    }
+
+    public function getDatabaseReference(): SQLite3 {
+        return $this->db;
     }
 }

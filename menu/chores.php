@@ -33,9 +33,9 @@ if (isset($_POST["button_edit"])) {
     checkIfNumeric($id);
     $barcode = sanitizeString($_POST["barcode_" . $id]);
     if ($barcode == "") {
-        Chores::deleteBarcode($id);
+        ChoreManager::deleteBarcode($id);
     } else {
-        Chores::updateBarcode($id, $barcode);
+        ChoreManager::updateBarcode($id, $barcode);
     }
     //Hide POST, so we can refresh
     header("Location: " . $CONFIG->getPhpSelfWithBaseUrl());

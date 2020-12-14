@@ -23,8 +23,8 @@ require_once __DIR__ . "/api.inc.php";
 require_once __DIR__ . "/websocketconnection.inc.php";
 require_once __DIR__ . "/configProcessing.inc.php";
 require_once __DIR__ . "/modules/tags.php";
-require_once __DIR__ . "/modules/chores.php";
-require_once __DIR__ . "/modules/quantities.php";
+require_once __DIR__ . "/modules/choreManager.php";
+require_once __DIR__ . "/modules/quantityManager.php";
 
 
 //States to tell the script what to do with the barcodes that were scanned
@@ -339,42 +339,6 @@ class DatabaseConnection {
     }
 
 
-    //Gets an array of locally stored quantities
-    public function getQuantities() {
-        $res      = $this->db->query('SELECT * FROM Quantities');
-        $barcodes = array();
-        while ($row = $res->fetchArray()) {
-            $item             = array();
-            $item['id']       = $row['id'];
-            $item['barcode']  = $row['barcode'];
-            $item['quantity'] = $row['quantity'];
-            $item['product']  = $row['product'];
-            array_push($barcodes, $item);
-        }
-        return $barcodes;
-    }
-
-
-    //Gets quantity for stored barcode quantities
-    public function getQuantityByBarcode($barcode) {
-        $res = $this->db->query("SELECT * FROM Quantities WHERE barcode='$barcode'");
-        if ($row = $res->fetchArray()) {
-            return $row['quantity'];
-        } else {
-            return 1;
-        }
-    }
-
-
-    //Save product name if already stored as Quantity
-    public function refreshQuantityProductName($barcode, $productname) {
-        $res = $this->db->query("SELECT * FROM Quantities WHERE barcode='$barcode'");
-        if ($row = $res->fetchArray()) {
-            $this->db->exec("UPDATE Quantities SET product='$productname' WHERE barcode='$barcode'");
-        }
-    }
-
-
     //Gets an array of locally stored tags
     public function getStoredTags() {
         $res  = $this->db->query('SELECT * FROM Tags');
@@ -407,23 +371,6 @@ class DatabaseConnection {
         $this->db->exec("UPDATE Barcodes SET possibleMatch='$productId' WHERE barcode='$barcode'");
     }
 
-
-    //Adds a default quantity for a barcode or updates the product
-    public function addUpdateQuantity($barcode, $amount, $product = null) {
-        checkIfNumeric($amount);
-        if ($product == null) {
-            $this->db->exec("REPLACE INTO Quantities(barcode, quantity) VALUES ('$barcode', $amount)");
-        } else {
-            $this->db->exec("REPLACE INTO Quantities(barcode, quantity, product) VALUES ('$barcode', $amount, '$product')");
-        }
-    }
-
-
-    //Deletes Quantity barcode
-    public function deleteQuantity($id) {
-        checkIfNumeric($id);
-        $this->db->exec("DELETE FROM Quantities WHERE id='$id'");
-    }
 
     //Returns true if an unknown barcode is already in the list
     public function isUnknownBarcodeAlreadyStored($barcode): bool {

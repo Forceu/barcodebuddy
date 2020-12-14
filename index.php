@@ -235,7 +235,7 @@ function processButtons() {
                     $log = new LogOutput("Adding $amount " . $product["unit"] . " of " . $product["name"] . $additionalLog, EVENT_TYPE_ADD_KNOWN_BARCODE);
                     $log->setVerbose()->dontSendWebsocket()->createLog();
                 }
-                $db->refreshQuantityProductName($barcode, $product["name"]);
+                QuantityManager::refreshProductName($barcode, $product["name"]);
             }
         }
         //Hide POST, so we can refresh

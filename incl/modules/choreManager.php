@@ -1,7 +1,7 @@
 <?php
 
 
-class Chores {
+class ChoreManager {
     /**
      * Gets an array of locally stored chore barcodes
      * @return array
@@ -51,9 +51,10 @@ class Chores {
      * Checks if barcode is associated with a chore
      * @param string $barcode
      * @return bool
+     * @throws DbConnectionDuringEstablishException
      */
     public static function isChoreBarcode(string $barcode): bool {
-        return (Chores::getChoreBarcode($barcode) != null);
+        return (ChoreManager::getChoreBarcode($barcode) != null);
     }
 
 

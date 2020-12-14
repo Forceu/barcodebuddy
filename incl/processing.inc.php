@@ -73,7 +73,7 @@ function processNewBarcode($barcodeInput, $bestBeforeInDays = null, $price = nul
         return $log->setVerbose()->setWebsocketResultCode(WS_RESULT_PRODUCT_UNKNOWN)->createLog();
     }
 
-    if (Chores::isChoreBarcode($barcode)) {
+    if (ChoreManager::isChoreBarcode($barcode)) {
         $choreText = processChoreBarcode($barcode);
         $log       = new LogOutput("Executed chore: " . $choreText, EVENT_TYPE_EXEC_CHORE);
         return $log->setVerbose()->createLog();
@@ -156,7 +156,7 @@ const WS_RESULT_ERROR             = 'E';
 
 //Execute a chore when chore barcode was submitted
 function processChoreBarcode($barcode) {
-    $id = Chores::getChoreBarcode(sanitizeString($barcode))['choreId'];
+    $id = ChoreManager::getChoreBarcode(sanitizeString($barcode))['choreId'];
     checkIfNumeric($id);
     API::executeChore($id);
     return sanitizeString(API::getChoresInfo($id)["name"]);
@@ -167,7 +167,7 @@ function processUnknownBarcode($barcode, $websocketEnabled, &$fileLock, $bestBef
     $db     = DatabaseConnection::getInstance();
     $amount = 1;
     if ($db->getTransactionState() == STATE_PURCHASE) {
-        $amount = $db->getQuantityByBarcode($barcode);
+        $amount = QuantityManager::getQuantityForBarcode($barcode);
     }
     if ($db->isUnknownBarcodeAlreadyStored($barcode)) {
         //Unknown barcode already in local database
@@ -442,7 +442,7 @@ function getQuantityForBarcode($barcode, $isConsume, $productInfo) {
         return 1;
     if ($config["USE_GROCY_QU_FACTOR"])
         return intval($productInfo["quFactor"]);
-    return $amount = DatabaseConnection::getInstance()->getQuantityByBarcode($barcode);
+    return $amount = QuantityManager::getQuantityForBarcode($barcode);
 }
 
 
@@ -521,13 +521,13 @@ function changeQuantityAfterScan($amount) {
     $db      = DatabaseConnection::getInstance();
     $barcode = sanitizeString($config["LAST_BARCODE"]);
     if ($config["LAST_PRODUCT"] != null) {
-        $db->addUpdateQuantity($barcode, $amount, $config["LAST_PRODUCT"]);
+        QuantityManager::addUpdateEntry($barcode, $amount, $config["LAST_PRODUCT"]);
     } else {
         $product = API::getProductByBardcode($barcode);
         if ($product != null) {
-            $db->addUpdateQuantity($barcode, $amount, $product["name"]);
+            QuantityManager::addUpdateEntry($barcode, $amount, $product["name"]);
         } else {
-            $db->addUpdateQuantity($barcode, $amount);
+            QuantityManager::addUpdateEntry($barcode, $amount);
         }
     }
     if ($db->getStoredBarcodeAmount($barcode) == 1) {
@@ -570,7 +570,7 @@ function sortChores($a, $b) {
 //Merges chores with chore info
 function getAllChores() {
     $chores       = API::getChoresInfo();
-    $barcodes     = Chores::getBarcodes();
+    $barcodes     = ChoreManager::getBarcodes();
     $returnChores = array();
 
     foreach ($chores as $chore) {

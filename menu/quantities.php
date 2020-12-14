@@ -31,7 +31,7 @@ $CONFIG->checkIfAuthenticated(true, true);
 if (isset($_POST["button_delete"])) {
     $id = $_POST["button_delete"];
     checkIfNumeric($id);
-    DatabaseConnection::getInstance()->deleteQuantity($id);
+    QuantityManager::delete($id);
     //Hide POST, so we can refresh
     header("Location: " . $CONFIG->getPhpSelfWithBaseUrl());
     die();
@@ -45,9 +45,9 @@ $webUi->addFooter();
 $webUi->printHtml();
 
 
-function printSettingsQuantityTable() {
+function printSettingsQuantityTable(): string {
     global $CONFIG;
-    $quantities = DatabaseConnection::getInstance()->getQuantities();
+    $quantities = QuantityManager::getQuantities();
     $html       = new UiEditor();
     if (sizeof($quantities) == 0) {
         $html->addHtml("No saved quantities yet.");
@@ -60,15 +60,14 @@ function printSettingsQuantityTable() {
             "Quantity",
             "Action"
         ));
-
         foreach ($quantities as $quantity) {
             $table->startRow();
-            $table->addCell($quantity['product']);
-            $table->addCell($quantity['barcode']);
-            $table->addCell($quantity['quantity']);
+            $table->addCell($quantity->product);
+            $table->addCell($quantity->barcode);
+            $table->addCell($quantity->quantity);
             $table->addCell($html->buildButton("button_delete", "Delete")
                 ->setSubmit()
-                ->setValue($quantity['id'])
+                ->setValue($quantity->id)
                 ->generate(true));
             $table->endRow();
         }

@@ -22,6 +22,9 @@ require_once __DIR__ . "/PluginLoader.php";
 require_once __DIR__ . "/api.inc.php";
 require_once __DIR__ . "/websocketconnection.inc.php";
 require_once __DIR__ . "/configProcessing.inc.php";
+require_once __DIR__ . "/modules/tags.php";
+require_once __DIR__ . "/modules/chores.php";
+require_once __DIR__ . "/modules/quantities.php";
 
 
 //States to tell the script what to do with the barcodes that were scanned
@@ -54,32 +57,32 @@ class DatabaseConnection {
 
     /* 1 is used for true and 0 for false, as PHP interprets the String "false" as Boolean "true" */
     const DEFAULT_VALUES = array(
-        "BARCODE_C"              => "BBUDDY-C",
-        "BARCODE_CS"             => "BBUDDY-CS",
-        "BARCODE_CA"             => "BBUDDY-CA",
-        "BARCODE_P"              => "BBUDDY-P",
-        "BARCODE_O"              => "BBUDDY-O",
-        "BARCODE_GS"             => "BBUDDY-I",
-        "BARCODE_Q"              => "BBUDDY-Q-",
-        "BARCODE_AS"             => "BBUDDY-AS",
-        "REVERT_TIME"            => "10",
-        "REVERT_SINGLE"          => "1",
-        "MORE_VERBOSE"           => "1",
-        "GROCY_API_URL"          => null,
-        "GROCY_API_KEY"          => null,
-        "LAST_BARCODE"           => null,
-        "LAST_PRODUCT"           => null,
-        "WS_FULLSCREEN"          => "0",
-        "SHOPPINGLIST_REMOVE"    => "1",
-        "USE_GENERIC_NAME"       => "1",
-        "CONSUME_SAVED_QUANTITY" => "0",
-        "USE_GROCY_QU_FACTOR"    => "0",
-        "SHOW_STOCK_ON_SCAN"     => "0",
-        "LOOKUP_USE_OFF"         => "1",
-        "LOOKUP_USE_UPC"         => "1",
-        "LOOKUP_USE_JUMBO"       => "0",
-        "LOOKUP_USE_UPC_DATABASE"=> "0",
-        "LOOKUP_UPC_DATABASE_KEY"=> null);
+        "BARCODE_C"               => "BBUDDY-C",
+        "BARCODE_CS"              => "BBUDDY-CS",
+        "BARCODE_CA"              => "BBUDDY-CA",
+        "BARCODE_P"               => "BBUDDY-P",
+        "BARCODE_O"               => "BBUDDY-O",
+        "BARCODE_GS"              => "BBUDDY-I",
+        "BARCODE_Q"               => "BBUDDY-Q-",
+        "BARCODE_AS"              => "BBUDDY-AS",
+        "REVERT_TIME"             => "10",
+        "REVERT_SINGLE"           => "1",
+        "MORE_VERBOSE"            => "1",
+        "GROCY_API_URL"           => null,
+        "GROCY_API_KEY"           => null,
+        "LAST_BARCODE"            => null,
+        "LAST_PRODUCT"            => null,
+        "WS_FULLSCREEN"           => "0",
+        "SHOPPINGLIST_REMOVE"     => "1",
+        "USE_GENERIC_NAME"        => "1",
+        "CONSUME_SAVED_QUANTITY"  => "0",
+        "USE_GROCY_QU_FACTOR"     => "0",
+        "SHOW_STOCK_ON_SCAN"      => "0",
+        "LOOKUP_USE_OFF"          => "1",
+        "LOOKUP_USE_UPC"          => "1",
+        "LOOKUP_USE_JUMBO"        => "0",
+        "LOOKUP_USE_UPC_DATABASE" => "0",
+        "LOOKUP_UPC_DATABASE_KEY" => null);
 
 
     const DB_INT_VALUES = array("REVERT_TIME");
@@ -133,7 +136,7 @@ class DatabaseConnection {
         $this->db->exec("CREATE TABLE IF NOT EXISTS BarcodeLogs(id INTEGER PRIMARY KEY, log TEXT NOT NULL)");
         $this->db->exec("CREATE TABLE IF NOT EXISTS BBConfig(id INTEGER PRIMARY KEY, data TEXT UNIQUE NOT NULL, value TEXT NOT NULL)");
         $this->db->exec("CREATE TABLE IF NOT EXISTS ChoreBarcodes(id INTEGER PRIMARY KEY, choreId INTEGER UNIQUE, barcode TEXT NOT NULL )");
-        $this->db->exec("CREATE TABLE IF NOT EXISTS Quantities(id INTEGER PRIMARY KEY, barcode TEXT NOT NULL UNIQUE, quantitiy INTEGER NOT NULL, product TEXT)");
+        $this->db->exec("CREATE TABLE IF NOT EXISTS Quantities(id INTEGER PRIMARY KEY, barcode TEXT NOT NULL UNIQUE, quantity INTEGER NOT NULL, product TEXT)");
         $this->db->exec("CREATE TABLE IF NOT EXISTS ApiKeys(id INTEGER PRIMARY KEY, key TEXT NOT NULL UNIQUE, lastused INTEGER NOT NULL)");
         $this->insertDefaultValues();
         $previousVersion = BBConfig::getInstance($this)["version"];
@@ -225,6 +228,13 @@ class DatabaseConnection {
             $this->db->exec("ALTER TABLE Barcodes ADD COLUMN bestBeforeInDays INTEGER");
             $this->db->exec("ALTER TABLE Barcodes ADD COLUMN price TEXT");
             $this->isSupportedGrocyVersionOrDie();
+        }
+        if ($previousVersion < 1511) {
+            //Only sqlite 3.25+ supports renaming columns, therefore creating new table instead
+            $this->db->exec("ALTER TABLE Quantities RENAME TO Quantities_temp;");
+            $this->db->exec("CREATE TABLE Quantities(id INTEGER PRIMARY KEY, barcode TEXT NOT NULL UNIQUE, quantity INTEGER NOT NULL, product TEXT)");
+            $this->db->exec("INSERT INTO Quantities(id, barcode, quantity, product) SELECT id, barcode, quantitiy, product FROM Quantities_temp;");
+            $this->db->exec("DROP TABLE Quantities_temp;");
         }
     }
 
@@ -337,7 +347,7 @@ class DatabaseConnection {
             $item             = array();
             $item['id']       = $row['id'];
             $item['barcode']  = $row['barcode'];
-            $item['quantity'] = $row['quantitiy'];
+            $item['quantity'] = $row['quantity'];
             $item['product']  = $row['product'];
             array_push($barcodes, $item);
         }
@@ -349,7 +359,7 @@ class DatabaseConnection {
     public function getQuantityByBarcode($barcode) {
         $res = $this->db->query("SELECT * FROM Quantities WHERE barcode='$barcode'");
         if ($row = $res->fetchArray()) {
-            return $row['quantitiy'];
+            return $row['quantity'];
         } else {
             return 1;
         }
@@ -418,13 +428,13 @@ class DatabaseConnection {
         $this->db->exec("REPLACE INTO ChoreBarcodes(choreId, barcode) VALUES(" . $choreId . ", '" . str_replace('&#39;', "", $choreBarcode) . "')");
     }
 
-    //Adds a default quantitiy for a barcodem or updates the product
-    public function addUpdateQuantitiy($barcode, $amount, $product = null) {
+    //Adds a default quantity for a barcode or updates the product
+    public function addUpdateQuantity($barcode, $amount, $product = null) {
         checkIfNumeric($amount);
         if ($product == null) {
-            $this->db->exec("REPLACE INTO Quantities(barcode, quantitiy) VALUES ('$barcode', $amount)");
+            $this->db->exec("REPLACE INTO Quantities(barcode, quantity) VALUES ('$barcode', $amount)");
         } else {
-            $this->db->exec("REPLACE INTO Quantities(barcode, quantitiy, product) VALUES ('$barcode', $amount, '$product')");
+            $this->db->exec("REPLACE INTO Quantities(barcode, quantity, product) VALUES ('$barcode', $amount, '$product')");
         }
     }
 
@@ -436,7 +446,7 @@ class DatabaseConnection {
 
 
     //Deletes Quantity barcode
-    public function deleteQuantitiy($id) {
+    public function deleteQuantity($id) {
         checkIfNumeric($id);
         $this->db->exec("DELETE FROM Quantities WHERE id='$id'");
     }
@@ -457,19 +467,19 @@ class DatabaseConnection {
     }
 
     //Returns true if an unknown barcode is already in the list
-    public function isUnknownBarcodeAlreadyStored($barcode) {
+    public function isUnknownBarcodeAlreadyStored($barcode): bool {
         $count = $this->db->querySingle("SELECT COUNT(*) as count FROM Barcodes WHERE barcode='$barcode'");
         return ($count != 0);
     }
 
-    //Increases quantitiy of a saved barcode (not to confuse with default quantitiy)
-    public function addQuantitiyToUnknownBarcode($barcode, $amount) {
+    //Increases quantity of a saved barcode (not to confuse with default quantity)
+    public function addQuantityToUnknownBarcode($barcode, $amount) {
         $this->db->exec("UPDATE Barcodes SET amount = amount + $amount WHERE barcode = '$barcode'");
 
     }
 
-    //Sets quantitiy of a saved barcode (not to confuse with default quantitiy)
-    public function setQuantitiyToUnknownBarcode($barcode, $amount) {
+    //Sets quantity of a saved barcode (not to confuse with default quantity)
+    public function setQuantityToUnknownBarcode($barcode, $amount) {
         $this->db->exec("UPDATE Barcodes SET amount = $amount WHERE barcode = '$barcode'");
     }
 

@@ -171,7 +171,7 @@ function processUnknownBarcode($barcode, $websocketEnabled, &$fileLock, $bestBef
     }
     if ($db->isUnknownBarcodeAlreadyStored($barcode)) {
         //Unknown barcode already in local database
-        $db->addQuantitiyToUnknownBarcode($barcode, $amount);
+        $db->addQuantityToUnknownBarcode($barcode, $amount);
         $log    = new LogOutput("Unknown product already scanned. Increasing quantity.", EVENT_TYPE_ADD_NEW_BARCODE, $barcode);
         $output = $log
             ->insertBarcodeInWebsocketText()
@@ -521,17 +521,17 @@ function changeQuantityAfterScan($amount) {
     $db      = DatabaseConnection::getInstance();
     $barcode = sanitizeString($config["LAST_BARCODE"]);
     if ($config["LAST_PRODUCT"] != null) {
-        $db->addUpdateQuantitiy($barcode, $amount, $config["LAST_PRODUCT"]);
+        $db->addUpdateQuantity($barcode, $amount, $config["LAST_PRODUCT"]);
     } else {
         $product = API::getProductByBardcode($barcode);
         if ($product != null) {
-            $db->addUpdateQuantitiy($barcode, $amount, $product["name"]);
+            $db->addUpdateQuantity($barcode, $amount, $product["name"]);
         } else {
-            $db->addUpdateQuantitiy($barcode, $amount);
+            $db->addUpdateQuantity($barcode, $amount);
         }
     }
     if ($db->getStoredBarcodeAmount($barcode) == 1) {
-        $db->setQuantitiyToUnknownBarcode($barcode, $amount);
+        $db->setQuantityToUnknownBarcode($barcode, $amount);
     }
 }
 

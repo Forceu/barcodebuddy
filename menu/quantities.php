@@ -31,7 +31,7 @@ $CONFIG->checkIfAuthenticated(true, true);
 if (isset($_POST["button_delete"])) {
     $id = $_POST["button_delete"];
     checkIfNumeric($id);
-    DatabaseConnection::getInstance()->deleteQuantitiy($id);
+    DatabaseConnection::getInstance()->deleteQuantity($id);
     //Hide POST, so we can refresh
     header("Location: " . $CONFIG->getPhpSelfWithBaseUrl());
     die();

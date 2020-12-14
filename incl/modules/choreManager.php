@@ -4,7 +4,7 @@
 class ChoreManager {
     /**
      * Gets an array of locally stored chore barcodes
-     * @return array
+     * @return Chore[]
      * @throws DbConnectionDuringEstablishException
      */
     public static function getBarcodes(): array {
@@ -12,11 +12,7 @@ class ChoreManager {
         $res    = $db->query('SELECT * FROM ChoreBarcodes');
         $chores = array();
         while ($row = $res->fetchArray()) {
-            $item            = array();
-            $item['id']      = $row['id'];
-            $item['choreId'] = $row['choreId'];
-            $item['barcode'] = $row['barcode'];
-            array_push($chores, $item);
+            array_push($chores, new Chore($row));
         }
         return $chores;
     }
@@ -73,6 +69,29 @@ class ChoreManager {
             return null;
         }
     }
+}
 
 
+class Chore {
+
+    public $id;
+    public $choreId;
+    public $barcode;
+
+
+    public function __construct($dbRow) {
+        if (!$this->isValidRow($dbRow)) {
+            throw new RuntimeException("Invalid row supplied to create Chore Object");
+        }
+        $this->id      = $dbRow['id'];
+        $this->choreId = $dbRow['choreId'];
+        $this->barcode = $dbRow['barcode'];
+    }
+
+
+    private function isValidRow($dbRow): bool {
+        return (array_key_exists('id', $dbRow) &&
+            array_key_exists('choreId', $dbRow) &&
+            array_key_exists('barcode', $dbRow));
+    }
 }

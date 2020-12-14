@@ -564,7 +564,6 @@ function sortTags(Tag $a, Tag $b): bool {
     return $a->compare($b);
 }
 
-//TODO
 //Sorts the chores by name
 function sortChores($a, $b) {
     return $a['name'] > $b['name'];
@@ -580,8 +579,8 @@ function getAllChores() {
     foreach ($chores as $chore) {
         $chore["barcode"] = null;
         foreach ($barcodes as $barcode) {
-            if ($chore["id"] == $barcode["choreId"]) {
-                $chore["barcode"] = $barcode["barcode"];
+            if ($chore["id"] == $barcode->choreId) {
+                $chore["barcode"] = $barcode->barcode;
                 break;
             }
         }

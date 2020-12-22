@@ -173,7 +173,7 @@ class CheckBoxBuilder extends ElementBuilder {
         return $this->editorUi->addCheckBoxInternal(
             $this->name,
             $this->label,
-            ($this->value == 1),
+            ($this->value == 1), //Maybe change this to make it more readable / less prone to bugs
             $this->isDisabled,
             $this->useSpaces,
             $this->onChanged,

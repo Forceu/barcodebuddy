@@ -209,15 +209,8 @@ function processButtons() {
                         TagManager::add(sanitizeString($tag), $gidSelected);
                     }
                 }
-                $product          = API::getProductInfo(sanitizeString($gidSelected));
-                $previousBarcodes = $product["barcode"];
-                if ($previousBarcodes == null) {
-                    API::setBarcode($gidSelected, $barcode);
-                } else {
-                    $asArray = explode(",", $previousBarcodes);
-                    if (!in_array($barcode, $asArray))
-                        API::setBarcode($gidSelected, $previousBarcodes . "," . $barcode);
-                }
+                $product = API::getProductInfo(sanitizeString($gidSelected));
+                API::addBarcode($gidSelected, $barcode);
                 $log = new LogOutput("Associated barcode $barcode with " . $product["name"], EVENT_TYPE_ASSOCIATE_PRODUCT);
                 $log->setVerbose()->dontSendWebsocket()->createLog();
                 $db->deleteBarcode($id);
@@ -259,7 +252,7 @@ function getHtmlMainMenuReqActions($barcodes) {
             "Remove"
         ));
         foreach ($barcodes['tare'] as $item) {
-            $product     = API::getProductByBardcode($item['barcode']);
+            $product     = API::getProductByBarcode($item['barcode']);
             $totalWeight = $product['stockAmount'] + $product['tareWeight'];
             $table->startRow();
             $table->addCell($product["name"]);

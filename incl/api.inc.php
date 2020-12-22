@@ -7,7 +7,7 @@
  * LICENSE: This source file is subject to version 3.0 of the GNU General
  * Public License v3.0 that is attached to this project.
  *
- * 
+ *
  * Helper file for Grocy API and barcode lookup
  *
  * @author     Marc Ole Bulling
@@ -21,34 +21,50 @@ require_once __DIR__ . "/configProcessing.inc.php";
 require_once __DIR__ . "/db.inc.php";
 require_once __DIR__ . "/config.inc.php";
 
-const API_O_PRODUCTS     = 'objects/products';
-const API_PRODUCTS       = 'stock/products';
-const API_SHOPPINGLIST   = 'stock/shoppinglist/';
-const API_CHORES         = 'objects/chores';
-const API_STOCK          = 'stock/products';
-const API_CHORE_EXECUTE  = 'chores/';
-const API_SYTEM_INFO     = 'system/info';
+const API_O_PRODUCTS    = 'objects/products';
+const API_O_BARCODES    = 'objects/product_barcodes';
+const API_PRODUCTS      = 'stock/products';
+const API_SHOPPINGLIST  = 'stock/shoppinglist/';
+const API_CHORES        = 'objects/chores';
+const API_STOCK         = 'stock/products';
+const API_CHORE_EXECUTE = 'chores/';
+const API_SYTEM_INFO    = 'system/info';
 
-const MIN_GROCY_VERSION  = "2.7.1";
+const MIN_GROCY_VERSION = "3.0.0";
 
 
-const METHOD_GET         = "GET";
-const METHOD_PUT         = "PUT";
-const METHOD_POST        = "POST";
+const METHOD_GET  = "GET";
+const METHOD_PUT  = "PUT";
+const METHOD_POST = "POST";
 
-const LOGIN_URL         = "loginurl";
-const LOGIN_API_KEY     = "loginkey";
+const LOGIN_URL     = "loginurl";
+const LOGIN_API_KEY = "loginkey";
 
-const DISPLAY_DEBUG     = false;
+const DISPLAY_DEBUG = false;
 
-class InvalidServerResponseException extends Exception { }
-class UnauthorizedException          extends Exception { }
-class InvalidJsonResponseException   extends Exception { }
-class InvalidSSLException            extends Exception { }
-class InvalidParameterException      extends Exception { }
-class NotFoundException              extends Exception { }
-class LimitExceededException         extends Exception { }
-class InternalServerErrorException   extends Exception { }
+class InvalidServerResponseException extends Exception {
+}
+
+class UnauthorizedException extends Exception {
+}
+
+class InvalidJsonResponseException extends Exception {
+}
+
+class InvalidSSLException extends Exception {
+}
+
+class InvalidParameterException extends Exception {
+}
+
+class NotFoundException extends Exception {
+}
+
+class LimitExceededException extends Exception {
+}
+
+class InternalServerErrorException extends Exception {
+}
 
 class CurlGenerator {
     private $ch = null;
@@ -59,17 +75,17 @@ class CurlGenerator {
     const IGNORED_API_ERRORS_REGEX = array(
         '/No product with barcode .+ found/'
     );
-    
+
     function __construct($url, $method = METHOD_GET, $jasonData = null, $loginOverride = null, $noApiCall = false, $ignoredResultCodes = null) {
         global $CONFIG;
 
         $config = BBConfig::getInstance();
-        
-        $this->method                    = $method;
-        $this->urlApi                    = $url;
-        $this->ch                        = curl_init();
+
+        $this->method = $method;
+        $this->urlApi = $url;
+        $this->ch     = curl_init();
         if ($ignoredResultCodes != null)
-            $this->ignoredResultCodes    = $ignoredResultCodes;
+            $this->ignoredResultCodes = $ignoredResultCodes;
 
         if ($loginOverride == null) {
             $apiKey = $config["GROCY_API_KEY"];
@@ -87,7 +103,7 @@ class CurlGenerator {
             array_push($headerArray, 'Content-Length: ' . strlen($jasonData));
             curl_setopt($this->ch, CURLOPT_POSTFIELDS, $jasonData);
         }
-        
+
         if ($noApiCall)
             curl_setopt($this->ch, CURLOPT_URL, $url);
         else
@@ -96,7 +112,7 @@ class CurlGenerator {
         curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, $this->method);
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, 0);
-        curl_setopt($this->ch, CURLOPT_USERAGENT,'BarcodeBuddy v' . BB_VERSION_READABLE);
+        curl_setopt($this->ch, CURLOPT_USERAGENT, 'BarcodeBuddy v' . BB_VERSION_READABLE);
         curl_setopt($this->ch, CURLOPT_TIMEOUT, $CONFIG->CURL_TIMEOUT_S);
         if ($CONFIG->CURL_ALLOW_INSECURE_SSL_CA) {
             curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -105,20 +121,20 @@ class CurlGenerator {
             curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, false);
         }
     }
-    
+
     function execute($decode = false) {
         if (DISPLAY_DEBUG) {
             $startTime = microtime(true);
-            DatabaseConnection::getInstance()->saveLog("<i>Executing API call: " . $this->urlApi. "</i>", false, false, true);
+            DatabaseConnection::getInstance()->saveLog("<i>Executing API call: " . $this->urlApi . "</i>", false, false, true);
         }
-        $curlResult   = curl_exec($this->ch);
+        $curlResult = curl_exec($this->ch);
         $this->checkForErrorsAndThrow($curlResult);
         curl_close($this->ch);
 
         $jsonDecoded = json_decode($curlResult, true);
-        if ($decode && isset($jsonDecoded->response->status) && $jsonDecoded->response->status == 'ERROR') 
+        if ($decode && isset($jsonDecoded->response->status) && $jsonDecoded->response->status == 'ERROR')
             throw new InvalidJsonResponseException($jsonDecoded->response->errormessage);
-        
+
         if (isset($jsonDecoded["error_message"])) {
             $isIgnoredError = false;
             foreach (self::IGNORED_API_ERRORS_REGEX as $ignoredError) {
@@ -129,15 +145,14 @@ class CurlGenerator {
                 throw new InvalidJsonResponseException($jsonDecoded["error_message"]);
         }
         if (DISPLAY_DEBUG) {
-            $totalTimeMs = round((microtime(true)- $startTime) * 1000);
+            $totalTimeMs = round((microtime(true) - $startTime) * 1000);
             DatabaseConnection::getInstance()->saveLog("<i>Executing took " . $totalTimeMs . "ms</i>", false, false, true);
         }
         if ($decode)
             return $jsonDecoded;
-         else
+        else
             return $curlResult;
     }
-
 
 
     private function checkForErrorsAndThrow($curlResult) {
@@ -148,21 +163,21 @@ class CurlGenerator {
             return;
 
         switch ($responseCode) {
-            case 400: 
-                 throw new InvalidParameterException();
-                 break;
+            case 400:
+                throw new InvalidParameterException();
+                break;
             case 401:
-                 throw new UnauthorizedException();
-                 break;
+                throw new UnauthorizedException();
+                break;
             case 404:
-                 throw new NotFoundException();
-                 break;
+                throw new NotFoundException();
+                break;
             case 429:
-                 throw new LimitExceededException();
-                 break;
+                throw new LimitExceededException();
+                break;
             case 500:
-                 throw new InternalServerErrorException();
-                 break;
+                throw new InternalServerErrorException();
+                break;
         }
         if ($curlResult === false) {
             if (self::isErrorSslRelated($curlError))
@@ -170,7 +185,7 @@ class CurlGenerator {
             else
                 throw new InvalidServerResponseException();
         } elseif ($curlResult == "" && $responseCode != 204) {
-                throw new InvalidServerResponseException();
+            throw new InvalidServerResponseException();
         }
     }
 
@@ -180,14 +195,14 @@ class CurlGenerator {
 }
 
 class API {
-    
+
     /**
      * Getting info about one or all Grocy products.
-     * 
-     * @param  string ProductId or none, to get a list of all products
+     *
+     * @param string ProductId or none, to get a list of all products
      * @return array Product info or array of products
      */
-    public static function getProductInfo($productId = "") {
+    public static function getProductInfo($productId = ""): ?array {
 
         if ($productId == "") {
             $apiurl = API_O_PRODUCTS;
@@ -196,18 +211,18 @@ class API {
         }
 
         $result = null;  // Assure assignment in event curl throws exception.
-        $curl = new CurlGenerator($apiurl);
+        $curl   = new CurlGenerator($apiurl);
         try {
             $result = $curl->execute(true);
         } catch (Exception $e) {
             self::processError($e, "Could not lookup Grocy product info");
         }
-        if ($productId != "") {
+        if ($result != null && $productId != "") {
             if (isset($result["product"]["id"])) {
                 checkIfNumeric($result["product"]["id"]);
                 $resultArray                             = array();
                 $resultArray["id"]                       = $result["product"]["id"];
-                $resultArray["barcode"]                  = $result["product"]["barcode"];
+                $resultArray["barcode"]                  = $result["product_barcodes"];
                 $resultArray["name"]                     = sanitizeString($result["product"]["name"]);
                 $resultArray["unit"]                     = sanitizeString($result["quantity_unit_stock"]["name"]);
                 $resultArray["stockAmount"]              = sanitizeString($result["stock_amount"]);
@@ -222,17 +237,16 @@ class API {
         }
         return $result;
     }
-    
-    
+
+
     /**
      * Open product with $id
-     * 
-     * @param  String productId
-     * @return none
+     *
+     * @param String productId
      */
     public static function openProduct($id) {
 
-        $data      = json_encode(array(
+        $data   = json_encode(array(
             'amount' => "1"
         ));
         $apiurl = API_STOCK . "/" . $id . "/open";
@@ -244,18 +258,17 @@ class API {
             self::processError($e, "Could not open Grocy product");
         }
     }
-    
-    
+
 
     /**
      *   Check if API details are correct
-     * 
+     *
      * @param String $givenurl URL to Grocy API
-     * @param String $apikey   API key
+     * @param String $apikey API key
      *
      * @return String | true Returns String with error or true if connection could be established
      */
-    public static function checkApiConnection($givenurl, $apikey) {
+    public static function checkApiConnection(string $givenurl, string $apikey) {
         $loginInfo = array(LOGIN_URL => $givenurl, LOGIN_API_KEY => $apikey);
 
         $curl = new CurlGenerator(API_SYTEM_INFO, METHOD_GET, null, $loginInfo);
@@ -264,7 +277,7 @@ class API {
         } catch (InvalidServerResponseException $e) {
             return "Could not connect to server<br>";
         } catch (InvalidJsonResponseException $e) {
-            return "Error: ". $e->getMessage();
+            return "Error: " . $e->getMessage();
         } catch (UnauthorizedException $e) {
             return "Invalid API key<br>";
         } catch (InvalidSSLException $e) {
@@ -280,7 +293,7 @@ class API {
         }
         if (isset($result["grocy_version"]["Version"])) {
             $version = $result["grocy_version"]["Version"];
-            
+
             if (!API::isSupportedGrocyVersion($version)) {
                 return "Grocy " . MIN_GROCY_VERSION . " or newer required. You are running " . $version . ", please upgrade your Grocy instance.<br>";
             } else {
@@ -289,22 +302,22 @@ class API {
         }
         return "Invalid response. Are you using the correct URL?<br>";
     }
-    
+
     /**
      *
      * Check if the installed Grocy version is equal or newer to the required version
-     * 
-     * @param  String reported Grocy version
+     *
+     * @param String reported Grocy version
      * @return boolean true if version supported
      */
-    public static function isSupportedGrocyVersion($version) {
+    public static function isSupportedGrocyVersion($version): bool {
         if (!preg_match("/\d+.\d+.\d+/", $version)) {
             return false;
         }
-        
+
         $version_ex    = explode(".", $version);
         $minVersion_ex = explode(".", MIN_GROCY_VERSION);
-        
+
         if ($version_ex[0] < $minVersion_ex[0]) {
             return false;
         } else if ($version_ex[0] == $minVersion_ex[0] && $version_ex[1] < $minVersion_ex[1]) {
@@ -315,15 +328,15 @@ class API {
             return true;
         }
     }
-    
-    
+
+
     /**
      *
      * Requests the version of the Grocy instance
-     * 
+     *
      * @return String Reported Grocy version
      */
-    public static function getGrocyVersion() {
+    public static function getGrocyVersion(): ?string {
 
         $curl = new CurlGenerator(API_SYTEM_INFO);
         try {
@@ -352,9 +365,9 @@ class API {
      * @param null $defaultBestBefore
      * @return false if default best before date not set
      */
-    public static function purchaseProduct($id, $amount, $bestbefore = null, $price = null, &$fileLock = null, $defaultBestBefore = null) {
+    public static function purchaseProduct($id, $amount, $bestbefore = null, $price = null, &$fileLock = null, $defaultBestBefore = null): bool {
         $data = array(
-            'amount' => $amount,
+            'amount'           => $amount,
             'transaction_type' => 'purchase'
         );
 
@@ -365,14 +378,14 @@ class API {
         if ($bestbefore != null) {
             $daysBestBefore = $bestbefore;
         } else {
-            if ($defaultBestBefore != null) 
+            if ($defaultBestBefore != null)
                 $daysBestBefore = $defaultBestBefore;
-            else 
+            else
                 $daysBestBefore = self::getDefaultBestBeforeDays($id);
         }
         $data['best_before_date'] = self::formatBestBeforeDays($daysBestBefore);
-        $data_json = json_encode($data);
-        $apiurl = API_STOCK . "/" . $id . "/add";
+        $data_json                = json_encode($data);
+        $apiurl                   = API_STOCK . "/" . $id . "/add";
 
         $curl = new CurlGenerator($apiurl, METHOD_POST, $data_json);
         try {
@@ -387,20 +400,18 @@ class API {
         }
         return ($daysBestBefore != 0);
     }
-    
-    
-    
+
+
     /**
      *
      * Removes an item from the default shoppinglist
-     * 
-     * @param  String product id
-     * @param  Int amount
-     * @return none
+     *
+     * @param String product id
+     * @param Int amount
      */
     public static function removeFromShoppinglist($productid, $amount) {
-        $data      = json_encode(array(
-            'product_id' => $productid,
+        $data   = json_encode(array(
+            'product_id'     => $productid,
             'product_amount' => $amount
         ));
         $apiurl = API_SHOPPINGLIST . "remove-product";
@@ -412,19 +423,18 @@ class API {
             self::processError($e, "Could not remove item from shoppinglist");
         }
     }
-    
- 
+
+
     /**
      *
      * Adds an item to the default shoppinglist
-     * 
-     * @param  String product id
-     * @param  Int amount
-     * @return none
+     *
+     * @param String product id
+     * @param Int amount
      */
     public static function addToShoppinglist($productid, $amount) {
-        $data      = json_encode(array(
-            'product_id' => $productid,
+        $data   = json_encode(array(
+            'product_id'     => $productid,
             'product_amount' => $amount
         ));
         $apiurl = API_SHOPPINGLIST . "add-product";
@@ -436,26 +446,23 @@ class API {
             self::processError($e, "Could not add item to shoppinglist");
         }
     }
-    
-    
-    
-    
-   /**
-    * Consumes a product
-    * 
-    * @param  int id
-    * @param  int amount
-    * @param  boolean set true if product was spoiled. Default: false 
-    * @return none
-    */
+
+
+    /**
+     * Consumes a product
+     *
+     * @param int id
+     * @param int amount
+     * @param boolean set true if product was spoiled. Default: false
+     */
     public static function consumeProduct($id, $amount, $spoiled = false) {
 
-        $data      = json_encode(array(
-            'amount' => $amount,
+        $data = json_encode(array(
+            'amount'           => $amount,
             'transaction_type' => 'consume',
-            'spoiled' => $spoiled
+            'spoiled'          => $spoiled
         ));
-        
+
         $apiurl = API_STOCK . "/" . $id . "/consume";
 
         $curl = new CurlGenerator($apiurl, METHOD_POST, $data);
@@ -465,22 +472,21 @@ class API {
             self::processError($e, "Could not consume product");
         }
     }
-    
-    /**
-     * Sets barcode to a Grocy product (replaces all old ones,
-     *  so make sure to request them first)
-     * @param int product id
-     * @param String barcode(s) to set
-     */
-    public static function setBarcode($id, $barcode) {
 
-        $data      = json_encode(array(
-            'barcode' => $barcode
+    /**
+     * Sets barcode to a Grocy product (unlike in the old API, this does not
+     * replace previous barcodes)
+     * @param int product id
+     * @param string  barcode to be set
+     */
+    public static function addBarcode($id, $barcode) {
+
+        $data = json_encode(array(
+            "product_id" => $id,
+            "barcode"    => $barcode
         ));
 
-        $apiurl    = API_O_PRODUCTS . "/" . $id;
-
-        $curl = new CurlGenerator($apiurl, METHOD_PUT, $data);
+        $curl = new CurlGenerator(API_O_BARCODES, METHOD_POST, $data);
         try {
             $curl->execute();
         } catch (Exception $e) {
@@ -489,13 +495,12 @@ class API {
     }
 
 
-
     /**
      * Formats the amount of days into future date
-     * @param  [int] $days  Amount of days a product is consumable, or -1 if it does not expire
-     * @return [String]     Formatted date
+     * @param int $days Amount of days a product is consumable, or -1 if it does not expire
+     * @return false|string  Formatted date
      */
-    private static function formatBestBeforeDays($days) {
+    private static function formatBestBeforeDays(int $days) {
         if ($days == "-1") {
             return "2999-12-31";
         } else {
@@ -506,11 +511,13 @@ class API {
 
     /**
      * Retrieves the default best before date for a product
-     * @param  [int] $id Product id
-     * @return [int]     Amount of days or -1 if it does not expire
+     * @param int $id Product id
+     * @return int     Amount of days or -1 if it does not expire
      */
-    private static function getDefaultBestBeforeDays($id) {
+    private static function getDefaultBestBeforeDays(int $id): int {
         $info = self::getProductInfo($id);
+        if ($info == null)
+            return 0;
         $days = $info["default_best_before_days"];
         checkIfNumeric($days);
         return $days;
@@ -519,12 +526,12 @@ class API {
 
     /**
      * Get a Grocy product by barcode
-     * @param  [String] $barcode barcode to lookup
+     * @param string $barcode barcode to lookup
      * @return array|null        Array if product info or null if barcode
      *                           is not associated with a product
      */
-    public static function getProductByBardcode($barcode) {
-        
+    public static function getProductByBarcode(string $barcode): ?array {
+
         $apiurl = API_STOCK . "/by-barcode/" . $barcode;
 
 
@@ -534,7 +541,7 @@ class API {
         } catch (Exception $e) {
             self::processError($e, "Could not lookup Grocy barcode");
         }
-        
+
         if (isset($result["product"]["id"])) {
             checkIfNumeric($result["product"]["id"]);
             $resultArray                      = array();
@@ -558,15 +565,15 @@ class API {
 
     /**
      * Gets location and amount of stock of a product
-     * @param  [String] $productid  Product id
-     * @return bool|array              Array with location info, null if none in stock
+     * @param int $productid Product id
+     * @return null|array              Array with location info, null if none in stock
      */
-    public static function getProductLocations($productid) {
-        
+    public static function getProductLocations(int $productid): ?array {
+
         $apiurl = API_STOCK . "/" . $productid . "/locations";
 
-
-        $curl = new CurlGenerator($apiurl);
+        $result = null;
+        $curl   = new CurlGenerator($apiurl);
         try {
             $result = $curl->execute(true);
         } catch (Exception $e) {
@@ -582,13 +589,13 @@ class API {
      * @return bool|mixed|string       Either chore if ID, or all chores
      */
     public static function getChoresInfo($choreId = "") {
-        
+
         if ($choreId == "") {
             $apiurl = API_CHORES;
         } else {
             $apiurl = API_CHORES . "/" . $choreId;
         }
-        
+
         $curl = new CurlGenerator($apiurl);
         try {
             $result = $curl->execute(true);
@@ -598,18 +605,18 @@ class API {
         }
         return $result;
     }
-    
-    
+
+
     /**
      * Executes a Grocy chore
      * @param  [int] $choreId Chore id
      */
     public static function executeChore($choreId) {
-        
-        $apiurl    = API_CHORE_EXECUTE . $choreId . "/execute";
-        $data      = json_encode(array(
+
+        $apiurl = API_CHORE_EXECUTE . $choreId . "/execute";
+        $data   = json_encode(array(
             'tracked_time' => "",
-            'done_by' => ""
+            'done_by'      => ""
         ));
 
 
@@ -623,7 +630,7 @@ class API {
 
     public static function processError($e, $errorMessage) {
         $class = get_class($e);
-        switch($class) {
+        switch ($class) {
             case 'InvalidServerResponseException':
                 self::logError("Could not connect to Grocy server: " . $errorMessage);
                 break;
@@ -655,7 +662,7 @@ class API {
         try {
             DatabaseConnection::getInstance()->saveError($errorMessage, $isFatal);
         } catch (DbConnectionDuringEstablishException $_) {
-            // Error occured during the DB connection. As such, DB is not available to log the error.
+            // Error occurred during the DB connection. As such, DB is not available to log the error.
         }
     }
 }

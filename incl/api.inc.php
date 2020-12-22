@@ -30,7 +30,7 @@ const API_STOCK         = 'stock/products';
 const API_CHORE_EXECUTE = 'chores/';
 const API_SYTEM_INFO    = 'system/info';
 
-const MIN_GROCY_VERSION = "2.7.2"; //TODO will be a different version!
+const MIN_GROCY_VERSION = "3.0.0";
 
 
 const METHOD_GET  = "GET";

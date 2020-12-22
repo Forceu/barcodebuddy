@@ -94,7 +94,7 @@ function getHtmlSetupTable($result) {
     						->pattern('[A-Za-z0-9]{50}')
     						->generate();
     if ($result !== true) {
-         $html->addHtml('<span style="color: red; ">Unable to connect to API: ' .$result. '</span>');
+         $html->addHtml('<br><span style="color: red; ">Unable to connect to API: ' .$result. '</span>');
     }
     $html->addLineBreak(2);
     $html->buildButton("button_save", "Save")

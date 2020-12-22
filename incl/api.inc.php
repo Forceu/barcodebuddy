@@ -226,6 +226,7 @@ class API {
                 $resultArray["name"]                     = sanitizeString($result["product"]["name"]);
                 $resultArray["unit"]                     = sanitizeString($result["quantity_unit_stock"]["name"]);
                 $resultArray["stockAmount"]              = sanitizeString($result["stock_amount"]);
+                $resultArray["isTare"]                   = ($result["product"]["enable_tare_weight_handling"] == "1");
                 $resultArray["default_best_before_days"] = $result["product"]["default_best_before_days"];
                 if ($resultArray["stockAmount"] == null) {
                     $resultArray["stockAmount"] = "0";

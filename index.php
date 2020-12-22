@@ -214,19 +214,26 @@ function processButtons() {
                 $log = new LogOutput("Associated barcode $barcode with " . $product["name"], EVENT_TYPE_ASSOCIATE_PRODUCT);
                 $log->setVerbose()->dontSendWebsocket()->createLog();
                 $db->deleteBarcode($id);
-                if ($isConsume) {
-                    if ($product["stockAmount"] < $amount)
-                        $amount = $product["stockAmount"];
-                    API::consumeProduct($gidSelected, $amount);
-                    $log = new LogOutput("Consuming $amount " . $product["unit"] . " of " . $product["name"], EVENT_TYPE_ADD_KNOWN_BARCODE);
+                if ($product["isTare"]) {
+                    if (!$db->isUnknownBarcodeAlreadyStored($barcode))
+                        $db->insertActionRequiredBarcode($barcode, $row["bestBeforeInDays"], $row["price"]);
+                    $log = new LogOutput("Action required: Enter weight for " . $product["name"], EVENT_TYPE_ACTION_REQUIRED, $barcode);
                     $log->setVerbose()->dontSendWebsocket()->createLog();
                 } else {
-                    $additionalLog = "";
-                    if (!API::purchaseProduct($gidSelected, $amount, $row["bestBeforeInDays"], $row["price"])) {
-                        $additionalLog = " [WARNING]: No default best before date set!";
+                    if ($isConsume) {
+                        if ($product["stockAmount"] < $amount)
+                            $amount = $product["stockAmount"];
+                        API::consumeProduct($gidSelected, $amount);
+                        $log = new LogOutput("Consuming $amount " . $product["unit"] . " of " . $product["name"], EVENT_TYPE_ADD_KNOWN_BARCODE);
+                        $log->setVerbose()->dontSendWebsocket()->createLog();
+                    } else {
+                        $additionalLog = "";
+                        if (!API::purchaseProduct($gidSelected, $amount, $row["bestBeforeInDays"], $row["price"])) {
+                            $additionalLog = " [WARNING]: No default best before date set!";
+                        }
+                        $log = new LogOutput("Adding $amount " . $product["unit"] . " of " . $product["name"] . $additionalLog, EVENT_TYPE_ADD_KNOWN_BARCODE);
+                        $log->setVerbose()->dontSendWebsocket()->createLog();
                     }
-                    $log = new LogOutput("Adding $amount " . $product["unit"] . " of " . $product["name"] . $additionalLog, EVENT_TYPE_ADD_KNOWN_BARCODE);
-                    $log->setVerbose()->dontSendWebsocket()->createLog();
                 }
                 QuantityManager::refreshProductName($barcode, $product["name"]);
             }

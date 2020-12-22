@@ -1,4 +1,4 @@
-name: Test
+name: Run Psalm
 on: [push, pull_request]
 jobs:
   build:

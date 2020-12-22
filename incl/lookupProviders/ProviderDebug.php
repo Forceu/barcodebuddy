@@ -19,17 +19,16 @@ require_once __DIR__ . "/../api.inc.php";
 
 class ProviderDebug extends LookupProvider {
 
-    /** @psalm-assert false IS_ENABLED */
     const IS_ENABLED    = false;
     const RETURN_STRING = "This is a test result";
 
     function __construct($apiKey = null) {
         parent::__construct($apiKey);
-        $this->providerName      = "UPC Item DB";
+        $this->providerName      = "Debug Lookup";
         $this->providerConfigKey = "USE_DEBUG_LOOKUP";
     }
 
-    public function lookupBarcode($barcode) {
+    public function lookupBarcode($barcode): ?string {
         if (self::IS_ENABLED)
             return self::RETURN_STRING;
         else

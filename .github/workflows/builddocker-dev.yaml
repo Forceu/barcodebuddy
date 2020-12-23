@@ -16,7 +16,7 @@ jobs:
 
     - name: build x64
       run: |
-        VERSION=$(curl -sX GET "https://api.github.com/repos/Forceu/barcodebuddy/releases/latest" | awk '/tag_name/{print $4; exit}' FS='[""]')
+        VERSION=$(curl -s -X GET "https://api.github.com/repos/Forceu/barcodebuddy/releases/latest" | awk '/tag_name/{print $4; exit}' FS='[""]')
         curl -u ":$TOKEN" \
         -X POST \
         -H "Accept: application/vnd.github.v3+json" \
@@ -24,7 +24,7 @@ jobs:
         -d '{"ref": "master", "inputs": {"version": "${VERSION}"}}'
     - name: build arm32
       run: |
-        VERSION=$(curl -sX GET "https://api.github.com/repos/Forceu/barcodebuddy/releases/latest" | awk '/tag_name/{print $4; exit}' FS='[""]')
+        VERSION=$(curl -s -X GET "https://api.github.com/repos/Forceu/barcodebuddy/releases/latest" | awk '/tag_name/{print $4; exit}' FS='[""]')
         curl -u ":$TOKEN" \
         -X POST \
         -H "Accept: application/vnd.github.v3+json" \
@@ -32,7 +32,7 @@ jobs:
         -d '{"ref": "master", "inputs": {"version": "${VERSION}"}}'
     - name: build arm64
       run: |
-        VERSION=$(curl -sX GET "https://api.github.com/repos/Forceu/barcodebuddy/releases/latest" | awk '/tag_name/{print $4; exit}' FS='[""]')
+        VERSION=$(curl -s -X GET "https://api.github.com/repos/Forceu/barcodebuddy/releases/latest" | awk '/tag_name/{print $4; exit}' FS='[""]')
         curl -u ":$TOKEN" \
         -X POST \
         -H "Accept: application/vnd.github.v3+json" \

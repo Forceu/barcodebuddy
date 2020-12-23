@@ -12,16 +12,21 @@ jobs:
       TOKEN: ${{ secrets.ACCESS_TOKEN_REPO }}
     
     steps:
+    - uses: oprypin/find-latest-tag@v1
+      with:
+        repository: Forceu/barcodebuddy 
+        releases-only: true 
+      id: latestversion
+
     - uses: actions/checkout@v2
 
     - name: build x64
       run: |
-        VERSION=$(curl -s -X GET "https://api.github.com/repos/Forceu/barcodebuddy/releases/latest" | awk '/tag_name/{print $4; exit}' FS='[""]')
         curl -u ":$TOKEN" \
         -X POST \
         -H "Accept: application/vnd.github.v3+json" \
         https://api.github.com/repos/forceu/barcodebuddy-docker/actions/workflows/docker-publish-x64.yml/dispatches \
-        -d '{"ref": "master", "inputs": {"version": "${VERSION}"}}'
+        -d '{"ref": "master", "inputs": {"version": "${{ steps.latestversion.outputs.tag }}"}}'
     - name: build arm32
       run: |
         VERSION=$(curl -s -X GET "https://api.github.com/repos/Forceu/barcodebuddy/releases/latest" | awk '/tag_name/{print $4; exit}' FS='[""]')
@@ -29,7 +34,7 @@ jobs:
         -X POST \
         -H "Accept: application/vnd.github.v3+json" \
         https://api.github.com/repos/forceu/barcodebuddy-docker/actions/workflows/docker-publish-arm32.yml/dispatches \
-        -d '{"ref": "master", "inputs": {"version": "${VERSION}"}}'
+        -d '{"ref": "master", "inputs": {"version": "${{ steps.latestversion.outputs.tag }}"}}'
     - name: build arm64
       run: |
         VERSION=$(curl -s -X GET "https://api.github.com/repos/Forceu/barcodebuddy/releases/latest" | awk '/tag_name/{print $4; exit}' FS='[""]')
@@ -37,4 +42,4 @@ jobs:
         -X POST \
         -H "Accept: application/vnd.github.v3+json" \
         https://api.github.com/repos/forceu/barcodebuddy-docker/actions/workflows/docker-publish-arm64.yml/dispatches \
-        -d '{"ref": "master", "inputs": {"version": "${VERSION}"}}'
+        -d '{"ref": "master", "inputs": {"version": "${{ steps.latestversion.outputs.tag }}"}}'

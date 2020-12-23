@@ -16,6 +16,7 @@ jobs:
       with:
         repository: Forceu/barcodebuddy 
         releases-only: true 
+	prefix: 'v'
       id: latestversion
 
     - uses: actions/checkout@v2

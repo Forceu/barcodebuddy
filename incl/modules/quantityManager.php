@@ -55,7 +55,8 @@ class QuantityManager {
      *
      * @param $barcode
      * @param $amount
-     * @param null $product
+     * @param $product
+     * @throws DbConnectionDuringEstablishException
      */
     public static function addUpdateEntry($barcode, $amount, $product = null) {
         checkIfNumeric($amount);

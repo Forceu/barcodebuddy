@@ -32,7 +32,7 @@ class ProviderUpcDatabase extends LookupProvider {
      * @param string $barcode The barcode to lookup
      * @return null|string         Name of product, null if none found
      */
-    public function lookupBarcode($barcode): ?string {
+    public function lookupBarcode(string $barcode): ?string {
         $upcdb_key = BBConfig::getInstance()['LOOKUP_UPC_DATABASE_KEY'];
         if (!$this->isProviderEnabled() || !$upcdb_key)
             return null;

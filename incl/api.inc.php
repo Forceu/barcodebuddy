@@ -22,14 +22,15 @@ require_once __DIR__ . "/db.inc.php";
 require_once __DIR__ . "/config.inc.php";
 require_once __DIR__ . "/redis.inc.php";
 
-const API_O_BARCODES    = 'objects/product_barcodes';
-const API_PRODUCTS      = 'stock/products';
-const API_ALL_PRODUCTS  = 'stock';
-const API_SHOPPINGLIST  = 'stock/shoppinglist/';
-const API_CHORES        = 'objects/chores';
-const API_STOCK         = 'stock/products';
-const API_CHORE_EXECUTE = 'chores/';
-const API_SYTEM_INFO    = 'system/info';
+const API_O_BARCODES       = 'objects/product_barcodes';
+const API_PRODUCTS         = 'stock/products';
+const API_ALL_PRODUCTS     = 'stock';
+const API_SHOPPINGLIST     = 'stock/shoppinglist/';
+const API_CHORES           = 'objects/chores';
+const API_STOCK            = 'stock/products';
+const API_STOCK_BY_BARCODE = API_STOCK . "/by-barcode/";
+const API_CHORE_EXECUTE    = 'chores/';
+const API_SYTEM_INFO       = 'system/info';
 
 const MIN_GROCY_VERSION = "3.0.0";
 
@@ -570,15 +571,13 @@ class API {
         return $days;
     }
 
-
     /**
      * Get a Grocy product by barcode
      * @param string $barcode barcode to lookup
-     * @return array|null        Array if product info or null if barcode
-     *                           is not associated with a product
+     * @return GrocyProduct|null Product info or null if barcode is not associated with a product
      */
     public static function getProductByBarcode(string $barcode): ?GrocyProduct {
-        $apiurl = API_STOCK . "/by-barcode/" . $barcode;
+        $apiurl = API_STOCK_BY_BARCODE . $barcode;
         $curl   = new CurlGenerator($apiurl);
         try {
             $result = $curl->execute(true);
@@ -588,9 +587,8 @@ class API {
 
         if (isset($result["product"]["id"])) {
             return GrocyProduct::parseProductInfo($result);
-        } else {
-            return null;
         }
+        return null;
     }
 
 
@@ -616,18 +614,29 @@ class API {
 
     /**
      * Getting info of a Grocy chore
-     * @param string $choreId Chore ID. If not passed, all chores are looked up
-     * @return bool|mixed|string       Either chore if ID, or all chores
+     * @param string $choreId Chore ID.
+     * @return null|array       Either chore if ID, or all chores
      */
-    public static function getChoresInfo($choreId = "") {
-
-        if ($choreId == "") {
-            $apiurl = API_CHORES;
-        } else {
-            $apiurl = API_CHORES . "/" . $choreId;
+    public static function getChoresInfo(string $choreId): ?array {
+        $apiurl = API_CHORES . "/" . $choreId;
+        $curl   = new CurlGenerator($apiurl);
+        try {
+            $result = $curl->execute(true);
+        } catch (Exception $e) {
+            self::processError($e, "Could not get chore info");
+            return null;
         }
+        return $result;
+    }
 
-        $curl = new CurlGenerator($apiurl);
+
+    /**
+     * Getting info of all Grocy chores
+     * @return array|null       Array with all chore infos or null
+     */
+    public static function getAllChoresInfo(): ?array {
+        $apiurl = API_CHORES;
+        $curl   = new CurlGenerator($apiurl);
         try {
             $result = $curl->execute(true);
         } catch (Exception $e) {

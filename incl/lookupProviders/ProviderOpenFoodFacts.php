@@ -30,7 +30,7 @@ class ProviderOpenFoodFacts extends LookupProvider {
      * @param string $barcode The barcode to lookup
      * @return null|string         Name of product, null if none found
      */
-    public function lookupBarcode($barcode) {
+    public function lookupBarcode(string $barcode): ?string {
         if (!$this->isProviderEnabled())
             return null;
 

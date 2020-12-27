@@ -22,8 +22,15 @@ require_once __DIR__ . "/config.inc.php";
 require_once __DIR__ . "/lookupProviders/BarcodeLookup.class.php";
 
 
-// Function that is called when a barcode is passed on
-function processNewBarcode($barcodeInput, $bestBeforeInDays = null, $price = null) {
+/**
+ * Function that is called when a barcode is passed on
+ * @param $barcodeInput
+ * @param null $bestBeforeInDays
+ * @param null $price
+ * @return string
+ * @throws DbConnectionDuringEstablishException
+ */
+function processNewBarcode($barcodeInput, $bestBeforeInDays = null, $price = null): string {
     $db     = DatabaseConnection::getInstance();
     $config = BBConfig::getInstance();
 
@@ -82,13 +89,13 @@ function processNewBarcode($barcodeInput, $bestBeforeInDays = null, $price = nul
     $sanitizedBarcode = sanitizeString($barcode);
     $lockGenerator    = new LockGenerator();
     $lockGenerator->createLock();
-    $productInfo = API::getProductByBarcode($sanitizedBarcode);
-    if ($productInfo == null) {
+    $productInfoFromBarcode = API::getProductByBarcode($sanitizedBarcode);
+    if ($productInfoFromBarcode == null) {
         $db->saveLastBarcode($sanitizedBarcode);
         return processUnknownBarcode($sanitizedBarcode, true, $lockGenerator, $bestBeforeInDays, $price);
     } else {
-        $db->saveLastBarcode($sanitizedBarcode, $productInfo->name);
-        return processKnownBarcode($productInfo, $sanitizedBarcode, true, $lockGenerator, $bestBeforeInDays, $price);
+        $db->saveLastBarcode($sanitizedBarcode, $productInfoFromBarcode->name);
+        return processKnownBarcode($productInfoFromBarcode, $sanitizedBarcode, true, $lockGenerator, $bestBeforeInDays, $price);
     }
 }
 
@@ -154,7 +161,12 @@ const WS_RESULT_MODE_CHANGE       = 4;
 const WS_RESULT_ERROR             = 'E';
 
 
-//Execute a chore when chore barcode was submitted
+/**
+ * Execute a chore when chore barcode was submitted
+ * @param $barcode
+ * @return mixed
+ * @throws DbConnectionDuringEstablishException
+ */
 function processChoreBarcode($barcode) {
     $id = ChoreManager::getChoreBarcode(sanitizeString($barcode))['choreId'];
     checkIfNumeric($id);
@@ -188,11 +200,11 @@ function processUnknownBarcode($barcode, $websocketEnabled, &$fileLock, $bestBef
             ->setWebsocketResultCode(WS_RESULT_PRODUCT_LOOKED_UP)
             ->createLog();
     } else {
-        $productname = "N/A";
+        $productname = null;
         if (is_numeric($barcode)) {
             $productname = BarcodeLookup::lookup($barcode);
         }
-        if ($productname != "N/A") {
+        if ($productname != null) {
             $db->insertUnrecognizedBarcode($barcode, $amount, $bestBeforeInDays, $price, $productname, TagManager::getProductIdByPossibleTag($productname));
             $log    = new LogOutput("Unknown barcode looked up, found name: " . $productname, EVENT_TYPE_ADD_NEW_BARCODE, $barcode);
             $output = $log
@@ -630,7 +642,7 @@ function sortChores($a, $b) {
  * @throws DbConnectionDuringEstablishException
  */
 function getAllChores(): array {
-    $chores       = API::getChoresInfo();
+    $chores       = API::getAllChoresInfo();
     $barcodes     = ChoreManager::getBarcodes();
     $returnChores = array();
 

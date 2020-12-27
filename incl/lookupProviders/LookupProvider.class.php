@@ -37,7 +37,7 @@ class LookupProvider {
     protected function isProviderEnabled(): bool {
         if ($this->providerConfigKey == null)
             throw new Exception('providerConfigKey needs to be overriden!');
-        return BBConfig::getInstance()[$this->providerConfigKey];
+        return BBConfig::getInstance()[$this->providerConfigKey] == "1";
     }
 
     /**
@@ -46,7 +46,7 @@ class LookupProvider {
      * @return null|string         Name of product, null if none found
      * @throws Exception
      */
-    public function lookupBarcode($barcode) {
+    public function lookupBarcode(string $barcode): ?string {
         throw new Exception('lookupBarcode needs to be overriden!');
     }
 

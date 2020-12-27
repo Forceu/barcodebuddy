@@ -28,7 +28,7 @@ class ProviderDebug extends LookupProvider {
         $this->providerConfigKey = "USE_DEBUG_LOOKUP";
     }
 
-    public function lookupBarcode($barcode): ?string {
+    public function lookupBarcode(string $barcode): ?string {
         if (self::IS_ENABLED)
             return self::RETURN_STRING;
         else

@@ -45,7 +45,6 @@ if (isset($argv[1])) {
     die;
 }
 
-
 $CONFIG->checkIfAuthenticated(true);
 
 //If invalid settings are set, load setup

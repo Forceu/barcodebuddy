@@ -28,7 +28,7 @@ const API_ALL_PRODUCTS     = 'stock';
 const API_SHOPPINGLIST     = 'stock/shoppinglist/';
 const API_CHORES           = 'objects/chores';
 const API_STOCK            = 'stock/products';
-const API_STOCK_BY_BARCODE = API_STOCK . "/by-barcode/";
+const API_STOCK_BY_BARCODE = 'stock/products/by-barcode/';
 const API_CHORE_EXECUTE    = 'chores/';
 const API_SYTEM_INFO       = 'system/info';
 
@@ -241,6 +241,16 @@ class API {
      * @return array|null Array of products
      */
     public static function getAllProductsInfo(): ?array {
+        $updateRedisCache = false;
+
+        if (RedisConnection::isRedisAvailable()) {
+            if (RedisConnection::isCacheAvailable()) {
+                $cachedResult = RedisConnection::getAllProductsInfo();
+                if ($cachedResult != null)
+                    return $cachedResult;
+            }
+            $updateRedisCache = true;
+        }
         $apiurl = API_ALL_PRODUCTS;
 
         $result = null;  // Assure assignment in event curl throws exception.
@@ -255,6 +265,9 @@ class API {
             foreach ($result as $product) {
                 array_push($products, GrocyProduct::parseProductInfo($product));
             }
+            if ($updateRedisCache) {
+                RedisConnection::cacheAllProductsInfo($products);
+            }
             return $products;
         }
         return null;
@@ -263,7 +276,7 @@ class API {
     /**
      * Getting info about one Grocy product.
      *
-     * @param string ProductId or none, to get a list of all products
+     * @param string ProductId
      * @return GrocyProduct Product info or array of products
      */
     public static function getProductInfo($productId): ?GrocyProduct {
@@ -540,6 +553,9 @@ class API {
         } catch (Exception $e) {
             self::processError($e, "Could not set Grocy barcode");
         }
+        if (RedisConnection::isRedisAvailable()) {
+            RedisConnection::expireAllBarcodes();
+        }
     }
 
 
@@ -571,12 +587,39 @@ class API {
         return $days;
     }
 
+
     /**
-     * Get a Grocy product by barcode
+     * Get a Grocy product by barcode, is able to cache
      * @param string $barcode barcode to lookup
      * @return GrocyProduct|null Product info or null if barcode is not associated with a product
      */
     public static function getProductByBarcode(string $barcode): ?GrocyProduct {
+        $cachedResult = null;
+        if (RedisConnection::isRedisAvailable()) {
+            if (RedisConnection::isCacheAvailable()) {
+                $cachedResult = RedisConnection::getAllBarcodes();
+            }
+        }
+        if ($cachedResult == null) {
+            $allBarcodes = self::getAllBarcodes();
+            RedisConnection::cacheAllBarcodes($allBarcodes);
+        } else {
+            $allBarcodes = $cachedResult;
+        }
+        if (!isset($allBarcodes[$barcode])) {
+            return null;
+        } else {
+            return self::getProductInfo($allBarcodes[$barcode]);
+        }
+    }
+
+
+    /**
+     * Get a Grocy product by barcode from API, currently unused
+     * @param string $barcode barcode to lookup
+     * @return GrocyProduct|null Product info or null if barcode is not associated with a product
+     */
+    public static function getProductByBarcodeLegacy(string $barcode): ?GrocyProduct {
         $apiurl = API_STOCK_BY_BARCODE . $barcode;
         $curl   = new CurlGenerator($apiurl);
         try {
@@ -589,6 +632,23 @@ class API {
             return GrocyProduct::parseProductInfo($result);
         }
         return null;
+    }
+
+    public static function getAllBarcodes(): ?array {
+        $curl = new CurlGenerator(API_O_BARCODES);
+        try {
+            $curlResult = $curl->execute(true);
+        } catch (Exception $e) {
+            self::processError($e, "Could not lookup Grocy barcodes");
+            return null;
+        }
+        $result = array();
+        foreach ($curlResult as $item) {
+            if (!isset($item["barcode"]) || !isset($item["product_id"]))
+                continue;
+            $result[$item["barcode"]] = $item["product_id"];
+        }
+        return $result;
     }
 
 
@@ -617,7 +677,7 @@ class API {
      * @param string $choreId Chore ID.
      * @return null|array       Either chore if ID, or all chores
      */
-    public static function getChoresInfo(string $choreId): ?array {
+    public static function getChoreInfo(string $choreId): ?array {
         $apiurl = API_CHORES . "/" . $choreId;
         $curl   = new CurlGenerator($apiurl);
         try {
@@ -707,20 +767,22 @@ class API {
     }
 
     public static function runBenchmark($id) {
+        //TODO disable cache
         $randomBarcode = "rand" . rand(10, 10000);
         echo "Running benchmark with product ID $id:\n\n";
         self::benchmarkApiCall("getAllProductsInfo");
         self::benchmarkApiCall("getProductInfo", $id);
         self::benchmarkApiCall("openProduct", $id);
-        self::benchmarkApiCall("getGrocyVersion", $id);
+        self::benchmarkApiCall("getGrocyVersion");
         self::benchmarkApiCall("purchaseProduct", $id, 1);
         self::benchmarkApiCall("addToShoppinglist", $id, 1);
         self::benchmarkApiCall("removeFromShoppinglist", $id, 1);
         self::benchmarkApiCall("consumeProduct", $id, 1);
         self::benchmarkApiCall("addBarcode", $id, $randomBarcode);
+        self::benchmarkApiCall("getAllBarcodes");
         self::benchmarkApiCall("getProductByBarcode", $randomBarcode);
         self::benchmarkApiCall("getProductLocations", $id);
-        self::benchmarkApiCall("getChoresInfo");
+        self::benchmarkApiCall("getAllChoresInfo");
         die();
     }
 

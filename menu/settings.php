@@ -42,12 +42,15 @@ $webUi->addCard("General Settings", getHtmlSettingsGeneral());
 $webUi->addCard("Barcode Lookup Providers", getHtmlSettingsBarcodeLookup());
 $webUi->addCard("Grocy API", getHtmlSettingsGrocyApi());
 $webUi->addCard("Websocket Server Status", getHtmlSettingsWebsockets());
+$webUi->addCard("Redis Cache", getHtmlSettingsRedis());
 $webUi->addFooter();
 $webUi->printHtml();
 
 
-//Called when settings were saved. For each input, the setting
-//is saved as a database entry
+/**
+ * Called when settings were saved. For each input, the setting
+ * is saved as a database entry
+ */
 function saveSettings() {
     $db     = DatabaseConnection::getInstance();
     $config = BBConfig::getInstance();
@@ -70,7 +73,10 @@ function saveSettings() {
 }
 
 
-function getHtmlSettingsGeneral() {
+/**
+ * @return string
+ */
+function getHtmlSettingsGeneral(): string {
     $config = BBConfig::getInstance();
     $html   = new UiEditor(true, null, "settings1");
     $html->addHtml('<div class="flex-settings">');
@@ -106,7 +112,10 @@ function getHtmlSettingsGeneral() {
 }
 
 
-function getHtmlSettingsGrocyApi() {
+/**
+ * @return string
+ */
+function getHtmlSettingsGrocyApi(): string {
     $config = BBConfig::getInstance();
     $html   = new UiEditor(true, null, "settings2");
     $html->buildEditField('GROCY_API_URL', 'Grocy API URL', $config["GROCY_API_URL"])
@@ -121,7 +130,10 @@ function getHtmlSettingsGrocyApi() {
     return $html->getHtml();
 }
 
-function getHtmlSettingsBarcodeLookup() {
+/**
+ * @return string
+ */
+function getHtmlSettingsBarcodeLookup(): string {
     $config = BBConfig::getInstance();
     $html   = new UiEditor(true, null, "settings3");
     $html->addCheckbox('LOOKUP_USE_OFF', 'Use OpenFoodFacts.org', $config["LOOKUP_USE_OFF"]);
@@ -164,7 +176,10 @@ function getHtmlSettingsBarcodeLookup() {
 }
 
 
-function checkGrocyConnection() {
+/**
+ * @return string
+ */
+function checkGrocyConnection(): string {
     $config = BBConfig::getInstance();
     $result = API::checkApiConnection($config["GROCY_API_URL"], $config["GROCY_API_KEY"]);
     if ($result === true) {
@@ -175,12 +190,28 @@ function checkGrocyConnection() {
 }
 
 
-function getHtmlSettingsWebsockets() {
+/**
+ * @return string
+ */
+function getHtmlSettingsWebsockets(): string {
     global $CONFIG;
     $sp = websocket_open('localhost', $CONFIG->PORT_WEBSOCKET_SERVER, '', $errorstr, 5);
     if ($sp !== false) {
         return '<span style="color:green">Websocket server is running.</span>';
     } else {
         return '<span style="color:red">Websocket server is not running! ' . $errorstr . '</span>';
+    }
+}
+
+/**
+ * @return string
+ */
+function getHtmlSettingsRedis(): string {
+    global $CONFIG;
+    if (RedisConnection::isRedisAvailable()) {
+        return '<span style="color:green">Redis cache is available.</span>';
+    } else {
+        $error = RedisConnection::getErrorMessage();
+        return '<span style="color:red">Cannot connect to Rediscache! ' . $error . '</span>';
     }
 }

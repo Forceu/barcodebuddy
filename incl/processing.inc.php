@@ -171,7 +171,7 @@ function processChoreBarcode($barcode) {
     $id = ChoreManager::getChoreBarcode(sanitizeString($barcode))['choreId'];
     checkIfNumeric($id);
     API::executeChore($id);
-    return sanitizeString(API::getChoresInfo($id)["name"]);
+    return sanitizeString(API::getChoreInfo($id)["name"]);
 }
 
 /**
@@ -308,6 +308,9 @@ function processModeChangeGetParameter($modeParameter) {
  * @throws DbConnectionDuringEstablishException
  */
 function processRefreshedBarcode($barcode) {
+    if (RedisConnection::isRedisAvailable()) {
+        RedisConnection::expireAllBarcodes();
+    }
     $productInfo = API::getProductByBarcode($barcode);
     if ($productInfo != null) {
         DatabaseConnection::getInstance()->updateSavedBarcodeMatch($barcode, $productInfo->id);

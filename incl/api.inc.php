@@ -20,6 +20,7 @@
 require_once __DIR__ . "/configProcessing.inc.php";
 require_once __DIR__ . "/db.inc.php";
 require_once __DIR__ . "/config.inc.php";
+require_once __DIR__ . "/redis.incl.php";
 
 const API_O_PRODUCTS    = 'objects/products';
 const API_O_BARCODES    = 'objects/product_barcodes';
@@ -665,5 +666,46 @@ class API {
         } catch (DbConnectionDuringEstablishException $_) {
             // Error occurred during the DB connection. As such, DB is not available to log the error.
         }
+    }
+
+    public static function runBenchmark($id) {
+        $randomBarcode = "rand" . rand(10, 10000);
+        echo "Running benchmark with product ID $id:\n\n";
+        self::benchmarkApiCall("getProductInfo");
+        self::benchmarkApiCall("getProductInfo", $id);
+        self::benchmarkApiCall("openProduct", $id);
+        self::benchmarkApiCall("getGrocyVersion", $id);
+        self::benchmarkApiCall("purchaseProduct", $id, 1);
+        self::benchmarkApiCall("addToShoppinglist", $id, 1);
+        self::benchmarkApiCall("removeFromShoppinglist", $id, 1);
+        self::benchmarkApiCall("consumeProduct", $id, 1);
+        self::benchmarkApiCall("addBarcode", $id, $randomBarcode);
+        self::benchmarkApiCall("getProductByBarcode", $randomBarcode);
+        self::benchmarkApiCall("getProductLocations", $id);
+        self::benchmarkApiCall("getChoresInfo");
+        die();
+    }
+
+    private static function benchmarkApiCall($apiCall, ...$param) {
+        $timeStart = microtime(true);
+        $name      = "$apiCall(";
+        foreach ($param as $parameter) {
+            $name = $name . $parameter . ", ";
+        }
+        $name = rtrim($name, ", ") . ")";
+        switch (sizeof($param)) {
+            case 0:
+                call_user_func("API::" . $apiCall);
+                break;
+            case 1:
+                call_user_func("API::" . $apiCall, $param[0]);
+                break;
+            case 2:
+                call_user_func("API::" . $apiCall, $param[0], $param[1]);
+                break;
+        }
+        $timeTotal = round((microtime(true) - $timeStart) * 1000);
+        echo "Running $name took $timeTotal ms.\n";
+
     }
 }

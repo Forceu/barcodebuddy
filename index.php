@@ -31,6 +31,13 @@ if (isset($_GET["version"]) || (isset($argv[1]) && $argv[1] == "-v")) {
     die("BarcodeBuddy " . BB_VERSION);
 }
 
+//Run API benchmark when the parameter --benchmark is supplied
+if (isset($argv[1]) && $argv[1] == "--benchmark") {
+    if (isset($argv[2]) && is_numeric($argv[2]))
+        API::runBenchmark($argv[2]);
+    else
+        die("Benchmark requires a numeric parameter with the product ID to test, eg 'php index.php --benchmark 1'");
+}
 
 //If arguments are passed with the CLI, parse them as barcode
 if (isset($argv[1])) {

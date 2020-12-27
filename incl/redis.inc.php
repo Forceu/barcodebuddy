@@ -33,8 +33,11 @@ class RedisConnection {
      * @throws RedisException Exception when unable to connect, for some reason not documented
      */
     private static function establishConnection(): ?Redis {
+        $config = BBConfig::getInstance();
+        if (!$config["USE_REDIS"])
+            return null;
         $redis       = new Redis();
-        $isConnected = $redis->connect('127.0.0.1', 6379, 0.2);
+        $isConnected = $redis->connect($config["REDIS_IP"], $config["REDIS_PORT"], 0.2);
         if (!$isConnected)
             return null;
         return $redis;

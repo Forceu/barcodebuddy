@@ -82,7 +82,10 @@ class DatabaseConnection {
         "LOOKUP_USE_UPC"          => "1",
         "LOOKUP_USE_JUMBO"        => "0",
         "LOOKUP_USE_UPC_DATABASE" => "0",
-        "LOOKUP_UPC_DATABASE_KEY" => null);
+        "LOOKUP_UPC_DATABASE_KEY" => null,
+        "USE_REDIS"               => "0",
+        "REDIS_IP"                => "127.0.0.1",
+        "REDIS_PORT"              => "6379");
 
 
     const DB_INT_VALUES = array("REVERT_TIME");

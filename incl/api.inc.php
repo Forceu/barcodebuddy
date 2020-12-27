@@ -92,8 +92,8 @@ class GrocyProduct {
         $result->quFactor              = sanitizeString($infoArray["product"]["qu_factor_purchase_to_stock"]);
         $result->defaultBestBeforeDays = $infoArray["product"]["default_best_before_days"];
         $result->creationDate          = $infoArray["product"]["row_created_timestamp"];
-        $result->unit                  = sanitizeString($infoArray["product"]["quantity_unit_stock"]["name"]);
-        $result->barcodes              = $infoArray["product"]["product_barcodes"];
+        $result->unit                  = sanitizeString($infoArray["quantity_unit_stock"]["name"]);
+        $result->barcodes              = $infoArray["product_barcodes"];
 
         if (sanitizeString($infoArray["stock_amount"]) != null)
             $result->stockAmount = sanitizeString($infoArray["stock_amount"]);
@@ -249,13 +249,14 @@ class API {
     /**
      * Getting info all Grocy products.
      *
+     * @param bool $ignoreCache If true, cache will be ignored and afterwards updated.
      * @return GrocyProduct[]|null Array of products
      */
-    public static function getAllProductsInfo(): ?array {
+    public static function getAllProductsInfo($ignoreCache = false): ?array {
         $updateRedisCache = false;
 
         if (RedisConnection::isRedisAvailable()) {
-            if (RedisConnection::isCacheAvailable()) {
+            if (!$ignoreCache && RedisConnection::isCacheAvailable()) {
                 $cachedResult = RedisConnection::getAllProductsInfo();
                 if ($cachedResult != null)
                     return $cachedResult;
@@ -620,24 +621,11 @@ class API {
     /**
      * Get a Grocy product by barcode, is able to cache
      * @param string $barcode barcode to lookup
+     * @param bool $ignoreCache Cache will be ignored if true
      * @return GrocyProduct|null Product info or null if barcode is not associated with a product
      */
-    public static function getProductByBarcode(string $barcode): ?GrocyProduct {
-        $cachedResult = null;
-        $updateRedis  = false;
-        if (RedisConnection::isRedisAvailable()) {
-            if (RedisConnection::isCacheAvailable()) {
-                $cachedResult = RedisConnection::getAllBarcodes();
-            } else
-                $updateRedis = true;
-        }
-        if ($cachedResult == null) {
-            $allBarcodes = self::getAllBarcodes();
-            if ($updateRedis)
-                RedisConnection::cacheAllBarcodes($allBarcodes);
-        } else {
-            $allBarcodes = $cachedResult;
-        }
+    public static function getProductByBarcode(string $barcode, $ignoreCache = false): ?GrocyProduct {
+        $allBarcodes = self::getAllBarcodes($ignoreCache);
         if (!isset($allBarcodes[$barcode])) {
             return null;
         } else {
@@ -666,7 +654,20 @@ class API {
         return null;
     }
 
-    public static function getAllBarcodes(): ?array {
+    /**
+     * @param bool $ignoreCache If true, cache will be ignored and afterwards updated.
+     * @return array|null
+     */
+    public static function getAllBarcodes($ignoreCache = false): ?array {
+        $updateRedis = false;
+        if (RedisConnection::isRedisAvailable()) {
+            if (!$ignoreCache && RedisConnection::isCacheAvailable()) {
+                return RedisConnection::getAllBarcodes();
+            } else {
+                $updateRedis = true;
+            }
+        }
+
         $curl = new CurlGenerator(API_O_BARCODES);
         try {
             $curlResult = $curl->execute(true);
@@ -680,6 +681,8 @@ class API {
                 continue;
             $result[$item["barcode"]] = $item["product_id"];
         }
+        if ($updateRedis)
+            RedisConnection::cacheAllBarcodes($result);
         return $result;
     }
 
@@ -802,6 +805,8 @@ class API {
         //TODO disable cache
         $randomBarcode = "rand" . rand(10, 10000);
         echo "Running benchmark with product ID $id:\n\n";
+        $timeStart = microtime(true);
+        self::benchmarkApiCall("getAllProductsInfo", true);
         self::benchmarkApiCall("getAllProductsInfo");
         self::benchmarkApiCall("getProductInfo", $id);
         self::benchmarkApiCall("openProduct", $id);
@@ -811,10 +816,14 @@ class API {
         self::benchmarkApiCall("removeFromShoppinglist", $id, 1);
         self::benchmarkApiCall("consumeProduct", $id, 1);
         self::benchmarkApiCall("addBarcode", $id, $randomBarcode);
+        self::benchmarkApiCall("getAllBarcodes", true);
         self::benchmarkApiCall("getAllBarcodes");
+        self::benchmarkApiCall("getProductByBarcode", $randomBarcode, true);
         self::benchmarkApiCall("getProductByBarcode", $randomBarcode);
         self::benchmarkApiCall("getProductLocations", $id);
         self::benchmarkApiCall("getAllChoresInfo");
+        $timeTotal = round((microtime(true) - $timeStart) * 1000);
+        echo "\nTotal time: $timeTotal ms\n";
         die();
     }
 

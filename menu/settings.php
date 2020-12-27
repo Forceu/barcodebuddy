@@ -41,8 +41,8 @@ $webUi->addHeader();
 $webUi->addCard("General Settings", getHtmlSettingsGeneral());
 $webUi->addCard("Barcode Lookup Providers", getHtmlSettingsBarcodeLookup());
 $webUi->addCard("Grocy API", getHtmlSettingsGrocyApi());
-$webUi->addCard("Websocket Server Status", getHtmlSettingsWebsockets());
 $webUi->addCard("Redis Cache", getHtmlSettingsRedis());
+$webUi->addCard("Websocket Server Status", getHtmlSettingsWebsockets());
 $webUi->addFooter();
 $webUi->printHtml();
 
@@ -189,6 +189,18 @@ function checkGrocyConnection(): string {
     }
 }
 
+/**
+ * @return string
+ */
+function checkRedisConnection(): string {
+    if (RedisConnection::isRedisAvailable()) {
+        return '<span style="color:green">Redis cache is available.</span>';
+    } else {
+        $error = RedisConnection::getErrorMessage();
+        return '<span style="color:red">Cannot connect to Rediscache! ' . $error . '</span>';
+    }
+}
+
 
 /**
  * @return string
@@ -207,11 +219,20 @@ function getHtmlSettingsWebsockets(): string {
  * @return string
  */
 function getHtmlSettingsRedis(): string {
-    global $CONFIG;
-    if (RedisConnection::isRedisAvailable()) {
-        return '<span style="color:green">Redis cache is available.</span>';
-    } else {
-        $error = RedisConnection::getErrorMessage();
-        return '<span style="color:red">Cannot connect to Rediscache! ' . $error . '</span>';
+    $config = BBConfig::getInstance();
+    $html   = new UiEditor(true, null, "settings4");
+    $html->addCheckbox("USE_REDIS", "Use Redis cache", $config["USE_REDIS"], false, false);
+    $html->addLineBreak(1);
+    $html->buildEditField('REDIS_IP', 'Redis Server IP', $config["REDIS_IP"])
+        ->setPlaceholder('e.g. 127.0.0.1')
+        ->generate();
+    $html->buildEditField('REDIS_PORT', 'Redis Server Port', $config["REDIS_PORT"])
+        ->setPlaceholder('e.g. 6379')
+        ->pattern('^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$')
+        ->generate();
+    if ($config["USE_REDIS"]) {
+        $html->addLineBreak(2);
+        $html->addHtml(checkRedisConnection());
     }
+    return $html->getHtml();
 }

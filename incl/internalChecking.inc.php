@@ -41,7 +41,7 @@ const OPTIONAL_EXTENSIONS = array();
  * @return array  Returns an array for all modules. $return["result"] is
  *                 RESULT_ALL_INSTALLED, RESULT_OPT_MISSING or RESULT_REQ_MISSING
  */
-function checkExtensionsInstalled() {
+function checkExtensionsInstalled(): array {
     $loadedExtensions = get_loaded_extensions();
     $result           = array();
     $result["req"]    = array();
@@ -66,13 +66,13 @@ function checkExtensionsInstalled() {
 
 
 //Check a specific extension
-function isExtensionInstalled($name) {
+function isExtensionInstalled($name): bool {
     $loadedExtensions = get_loaded_extensions();
     return in_array($name, $loadedExtensions);
 }
 
 //Check if Grocy API config is set in the database
-function isGrocyApiSet() {
+function isGrocyApiSet(): bool {
     $config = BBConfig::getInstance();
     return ($config["GROCY_API_URL"] != null && $config["GROCY_API_KEY"] != null);
 }

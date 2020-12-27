@@ -20,7 +20,7 @@
 require_once __DIR__ . "/configProcessing.inc.php";
 require_once __DIR__ . "/db.inc.php";
 require_once __DIR__ . "/config.inc.php";
-require_once __DIR__ . "/redis.incl.php";
+require_once __DIR__ . "/redis.inc.php";
 
 const API_O_PRODUCTS    = 'objects/products';
 const API_O_BARCODES    = 'objects/product_barcodes';

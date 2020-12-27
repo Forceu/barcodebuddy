@@ -91,7 +91,7 @@ processButtons();
 
 $barcodes = DatabaseConnection::getInstance()->getStoredBarcodes();
 if (sizeof($barcodes['known']) > 0 || sizeof($barcodes['unknown']) > 0 || sizeof($barcodes['tare']) > 0) {
-    $productinfo = API::getAllProductsInfo(); //TODO convert
+    $productinfo = API::getAllProductsInfo();
 }
 
 //Only pass refreshed cards to AJAX

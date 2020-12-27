@@ -308,10 +308,8 @@ function processModeChangeGetParameter($modeParameter) {
  * @throws DbConnectionDuringEstablishException
  */
 function processRefreshedBarcode($barcode) {
-    if (RedisConnection::isRedisAvailable()) {
-        RedisConnection::expireAllBarcodes();
-    }
-    $productInfo = API::getProductByBarcode($barcode);
+    RedisConnection::expireAllProductInfo();
+    $productInfo = API::getLastCreatedProduct();
     if ($productInfo != null) {
         DatabaseConnection::getInstance()->updateSavedBarcodeMatch($barcode, $productInfo->id);
     }

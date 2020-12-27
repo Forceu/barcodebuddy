@@ -23,7 +23,8 @@ require_once __DIR__ . "/config.inc.php";
 require_once __DIR__ . "/redis.inc.php";
 
 const API_O_BARCODES       = 'objects/product_barcodes';
-const API_PRODUCTS         = 'stock/products';
+const API_O_PRODUCTS       = 'objects/products';
+const API_STOCK_PRODUCTS   = 'stock/products';
 const API_ALL_PRODUCTS     = 'stock';
 const API_SHOPPINGLIST     = 'stock/shoppinglist/';
 const API_CHORES           = 'objects/chores';
@@ -73,13 +74,14 @@ class GrocyProduct {
     public $name;
     public $barcodes = null;
     public $unit = null;
-    public $stockAmount;
+    public $stockAmount = "0";
     public $isTare;
     public $tareWeight;
     public $quFactor;
     public $defaultBestBeforeDays;
+    public $creationDate;
 
-    public static function parseProductInfo($infoArray): GrocyProduct {
+    public static function parseProductInfoStock($infoArray): GrocyProduct {
         checkIfNumeric($infoArray["product"]["id"]);
 
         $result                        = new GrocyProduct();
@@ -89,18 +91,27 @@ class GrocyProduct {
         $result->tareWeight            = sanitizeString($infoArray["product"]["tare_weight"]);
         $result->quFactor              = sanitizeString($infoArray["product"]["qu_factor_purchase_to_stock"]);
         $result->defaultBestBeforeDays = $infoArray["product"]["default_best_before_days"];
+        $result->creationDate          = $infoArray["product"]["row_created_timestamp"];
+        $result->unit                  = sanitizeString($infoArray["product"]["quantity_unit_stock"]["name"]);
+        $result->barcodes              = $infoArray["product"]["product_barcodes"];
 
-        if (isset($infoArray["product"]["quantity_unit_stock"]["name"]))
-            $result->unit = sanitizeString($infoArray["product"]["quantity_unit_stock"]["name"]);
-        if (isset($infoArray["product"]["product_barcodes"]))
-            $result->barcodes = $infoArray["product"]["product_barcodes"];
-        if (isset($infoArray["amount"]))
-            $result->stockAmount = sanitizeString($infoArray["amount"]);
-        else
+        if (sanitizeString($infoArray["stock_amount"]) != null)
             $result->stockAmount = sanitizeString($infoArray["stock_amount"]);
-        if ($result->stockAmount == null) {
-            $result->stockAmount = "0";
-        }
+        return $result;
+    }
+
+
+    public static function parseProductInfoObjects($infoArray): GrocyProduct {
+        checkIfNumeric($infoArray["id"]);
+
+        $result                        = new GrocyProduct();
+        $result->id                    = $infoArray["id"];
+        $result->name                  = sanitizeString($infoArray["name"]);
+        $result->isTare                = ($infoArray["enable_tare_weight_handling"] == "1");
+        $result->tareWeight            = sanitizeString($infoArray["tare_weight"]);
+        $result->quFactor              = sanitizeString($infoArray["qu_factor_purchase_to_stock"]);
+        $result->defaultBestBeforeDays = $infoArray["default_best_before_days"];
+        $result->creationDate          = $infoArray["row_created_timestamp"];
         return $result;
     }
 }
@@ -238,7 +249,7 @@ class API {
     /**
      * Getting info all Grocy products.
      *
-     * @return array|null Array of products
+     * @return GrocyProduct[]|null Array of products
      */
     public static function getAllProductsInfo(): ?array {
         $updateRedisCache = false;
@@ -251,10 +262,9 @@ class API {
             }
             $updateRedisCache = true;
         }
-        $apiurl = API_ALL_PRODUCTS;
 
         $result = null;  // Assure assignment in event curl throws exception.
-        $curl   = new CurlGenerator($apiurl);
+        $curl   = new CurlGenerator(API_O_PRODUCTS);
         try {
             $result = $curl->execute(true);
         } catch (Exception $e) {
@@ -263,7 +273,7 @@ class API {
         if ($result != null) {
             $products = array();
             foreach ($result as $product) {
-                array_push($products, GrocyProduct::parseProductInfo($product));
+                array_push($products, GrocyProduct::parseProductInfoObjects($product));
             }
             if ($updateRedisCache) {
                 RedisConnection::cacheAllProductsInfo($products);
@@ -280,7 +290,7 @@ class API {
      * @return GrocyProduct Product info or array of products
      */
     public static function getProductInfo($productId): ?GrocyProduct {
-        $apiurl = API_PRODUCTS . "/" . $productId;
+        $apiurl = API_STOCK_PRODUCTS . "/" . $productId;
 
         $result = null;  // Assure assignment in event curl throws exception.
         $curl   = new CurlGenerator($apiurl);
@@ -291,12 +301,31 @@ class API {
         }
         if ($result != null) {
             if (isset($result["product"]["id"])) {
-                return GrocyProduct::parseProductInfo($result);
+                return GrocyProduct::parseProductInfoStock($result);
             } else {
                 return null;
             }
         }
         return null;
+    }
+
+    /**
+     * Gets the last created product
+     * TODO Add cutoff date
+     * @return GrocyProduct|null
+     */
+    public static function getLastCreatedProduct(): ?GrocyProduct {
+        $products    = self::getAllProductsInfo();
+        $lastProduct = null;
+        foreach ($products as $product) {
+            if ($lastProduct == null)
+                $lastProduct = $product;
+            else {
+                if ($product->creationDate > $lastProduct->creationDate)
+                    $lastProduct = $product;
+            }
+        }
+        return $lastProduct;
     }
 
 
@@ -595,14 +624,17 @@ class API {
      */
     public static function getProductByBarcode(string $barcode): ?GrocyProduct {
         $cachedResult = null;
+        $updateRedis  = false;
         if (RedisConnection::isRedisAvailable()) {
             if (RedisConnection::isCacheAvailable()) {
                 $cachedResult = RedisConnection::getAllBarcodes();
-            }
+            } else
+                $updateRedis = true;
         }
         if ($cachedResult == null) {
             $allBarcodes = self::getAllBarcodes();
-            RedisConnection::cacheAllBarcodes($allBarcodes);
+            if ($updateRedis)
+                RedisConnection::cacheAllBarcodes($allBarcodes);
         } else {
             $allBarcodes = $cachedResult;
         }
@@ -629,7 +661,7 @@ class API {
         }
 
         if (isset($result["product"]["id"])) {
-            return GrocyProduct::parseProductInfo($result);
+            return GrocyProduct::parseProductInfoStock($result);
         }
         return null;
     }

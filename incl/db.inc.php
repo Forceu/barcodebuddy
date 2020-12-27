@@ -41,6 +41,14 @@ const SECTION_UNKNOWN_BARCODES = "unknown";
 const SECTION_A_REQ_BARCODES   = "req_actions";
 const SECTION_LOGS             = "log";
 
+/**
+ * Dockerfile changes this to "1", so that the default is true
+ * For non-docker this should be false ("0").
+ * If the Dockerfile was overriding the env, the user could not
+ * disable Redis.
+ */
+const DEFAULT_USE_REDIS = "0";
+
 const LEGACY_DATABASE_PATH = __DIR__ . '/../barcodebuddy.db';
 
 /**
@@ -83,7 +91,7 @@ class DatabaseConnection {
         "LOOKUP_USE_JUMBO"        => "0",
         "LOOKUP_USE_UPC_DATABASE" => "0",
         "LOOKUP_UPC_DATABASE_KEY" => null,
-        "USE_REDIS"               => "0",
+        "USE_REDIS"               => DEFAULT_USE_REDIS,
         "REDIS_IP"                => "127.0.0.1",
         "REDIS_PORT"              => "6379");
 

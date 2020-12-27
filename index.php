@@ -267,14 +267,14 @@ function getHtmlMainMenuReqActions($barcodes) {
         ));
         foreach ($barcodes['tare'] as $item) {
             $product     = API::getProductByBarcode($item['barcode']);
-            $totalWeight = $product['stockAmount'] + $product['tareWeight'];
+            $totalWeight = $product->stockAmount + $product->tareWeight;
             $table->startRow();
-            $table->addCell($product["name"]);
+            $table->addCell($product->name);
             $table->addCell($totalWeight);
-            $table->addCell($html->buildEditField("quantity_" . $item['id'], "New weight (tare: " . intval($product['tareWeight']) . ")", $totalWeight)
+            $table->addCell($html->buildEditField("quantity_" . $item['id'], "New weight (tare: " . intval($product->tareWeight) . ")", $totalWeight)
                 ->type("number")
                 ->setWidth('8em')
-                ->minmax(array($product['tareWeight'], null))
+                ->minmax(array($product->tareWeight, null))
                 ->generate(true));
             $table->addCell($html->buildButton("button_submit", "Submit")
                 ->setSubmit()

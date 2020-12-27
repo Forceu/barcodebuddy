@@ -25,8 +25,8 @@ require_once __DIR__ . "/lookupProviders/BarcodeLookup.class.php";
 /**
  * Function that is called when a barcode is passed on
  * @param $barcodeInput
- * @param null $bestBeforeInDays
- * @param null $price
+ * @param  $bestBeforeInDays
+ * @param  $price
  * @return string
  * @throws DbConnectionDuringEstablishException
  */
@@ -246,34 +246,28 @@ function stateToString(int $state): string {
     return $allowedModes[$state];
 }
 
-function getProductByIdFromVariable($id, $products) {
-    foreach ($products as $product) {
-        if ($product["id"] == $id)
-            return $product;
-    }
-    return null;
-}
-
 function changeWeightTareItem($barcode, $newWeight) {
     $product = API::getProductByBarcode($barcode);
+    if ($product == null)
+        return false;
 
-    if (($product["stockAmount"] + $product["tareWeight"]) == $newWeight) {
-        $log = new LogOutput("Weight unchanged for: " . $product["name"], EVENT_TYPE_ACTION_REQUIRED);
+    if (($product->stockAmount + $product->tareWeight) == $newWeight) {
+        $log = new LogOutput("Weight unchanged for: " . $product->name, EVENT_TYPE_ACTION_REQUIRED);
         $log->setVerbose()->dontSendWebsocket()->createLog();
         return true;
     }
-    if ($newWeight < $product["tareWeight"]) {
-        $log = new LogOutput("Entered weight for " . $product["name"] . " is below tare weight(" . $product["tareWeight"] . ")", EVENT_TYPE_ACTION_REQUIRED);
+    if ($newWeight < $product->tareWeight) {
+        $log = new LogOutput("Entered weight for " . $product->name . " is below tare weight(" . $product->tareWeight . ")", EVENT_TYPE_ACTION_REQUIRED);
         $log->setVerbose()->dontSendWebsocket()->createLog();
         return false;
     }
 
-    if ($product["stockAmount"] > ($newWeight - $product["tareWeight"])) {
-        API::consumeProduct($product["id"], $newWeight);
+    if ($product->stockAmount > ($newWeight - $product->tareWeight)) {
+        API::consumeProduct($product->id, $newWeight);
     } else {
-        API::purchaseProduct($product["id"], $newWeight);
+        API::purchaseProduct($product->id, $newWeight);
     }
-    $log = new LogOutput("Weight set to " . $newWeight . " for: " . $product["name"], EVENT_TYPE_ACTION_REQUIRED);
+    $log = new LogOutput("Weight set to " . $newWeight . " for: " . $product->name, EVENT_TYPE_ACTION_REQUIRED);
     $log->setVerbose()->dontSendWebsocket()->createLog();
     return true;
 }
@@ -581,7 +575,7 @@ function changeQuantityAfterScan($amount) {
     } else {
         $product = API::getProductByBarcode($barcode);
         if ($product != null) {
-            QuantityManager::addUpdateEntry($barcode, $amount, $product["name"]);
+            QuantityManager::addUpdateEntry($barcode, $amount, $product->name);
         } else {
             QuantityManager::addUpdateEntry($barcode, $amount);
         }

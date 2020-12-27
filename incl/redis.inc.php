@@ -23,9 +23,9 @@
 class RedisConnection {
 
     private static function connectToRedis(): ?Redis {
-        $redis  = new Redis();
-        $result = $redis->connect('127.0.0.1', 6379);
-        if (!$result)
+        $redis       = new Redis();
+        $isConnected = $redis->connect('127.0.0.1', 6379, 0.2);
+        if (!$isConnected)
             return null;
         return $redis;
     }
@@ -42,6 +42,10 @@ class RedisConnection {
         if ($redis != null) {
             return $redis->get($key);
         }
+    }
+
+    public static function isRedisAvailable(): bool {
+        return self::connectToRedis() != null;
     }
 
 }

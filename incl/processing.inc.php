@@ -497,10 +497,10 @@ function getQuantityForBarcode(string $barcode, bool $isConsume, GrocyProduct $p
 /**
  * Function for generating the <select> elements in the web ui
  * @param $selected
- * @param $productinfo array
+ * @param array|null $productinfo array
  * @return string
  */
-function printSelections($selected, array $productinfo): string {
+function printSelections($selected, ?array $productinfo): string {
     $optionscontent = " <option value = \"0\" >= None =</option>";
     if (!isset($productinfo) || !sizeof($productinfo))
         return $optionscontent;

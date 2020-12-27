@@ -19,6 +19,15 @@ if [[ $(printenv IGNORE_SSL_HOST) == "true" ]]; then
     sed -i 's/const CURL_ALLOW_INSECURE_SSL_HOST.*/const CURL_ALLOW_INSECURE_SSL_HOST=true;/g' /app/bbuddy/config-dist.php
 fi
 
+if [[ $(printenv ATTACH_BARCODESCANNER) == "true" ]]; then
+    echo "[EnvParser] ATTACH_BARCODESCANNER set, enabling input grabber"
+    rm -f /etc/services.d/2inputGrabber/down
+else
+    echo "[EnvParser] ATTACH_BARCODESCANNER not set, disabling input grabber"
+    touch /etc/services.d/2inputGrabber/down
+fi
+
+
 for var in $(compgen -e | grep "BBUDDY_"); do
     newline='fastcgi_param '$var' '\'$(printenv $var)\'';'
     grep -q "$newline" /config/nginx/site-confs/default

@@ -20,6 +20,9 @@
 require_once __DIR__ . "/incl/config.inc.php";
 
 $config = BBConfig::getInstance();
+if ($config["GROCY_API_URL"] == null || $config["GROCY_API_KEY"] == null)
+    die();
+
 if ($config["USE_REDIS"])
     updateCache();
 

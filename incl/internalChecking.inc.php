@@ -31,8 +31,8 @@ const RESULT_ALL_INSTALLED = 0;
 const RESULT_OPT_MISSING   = 1;
 const RESULT_REQ_MISSING   = 2;
 
-const REQ_EXTENSIONS       = array("curl", "date", "sqlite3", "json", "sockets");
-const OPTIONAL_EXTENSIONS  = array();
+const REQ_EXTENSIONS      = array("curl", "date", "sqlite3", "json", "sockets", "redis");
+const OPTIONAL_EXTENSIONS = array();
 
 
 /**
@@ -44,6 +44,8 @@ const OPTIONAL_EXTENSIONS  = array();
 function checkExtensionsInstalled() {
     $loadedExtensions = get_loaded_extensions();
     $result           = array();
+    $result["req"]    = array();
+    $result["opt"]    = array();
     $result["result"] = RESULT_ALL_INSTALLED;
     foreach (REQ_EXTENSIONS as $module) {
         $isLoaded               = in_array($module, $loadedExtensions);

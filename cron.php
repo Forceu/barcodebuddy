@@ -18,15 +18,11 @@
 
 
 require_once __DIR__ . "/incl/config.inc.php";
+require_once __DIR__ . "/incl/redis.inc.php";
 
 $config = BBConfig::getInstance();
 if ($config["GROCY_API_URL"] == null || $config["GROCY_API_KEY"] == null)
     die();
 
 if ($config["USE_REDIS"])
-    updateCache();
-
-function updateCache() {
-    API::getAllProductsInfo(true);
-    API::getAllBarcodes(true);
-}
+    RedisConnection::updateCache();

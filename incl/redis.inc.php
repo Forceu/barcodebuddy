@@ -20,6 +20,10 @@
 /**
  * Creates a cache connection and offers cache functions
  */
+
+
+require_once __DIR__ . "/config.inc.php";
+
 class RedisConnection {
     const KEY_CACHE_AVAILABLE        = "bbuddy_isavail";
     const KEY_CACHE_ALL_PRODUCT_INFO = "bbuddy_apo";
@@ -97,6 +101,19 @@ class RedisConnection {
         if ($result === false)
             return null;
         return $result;
+    }
+
+    /**
+     * Forces an update for all cache entries:
+     * API::getAllProductsInfo()
+     * API::getAllBarcodes()
+     */
+    public static function updateCache() {
+        if (self::isRedisAvailable()) {
+            require_once __DIR__ . "/api.inc.php";
+            API::getAllProductsInfo(true);
+            API::getAllBarcodes(true);
+        }
     }
 
 

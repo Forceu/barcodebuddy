@@ -32,8 +32,9 @@ const API_STOCK            = 'stock/products';
 const API_STOCK_BY_BARCODE = 'stock/products/by-barcode/';
 const API_CHORE_EXECUTE    = 'chores/';
 const API_SYTEM_INFO       = 'system/info';
+const API_SYTEM_TIME       = 'system/time';
 
-const MIN_GROCY_VERSION = "3.0.0";
+const MIN_GROCY_VERSION = "3.0.1";
 
 
 const METHOD_GET  = "GET";
@@ -312,21 +313,44 @@ class API {
 
     /**
      * Gets the last created product
-     * TODO Add cutoff date
+     * @param int $timeframeInMinutes Specify how many old the product can be max (in minutes) or pass 0 for unlimited age
      * @return GrocyProduct|null
      */
-    public static function getLastCreatedProduct(): ?GrocyProduct {
+    public static function getLastCreatedProduct(int $timeframeInMinutes = 0): ?GrocyProduct {
         $products    = self::getAllProductsInfo();
         $lastProduct = null;
+        if ($timeframeInMinutes < 1)
+            $latestDate = "0";
+        else
+            $latestDate = self::getLocalTimeGrocy($timeframeInMinutes * -60);
         foreach ($products as $product) {
-            if ($lastProduct == null)
+            if ($product->creationDate > $latestDate) {
                 $lastProduct = $product;
-            else {
-                if ($product->creationDate > $lastProduct->creationDate)
-                    $lastProduct = $product;
+                $latestDate  = $product->creationDate;
             }
         }
         return $lastProduct;
+    }
+
+    /**
+     * Gets local time from Grocy (all db entries are in local time)
+     * @param int $offset offset to time in seconds
+     * @return string
+     */
+    public static function getLocalTimeGrocy(int $offset = 0): string {
+        $apiurl = API_SYTEM_TIME . "?offset=" . $offset;
+        $curl   = new CurlGenerator($apiurl);
+        try {
+            $result = $curl->execute(true);
+        } catch (Exception $e) {
+            self::processError($e, "Could not get Grocy local time");
+        }
+
+        if (isset($result["time_local_sqlite3"])) {
+            return $result["time_local_sqlite3"];
+        }
+        self::logError("Grocy did not provide local time");
+        return "0";
     }
 
 
@@ -802,7 +826,6 @@ class API {
     }
 
     public static function runBenchmark($id) {
-        //TODO disable cache
         $randomBarcode = "rand" . rand(10, 10000);
         echo "Running benchmark with product ID $id:\n\n";
         $timeStart = microtime(true);
@@ -847,6 +870,5 @@ class API {
         }
         $timeTotal = round((microtime(true) - $timeStart) * 1000);
         echo "Running $name took $timeTotal ms.\n";
-
     }
 }

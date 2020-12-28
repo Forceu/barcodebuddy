@@ -309,7 +309,7 @@ function processModeChangeGetParameter($modeParameter) {
  */
 function processRefreshedBarcode($barcode) {
     RedisConnection::expireAllProductInfo();
-    $productInfo = API::getLastCreatedProduct();
+    $productInfo = API::getLastCreatedProduct(5);
     if ($productInfo != null) {
         DatabaseConnection::getInstance()->updateSavedBarcodeMatch($barcode, $productInfo->id);
     }

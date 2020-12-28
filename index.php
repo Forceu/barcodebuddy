@@ -84,7 +84,6 @@ if (isset($_GET["text"])) {
     hideGetPostParameters();
 }
 
-
 // If a button was pressed, we are processing everything here.
 // Only one row can be processed at a time
 processButtons();

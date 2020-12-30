@@ -21,6 +21,7 @@ require_once __DIR__ . "/configProcessing.inc.php";
 require_once __DIR__ . "/db.inc.php";
 require_once __DIR__ . "/config.inc.php";
 require_once __DIR__ . "/redis.inc.php";
+require_once __DIR__ . "/curl.inc.php";
 
 const API_O_BARCODES       = 'objects/product_barcodes';
 const API_O_PRODUCTS       = 'objects/products';
@@ -36,39 +37,11 @@ const API_SYTEM_TIME       = 'system/time';
 
 const MIN_GROCY_VERSION = "3.0.1";
 
-
-const METHOD_GET  = "GET";
-const METHOD_PUT  = "PUT";
-const METHOD_POST = "POST";
-
 const LOGIN_URL     = "loginurl";
 const LOGIN_API_KEY = "loginkey";
 
 const DISPLAY_DEBUG = false;
 
-class InvalidServerResponseException extends Exception {
-}
-
-class UnauthorizedException extends Exception {
-}
-
-class InvalidJsonResponseException extends Exception {
-}
-
-class InvalidSSLException extends Exception {
-}
-
-class InvalidParameterException extends Exception {
-}
-
-class NotFoundException extends Exception {
-}
-
-class LimitExceededException extends Exception {
-}
-
-class InternalServerErrorException extends Exception {
-}
 
 class GrocyProduct {
     public $id;
@@ -114,134 +87,6 @@ class GrocyProduct {
         $result->defaultBestBeforeDays = $infoArray["default_best_before_days"];
         $result->creationDate          = $infoArray["row_created_timestamp"];
         return $result;
-    }
-}
-
-class CurlGenerator {
-    private $ch = null;
-    private $method = METHOD_GET;
-    private $urlApi;
-    private $ignoredResultCodes = array(400);
-
-    const IGNORED_API_ERRORS_REGEX = array(
-        '/No product with barcode .+ found/'
-    );
-
-    function __construct($url, $method = METHOD_GET, $jasonData = null, $loginOverride = null, $noApiCall = false, $ignoredResultCodes = null) {
-        global $CONFIG;
-
-        $config = BBConfig::getInstance();
-
-        $this->method = $method;
-        $this->urlApi = $url;
-        $this->ch     = curl_init();
-        if ($ignoredResultCodes != null)
-            $this->ignoredResultCodes = $ignoredResultCodes;
-
-        if ($loginOverride == null) {
-            $apiKey = $config["GROCY_API_KEY"];
-            $apiUrl = $config["GROCY_API_URL"];
-        } else {
-            $apiKey = $loginOverride[LOGIN_API_KEY];
-            $apiUrl = $loginOverride[LOGIN_URL];
-        }
-
-        $headerArray = array(
-            'GROCY-API-KEY: ' . $apiKey
-        );
-        if ($jasonData != null) {
-            array_push($headerArray, 'Content-Type: application/json');
-            array_push($headerArray, 'Content-Length: ' . strlen($jasonData));
-            curl_setopt($this->ch, CURLOPT_POSTFIELDS, $jasonData);
-        }
-
-        if ($noApiCall)
-            curl_setopt($this->ch, CURLOPT_URL, $url);
-        else
-            curl_setopt($this->ch, CURLOPT_URL, $apiUrl . $url);
-        curl_setopt($this->ch, CURLOPT_HTTPHEADER, $headerArray);
-        curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, $this->method);
-        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, 0);
-        curl_setopt($this->ch, CURLOPT_USERAGENT, 'BarcodeBuddy v' . BB_VERSION_READABLE);
-        curl_setopt($this->ch, CURLOPT_TIMEOUT, $CONFIG->CURL_TIMEOUT_S);
-        if ($CONFIG->CURL_ALLOW_INSECURE_SSL_CA) {
-            curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
-        }
-        if ($CONFIG->CURL_ALLOW_INSECURE_SSL_HOST) {
-            curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, false);
-        }
-    }
-
-    function execute($decode = false) {
-        if (DISPLAY_DEBUG) {
-            $startTime = microtime(true);
-            DatabaseConnection::getInstance()->saveLog("<i>Executing API call: " . $this->urlApi . "</i>", false, false, true);
-        }
-        $curlResult = curl_exec($this->ch);
-        $this->checkForErrorsAndThrow($curlResult);
-        curl_close($this->ch);
-
-        $jsonDecoded = json_decode($curlResult, true);
-        if ($decode && isset($jsonDecoded->response->status) && $jsonDecoded->response->status == 'ERROR')
-            throw new InvalidJsonResponseException($jsonDecoded->response->errormessage);
-
-        if (isset($jsonDecoded["error_message"])) {
-            $isIgnoredError = false;
-            foreach (self::IGNORED_API_ERRORS_REGEX as $ignoredError) {
-                if (preg_match($ignoredError, $jsonDecoded["error_message"]))
-                    $isIgnoredError = true;
-            }
-            if (!$isIgnoredError)
-                throw new InvalidJsonResponseException($jsonDecoded["error_message"]);
-        }
-        if (DISPLAY_DEBUG) {
-            $totalTimeMs = round((microtime(true) - $startTime) * 1000);
-            DatabaseConnection::getInstance()->saveLog("<i>Executing took " . $totalTimeMs . "ms</i>", false, false, true);
-        }
-        if ($decode)
-            return $jsonDecoded;
-        else
-            return $curlResult;
-    }
-
-
-    private function checkForErrorsAndThrow($curlResult) {
-        $curlError    = curl_errno($this->ch);
-        $responseCode = curl_getinfo($this->ch, CURLINFO_RESPONSE_CODE);
-
-        if (in_array($responseCode, $this->ignoredResultCodes))
-            return;
-
-        switch ($responseCode) {
-            case 400:
-                throw new InvalidParameterException();
-                break;
-            case 401:
-                throw new UnauthorizedException();
-                break;
-            case 404:
-                throw new NotFoundException();
-                break;
-            case 429:
-                throw new LimitExceededException();
-                break;
-            case 500:
-                throw new InternalServerErrorException();
-                break;
-        }
-        if ($curlResult === false) {
-            if (self::isErrorSslRelated($curlError))
-                throw new InvalidSSLException();
-            else
-                throw new InvalidServerResponseException();
-        } elseif ($curlResult == "" && $responseCode != 204) {
-            throw new InvalidServerResponseException();
-        }
-    }
-
-    private static function isErrorSslRelated($curlError) {
-        return ($curlError == CURLE_SSL_CERTPROBLEM || $curlError == CURLE_SSL_CIPHER || $curlError == CURLE_SSL_CACERT);
     }
 }
 

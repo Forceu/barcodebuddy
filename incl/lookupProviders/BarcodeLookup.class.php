@@ -26,7 +26,8 @@ class BarcodeLookup {
         "ProviderOpenFoodFacts",
         "ProviderUpcDb",
         "ProviderJumbo",
-        "ProviderUpcDatabase"
+        "ProviderUpcDatabase",
+        "ProviderAlbertHeijn"
     );
 
     /**

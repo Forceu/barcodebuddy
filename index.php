@@ -26,6 +26,7 @@ require_once __DIR__ . "/incl/processing.inc.php";
 require_once __DIR__ . "/incl/websocketconnection.inc.php";
 require_once __DIR__ . "/incl/webui.inc.php";
 
+
 //If barcodes or parameters are passed through CLI or GET, process them and do not do anything else
 if (isset($_GET["version"]) || (isset($argv[1]) && $argv[1] == "-v")) {
     die("BarcodeBuddy " . BB_VERSION);

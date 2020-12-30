@@ -142,6 +142,8 @@ function getHtmlSettingsBarcodeLookup(): string {
     $html->addLineBreak();
     $html->addCheckbox('LOOKUP_USE_JUMBO', 'Use Jumbo.com', $config["LOOKUP_USE_JUMBO"]);
     $html->addLineBreak();;
+    $html->addCheckbox('LOOKUP_USE_AH', 'Use AH.nl', $config["LOOKUP_USE_AH"]);
+    $html->addLineBreak();;
     $html->addHtml((new CheckBoxBuilder(
         "LOOKUP_USE_UPC_DATABASE",
         "Use UPCDatabase.org",

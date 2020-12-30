@@ -128,23 +128,24 @@ class RedisConnection {
 
 
     public static function expireAllBarcodes() {
-        self::expires(self::KEY_CACHE_ALL_BARCODES);
+        self::expire(self::KEY_CACHE_ALL_BARCODES);
     }
 
     public static function expireAllProductInfo() {
-        self::expires(self::KEY_CACHE_ALL_PRODUCT_INFO);
+        self::expire(self::KEY_CACHE_ALL_PRODUCT_INFO);
     }
 
     public static function invalidateCache() {
-        self::expires(self::KEY_CACHE_AVAILABLE);
-        self::expires(self::KEY_CACHE_ALL_BARCODES);
-        self::expires(self::KEY_CACHE_ALL_PRODUCT_INFO);
+        self::expire(self::KEY_CACHE_AVAILABLE,
+            self::KEY_CACHE_ALL_BARCODES,
+            self::KEY_CACHE_ALL_PRODUCT_INFO
+        );
     }
 
-    private static function expires($key) {
+    private static function expire(string ...$keys) {
         $redis = self::connectToRedis();
         if ($redis != null) {
-            $redis->expire($key, 0);
+            $redis->del($keys);
         }
     }
 

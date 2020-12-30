@@ -20,6 +20,7 @@ require_once __DIR__ . "/ProviderUpcDb.php";
 require_once __DIR__ . "/ProviderJumbo.php";
 require_once __DIR__ . "/ProviderUpcDatabase.php";
 require_once __DIR__ . "/ProviderDebug.php";
+require_once __DIR__ . "/ProviderAlbertHeijn.php";
 
 class LookupProvider {
 
@@ -51,8 +52,8 @@ class LookupProvider {
     }
 
 
-    protected function execute($url) {
-        $curl = new CurlGenerator($url, METHOD_GET, null, null, true, $this->ignoredResultCodes);
+    protected function execute(string $url, string $method = METHOD_GET, array $formdata = null, string $userAgent = null, $headers = null) {
+        $curl = new CurlGenerator($url, $method, null, null, true, $this->ignoredResultCodes, $formdata, $userAgent, $headers);
         try {
             $result = $curl->execute(true);
         } catch (Exception $e) {

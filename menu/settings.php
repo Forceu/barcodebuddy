@@ -214,15 +214,14 @@ function checkGrocyConnection(): string {
     }
 }
 
-/**
- * @return string
- */
-function checkRedisConnection(): string {
-    if (RedisConnection::isRedisAvailable()) {
-        return '<span style="color:green">Redis cache is available.</span>';
-    } else {
+function checkRedisConnection(UiEditor &$html) {
+    if (!RedisConnection::isRedisAvailable()) {
         $error = RedisConnection::getErrorMessage();
-        return '<span style="color:red">Cannot connect to Rediscache! ' . $error . '</span>';
+        $html->addHtml('<span style="color:red">Cannot connect to Rediscache! ' . $error . '</span>');
+    } else {
+        $html->addHtml('<span style="color:green">Redis cache is available.</span>');
+        $html->addSpaces(4);
+        $html->addButton("updatecache", "Update Cache", "updateRedisCache(true)");
     }
 }
 
@@ -257,7 +256,7 @@ function getHtmlSettingsRedis(): string {
         ->generate();
     if ($config["USE_REDIS"]) {
         $html->addLineBreak(2);
-        $html->addHtml(checkRedisConnection());
+        checkRedisConnection($html);
     }
     return $html->getHtml();
 }

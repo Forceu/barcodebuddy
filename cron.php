@@ -26,3 +26,6 @@ if ($config["GROCY_API_URL"] == null || $config["GROCY_API_KEY"] == null)
 
 if ($config["USE_REDIS"])
     RedisConnection::updateCache();
+
+if (isset($_GET["ajax"]))
+    die("OK");

@@ -119,3 +119,21 @@ function showQrCode(content) {
     document.getElementById('placeHolder').innerHTML = qr.createImgTag(10, 5);
     document.getElementById("qrcode-modal").style.display = "block";
 }
+
+function updateRedisCache(isMenu) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+            if (xhttp.responseText === "OK") {
+                showToast("Cache updated");
+            } else {
+                showToast("Error: Could not update cache!");
+            }
+        }
+    };
+    if (isMenu)
+        xhttp.open("GET", "../cron.php?ajax", true);
+    else
+        xhttp.open("GET", "./cron.php?ajax", true);
+    xhttp.send();
+}

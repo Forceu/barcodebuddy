@@ -412,12 +412,15 @@ function processKnownBarcode(GrocyProduct $productInfo, $barcode, $websocketEnab
             }
             return $output;
         case STATE_PURCHASE:
-            $amount = getQuantityForBarcode($barcode, false, $productInfo);
-            if ($productInfo->defaultBestBeforeDays == 0 && $bestBeforeInDays == null)
-                $additionalLog = " [WARNING]: No default best before date set!";
-            else
+            $isWarning = false;
+            $amount    = getQuantityForBarcode($barcode, false, $productInfo);
+            if ($productInfo->defaultBestBeforeDays == 0 && $bestBeforeInDays == null) {
+                $additionalLog = " <span style=\"color: orange;\">No default best before date set!</span>";
+                $isWarning     = true;
+            } else {
                 $additionalLog = "";
-            $log    = new LogOutput("Adding  $amount " . $productInfo->unit . " of " . $productInfo->name . $additionalLog, EVENT_TYPE_ADD_KNOWN_BARCODE, $barcode);
+            }
+            $log    = new LogOutput("Adding  $amount " . $productInfo->unit . " of " . $productInfo->name . $additionalLog, EVENT_TYPE_ADD_KNOWN_BARCODE, $barcode, $isWarning);
             $output = $log
                 ->addStockToText($productInfo->stockAmount + $amount)
                 ->setWebsocketResultCode(WS_RESULT_PRODUCT_FOUND)
@@ -700,20 +703,22 @@ class LogOutput {
 
     private $logText;
     private $eventType;
-    private $barcode = null;
+    private $barcode;
     private $isVerbose = false;
     private $sendWebsocketMessage = true;
     private $websocketResultCode = WS_RESULT_PRODUCT_FOUND;
     private $websocketText;
+    private $isError;
 
-    function __construct($logText, $eventType, $barcode = null) {
+    function __construct(string $logText, string $eventType, string $barcode = null, bool $isError = false) {
         $this->logText       = $logText;
         $this->eventType     = $eventType;
         $this->websocketText = $logText;
         $this->barcode       = $barcode;
+        $this->isError       = $isError;
 
         if ($barcode != null)
-            $this->logText .= " Barcode: $barcode";
+            $this->logText .= " [$barcode]";
     }
 
     public function setVerbose() {
@@ -771,7 +776,12 @@ class LogOutput {
     public function createLog() {
         global $LOADED_PLUGINS;
 
-        DatabaseConnection::getInstance()->saveLog($this->logText, $this->isVerbose);
+        if ($this->isError) {
+            $this->websocketText = str_replace("</span>", "", $this->websocketText);
+            $this->websocketText = preg_replace("/<span .*?>+/", "- WARNING: ", $this->websocketText);
+        }
+
+        DatabaseConnection::getInstance()->saveLog($this->logText, $this->isVerbose, $this->isError);
         if ($this->sendWebsocketMessage) {
             sendWebsocketMessage($this->websocketText, $this->websocketResultCode);
         }

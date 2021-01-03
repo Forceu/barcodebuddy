@@ -262,11 +262,11 @@ $CONFIG->checkIfAuthenticated(true);
                 document.getElementById('scan-result').textContent = 'waiting for barcode...';
                 document.getElementById('event').textContent = '';
             }
-        };
+        }
 
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
-        };
+        }
 
         function resultScan(color, message, text, sound) {
             document.getElementById('content').style.backgroundColor = color;
@@ -276,8 +276,7 @@ $CONFIG->checkIfAuthenticated(true);
             document.getElementById('log-entries').innerText = '\r\n' + text + document.getElementById('log-entries').innerText;
             currentScanId++;
             resetScan(currentScanId);
-
-        };
+        }
 
         source.onopen = function () {
             document.getElementById('grocy-sse').textContent = 'Connected';

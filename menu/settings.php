@@ -136,17 +136,54 @@ function getHtmlSettingsGrocyApi(): string {
 function getHtmlSettingsBarcodeLookup(): string {
     $config = BBConfig::getInstance();
     $html   = new UiEditor(true, null, "settings3");
-    $html->addCheckbox('LOOKUP_USE_OFF', 'Use OpenFoodFacts.org', $config["LOOKUP_USE_OFF"]);
+    $html->addScriptFile("../incl/js/Sortable.min.js");
+    $html->addHtml("Use Drag&amp;Drop for changing lookup order");
+    $html->addHtml('<ul class="demo-list-item mdl-list" id="providers">');
+
+    $providerList = getProviderListItems($html);
+    $orderAsArray = explode(",", $config["LOOKUP_ORDER"]);
+    foreach ($orderAsArray as $orderId) {
+        $html->addHtml($providerList["id" . $orderId]);
+    }
+
+
+    $html->addHtml('</ul>');
     $html->addLineBreak();
-    $html->addCheckbox('LOOKUP_USE_UPC', 'Use UPCitemDB.com', $config["LOOKUP_USE_UPC"]);
-    $html->addLineBreak();
-    $html->addCheckbox('LOOKUP_USE_JUMBO', 'Use Jumbo.com', $config["LOOKUP_USE_JUMBO"]);
-    $html->addLineBreak();;
-    $html->addCheckbox('LOOKUP_USE_AH', 'Use AH.nl', $config["LOOKUP_USE_AH"]);
-    $html->addLineBreak();;
-    $html->addHtml((new CheckBoxBuilder(
+    $html->addHtml(
+        (new EditFieldBuilder(
+            'LOOKUP_UPC_DATABASE_KEY',
+            'UPCDatabase.org API Key',
+            $config["LOOKUP_UPC_DATABASE_KEY"],
+            $html)
+        )
+            ->required($config["LOOKUP_USE_UPC_DATABASE"])
+            ->pattern('[A-Za-z0-9]{32}')
+            ->generate(true)
+    );
+
+    $html->addHiddenField("LOOKUP_ORDER", $config["LOOKUP_ORDER"]);
+
+    $html->addScript("var elements = document.getElementById('providers');
+                           var sortable = Sortable.create(elements, { animation: 150,
+                                    dataIdAttr: 'data-id',
+                                    onSort: function (evt) {
+                                       document.getElementById('LOOKUP_ORDER').value = sortable.toArray().join();
+                                    },});");
+
+    return $html->getHtml();
+}
+
+
+function getProviderListItems(UiEditor $html): array {
+    $config                                 = BBConfig::getInstance();
+    $result                                 = array();
+    $result["id" . LOOKUP_ID_OPENFOODFACTS] = $html->addListItem($html->addCheckbox('LOOKUP_USE_OFF', 'OpenFoodFacts', $config["LOOKUP_USE_OFF"], false, false, true), "Uses OpenFoodFacts.org", LOOKUP_ID_OPENFOODFACTS, true);
+    $result["id" . LOOKUP_ID_UPCDB]         = $html->addListItem($html->addCheckbox('LOOKUP_USE_UPC', 'UPC Item DB', $config["LOOKUP_USE_UPC"], false, false, true), "Uses UPCitemDB.com", LOOKUP_ID_UPCDB, true);
+    $result["id" . LOOKUP_ID_ALBERTHEIJN]   = $html->addListItem($html->addCheckbox('LOOKUP_USE_AH', 'Albert Heijn', $config["LOOKUP_USE_AH"], false, false, true), "Uses AH.nl", LOOKUP_ID_ALBERTHEIJN, true);
+    $result["id" . LOOKUP_ID_JUMBO]         = $html->addListItem($html->addCheckbox('LOOKUP_USE_JUMBO', 'Jumbo', $config["LOOKUP_USE_JUMBO"], false, false, true), "Uses Jumbo.com (slow)", LOOKUP_ID_JUMBO, true);
+    $result["id" . LOOKUP_ID_UPCDATABASE]   = $html->addListItem((new CheckBoxBuilder(
         "LOOKUP_USE_UPC_DATABASE",
-        "Use UPCDatabase.org",
+        "UPC Database",
         $config["LOOKUP_USE_UPC_DATABASE"],
         $html)
     )->onCheckChanged(
@@ -159,22 +196,8 @@ function getHtmlSettingsBarcodeLookup(): string {
                     api_key_input.required = element.checked;
                 }
             }")
-        ->addSpaces()
-        ->generate(true)
-    );
-    $html->addHtml(
-        (new EditFieldBuilder(
-            'LOOKUP_UPC_DATABASE_KEY',
-            'UPC Database API Key',
-            $config["LOOKUP_UPC_DATABASE_KEY"],
-            $html)
-        )
-            ->required($config["LOOKUP_USE_UPC_DATABASE"])
-            ->pattern('[A-Za-z0-9]{32}')
-            ->generate(true)
-    );
-
-    return $html->getHtml();
+        ->generate(true), "Uses UPCDatabase.org", LOOKUP_ID_UPCDATABASE, true);
+    return $result;
 }
 
 

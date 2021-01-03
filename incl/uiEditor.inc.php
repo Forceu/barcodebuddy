@@ -548,7 +548,7 @@ class UiEditor {
         return $this;
     }
 
-    function addCheckbox($name, $label, $isChecked, $isDisabled = false, $useSpaces = true) {
+    function addCheckbox($name, $label, $isChecked, $isDisabled = false, $useSpaces = true, $asHtml = false) {
         $checkedHtml = "";
         if ($isChecked) {
             $checkedHtml = "checked";
@@ -557,12 +557,20 @@ class UiEditor {
         if ($isDisabled) {
             $disabledHtml = "disabled";
         }
-        $this->addHtml('<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="' . $name . '">
-                  <input type="checkbox" value="1" id="' . $name . '" name="' . $name . '" class="mdl-checkbox__input" ' . $disabledHtml . ' ' . $checkedHtml . '>
-                  <span class="mdl-checkbox__label">' . $label . '</span>
-                </label><input type="hidden" value="0" name="' . $name . '_hidden"/>');
+        $result = '<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="' . $name . '">
+                      <input type="checkbox" value="1" id="' . $name . '" name="' . $name . '" class="mdl-checkbox__input" ' . $disabledHtml . ' ' . $checkedHtml . '>
+                      <span class="mdl-checkbox__label">' . $label . '</span>
+                </label><input type="hidden" value="0" name="' . $name . '_hidden"/>';
+        if ($asHtml) {
+            if ($useSpaces)
+                $result = $result . '&nbsp;&nbsp;';
+            return $result;
+        }
         if ($useSpaces)
             $this->addSpaces();
+
+        $this->addHtml($result);
+        return $this;
     }
 
     function addSubmitButton($name, $label, $isRaised = true, $isDisabled = false, $asHtml = false, $isColoured = true, $onClick = null, $value = null) {
@@ -713,8 +721,25 @@ class UiEditor {
         $this->htmlOutput = $this->htmlOutput . $html . "\n";
     }
 
+    function addListItem($htmlHeader, $htmlBody, $data = "", $asHtml = false) {
+        //Add spaces if there is a checkbox
+        if (strpos($htmlHeader, "mdl-checkbox") !== false) {
+            $htmlBody = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $htmlBody;
+        }
+        $result = "<li data-id=\"$data\" class=\"mdl-list__item mdl-list__item--two-line\" data-value=\"$data\"><span class=\"mdl-list__item-primary-content\">" . $htmlHeader . "
+                                                    <span class=\"mdl-list__item-sub-title\">" . $htmlBody . "</span></span></li>\n";
+        if ($asHtml)
+            return $result;
+        else
+            $this->htmlOutput = $this->htmlOutput . $result;
+    }
+
     function addScript($html) {
         $this->htmlOutput = $this->htmlOutput . "\n" . "<script>" . $html . "</script>\n";
+    }
+
+    function addScriptFile($file) {
+        $this->htmlOutput = $this->htmlOutput . "\n" . "<script src=\"$file\"></script>\n";
     }
 
     static function addTextWrap($text, $maxSize = 12, $minSize = 10) {

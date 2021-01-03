@@ -41,6 +41,13 @@ const SECTION_UNKNOWN_BARCODES = "unknown";
 const SECTION_A_REQ_BARCODES   = "req_actions";
 const SECTION_LOGS             = "log";
 
+
+const LOOKUP_ID_OPENFOODFACTS = "1";
+const LOOKUP_ID_UPCDB         = "2";
+const LOOKUP_ID_UPCDATABASE   = "3";
+const LOOKUP_ID_ALBERTHEIJN   = "4";
+const LOOKUP_ID_JUMBO         = "5";
+
 /**
  * Dockerfile changes this to "1", so that the default is true
  * For non-docker this should be false ("0").
@@ -94,7 +101,12 @@ class DatabaseConnection {
         "LOOKUP_UPC_DATABASE_KEY" => null,
         "USE_REDIS"               => DEFAULT_USE_REDIS,
         "REDIS_IP"                => "127.0.0.1",
-        "REDIS_PORT"              => "6379");
+        "REDIS_PORT"              => "6379",
+        "LOOKUP_ORDER"            => LOOKUP_ID_OPENFOODFACTS . "," .
+            LOOKUP_ID_UPCDB . "," .
+            LOOKUP_ID_UPCDATABASE . "," .
+            LOOKUP_ID_ALBERTHEIJN . "," .
+            LOOKUP_ID_JUMBO);
 
 
     const DB_INT_VALUES = array("REVERT_TIME");

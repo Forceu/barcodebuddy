@@ -19,7 +19,6 @@ require_once __DIR__ . "/../api.inc.php";
 
 class ProviderDebug extends LookupProvider {
 
-    const IS_ENABLED    = false;
     const RETURN_STRING = "This is a test result";
 
     function __construct($apiKey = null) {
@@ -29,9 +28,6 @@ class ProviderDebug extends LookupProvider {
     }
 
     public function lookupBarcode(string $barcode): ?string {
-        if (self::IS_ENABLED)
-            return self::RETURN_STRING;
-        else
-            return null;
+        return self::RETURN_STRING;
     }
 }

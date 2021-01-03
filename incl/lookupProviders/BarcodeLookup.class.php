@@ -21,13 +21,14 @@ require_once __DIR__ . "/../config.inc.php";
 
 class BarcodeLookup {
 
+    private const USE_DEBUG_PROVIDER = false;
+
     private static $providers = array(
-        "ProviderDebug",
-        "ProviderOpenFoodFacts",
-        "ProviderUpcDb",
-        "ProviderJumbo",
-        "ProviderUpcDatabase",
-        "ProviderAlbertHeijn"
+        LOOKUP_ID_OPENFOODFACTS => "ProviderOpenFoodFacts",
+        LOOKUP_ID_UPCDB         => "ProviderUpcDb",
+        LOOKUP_ID_UPCDATABASE   => "ProviderUpcDatabase",
+        LOOKUP_ID_ALBERTHEIJN   => "ProviderAlbertHeijn",
+        LOOKUP_ID_JUMBO         => "ProviderJumbo"
     );
 
     /**
@@ -36,8 +37,14 @@ class BarcodeLookup {
      * @return string Returns product name or null if not found
      */
     public static function lookUp(string $barcode): ?string {
-        foreach (BarcodeLookup::$providers as &$provider) {
-            $result = (new $provider())->lookupBarcode($barcode);
+        if (self::USE_DEBUG_PROVIDER) {
+            return (new ProviderDebug)->lookupBarcode($barcode);
+        }
+        $config       = BBConfig::getInstance();
+        $orderAsArray = explode(",", $config["LOOKUP_ORDER"]);
+        foreach ($orderAsArray as $orderId) {
+            $result = (new self::$providers[$orderId]())->lookupBarcode($barcode);
+            echo "Using provider " . self::$providers[$orderId] . "\n";
             if ($result != null)
                 return $result;
         }

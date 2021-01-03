@@ -452,9 +452,7 @@ class API {
         } catch (Exception $e) {
             self::processError($e, "Could not set Grocy barcode");
         }
-        if (RedisConnection::isRedisAvailable()) {
-            RedisConnection::expireAllBarcodes();
-        }
+        RedisConnection::expireAllBarcodes();
     }
 
 
@@ -531,7 +529,11 @@ class API {
         $updateRedis = false;
         if (RedisConnection::isRedisAvailable()) {
             if (!$ignoreCache && RedisConnection::isCacheAvailable()) {
-                return RedisConnection::getAllBarcodes();
+                $cachedBarcodes = RedisConnection::getAllBarcodes();
+                if ($cachedBarcodes != null)
+                    return $cachedBarcodes;
+                else
+                    $updateRedis = true;
             } else {
                 $updateRedis = true;
             }

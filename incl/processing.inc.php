@@ -315,10 +315,6 @@ function processRefreshedBarcode($barcode) {
     }
 }
 
-//We are using the old inventory API until the next Grocy version is officially released
-//TODO
-const USE_NEW_INVENTORY_API = false;
-
 /**
  * Process a barcode that Grocy already knows
  * @param $productInfo GrocyProduct
@@ -455,12 +451,10 @@ function processKnownBarcode(GrocyProduct $productInfo, $barcode, $websocketEnab
         case STATE_GETSTOCK:
             $fileLock->removeLock();
             $log = "Currently in stock: " . $productInfo->stockAmount . " " . $productInfo->unit . " of " . $productInfo->name;
-            if (USE_NEW_INVENTORY_API) {
-                if ($productInfo->stockAmount > 0) {
-                    $locationInfo = API::getProductLocations($productInfo->id);
-                    foreach ($locationInfo as $location) {
-                        $log = $log . "\nLocation " . $location["location_name"] . ": " . $location["amount"] . " " . $productInfo->unit;
-                    }
+            if ($productInfo->stockAmount > 0) {
+                $locationInfo = API::getProductLocations($productInfo->id);
+                foreach ($locationInfo as $location) {
+                    $log = $log . "\nLocation " . $location["location_name"] . ": " . $location["amount"] . " " . $productInfo->unit;
                 }
             }
             return (new LogOutput($log, EVENT_TYPE_ADD_KNOWN_BARCODE))->createLog();

@@ -421,11 +421,7 @@ function getHtmlLogTextArea() {
             -webkit-appearance: textarea;
                     max-height: 18em;
                     overflow:auto;"
-            contenteditable="true"
-            ondrop="return false"
-            oncut="return false"
-            onpaste="return false"
-            onkeydown="if(event.metaKey) return true; return false;">');
+            contenteditable="false">');
         foreach ($logs as $log) {
             $html->addHtml($log . "<br>");
         }

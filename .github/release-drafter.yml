@@ -1,7 +1,9 @@
 template: |
+
+  ### Changelog
+  $CHANGES
+
   ### Upgrading from v1.4
   
   Please refer to [v1.5.0.1](https://github.com/Forceu/barcodebuddy/releases/tag/v1.5.0.1) on how to upgrade
   
-  ### Changelog
-  $CHANGES

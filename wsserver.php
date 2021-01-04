@@ -36,59 +36,27 @@ if (checkExtensionsInstalled()["result"] != RESULT_ALL_INSTALLED) {
 }
 
 
-//If we are using php7.2+, the new server version is supported
-if (isNewServerSupported()) {
-    
-    require __DIR__ . '/incl/websocket/php-websocket/src/Connection.php';
-    require __DIR__ . '/incl/websocket/php-websocket/src/Socket.php';
-    require __DIR__ . '/incl/websocket/php-websocket/src/Server.php';
-    
-    require __DIR__ . '/incl/websocket/php-websocket/src/Application/ApplicationInterface.php';
-    require __DIR__ . '/incl/websocket/php-websocket/src/Application/Application.php';
-    require __DIR__ . '/incl/websocket/ScreenApplication.php';
-    if (ENABLE_STATISTICS) {
-        require __DIR__ . '/incl/websocket/php-websocket/src/Application/StatusApplication.php';
-    }
-    
-    $server = new \Bloatless\WebSocket\Server('127.0.0.1', $CONFIG->PORT_WEBSOCKET_SERVER);
-    
-    // server settings:
-    $server->setMaxClients(100);
-    $server->setCheckOrigin(false);
-    $server->setMaxConnectionsPerIp(100);
-    $server->setMaxRequestsPerMinute(2000);
-    
-    $server->registerApplication('screen', \Bloatless\WebSocket\Application\ScreenApplication::getInstance());
-    if (ENABLE_STATISTICS) {
-        $server->registerApplication('status', \Bloatless\WebSocket\Application\StatusApplication::getInstance());
-    }
-    $server->run();
-    
-    
-} else {
-    //For older PHP versions, we are using websocket1.0
-    
-    
-    echo "You are using PHP <7.2, starting old server";
-    require(__DIR__ . '/incl/websocket/php-websocket-1.0/server/lib/SplClassLoader.php');
-    
-    $classLoader = new SplClassLoader('WebSocket', __DIR__ . '/incl/websocket/php-websocket-1.0/server/lib');
-    $classLoader->register();
-    
-    $server = new \WebSocket\Server('127.0.0.1', $CONFIG->PORT_WEBSOCKET_SERVER, false);
-    
-    // server settings:
-    $server->setMaxClients(100);
-    $server->setCheckOrigin(false);
-    $server->setMaxConnectionsPerIp(100);
-    $server->setMaxRequestsPerMinute(2000);
-    
-    $server->registerApplication('screen', \WebSocket\Application\DemoApplication::getInstance());
-    
-    if (ENABLE_STATISTICS) {
-        $server->registerApplication('status', \WebSocket\Application\StatusApplication::getInstance());
-    }
-    $server->run();
-    
+require __DIR__ . '/incl/websocket/php-websocket/src/Connection.php';
+require __DIR__ . '/incl/websocket/php-websocket/src/Socket.php';
+require __DIR__ . '/incl/websocket/php-websocket/src/Server.php';
+
+require __DIR__ . '/incl/websocket/php-websocket/src/Application/ApplicationInterface.php';
+require __DIR__ . '/incl/websocket/php-websocket/src/Application/Application.php';
+require __DIR__ . '/incl/websocket/ScreenApplication.php';
+if (ENABLE_STATISTICS) {
+    require __DIR__ . '/incl/websocket/php-websocket/src/Application/StatusApplication.php';
 }
 
+$server = new \Bloatless\WebSocket\Server('127.0.0.1', $CONFIG->PORT_WEBSOCKET_SERVER);
+
+// server settings:
+$server->setMaxClients(100);
+$server->setCheckOrigin(false);
+$server->setMaxConnectionsPerIp(100);
+$server->setMaxRequestsPerMinute(2000);
+
+$server->registerApplication('screen', \Bloatless\WebSocket\Application\ScreenApplication::getInstance());
+if (ENABLE_STATISTICS) {
+    $server->registerApplication('status', \Bloatless\WebSocket\Application\StatusApplication::getInstance());
+}
+$server->run();

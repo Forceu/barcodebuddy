@@ -17,6 +17,11 @@
  * @since      File available since Release 1.2
  */
 
+if (version_compare(PHP_VERSION, '7.2.0') < 0) {
+    echo 'PHP 7.2+ required, you are running ' . PHP_VERSION;
+    die();
+}
+
 
 require_once __DIR__ . "/incl/configProcessing.inc.php";
 require_once __DIR__ . "/incl/db.inc.php";

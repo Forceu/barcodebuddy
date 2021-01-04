@@ -35,7 +35,7 @@ function sendWSResult($resultValue, $name) {
     if ($client->connect('127.0.0.1', $CONFIG->PORT_WEBSOCKET_SERVER, '/screen')) {
         $payload = json_encode(array(
             'action' => 'echo',
-            'data' => $resultValue . $name
+            'data'   => $resultValue . $name
         ));
         $client->sendData($payload);
     }
@@ -47,7 +47,7 @@ function requestSavedState() {
     if ($client->connect('127.0.0.1', $CONFIG->PORT_WEBSOCKET_SERVER, '/screen')) {
         $payload = json_encode(array(
             'action' => 'getmode',
-            'data' => ''
+            'data'   => ''
         ));
         $client->sendData($payload);
     }
@@ -60,18 +60,13 @@ function sendNewState($newState) {
     if ($client->connect('127.0.0.1', $CONFIG->PORT_WEBSOCKET_SERVER, '/screen')) {
         $payload = json_encode(array(
             'action' => 'setmode',
-            'data' => stateToString($newState)
+            'data'   => stateToString($newState)
         ));
         $client->sendData($payload);
     }
 }
 
 function getClient() {
-    if (isNewServerSupported()) {
-        require_once __DIR__ . '/php-websocket/src/Client.php';
-        return new \Bloatless\WebSocket\Client;
-    } else {
-        require_once __DIR__ . '/php-websocket-1.0/class.websocket_client.php';
-        return new WebsocketClient;
-    }
+    require_once __DIR__ . '/php-websocket/src/Client.php';
+    return new \Bloatless\WebSocket\Client;
 }

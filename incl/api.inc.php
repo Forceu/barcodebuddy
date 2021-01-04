@@ -35,7 +35,8 @@ const API_CHORE_EXECUTE    = 'chores/';
 const API_SYTEM_INFO       = 'system/info';
 const API_SYTEM_TIME       = 'system/time';
 
-const MIN_GROCY_VERSION = "3.0.1";
+const MIN_GROCY_VERSION = "3.0.0"; //TODO replace with 3.0.1 once it is released
+const USE_OLD_300_API   = true; //TODO DELETE once 3.0.1 is released
 
 const LOGIN_URL     = "loginurl";
 const LOGIN_API_KEY = "loginkey";
@@ -183,6 +184,9 @@ class API {
      * @return string
      */
     public static function getLocalTimeGrocy(int $offset = 0): string {
+        if (USE_OLD_300_API) { //TODO DELETE once 3.0.1 is released
+            return "0";
+        }
         $apiurl = API_SYTEM_TIME . "?offset=" . $offset;
         $curl   = new CurlGenerator($apiurl);
         try {

@@ -339,7 +339,7 @@ function getHtmlMainMenuTableKnown($barcodes) {
                     ->generate(true));
             $table->addCell(explodeWordsAndMakeCheckboxes($item['name'], $itemId));
             $table->addCell($html->buildButton("button_createproduct", "Create Product")
-                ->setOnClick('openNewTab(\'' . BBConfig::getInstance()["GROCY_BASE_URL"] . 'product/new?closeAfterCreation&prefillname=' . rawurlencode(htmlspecialchars_decode($item['name'], ENT_QUOTES)) . '&prefillbarcode=' . $item['barcode'] . '\', \'' . $item['barcode'] . '\')')
+                ->setOnClick('openNewTab(\'' . BBConfig::getInstance()["GROCY_BASE_URL"] . 'product/new?closeAfterCreation&flow=InplaceNewProductWithName&name=' . rawurlencode(htmlspecialchars_decode($item['name'], ENT_QUOTES)) . '\', \'' . $item['barcode'] . '\')')
                 ->generate(true));
             $table->addCell($html->buildButton("button_delete", "Remove")->setSubmit()->setValue($item['id'])->generate(true));
             $table->endRow();

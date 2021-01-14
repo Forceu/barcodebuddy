@@ -366,10 +366,10 @@ $CONFIG->checkIfAuthenticated(true);
                     document.getElementById('grocy-sse').textContent = 'Reconnecting...';
                     // console.log('Reconnecting...');
                     connectFailCounter++
-                    if (connectFailCounter == 500) {
+                    if (connectFailCounter === 100) {
                         source.close();
                         document.getElementById('grocy-sse').textContent = 'Unavailable';
-                        document.getElementById('scan-result').textContent = 'Sorry, the server is offline';
+                        document.getElementById('scan-result').textContent = 'Unable to connect to Barcode Buddy';
                     }
                     break;
                 case EventSource.CLOSED:

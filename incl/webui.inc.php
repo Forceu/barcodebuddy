@@ -312,6 +312,15 @@ class WebUiGenerator {
         await delay(1000);
 
         eventSource = new EventSource("incl/sse/sse_data.php");
+        var connectFailCounter = 0;
+        eventSource.addEventListener("error", function (event) {
+            if (event.target.readyState === EventSource.CONNECTING) {
+                    connectFailCounter++
+                    if (connectFailCounter === 100) {
+                        eventSource.close();
+                    }
+            }
+        }, false);
         eventSource.onmessage = function(event) {
             var resultJson = JSON.parse(event.data);
                 var resultCode = resultJson.data.substring(0, 1);

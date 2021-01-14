@@ -107,6 +107,12 @@ $CONFIG->checkIfAuthenticated(true);
             right: 10px;
         }
 
+        #backbuttondiv {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+        }
+
         .h1 {
             font: bold 4em arial;
             margin: auto;
@@ -195,12 +201,26 @@ $CONFIG->checkIfAuthenticated(true);
     <button class="sound" onclick="toggleSound()" id="soundbutton"><img id="muteimg" src="incl/img/mute.svg"
                                                                         alt="Toggle sound and wakelock"></button>
 </div>
+<div id="backbuttondiv">
+    <button class="sound" onclick="goHome()" id="backbutton"><img src="incl/img/back.svg"
+                                                                  alt="Go back to overview">
+    </button>
+</div>
 
 <script>
 
     var noSleep = new NoSleep();
     var wakeLockEnabled = false;
     var isFirstStart = true;
+
+
+    function goHome() {
+        if (document.referrer === "") {
+            window.location.href = './index.php'
+        } else {
+            window.close();
+        }
+    }
 
     function toggleSound() {
         if (!wakeLockEnabled) {
@@ -223,6 +243,7 @@ $CONFIG->checkIfAuthenticated(true);
             document.getElementById("muteimg").src = "incl/img/mute.svg";
         }
     }
+
 
     function syncCache() {
         var xhttp = new XMLHttpRequest();

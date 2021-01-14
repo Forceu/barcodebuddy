@@ -113,6 +113,13 @@ $CONFIG->checkIfAuthenticated(true);
             left: 10px;
         }
 
+        #selectbuttondiv {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
         .h1 {
             font: bold 4em arial;
             margin: auto;
@@ -145,7 +152,7 @@ $CONFIG->checkIfAuthenticated(true);
             text-align: center;
         }
 
-        .sound {
+        .bottom-button {
             background-color: #31B0D5;
             color: white;
             padding: 1em 2em;
@@ -153,19 +160,72 @@ $CONFIG->checkIfAuthenticated(true);
             border-color: #46b8da;
         }
 
-        #muteimg {
-            height: 2em;
-            width: 2em;
+        .bottom-img {
+            height: 2.5em;
+            width: 2.5em;
         }
 
         @media only screen and (orientation: portrait)  not (display-mode: fullscreen) {
-            .sound {
+            .bottom-button {
                 padding: 2em 4em;
             }
 
-            #muteimg {
+            .bottom-img {
                 height: 3em;
                 width: 3em;
+            }
+        }
+
+        .overlay {
+            height: 0;
+            width: 100%;
+            position: fixed;
+            z-index: 1;
+            bottom: 0;
+            left: 0;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.9);
+            overflow-x: hidden;
+            transition: 0.3s;
+        }
+
+        .overlay-content {
+            position: relative;
+            top: 25%;
+            width: 100%;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .overlay a {
+            padding: 8px;
+            text-decoration: none;
+            font-size: 36px;
+            color: #818181;
+            display: block;
+            transition: 0.2s;
+        }
+
+        .overlay a:hover, .overlay a:focus {
+            color: #f1f1f1;
+        }
+
+        .overlay .closebtn {
+            position: absolute;
+            top: 20px;
+            right: 45px;
+            font-size: 60px;
+        }
+
+        @media screen and (max-height: 450px) {
+            .overlay a {
+                font-size: 20px
+            }
+
+            .overlay .closebtn {
+                font-size: 40px;
+                top: 15px;
+                right: 35px;
             }
         }
     </style>
@@ -198,16 +258,58 @@ $CONFIG->checkIfAuthenticated(true);
 <audio id="beep_success" muted="muted" src="incl/websocket/beep.ogg" type="audio/ogg" preload="auto"></audio>
 <audio id="beep_nosuccess" muted="muted" src="incl/websocket/buzzer.ogg" type="audio/ogg" preload="auto"></audio>
 <div id="soundbuttondiv">
-    <button class="sound" onclick="toggleSound()" id="soundbutton"><img id="muteimg" src="incl/img/mute.svg"
-                                                                        alt="Toggle sound and wakelock"></button>
+    <button class="bottom-button" onclick="toggleSound()" id="soundbutton"><img class="bottom-img"
+                                                                                src="incl/img/mute.svg"
+                                                                                alt="Toggle sound and wakelock">
+    </button>
 </div>
 <div id="backbuttondiv">
-    <button class="sound" onclick="goHome()" id="backbutton"><img src="incl/img/back.svg"
-                                                                  alt="Go back to overview">
+    <button class="bottom-button" onclick="goHome()" id="backbutton"><img class="bottom-img" src="incl/img/back.svg"
+                                                                          alt="Go back to overview">
+    </button>
+</div>
+<div id="selectbuttondiv">
+    <button class="bottom-button" onclick="openNav()" id="selectbutton"><img class="bottom-img" src="incl/img/cart.svg"
+                                                                             alt="Set mode">
     </button>
 </div>
 
+
+<div id="myNav" class="overlay">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <div class="overlay-content">
+        <a href="#" onclick="sendBarcode('<?php echo BBConfig::getInstance()["BARCODE_P"] ?>')">Purchase</a>
+        <a href="#" onclick="sendBarcode('<?php echo BBConfig::getInstance()["BARCODE_C"] ?>')">Consume</a>
+        <a href="#" onclick="sendBarcode('<?php echo BBConfig::getInstance()["BARCODE_O"] ?>')">Open</a>
+        <a href="#" onclick="sendBarcode('<?php echo BBConfig::getInstance()["BARCODE_GS"] ?>')">Inventory</a>
+        <a href="#" onclick="sendBarcode('<?php echo BBConfig::getInstance()["BARCODE_AS"] ?>')">Add to shoppinglist</a>
+        <a href="#" onclick="sendQuantity()">Set quantity</a>
+        <a href="#" onclick="sendBarcode('<?php echo BBConfig::getInstance()["BARCODE_CA"] ?>')">Consume All</a>
+        <a href="#" onclick="sendBarcode('<?php echo BBConfig::getInstance()["BARCODE_CS"] ?>')">Consume (spoiled)</a>
+    </div>
+</div>
+
 <script>
+
+    function openNav() {
+        document.getElementById("myNav").style.height = "100%";
+    }
+
+    function closeNav() {
+        document.getElementById("myNav").style.height = "0%";
+    }
+
+    function sendBarcode(barcode) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "./api/action/scan?add=" + barcode, true);
+        xhttp.send();
+        closeNav();
+    }
+
+    function sendQuantity() {
+        var q = prompt('Enter quantity', '1');
+        sendBarcode('<?php echo BBConfig::getInstance()["BARCODE_Q"] ?>' + q);
+    }
 
     var noSleep = new NoSleep();
     var wakeLockEnabled = false;

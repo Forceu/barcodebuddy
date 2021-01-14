@@ -237,7 +237,8 @@ function processUnknownBarcode($barcode, $websocketEnabled, &$fileLock, $bestBef
 function stateToString(int $state): string {
     $allowedModes = array(
         STATE_CONSUME         => "Consume",
-        STATE_CONSUME_SPOILED => "Consume(spoiled)",
+        STATE_CONSUME_SPOILED => "Consume (spoiled)",
+        STATE_CONSUME_ALL     => "Consume (all)",
         STATE_PURCHASE        => "Purchase",
         STATE_OPEN            => "Open",
         STATE_GETSTOCK        => "Inventory",

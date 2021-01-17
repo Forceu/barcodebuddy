@@ -229,8 +229,12 @@ function processButtons() {
                     if ($isConsume) {
                         if ($product->stockAmount < $amount)
                             $amount = $product->stockAmount;
-                        API::consumeProduct($gidSelected, $amount);
-                        $log = new LogOutput("Consuming $amount " . $product->unit . " of " . $product->name, EVENT_TYPE_ADD_KNOWN_BARCODE);
+                        if ($amount > 0) {
+                            API::consumeProduct($gidSelected, $amount);
+                            $log = new LogOutput("Consuming $amount " . $product->unit . " of " . $product->name, EVENT_TYPE_ADD_KNOWN_BARCODE);
+                        } else {
+                            $log = new LogOutput("None in stock, not consuming: " . $product->name, EVENT_TYPE_ADD_KNOWN_BARCODE);
+                        }
                         $log->setVerbose()->dontSendWebsocket()->createLog();
                     } else {
                         $additionalLog = "";
@@ -407,8 +411,11 @@ function getHtmlMainMenuTableUnknown($barcodes) {
 }
 
 
-//outputs stored logs to the textarea
-function getHtmlLogTextArea() {
+/**
+ * Outputs stored logs to the textarea
+ * @return string
+ */
+function getHtmlLogTextArea(): string {
     $db   = DatabaseConnection::getInstance();
     $logs = $db->getLogs();
     $html = new UiEditor(true, null, "f3");

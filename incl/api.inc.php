@@ -416,6 +416,8 @@ class API {
      * @param boolean set true if product was spoiled. Default: false
      */
     public static function consumeProduct($id, $amount, $spoiled = false) {
+        if ($amount <= 0)
+            return;
 
         $data = json_encode(array(
             'amount'           => $amount,

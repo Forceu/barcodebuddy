@@ -161,8 +161,40 @@ class WebUiGenerator {
         <meta name="theme-color" content="#3f51b5">
 
 
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <style>
+        /* roboto-regular - vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic */
+        @font-face {
+          font-family: "Roboto";
+          font-style: normal;
+          font-weight: 400;
+          src: local(""),
+               url(' . $folder . 'incl/fonts/roboto-v20-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-regular.woff2) format("woff2"), /* Chrome 26+, Opera 23+, Firefox 39+ */
+               url(' . $folder . 'incl/fonts/roboto-v20-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-regular.woff) format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+        }
+        
+        @font-face {
+          font-family: "Material Icons";
+          font-style: normal;
+          font-weight: 400;
+          src: url(' . $folder . 'incl/fonts/materialicons.woff2) format("woff2");
+        }
+        
+        .material-icons {
+          font-family: "Material Icons";
+          font-weight: normal;
+          font-style: normal;
+          font-size: 24px;
+          line-height: 1;
+          letter-spacing: normal;
+          text-transform: none;
+          display: inline-block;
+          white-space: nowrap;
+          word-wrap: normal;
+          direction: ltr;
+          -webkit-font-feature-settings: "liga";
+          -webkit-font-smoothing: antialiased;
+        }
+        </style>
         <link rel="stylesheet" href="' . $folder . 'incl/css/material.indigo-blue.min.css">
         <link rel="stylesheet" href="' . $folder . 'incl/css/main.css">');
         if ($additionalHeader != null) {

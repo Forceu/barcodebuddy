@@ -61,6 +61,7 @@ const LEGACY_DATABASE_PATH = __DIR__ . '/../barcodebuddy.db';
 
 /**
  * Thrown when a database connection is already being setup and a new connection is requested
+ * This happens most likely when calling getInstance() during the database upgrade
  */
 class DbConnectionDuringEstablishException extends Exception {
 
@@ -273,9 +274,23 @@ class DatabaseConnection {
                 $this->updateConfig("LOOKUP_ORDER", $config["LOOKUP_ORDER"] . ",6");
             }
         }
+        if ($previousVersion < 1660) {
+            $quantities = $this->getQuantitiesForUpgrade();
+            foreach ($quantities as $quantity) {
+                if ($quantity->product != null) {
+                    try {
+                        QuantityManager::syncBarcodeToGrocy($quantity->barcode, $this->db);
+                    } catch (DbConnectionDuringEstablishException $e) {
+                        $this->saveError("Unable to sync quantity to Grocy: Barcode " . $quantity->barcode . ", Amount " . $quantity->quantity, true);
+                    }
+                } else {
+                    $this->saveError("Unable to sync quantity to Grocy, as barcode does not exist in Grocy: Barcode " . $quantity->barcode . ", Amount " . $quantity->quantity, true);
+                    QuantityManager::delete($quantity->id, $this->db);
+                }
+            }
+        }
         RedisConnection::updateCache();
     }
-
 
     private function isSupportedGrocyVersionOrDie() {
         global $ERROR_MESSAGE;
@@ -542,5 +557,19 @@ class DatabaseConnection {
 
     public function getDatabaseReference(): SQLite3 {
         return $this->db;
+    }
+
+
+    /**
+     * Gets the legacy Quantities stored, needed for the upgrade to 1.6.6.0
+     * @return array
+     */
+    private function getQuantitiesForUpgrade(): array {
+        $res      = $this->db->query('SELECT * FROM Quantities');
+        $barcodes = array();
+        while ($row = $res->fetchArray()) {
+            array_push($barcodes, new Quantity($row));
+        }
+        return $barcodes;
     }
 }

@@ -31,7 +31,7 @@ $CONFIG->checkIfAuthenticated(true, true);
 if (isset($_POST["button_delete"])) {
     $id = $_POST["button_delete"];
     checkIfNumeric($id);
-    QuantityManager::delete($id);
+    API::deleteBarcodeQuantity($id);
     //Hide POST, so we can refresh
     header("Location: " . $CONFIG->getPhpSelfWithBaseUrl());
     die();
@@ -48,7 +48,8 @@ $webUi->printHtml();
 function printSettingsQuantityTable(): string {
     global $CONFIG;
     $quantities = QuantityManager::getQuantities();
-    $html       = new UiEditor();
+    sortQuantityArray($quantities);
+    $html = new UiEditor();
     if (sizeof($quantities) == 0) {
         $html->addHtml("No saved quantities yet.");
         return $html->getHtml();
@@ -75,4 +76,10 @@ function printSettingsQuantityTable(): string {
         return $html->getHtml();
     }
 
+}
+
+function sortQuantityArray(&$arr) {
+    usort($arr, function (ApiQuantity $a, ApiQuantity $b) {
+        return strtolower($a->product) <=> strtolower($b->product);
+    });
 }

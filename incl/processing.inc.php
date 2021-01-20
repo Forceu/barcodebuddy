@@ -554,11 +554,11 @@ function changeQuantityAfterScan($amount) {
     $db      = DatabaseConnection::getInstance();
     $barcode = sanitizeString($config["LAST_BARCODE"]);
     if ($config["LAST_PRODUCT"] != null) {
-        QuantityManager::addUpdateEntry($barcode, $amount, $config["LAST_PRODUCT"]);
+        API::addBarcodeQuantity($barcode, $amount);
     } else {
         $product = API::getProductByBarcode($barcode);
         if ($product != null) {
-            QuantityManager::addUpdateEntry($barcode, $amount, $product->name);
+            API::addBarcodeQuantity($barcode, $amount);
         } else {
             QuantityManager::addUpdateEntry($barcode, $amount);
         }

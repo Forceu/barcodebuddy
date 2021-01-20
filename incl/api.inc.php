@@ -90,6 +90,9 @@ class GrocyProduct {
     }
 }
 
+class ApiInternalErrorException extends Exception {
+}
+
 class API {
 
     /**
@@ -120,7 +123,8 @@ class API {
         if ($result != null) {
             $products = array();
             foreach ($result as $product) {
-                array_push($products, GrocyProduct::parseProductInfoObjects($product));
+                $grocyProduct                = GrocyProduct::parseProductInfoObjects($product);
+                $products[$grocyProduct->id] = $grocyProduct;
             }
             if ($updateRedisCache) {
                 RedisConnection::cacheAllProductsInfo($products);
@@ -459,6 +463,60 @@ class API {
 
 
     /**
+     * Adds quantity information from grocy barcode
+     * @param string $barcode Barcode to modify
+     * @param int $quantity
+     * @param bool $ignoreCache
+     */
+    public static function addBarcodeQuantity(string $barcode, int $quantity, bool $ignoreCache = false) {
+
+        $data = json_encode(array(
+            "amount" => $quantity,
+        ));
+
+        $barcodes = self::getAllBarcodes($ignoreCache);
+        if (!isset($barcodes[$barcode])) {
+            if (!$ignoreCache) {
+                self::addBarcodeQuantity($barcode, $quantity, true);
+            } else {
+                self::processError(new ApiInternalErrorException(), "Could not add quantity, barcode $barcode not registered with Grocy.");
+                return;
+            }
+        }
+        $barcodeId = $barcodes[$barcode]["barcode_id"];
+        $url       = API_O_BARCODES . "/" . $barcodeId;
+
+        $curl = new CurlGenerator($url, METHOD_PUT, $data);
+        try {
+            $curl->execute();
+        } catch (Exception $e) {
+            self::processError($e, "Could not set Grocy barcode quantity");
+        }
+        RedisConnection::expireAllBarcodes();
+    }
+
+
+    /**
+     * Delete quantity information from grocy barcode
+     * @param string $id
+     */
+    public static function deleteBarcodeQuantity(string $id) {
+        $data = json_encode(array(
+            "amount" => null
+        ));
+        $url  = API_O_BARCODES . "/" . $id;
+
+        $curl = new CurlGenerator($url, METHOD_PUT, $data);
+        try {
+            $curl->execute();
+        } catch (Exception $e) {
+            self::processError($e, "Could not remove Grocy barcode quantity");
+        }
+        RedisConnection::expireAllBarcodes();
+    }
+
+
+    /**
      * Formats the amount of days into future date
      * @param int $days Amount of days a product is consumable, or -1 if it does not expire
      * @return false|string  Formatted date
@@ -532,8 +590,10 @@ class API {
         foreach ($curlResult as $item) {
             if (!isset($item["barcode"]) || !isset($item["product_id"]))
                 continue;
-            $result[$item["barcode"]]["id"]     = $item["product_id"];
-            $result[$item["barcode"]]["factor"] = $item["amount"];
+            $result[$item["barcode"]]["id"]         = $item["product_id"];
+            $result[$item["barcode"]]["factor"]     = $item["amount"];
+            $result[$item["barcode"]]["barcode_id"] = $item["id"];
+            $result[$item["barcode"]]["barcode"]    = $item["barcode"];
         }
         if ($updateRedis)
             RedisConnection::cacheAllBarcodes($result);
@@ -643,6 +703,9 @@ class API {
                 break;
             case 'InternalServerErrorException':
                 self::logError("Grocy reported internal error: " . $errorMessage);
+                break;
+            case 'ApiInternalErrorException':
+                self::logError("Could not process API call: " . $errorMessage);
                 break;
         }
     }

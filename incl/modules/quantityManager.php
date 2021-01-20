@@ -4,15 +4,16 @@ class QuantityManager {
 
     /**
      * Gets an array of locally stored quantities
-     * @return Quantity[]
-     * @throws DbConnectionDuringEstablishException
+     * @return ApiQuantity[]
      */
     public static function getQuantities(): array {
-        $db       = DatabaseConnection::getInstance()->getDatabaseReference();
-        $res      = $db->query('SELECT * FROM Quantities');
-        $barcodes = array();
-        while ($row = $res->fetchArray()) {
-            array_push($barcodes, new Quantity($row));
+        $barcodes       = array();
+        $storedBarcodes = API::getAllBarcodes();
+        $products       = API::getAllProductsInfo();
+        foreach ($storedBarcodes as $barcode) {
+            if ($barcode["factor"] != null) {
+                array_push($barcodes, new ApiQuantity($barcode, $products));
+            }
         }
         return $barcodes;
     }
@@ -22,18 +23,44 @@ class QuantityManager {
      * Gets quantity for stored barcode quantities or 1 if not found
      *
      * @param string $barcode
+     * @param bool $deleteAfterCompletion Deletes the entry after before returning the amount
+     * @param SQLite3|null $db A DB reference can be passed. Only use for upgrading DB to new version!
      * @return int quantity or 1 if not found
      * @throws DbConnectionDuringEstablishException
      */
-    public static function getStoredQuantityForBarcode(string $barcode): int {
-        $db  = DatabaseConnection::getInstance()->getDatabaseReference();
+    public static function getStoredQuantityForBarcode(string $barcode, bool $deleteAfterCompletion = false, SQLite3 $db = null): int {
+        if ($db == null)
+            $db = DatabaseConnection::getInstance()->getDatabaseReference();
         $res = $db->query("SELECT * FROM Quantities WHERE barcode='$barcode'");
         if ($row = $res->fetchArray()) {
-            return (new Quantity($row))->quantity;
+            $entry = new Quantity($row);
+            if ($deleteAfterCompletion)
+                self::delete($entry->id, $db);
+            return $entry->quantity;
         } else {
             return 1;
         }
     }
+
+    /**
+     * If a stored amount was found, add this to Grocy
+     * @param SQLite3|null $db A DB reference can be passed. Only use for upgrading DB to new version!
+     * @param string $barcode
+     * @throws DbConnectionDuringEstablishException
+     */
+    public static function syncBarcodeToGrocy(string $barcode, SQLite3 $db = null) {
+        $storedAmount = self::getStoredQuantityForBarcode($barcode, true, $db);
+        if ($storedAmount != 1) {
+            API::addBarcodeQuantity($barcode, $storedAmount);
+            //Only store log if not currently upgrading db
+            if ($db == null) {
+                $log = new LogOutput("Set quantity to $storedAmount for barcode $barcode", EVENT_TYPE_ASSOCIATE_PRODUCT);
+                $log->setVerbose()->dontSendWebsocket()->createLog();
+            }
+        }
+    }
+
+    //TODO CONSUME_SAVED_QUANTITY not working
 
     /**
      * @param $barcode string
@@ -91,11 +118,13 @@ class QuantityManager {
     /**
      * Deletes Quantity barcode
      * @param $id
+     * @param SQLite3|null $db A DB reference can be passed. Only use for upgrading DB to new version!
      * @throws DbConnectionDuringEstablishException
      */
-    public static function delete($id) {
+    public static function delete($id, SQLite3 $db = null) {
         checkIfNumeric($id);
-        $db = DatabaseConnection::getInstance()->getDatabaseReference();
+        if ($db == null)
+            $db = DatabaseConnection::getInstance()->getDatabaseReference();
         $db->exec("DELETE FROM Quantities WHERE id='$id'");
     }
 }
@@ -124,4 +153,26 @@ class Quantity {
             array_key_exists('quantity', $dbRow) &&
             array_key_exists('product', $dbRow));
     }
+}
+
+
+class ApiQuantity {
+
+    public $id;
+    public $barcode;
+    public $quantity;
+    public $product;
+
+    /**
+     * ApiQuantity constructor.
+     * @param array $barcodeArrayItem
+     * @param GrocyProduct[] $productList
+     */
+    public function __construct(array $barcodeArrayItem, array $productList) {
+        $this->id       = $barcodeArrayItem['barcode_id'];
+        $this->barcode  = $barcodeArrayItem['barcode'];
+        $this->quantity = $barcodeArrayItem['factor'];
+        $this->product  = $productList[$barcodeArrayItem['id']]->name;
+    }
+
 }

@@ -220,6 +220,7 @@ function processButtons() {
                 $log = new LogOutput("Associated barcode $barcode with " . $product->name, EVENT_TYPE_ASSOCIATE_PRODUCT);
                 $log->setVerbose()->dontSendWebsocket()->createLog();
                 $db->deleteBarcode($id);
+                QuantityManager::syncBarcodeToGrocy($barcode);
                 if ($product->isTare) {
                     if (!$db->isUnknownBarcodeAlreadyStored($barcode))
                         $db->insertActionRequiredBarcode($barcode, $row["bestBeforeInDays"], $row["price"]);

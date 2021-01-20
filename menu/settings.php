@@ -149,16 +149,26 @@ function getHtmlSettingsBarcodeLookup(): string {
 
     $html->addHtml('</ul>');
     $html->addLineBreak();
-    $html->addHtml(
-        (new EditFieldBuilder(
-            'LOOKUP_UPC_DATABASE_KEY',
-            'UPCDatabase.org API Key',
-            $config["LOOKUP_UPC_DATABASE_KEY"],
-            $html)
-        )
-            ->required($config["LOOKUP_USE_UPC_DATABASE"])
-            ->pattern('[A-Za-z0-9]{32}')
-            ->generate(true)
+    $html->addHtml((new EditFieldBuilder(
+        'LOOKUP_UPC_DATABASE_KEY',
+        'UPCDatabase.org API Key',
+        $config["LOOKUP_UPC_DATABASE_KEY"],
+        $html))
+        ->required($config["LOOKUP_USE_UPC_DATABASE"])
+        ->pattern('[A-Za-z0-9]{32}')
+        ->disabled(!$config["LOOKUP_USE_UPC_DATABASE"])
+        ->generate(true)
+    );
+    $html->addLineBreak();
+    $html->addHtml((new EditFieldBuilder(
+        'LOOKUP_OPENGTIN_KEY',
+        'OpenGtinDb.org API Key',
+        $config["LOOKUP_OPENGTIN_KEY"],
+        $html))
+        ->required($config["LOOKUP_USE_OPEN_GTIN_DATABASE"])
+        ->pattern('[^%]{3,}')
+        ->disabled(!$config["LOOKUP_USE_OPEN_GTIN_DATABASE"])
+        ->generate(true)
     );
 
     $html->addHiddenField("LOOKUP_ORDER", $config["LOOKUP_ORDER"]);
@@ -173,6 +183,21 @@ function getHtmlSettingsBarcodeLookup(): string {
     return $html->getHtml();
 }
 
+function generateApiKeyChangeScript(string $functionName, string $keyId): string {
+    return "function " . $functionName . "(element) {
+                apiEditField = document.getElementById('" . $keyId . "');
+                if (!apiEditField) {
+                    console.warn('Unable to find element " . $keyId . "');
+                } else {
+                    apiEditField.required = element.checked;
+                    if (element.checked) {
+                        apiEditField.parentNode.MaterialTextfield.enable();
+                    } else {
+                        apiEditField.parentNode.MaterialTextfield.disable();
+                    }
+                }
+            }";
+}
 
 function getProviderListItems(UiEditor $html): array {
     $config                                 = BBConfig::getInstance();
@@ -188,15 +213,18 @@ function getProviderListItems(UiEditor $html): array {
         $html)
     )->onCheckChanged(
         "handleUPCDBChange(this)",
-        "function handleUPCDBChange(element) {
-                api_key_input = document.querySelector('#LOOKUP_UPC_DATABASE_KEY');
-                if (!api_key_input) {
-                    console.warn('Unable to find element LOOKUP_UPC_DATABASE_KEY');
-                } else {
-                    api_key_input.required = element.checked;
-                }
-            }")
+        generateApiKeyChangeScript("handleUPCDBChange", "LOOKUP_UPC_DATABASE_KEY"))
         ->generate(true), "Uses UPCDatabase.org", LOOKUP_ID_UPCDATABASE, true);
+
+    $result["id" . LOOKUP_ID_OPENGTINDB] = $html->addListItem((new CheckBoxBuilder(
+        "LOOKUP_USE_OPEN_GTIN_DATABASE",
+        "Open EAN / GTIN Database",
+        $config["LOOKUP_USE_OPEN_GTIN_DATABASE"],
+        $html)
+    )->onCheckChanged(
+        "handleOpenGtinChange(this)",
+        generateApiKeyChangeScript("handleOpenGtinChange", "LOOKUP_OPENGTIN_KEY"))
+        ->generate(true), "Uses OpenGtinDb.org", LOOKUP_ID_OPENGTINDB, true);
     return $result;
 }
 

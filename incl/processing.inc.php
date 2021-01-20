@@ -520,6 +520,8 @@ function printSelections($selected, ?array $productinfo): string {
 
 //Sanitizes a string for database input
 function sanitizeString($input, $strongFilter = false) {
+    if ($input == null)
+        return null;
     if ($strongFilter) {
         return filter_var($input, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
     } else {

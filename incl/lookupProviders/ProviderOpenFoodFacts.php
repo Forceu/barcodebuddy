@@ -48,17 +48,6 @@ class ProviderOpenFoodFacts extends LookupProvider {
             $productName = sanitizeString($result["product"]["product_name"]);
         }
 
-        if ($this->useGenericName) {
-            if ($genericName != null)
-                return $genericName;
-            if ($productName != null)
-                return $productName;
-        } else {
-            if ($productName != null)
-                return $productName;
-            if ($genericName != null)
-                return $genericName;
-        }
-        return null;
+        return $this->returnNameOrGenericName($productName, $genericName);
     }
 }

@@ -28,7 +28,8 @@ class BarcodeLookup {
         LOOKUP_ID_UPCDB         => "ProviderUpcDb",
         LOOKUP_ID_UPCDATABASE   => "ProviderUpcDatabase",
         LOOKUP_ID_ALBERTHEIJN   => "ProviderAlbertHeijn",
-        LOOKUP_ID_JUMBO         => "ProviderJumbo"
+        LOOKUP_ID_JUMBO         => "ProviderJumbo",
+        LOOKUP_ID_OPENGTINDB    => "ProviderOpengtindb"
     );
 
     /**
@@ -44,7 +45,6 @@ class BarcodeLookup {
         $orderAsArray = explode(",", $config["LOOKUP_ORDER"]);
         foreach ($orderAsArray as $orderId) {
             $result = (new self::$providers[$orderId]())->lookupBarcode($barcode);
-            echo "Using provider " . self::$providers[$orderId] . "\n";
             if ($result != null)
                 return $result;
         }

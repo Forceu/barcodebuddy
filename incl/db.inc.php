@@ -47,6 +47,7 @@ const LOOKUP_ID_UPCDB         = "2";
 const LOOKUP_ID_UPCDATABASE   = "3";
 const LOOKUP_ID_ALBERTHEIJN   = "4";
 const LOOKUP_ID_JUMBO         = "5";
+const LOOKUP_ID_OPENGTINDB    = "6";
 
 /**
  * Dockerfile changes this to "1", so that the default is true
@@ -72,41 +73,44 @@ class DatabaseConnection {
 
     /* 1 is used for true and 0 for false, as PHP interprets the String "false" as Boolean "true" */
     const DEFAULT_VALUES = array(
-        "BARCODE_C"               => "BBUDDY-C",
-        "BARCODE_CS"              => "BBUDDY-CS",
-        "BARCODE_CA"              => "BBUDDY-CA",
-        "BARCODE_P"               => "BBUDDY-P",
-        "BARCODE_O"               => "BBUDDY-O",
-        "BARCODE_GS"              => "BBUDDY-I",
-        "BARCODE_Q"               => "BBUDDY-Q-",
-        "BARCODE_AS"              => "BBUDDY-AS",
-        "REVERT_TIME"             => "10",
-        "REVERT_SINGLE"           => "1",
-        "MORE_VERBOSE"            => "1",
-        "GROCY_API_URL"           => null,
-        "GROCY_API_KEY"           => null,
-        "LAST_BARCODE"            => null,
-        "LAST_PRODUCT"            => null,
-        "WS_FULLSCREEN"           => "0",
-        "SHOPPINGLIST_REMOVE"     => "1",
-        "USE_GENERIC_NAME"        => "1",
-        "CONSUME_SAVED_QUANTITY"  => "0",
-        "USE_GROCY_QU_FACTOR"     => "0",
-        "SHOW_STOCK_ON_SCAN"      => "0",
-        "LOOKUP_USE_OFF"          => "1",
-        "LOOKUP_USE_UPC"          => "1",
-        "LOOKUP_USE_JUMBO"        => "0",
-        "LOOKUP_USE_AH"           => "0",
-        "LOOKUP_USE_UPC_DATABASE" => "0",
-        "LOOKUP_UPC_DATABASE_KEY" => null,
-        "USE_REDIS"               => DEFAULT_USE_REDIS,
-        "REDIS_IP"                => "127.0.0.1",
-        "REDIS_PORT"              => "6379",
-        "LOOKUP_ORDER"            => LOOKUP_ID_OPENFOODFACTS . "," .
+        "BARCODE_C"                     => "BBUDDY-C",
+        "BARCODE_CS"                    => "BBUDDY-CS",
+        "BARCODE_CA"                    => "BBUDDY-CA",
+        "BARCODE_P"                     => "BBUDDY-P",
+        "BARCODE_O"                     => "BBUDDY-O",
+        "BARCODE_GS"                    => "BBUDDY-I",
+        "BARCODE_Q"                     => "BBUDDY-Q-",
+        "BARCODE_AS"                    => "BBUDDY-AS",
+        "REVERT_TIME"                   => "10",
+        "REVERT_SINGLE"                 => "1",
+        "MORE_VERBOSE"                  => "1",
+        "GROCY_API_URL"                 => null,
+        "GROCY_API_KEY"                 => null,
+        "LAST_BARCODE"                  => null,
+        "LAST_PRODUCT"                  => null,
+        "WS_FULLSCREEN"                 => "0",
+        "SHOPPINGLIST_REMOVE"           => "1",
+        "USE_GENERIC_NAME"              => "1",
+        "CONSUME_SAVED_QUANTITY"        => "0",
+        "USE_GROCY_QU_FACTOR"           => "0",
+        "SHOW_STOCK_ON_SCAN"            => "0",
+        "LOOKUP_USE_OFF"                => "1",
+        "LOOKUP_USE_UPC"                => "1",
+        "LOOKUP_USE_JUMBO"              => "0",
+        "LOOKUP_USE_AH"                 => "0",
+        "LOOKUP_USE_UPC_DATABASE"       => "0",
+        "LOOKUP_USE_OPEN_GTIN_DATABASE" => "0",
+        "LOOKUP_UPC_DATABASE_KEY"       => null,
+        "LOOKUP_OPENGTIN_KEY"           => null,
+        "USE_REDIS"                     => DEFAULT_USE_REDIS,
+        "REDIS_IP"                      => "127.0.0.1",
+        "REDIS_PORT"                    => "6379",
+        "LOOKUP_ORDER"                  => LOOKUP_ID_OPENFOODFACTS . "," .
             LOOKUP_ID_UPCDB . "," .
             LOOKUP_ID_UPCDATABASE . "," .
             LOOKUP_ID_ALBERTHEIJN . "," .
-            LOOKUP_ID_JUMBO);
+            LOOKUP_ID_JUMBO . "," .
+            LOOKUP_ID_OPENGTINDB);
 
 
     const DB_INT_VALUES = array("REVERT_TIME");
@@ -259,6 +263,12 @@ class DatabaseConnection {
             $this->db->exec("CREATE TABLE Quantities(id INTEGER PRIMARY KEY, barcode TEXT NOT NULL UNIQUE, quantity INTEGER NOT NULL, product TEXT)");
             $this->db->exec("INSERT INTO Quantities(id, barcode, quantity, product) SELECT id, barcode, quantitiy, product FROM Quantities_temp;");
             $this->db->exec("DROP TABLE Quantities_temp;");
+        }
+        if ($previousVersion < 1653) {
+            $config = BBConfig::getInstance();
+            if ($config["LOOKUP_ORDER"] != self::DEFAULT_VALUES["LOOKUP_ORDER"]) {
+                $this->updateConfig("LOOKUP_ORDER", $config["LOOKUP_ORDER"] . ",6");
+            }
         }
     }
 

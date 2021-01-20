@@ -21,6 +21,7 @@ require_once __DIR__ . "/ProviderJumbo.php";
 require_once __DIR__ . "/ProviderUpcDatabase.php";
 require_once __DIR__ . "/ProviderDebug.php";
 require_once __DIR__ . "/ProviderAlbertHeijn.php";
+require_once __DIR__ . "/ProviderOpengtindb.php";
 
 class LookupProvider {
 
@@ -51,11 +52,35 @@ class LookupProvider {
         throw new Exception('lookupBarcode needs to be overriden!');
     }
 
+    /**
+     * Returns the generic or product name, depending what user set in config or if
+     * a product / generic name is available
+     * @param string|null $productName
+     * @param string|null $genericName
+     * @return string|null
+     */
+    public function returnNameOrGenericName(?string $productName, ?string $genericName): ?string {
+        $productName = sanitizeString($productName);
+        $genericName = sanitizeString($genericName);
+        if ($this->useGenericName) {
+            if ($genericName != null)
+                return $genericName;
+            if ($productName != null)
+                return $productName;
+        } else {
+            if ($productName != null)
+                return $productName;
+            if ($genericName != null)
+                return $genericName;
+        }
+        return null;
+    }
 
-    protected function execute(string $url, string $method = METHOD_GET, array $formdata = null, string $userAgent = null, $headers = null) {
+
+    protected function execute(string $url, string $method = METHOD_GET, array $formdata = null, string $userAgent = null, $headers = null, $decodeJson = true) {
         $curl = new CurlGenerator($url, $method, null, null, true, $this->ignoredResultCodes, $formdata, $userAgent, $headers);
         try {
-            $result = $curl->execute(true);
+            $result = $curl->execute($decodeJson);
         } catch (Exception $e) {
             $class = get_class($e);
             switch ($class) {

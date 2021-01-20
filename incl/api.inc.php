@@ -498,30 +498,10 @@ class API {
         if (!isset($allBarcodes[$barcode])) {
             return null;
         } else {
-            return self::getProductInfo($allBarcodes[$barcode]);
+            return self::getProductInfo($allBarcodes[$barcode]["id"]);
         }
     }
 
-
-    /**
-     * Get a Grocy product by barcode from API, currently unused
-     * @param string $barcode barcode to lookup
-     * @return GrocyProduct|null Product info or null if barcode is not associated with a product
-     */
-    public static function getProductByBarcodeLegacy(string $barcode): ?GrocyProduct {
-        $apiurl = API_STOCK_BY_BARCODE . $barcode;
-        $curl   = new CurlGenerator($apiurl);
-        try {
-            $result = $curl->execute(true);
-        } catch (Exception $e) {
-            self::processError($e, "Could not lookup Grocy barcode");
-        }
-
-        if (isset($result["product"]["id"])) {
-            return GrocyProduct::parseProductInfoStock($result);
-        }
-        return null;
-    }
 
     /**
      * @param bool $ignoreCache If true, cache will be ignored and afterwards updated.
@@ -552,7 +532,8 @@ class API {
         foreach ($curlResult as $item) {
             if (!isset($item["barcode"]) || !isset($item["product_id"]))
                 continue;
-            $result[$item["barcode"]] = $item["product_id"];
+            $result[$item["barcode"]]["id"]     = $item["product_id"];
+            $result[$item["barcode"]]["factor"] = $item["amount"];
         }
         if ($updateRedis)
             RedisConnection::cacheAllBarcodes($result);

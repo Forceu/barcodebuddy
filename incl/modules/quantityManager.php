@@ -19,13 +19,13 @@ class QuantityManager {
 
 
     /**
-     * Gets quantity for stored barcode quantities or 1 as default
+     * Gets quantity for stored barcode quantities or 1 if not found
      *
      * @param string $barcode
      * @return int quantity or 1 if not found
      * @throws DbConnectionDuringEstablishException
      */
-    public static function getQuantityForBarcode(string $barcode): int {
+    public static function getStoredQuantityForBarcode(string $barcode): int {
         $db  = DatabaseConnection::getInstance()->getDatabaseReference();
         $res = $db->query("SELECT * FROM Quantities WHERE barcode='$barcode'");
         if ($row = $res->fetchArray()) {
@@ -33,6 +33,25 @@ class QuantityManager {
         } else {
             return 1;
         }
+    }
+
+    /**
+     * @param $barcode string
+     * @param $isConsume bool
+     * @param $productInfo GrocyProduct
+     * @return int
+     */
+    public static function getQuantityForBarcode(string $barcode, bool $isConsume, GrocyProduct $productInfo): int {
+        $config = BBConfig::getInstance();
+        if ($isConsume && !$config["CONSUME_SAVED_QUANTITY"])
+            return 1;
+        $amountSavedInProduct = intval($productInfo->quFactor);
+        $barcodes             = API::getAllBarcodes();
+        if (isset($barcodes[$barcode]) && $barcodes[$barcode]["factor"] != null)
+            return $barcodes[$barcode]["factor"];
+        if ($config["USE_GROCY_QU_FACTOR"] && $amountSavedInProduct > 1)
+            return $amountSavedInProduct;
+        return $amount = QuantityManager::getStoredQuantityForBarcode($barcode);
     }
 
     /**

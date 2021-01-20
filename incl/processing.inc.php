@@ -188,7 +188,7 @@ function processUnknownBarcode($barcode, $websocketEnabled, &$fileLock, $bestBef
     $db     = DatabaseConnection::getInstance();
     $amount = 1;
     if ($db->getTransactionState() == STATE_PURCHASE) {
-        $amount = QuantityManager::getQuantityForBarcode($barcode);
+        $amount = QuantityManager::getStoredQuantityForBarcode($barcode);
     }
     if ($db->isUnknownBarcodeAlreadyStored($barcode)) {
         //Unknown barcode already in local database
@@ -344,7 +344,7 @@ function processKnownBarcode(GrocyProduct $productInfo, $barcode, $websocketEnab
 
     switch ($state) {
         case STATE_CONSUME:
-            $amountToConsume = getQuantityForBarcode($barcode, true, $productInfo);
+            $amountToConsume = QuantityManager::getQuantityForBarcode($barcode, true, $productInfo);
 
             if ($productInfo->stockAmount > 0) {
                 if ($productInfo->stockAmount < $amountToConsume)
@@ -414,7 +414,7 @@ function processKnownBarcode(GrocyProduct $productInfo, $barcode, $websocketEnab
             return $output;
         case STATE_PURCHASE:
             $isWarning = false;
-            $amount    = getQuantityForBarcode($barcode, false, $productInfo);
+            $amount    = QuantityManager::getQuantityForBarcode($barcode, false, $productInfo);
             if ($productInfo->defaultBestBeforeDays == 0 && $bestBeforeInDays == null) {
                 $additionalLog = " <span style=\"color: orange;\">No default best before date set!</span>";
                 $isWarning     = true;
@@ -471,24 +471,6 @@ function processKnownBarcode(GrocyProduct $productInfo, $barcode, $websocketEnab
             throw new Exception("Unknown state");
     }
 }
-
-/**
- * @param $barcode string
- * @param $isConsume bool
- * @param $productInfo GrocyProduct
- * @return int
- * @throws DbConnectionDuringEstablishException
- */
-function getQuantityForBarcode(string $barcode, bool $isConsume, GrocyProduct $productInfo): int {
-    $config = BBConfig::getInstance();
-
-    if ($isConsume && !$config["CONSUME_SAVED_QUANTITY"])
-        return 1;
-    if ($config["USE_GROCY_QU_FACTOR"])
-        return intval($productInfo->quFactor);
-    return $amount = QuantityManager::getQuantityForBarcode($barcode);
-}
-
 
 /**
  * Function for generating the <select> elements in the web ui

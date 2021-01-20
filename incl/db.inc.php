@@ -232,8 +232,11 @@ class DatabaseConnection {
         }
     }
 
-    //Is called after updating Barcode Buddy to a new version
-    private function upgradeBarcodeBuddy($previousVersion) {
+    /**
+     * Is called after updating Barcode Buddy to a new version
+     * @param int $previousVersion Previously installed version
+     */
+    private function upgradeBarcodeBuddy(int $previousVersion) {
         //We update version before the actual update routine, as otherwise the user cannot
         //reenter setup. As the login gets invalidated in such a case, the Grocy version
         //will be checked upon reentering.
@@ -270,6 +273,7 @@ class DatabaseConnection {
                 $this->updateConfig("LOOKUP_ORDER", $config["LOOKUP_ORDER"] . ",6");
             }
         }
+        RedisConnection::updateCache();
     }
 
 

@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="4.1.1@16bfbd9224698bd738c665f33039fade2a1a3977">
   <file src="../../api/index.php">
-    <InvalidNullableReturnType occurrences="1">
-      <code>bool</code>
-    </InvalidNullableReturnType>
+    <InvalidScalarArgument occurrences="2">
+      <code>$bestBefore</code>
+      <code>$price</code>
+    </InvalidScalarArgument>
     <PossiblyFalseArgument occurrences="1">
       <code>strpos($requestedUrl, '/api')</code>
     </PossiblyFalseArgument>
+    <PossiblyNullArgument occurrences="1">
+      <code>sanitizeString($barcode)</code>
+    </PossiblyNullArgument>
   </file>
   <file src="../../incl/PluginLoader.php">
     <UnresolvableInclude occurrences="1">
@@ -14,60 +18,37 @@
     </UnresolvableInclude>
   </file>
   <file src="../../incl/api.inc.php">
-    <DocblockTypeContradiction occurrences="4">
-      <code>$bestbefore != null</code>
-      <code>$defaultBestBefore != null</code>
-      <code>$fileLock != null</code>
-      <code>$price != null</code>
-    </DocblockTypeContradiction>
-    <InvalidReturnStatement occurrences="1">
-      <code>$daysBestBefore != 0</code>
+    <InvalidReturnStatement occurrences="4">
+      <code>$days</code>
+      <code>$result</code>
+      <code>$result</code>
+      <code>$result</code>
     </InvalidReturnStatement>
-    <InvalidReturnType occurrences="5">
-      <code>false</code>
-      <code>none</code>
-      <code>none</code>
-      <code>none</code>
-      <code>none</code>
+    <InvalidReturnType occurrences="1">
+      <code>int</code>
     </InvalidReturnType>
     <InvalidScalarArgument occurrences="1">
-      <code>$curlResult</code>
+      <code>$daysBestBefore</code>
     </InvalidScalarArgument>
-    <NullableReturnStatement occurrences="2">
-      <code>null</code>
-      <code>null</code>
-    </NullableReturnStatement>
-    <PossiblyUndefinedVariable occurrences="20">
+    <PossiblyInvalidArrayOffset occurrences="3">
+      <code>$result["grocy_version"]</code>
+      <code>$result["grocy_version"]</code>
+      <code>$result["time_local_sqlite3"]</code>
+    </PossiblyInvalidArrayOffset>
+    <PossiblyInvalidIterator occurrences="2">
+      <code>$curlResult</code>
+      <code>$result</code>
+    </PossiblyInvalidIterator>
+    <PossiblyNullArrayAccess occurrences="1">
+      <code>$barcodes[$barcode]</code>
+    </PossiblyNullArrayAccess>
+    <PossiblyNullIterator occurrences="1">
+      <code>$products</code>
+    </PossiblyNullIterator>
+    <PossiblyUndefinedVariable occurrences="2">
       <code>$result</code>
       <code>$result</code>
-      <code>$result</code>
-      <code>$result</code>
-      <code>$result</code>
-      <code>$result</code>
-      <code>$result</code>
-      <code>$result</code>
-      <code>$result</code>
-      <code>$result</code>
-      <code>$result</code>
-      <code>$result</code>
-      <code>$result</code>
-      <code>$result</code>
-      <code>$result</code>
-      <code>$result</code>
-      <code>$result</code>
-      <code>$result</code>
-      <code>$result</code>
-      <code>$startTime</code>
     </PossiblyUndefinedVariable>
-    <UndefinedConstant occurrences="1">
-      <code>METHOD_GET</code>
-    </UndefinedConstant>
-    <UndefinedDocblockClass occurrences="4">
-      <code>none</code>
-      <code>none</code>
-      <code>none</code>
-      <code>none</code>
-    </UndefinedDocblockClass>
   </file>
   <file src="../../incl/authentication/authentication.inc.php">
     <InvalidGlobal occurrences="1">
@@ -88,9 +69,6 @@
     </InvalidReturnStatement>
   </file>
   <file src="../../incl/configProcessing.inc.php">
-    <ForbiddenCode occurrences="1">
-      <code>var_dump($variable)</code>
-    </ForbiddenCode>
     <InvalidGlobal occurrences="1">
       <code>global $CONFIG;</code>
     </InvalidGlobal>
@@ -133,6 +111,21 @@
       <code>isUserSetUp()</code>
     </UndefinedFunction>
   </file>
+  <file src="../../incl/curl.inc.php">
+    <InvalidScalarArgument occurrences="1">
+      <code>$curlResult</code>
+    </InvalidScalarArgument>
+    <PossiblyUndefinedVariable occurrences="1">
+      <code>$startTime</code>
+    </PossiblyUndefinedVariable>
+    <UndefinedConstant occurrences="5">
+      <code>BB_VERSION_READABLE</code>
+      <code>DISPLAY_DEBUG</code>
+      <code>DISPLAY_DEBUG</code>
+      <code>LOGIN_API_KEY</code>
+      <code>LOGIN_URL</code>
+    </UndefinedConstant>
+  </file>
   <file src="../../incl/db.inc.php">
     <DeprecatedMethod occurrences="1">
       <code>BBConfig::getInstance()</code>
@@ -143,45 +136,102 @@
       <code>$config["BARCODE_O"]</code>
       <code>$config["BARCODE_P"]</code>
     </PossiblyNullArgument>
+    <UndefinedConstant occurrences="7">
+      <code>DEFAULT_USE_REDIS</code>
+      <code>LOOKUP_ID_ALBERTHEIJN</code>
+      <code>LOOKUP_ID_JUMBO</code>
+      <code>LOOKUP_ID_OPENFOODFACTS</code>
+      <code>LOOKUP_ID_OPENGTINDB</code>
+      <code>LOOKUP_ID_UPCDATABASE</code>
+      <code>LOOKUP_ID_UPCDB</code>
+    </UndefinedConstant>
     <UndefinedFunction occurrences="1">
       <code>sendWebsocketStateChange($state)</code>
     </UndefinedFunction>
   </file>
-  <file src="../../incl/processing.inc.php">
+  <file src="../../incl/lookupProviders/BarcodeLookup.class.php">
+    <PossiblyNullArgument occurrences="1">
+      <code>$config["LOOKUP_ORDER"]</code>
+    </PossiblyNullArgument>
+    <UndefinedConstant occurrences="6">
+      <code>LOOKUP_ID_ALBERTHEIJN</code>
+      <code>LOOKUP_ID_JUMBO</code>
+      <code>LOOKUP_ID_OPENFOODFACTS</code>
+      <code>LOOKUP_ID_OPENGTINDB</code>
+      <code>LOOKUP_ID_UPCDATABASE</code>
+      <code>LOOKUP_ID_UPCDB</code>
+    </UndefinedConstant>
+  </file>
+  <file src="../../incl/modules/choreManager.php">
     <InvalidScalarArgument occurrences="2">
-      <code>$barcode</code>
+      <code>$choreId</code>
+      <code>$id</code>
+    </InvalidScalarArgument>
+    <UndefinedFunction occurrences="2">
+      <code>checkIfNumeric($choreId)</code>
+      <code>checkIfNumeric($id)</code>
+    </UndefinedFunction>
+  </file>
+  <file src="../../incl/modules/quantityManager.php">
+    <PossiblyNullIterator occurrences="1">
+      <code>$storedBarcodes</code>
+    </PossiblyNullIterator>
+    <UndefinedConstant occurrences="1">
+      <code>EVENT_TYPE_ASSOCIATE_PRODUCT</code>
+    </UndefinedConstant>
+  </file>
+  <file src="../../incl/modules/tagManager.php">
+    <UndefinedFunction occurrences="1">
+      <code>cleanNameForTagLookup($name)</code>
+    </UndefinedFunction>
+  </file>
+  <file src="../../incl/processing.inc.php">
+    <InvalidScalarArgument occurrences="5">
+      <code>"sortTags"</code>
+      <code>$id</code>
+      <code>$id</code>
+      <code>$quantity</code>
       <code>ceil($length / strlen($x))</code>
     </InvalidScalarArgument>
     <PossiblyFalseArgument occurrences="1">
       <code>strpos($url, $removeAfter)</code>
     </PossiblyFalseArgument>
-    <PossiblyInvalidArrayOffset occurrences="1">
-      <code>API::getChoresInfo($id)["name"]</code>
-    </PossiblyInvalidArrayOffset>
-    <PossiblyInvalidIterator occurrences="2">
+    <PossiblyNullArgument occurrences="7">
+      <code>$barcode</code>
+      <code>$barcode</code>
+      <code>$config["BARCODE_Q"]</code>
+      <code>$config["BARCODE_Q"]</code>
+      <code>$id</code>
+      <code>$sanitizedBarcode</code>
+      <code>sanitizeString($barcode)</code>
+    </PossiblyNullArgument>
+    <PossiblyNullArrayAccess occurrences="2">
+      <code>API::getChoreInfo($id)["name"]</code>
+      <code>ChoreManager::getChoreBarcode(sanitizeString($barcode))['choreId']</code>
+    </PossiblyNullArrayAccess>
+    <PossiblyNullIterator occurrences="3">
       <code>$chores</code>
       <code>$locationInfo</code>
-    </PossiblyInvalidIterator>
-    <PossiblyNullArgument occurrences="1">
-      <code>$config["BARCODE_Q"]</code>
-    </PossiblyNullArgument>
-    <PossiblyNullArrayAccess occurrences="11">
-      <code>$product["id"]</code>
-      <code>$product["id"]</code>
-      <code>$product["name"]</code>
-      <code>$product["name"]</code>
-      <code>$product["name"]</code>
-      <code>$product["stockAmount"]</code>
-      <code>$product["stockAmount"]</code>
-      <code>$product["tareWeight"]</code>
-      <code>$product["tareWeight"]</code>
-      <code>$product["tareWeight"]</code>
-      <code>$product["tareWeight"]</code>
-    </PossiblyNullArrayAccess>
+      <code>$products</code>
+    </PossiblyNullIterator>
+    <ReferenceConstraintViolation occurrences="1">
+      <code>return $output;</code>
+    </ReferenceConstraintViolation>
     <UndefinedFunction occurrences="2">
       <code>pluginEventReceiver_processEvent($this-&gt;eventType, $this-&gt;logText)</code>
       <code>sendWebsocketMessage($this-&gt;websocketText, $this-&gt;websocketResultCode)</code>
     </UndefinedFunction>
+  </file>
+  <file src="../../incl/redis.inc.php">
+    <UndefinedClass occurrences="7">
+      <code>$redis</code>
+      <code>$redis</code>
+      <code>$redis</code>
+      <code>?Redis</code>
+      <code>?Redis</code>
+      <code>RedisException</code>
+      <code>RedisException</code>
+    </UndefinedClass>
   </file>
   <file src="../../incl/sse/sse_data.php">
     <InvalidScalarArgument occurrences="4">
@@ -197,16 +247,6 @@
     </PossiblyUndefinedVariable>
   </file>
   <file src="../../incl/websocketconnection.inc.php">
-    <InvalidOperand occurrences="3">
-      <code>$version[0]</code>
-      <code>$version[1]</code>
-      <code>$version[2]</code>
-    </InvalidOperand>
-    <PossiblyUndefinedVariable occurrences="3">
-      <code>$version</code>
-      <code>$version</code>
-      <code>$version</code>
-    </PossiblyUndefinedVariable>
     <UndefinedFunction occurrences="3">
       <code>requestSavedState()</code>
       <code>sendNewState($newState)</code>
@@ -219,14 +259,36 @@
     </UndefinedConstant>
   </file>
   <file src="../../index.php">
-    <ParadoxicalCondition occurrences="1">
-      <code>isset($_POST["button_delete"])</code>
-    </ParadoxicalCondition>
-    <PossiblyNullArrayAccess occurrences="3">
-      <code>$product["name"]</code>
-      <code>$product['stockAmount']</code>
-      <code>$product['tareWeight']</code>
-    </PossiblyNullArrayAccess>
+    <InvalidScalarArgument occurrences="6">
+      <code>$amount</code>
+      <code>$amount</code>
+      <code>$argv[2]</code>
+      <code>$gidSelected</code>
+      <code>$gidSelected</code>
+      <code>$gidSelected</code>
+    </InvalidScalarArgument>
+    <PossiblyInvalidArrayAccess occurrences="1">
+      <code>$barcode["barcode"]</code>
+    </PossiblyInvalidArrayAccess>
+    <PossiblyNullArgument occurrences="7">
+      <code>$barcode</code>
+      <code>sanitizeString($_GET["add"], true)</code>
+      <code>sanitizeString($_GET["refreshbarcode"])</code>
+      <code>sanitizeString($_GET["text"], true)</code>
+      <code>sanitizeString($argv[1], true)</code>
+      <code>sanitizeString($barcode)</code>
+      <code>sanitizeString($gidSelected)</code>
+    </PossiblyNullArgument>
+    <PossiblyNullPropertyFetch occurrences="8">
+      <code>$product-&gt;isTare</code>
+      <code>$product-&gt;name</code>
+      <code>$product-&gt;name</code>
+      <code>$product-&gt;stockAmount</code>
+      <code>$product-&gt;stockAmount</code>
+      <code>$product-&gt;tareWeight</code>
+      <code>$product-&gt;unit</code>
+      <code>$product-&gt;unit</code>
+    </PossiblyNullPropertyFetch>
   </file>
   <file src="../../login.php">
     <UndefinedClass occurrences="2">
@@ -234,16 +296,26 @@
       <code>\Delight\Auth\UnknownUsernameException</code>
     </UndefinedClass>
   </file>
-  <file src="../../menu/settings.php">
-    <PossiblyNullArgument occurrences="2">
-      <code>$config["GROCY_API_KEY"]</code>
-      <code>$config["GROCY_API_URL"]</code>
+  <file src="../../menu/chores.php">
+    <InvalidScalarArgument occurrences="2">
+      <code>$id</code>
+      <code>$id</code>
+    </InvalidScalarArgument>
+    <PossiblyNullArgument occurrences="1">
+      <code>$barcode</code>
     </PossiblyNullArgument>
   </file>
-  <file src="../../wsserver.php">
-    <UndefinedClass occurrences="2">
-      <code>\WebSocket\Application\DemoApplication</code>
-      <code>\WebSocket\Server</code>
-    </UndefinedClass>
+  <file src="../../menu/settings.php">
+    <PossiblyNullArgument occurrences="4">
+      <code>$config["GROCY_API_KEY"]</code>
+      <code>$config["GROCY_API_URL"]</code>
+      <code>$config["LOOKUP_ORDER"]</code>
+      <code>$value</code>
+    </PossiblyNullArgument>
+  </file>
+  <file src="../../menu/tags.php">
+    <InvalidScalarArgument occurrences="1">
+      <code>$id</code>
+    </InvalidScalarArgument>
   </file>
 </files>

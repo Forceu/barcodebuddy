@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
-<psalm xmlns="https://getpsalm.org/schema/config"
-       errorBaseline="baseline.xml">
+<psalm xmlns="https://getpsalm.org/schema/config" errorBaseline="baseline.xml">
     <issueHandlers>
         <MissingParamType errorLevel="suppress" />
         <MissingReturnType  errorLevel="suppress" />

@@ -55,7 +55,7 @@ class GrocyProduct {
     public $defaultBestBeforeDays;
     public $creationDate;
 
-    public static function parseProductInfoStock($infoArray): GrocyProduct {
+    public static function parseProductInfoStock(array $infoArray): GrocyProduct {
         checkIfNumeric($infoArray["product"]["id"]);
 
         $result                        = new GrocyProduct();
@@ -75,7 +75,7 @@ class GrocyProduct {
     }
 
 
-    public static function parseProductInfoObjects($infoArray): GrocyProduct {
+    public static function parseProductInfoObjects(array $infoArray): GrocyProduct {
         checkIfNumeric($infoArray["id"]);
 
         $result                        = new GrocyProduct();
@@ -101,7 +101,7 @@ class API {
      * @param bool $ignoreCache If true, cache will be ignored and afterwards updated.
      * @return GrocyProduct[]|null Array of products
      */
-    public static function getAllProductsInfo($ignoreCache = false): ?array {
+    public static function getAllProductsInfo(bool $ignoreCache = false): ?array {
         $updateRedisCache = false;
 
         if (RedisConnection::isRedisAvailable()) {
@@ -137,10 +137,10 @@ class API {
     /**
      * Getting info about one Grocy product.
      *
-     * @param string ProductId
+     * @param int ProductId
      * @return GrocyProduct Product info or array of products
      */
-    public static function getProductInfo($productId): ?GrocyProduct {
+    public static function getProductInfo(int $productId): ?GrocyProduct {
         $url = API_STOCK_PRODUCTS . "/" . $productId;
 
         $result = null;  // Assure assignment in event curl throws exception.
@@ -206,9 +206,9 @@ class API {
     /**
      * Open product with $id
      *
-     * @param String productId
+     * @param int productId
      */
-    public static function openProduct($id) {
+    public static function openProduct(int $id) {
 
         $data = json_encode(array(
             'amount' => "1"
@@ -275,7 +275,7 @@ class API {
      * @param String reported Grocy version
      * @return boolean true if version supported
      */
-    public static function isSupportedGrocyVersion($version): bool {
+    public static function isSupportedGrocyVersion(string $version): bool {
         if (!preg_match("/\d+.\d+.\d+/", $version)) {
             return false;
         }
@@ -322,15 +322,16 @@ class API {
      *
      *  Adds a Grocy product.
      *
-     * @param $id
-     * @param $amount
-     * @param null $bestbefore
-     * @param null $price
-     * @param null $fileLock
-     * @param null $defaultBestBefore
-     * @return false if default best before date not set
+     * @param int $id
+     * @param int $amount
+     * @param string|null $bestbefore
+     * @param string|null $price
+     * @param LockGenerator|null $fileLock
+     * @param string|null $defaultBestBefore
+     * @return bool if default best before date not set
+     * @throws Exception
      */
-    public static function purchaseProduct($id, $amount, $bestbefore = null, $price = null, &$fileLock = null, $defaultBestBefore = null): bool {
+    public static function purchaseProduct(int $id, int $amount, string $bestbefore = null, string $price = null, LockGenerator &$fileLock = null, string $defaultBestBefore = null): bool {
         $data = array(
             'amount'           => $amount,
             'transaction_type' => 'purchase'
@@ -371,10 +372,10 @@ class API {
      *
      * Removes an item from the default shoppinglist
      *
-     * @param String product id
-     * @param Int amount
+     * @param int $productid
+     * @param int $amount
      */
-    public static function removeFromShoppinglist($productid, $amount) {
+    public static function removeFromShoppinglist(int $productid, int $amount) {
         $data = json_encode(array(
             'product_id'     => $productid,
             'product_amount' => $amount
@@ -394,10 +395,10 @@ class API {
      *
      * Adds an item to the default shoppinglist
      *
-     * @param String product id
-     * @param Int amount
+     * @param int $productid
+     * @param int $amount
      */
-    public static function addToShoppinglist($productid, $amount) {
+    public static function addToShoppinglist(int $productid, int $amount) {
         $data = json_encode(array(
             'product_id'     => $productid,
             'product_amount' => $amount
@@ -420,7 +421,7 @@ class API {
      * @param int amount
      * @param boolean set true if product was spoiled. Default: false
      */
-    public static function consumeProduct($id, $amount, $spoiled = false) {
+    public static function consumeProduct(int $id, int $amount, bool $spoiled = false) {
         if ($amount <= 0)
             return;
 
@@ -446,7 +447,7 @@ class API {
      * @param int product id
      * @param string  barcode to be set
      */
-    public static function addBarcode($id, $barcode) {
+    public static function addBarcode(int $id, string $barcode) {
 
         $data = json_encode(array(
             "product_id" => $id,
@@ -523,7 +524,7 @@ class API {
      * @return false|string  Formatted date
      */
     private static function formatBestBeforeDays(int $days) {
-        if ($days == "-1") {
+        if ($days == -1) {
             return "2999-12-31";
         } else {
             $date = date("Y-m-d");
@@ -566,7 +567,7 @@ class API {
      * @param bool $ignoreCache If true, cache will be ignored and afterwards updated.
      * @return array|null
      */
-    public static function getAllBarcodes($ignoreCache = false): ?array {
+    public static function getAllBarcodes(bool $ignoreCache = false): ?array {
         $updateRedis = false;
         if (RedisConnection::isRedisAvailable()) {
             if (!$ignoreCache && RedisConnection::isCacheAvailable()) {
@@ -624,10 +625,10 @@ class API {
 
     /**
      * Getting info of a Grocy chore
-     * @param string $choreId Chore ID.
+     * @param int $choreId Chore ID.
      * @return null|array       Either chore if ID, or all chores
      */
-    public static function getChoreInfo(string $choreId): ?array {
+    public static function getChoreInfo(int $choreId): ?array {
         $url  = API_CHORES . "/" . $choreId;
         $curl = new CurlGenerator($url);
         try {
@@ -659,9 +660,9 @@ class API {
 
     /**
      * Executes a Grocy chore
-     * @param  [int] $choreId Chore id
+     * @param int $choreId
      */
-    public static function executeChore($choreId) {
+    public static function executeChore(int $choreId) {
 
         $url  = API_CHORE_EXECUTE . $choreId . "/execute";
         $data = json_encode(array(
@@ -678,7 +679,11 @@ class API {
         }
     }
 
-    public static function processError($e, $errorMessage) {
+    /**
+     * @param Exception $e
+     * @param string $errorMessage
+     */
+    public static function processError(Exception $e, string $errorMessage) {
         $class = get_class($e);
         switch ($class) {
             case 'InvalidServerResponseException':
@@ -711,7 +716,11 @@ class API {
         }
     }
 
-    public static function logError($errorMessage, $isFatal = true) {
+    /**
+     * @param string $errorMessage
+     * @param bool $isFatal
+     */
+    public static function logError(string $errorMessage, bool $isFatal = true) {
         try {
             DatabaseConnection::getInstance()->saveError($errorMessage, $isFatal);
         } catch (DbConnectionDuringEstablishException $_) {
@@ -719,7 +728,11 @@ class API {
         }
     }
 
-    public static function runBenchmark($id) {
+    /**
+     * Runs a benchmark for debugging purposes
+     * @param int $id Product ID of grocy product to benchmark
+     */
+    public static function runBenchmark(int $id) {
         $randomBarcode = "rand" . rand(10, 10000);
         echo "Running benchmark with product ID $id:\n\n";
         $timeStart = microtime(true);
@@ -744,7 +757,7 @@ class API {
         die();
     }
 
-    private static function benchmarkApiCall($apiCall, ...$param) {
+    private static function benchmarkApiCall(string $apiCall, ...$param) {
         $timeStart = microtime(true);
         $name      = "$apiCall(";
         foreach ($param as $parameter) {

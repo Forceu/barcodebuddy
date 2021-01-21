@@ -48,6 +48,7 @@ class BBConfig implements ArrayAccess, Iterator, Countable {
      * @param null|DatabaseConnection $db
      *
      * @return BBConfig
+     * @throws DbConnectionDuringEstablishException
      */
     static function getInstance($db = null) {
         if (self::$_BBConfigInstance != null) {

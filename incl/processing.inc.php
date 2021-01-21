@@ -21,16 +21,16 @@ require_once __DIR__ . "/db.inc.php";
 require_once __DIR__ . "/config.inc.php";
 require_once __DIR__ . "/lookupProviders/BarcodeLookup.class.php";
 
-
 /**
+ *
  * Function that is called when a barcode is passed on
- * @param $barcodeInput
- * @param  $bestBeforeInDays
- * @param  $price
+ * @param string $barcodeInput
+ * @param string|null $bestBeforeInDays
+ * @param string|null $price
  * @return string
  * @throws DbConnectionDuringEstablishException
  */
-function processNewBarcode($barcodeInput, $bestBeforeInDays = null, $price = null): string {
+function processNewBarcode(string $barcodeInput, ?string $bestBeforeInDays = null, ?string $price = null): string {
     $db     = DatabaseConnection::getInstance();
     $config = BBConfig::getInstance();
 
@@ -99,7 +99,7 @@ function processNewBarcode($barcodeInput, $bestBeforeInDays = null, $price = nul
     }
 }
 
-function createLogModeChange($state): string {
+function createLogModeChange(int $state): string {
     $text = "Set state to ";
     switch ($state) {
         case STATE_CONSUME:
@@ -163,11 +163,11 @@ const WS_RESULT_ERROR             = 'E';
 
 /**
  * Execute a chore when chore barcode was submitted
- * @param $barcode
+ * @param string $barcode
  * @return mixed
  * @throws DbConnectionDuringEstablishException
  */
-function processChoreBarcode($barcode) {
+function processChoreBarcode(string $barcode) {
     $id = ChoreManager::getChoreBarcode(sanitizeString($barcode))['choreId'];
     checkIfNumeric($id);
     API::executeChore($id);
@@ -176,15 +176,15 @@ function processChoreBarcode($barcode) {
 
 /**
  * This is called if grocy does not know the barcode
- * @param $barcode
- * @param $websocketEnabled
- * @param $fileLock
- * @param $bestBeforeInDays
- * @param $price
+ * @param string $barcode
+ * @param bool $websocketEnabled
+ * @param LockGenerator $fileLock
+ * @param string|null $bestBeforeInDays
+ * @param string|null $price
  * @return string
  * @throws DbConnectionDuringEstablishException
  */
-function processUnknownBarcode($barcode, $websocketEnabled, &$fileLock, $bestBeforeInDays, $price): string {
+function processUnknownBarcode(string $barcode, bool $websocketEnabled, LockGenerator &$fileLock, ?string $bestBeforeInDays, ?string $price): string {
     $db     = DatabaseConnection::getInstance();
     $amount = 1;
     if ($db->getTransactionState() == STATE_PURCHASE) {
@@ -247,7 +247,7 @@ function stateToString(int $state): string {
     return $allowedModes[$state];
 }
 
-function changeWeightTareItem($barcode, $newWeight): bool {
+function changeWeightTareItem(string $barcode, int $newWeight): bool {
     $product = API::getProductByBarcode($barcode);
     if ($product == null)
         return false;
@@ -275,10 +275,10 @@ function changeWeightTareItem($barcode, $newWeight): bool {
 
 /**
  * Change mode if it was supplied by GET parameter
- * @param $modeParameter
+ * @param string $modeParameter
  * @throws DbConnectionDuringEstablishException
  */
-function processModeChangeGetParameter($modeParameter) {
+function processModeChangeGetParameter(string $modeParameter) {
     $db = DatabaseConnection::getInstance();
     switch (trim($modeParameter)) {
         case "consume":
@@ -305,10 +305,10 @@ function processModeChangeGetParameter($modeParameter) {
 
 /**
  * This will be called when a new grocy product is created from BB and the grocy tab is closed
- * @param $barcode
+ * @param string $barcode
  * @throws DbConnectionDuringEstablishException
  */
-function processRefreshedBarcode($barcode) {
+function processRefreshedBarcode(string $barcode) {
     RedisConnection::expireAllProductInfo();
     $productInfo = API::getLastCreatedProduct(5);
     if ($productInfo != null) {
@@ -318,16 +318,16 @@ function processRefreshedBarcode($barcode) {
 
 /**
  * Process a barcode that Grocy already knows
- * @param $productInfo GrocyProduct
- * @param $barcode
- * @param $websocketEnabled
- * @param $fileLock
- * @param $bestBeforeInDays
- * @param $price
+ * @param GrocyProduct $productInfo
+ * @param string $barcode
+ * @param bool $websocketEnabled
+ * @param LockGenerator $fileLock
+ * @param string|null $bestBeforeInDays
+ * @param string|null $price
  * @return string
  * @throws DbConnectionDuringEstablishException
  */
-function processKnownBarcode(GrocyProduct $productInfo, $barcode, $websocketEnabled, &$fileLock, $bestBeforeInDays, $price): string {
+function processKnownBarcode(GrocyProduct $productInfo, string $barcode, bool $websocketEnabled, LockGenerator &$fileLock, ?string $bestBeforeInDays, ?string $price): string {
     $config = BBConfig::getInstance();
     $db     = DatabaseConnection::getInstance();
 
@@ -473,11 +473,11 @@ function processKnownBarcode(GrocyProduct $productInfo, $barcode, $websocketEnab
 
 /**
  * Function for generating the <select> elements in the web ui
- * @param $selected
+ * @param string $selected
  * @param array|null $productinfo array
  * @return string
  */
-function printSelections($selected, ?array $productinfo): string {
+function printSelections(string $selected, ?array $productinfo): string {
     $optionscontent = " <option value = \"0\" >= None =</option>";
     if (!isset($productinfo) || !sizeof($productinfo))
         return $optionscontent;
@@ -499,8 +499,13 @@ function printSelections($selected, ?array $productinfo): string {
     return $optionscontent;
 }
 
-//Sanitizes a string for database input
-function sanitizeString($input, $strongFilter = false) {
+/**
+ * Sanitizes a string for database input
+ * @param string|null $input
+ * @param bool $strongFilter
+ * @return mixed|null
+ */
+function sanitizeString(?string $input, bool $strongFilter = false) {
     if ($input == null)
         return null;
     if ($strongFilter) {
@@ -510,20 +515,29 @@ function sanitizeString($input, $strongFilter = false) {
     }
 }
 
-//Terminates script if non numeric
-function checkIfNumeric($input) {
+/**
+ * Terminates script if non numeric
+ * @param string $input
+ */
+function checkIfNumeric(string $input) {
     if (!is_numeric($input)) {
         die("Illegal input! " . sanitizeString($input) . " needs to be a number");
     }
 }
 
-//Generate checkboxes for web ui
-function explodeWordsAndMakeCheckboxes($words, $id) {
-    if ($words == "N/A") {
+/**
+ * Generate checkboxes for web ui
+ * @param string $productName
+ * @param int $id
+ * @return string
+ * @throws DbConnectionDuringEstablishException
+ */
+function explodeWordsAndMakeCheckboxes(string $productName, int $id): string {
+    if ($productName == "N/A") {
         return "";
     }
     $selections = "";
-    $cleanWords = cleanNameForTagLookup($words);
+    $cleanWords = cleanNameForTagLookup($productName);
     $i          = 0;
     $addedWords = array(); // Check if word is used multiple times when creating possible tags
     foreach ($cleanWords as $str) {
@@ -540,7 +554,7 @@ function explodeWordsAndMakeCheckboxes($words, $id) {
     return $selections;
 }
 
-function cleanNameForTagLookup($input) {
+function cleanNameForTagLookup(string $input): array {
     $ignoreChars = array(",", ".", "-", ":", "(", ")");
     $cleanWords  = str_replace($ignoreChars, " ", $input);
     return explode(' ', $cleanWords);
@@ -548,10 +562,10 @@ function cleanNameForTagLookup($input) {
 
 /**
  * If a quantity barcode was scanned, add the quantity and process further
- * @param $amount
+ * @param int $amount
  * @throws DbConnectionDuringEstablishException
  */
-function changeQuantityAfterScan($amount) {
+function changeQuantityAfterScan(int $amount) {
     $config = BBConfig::getInstance();
 
     $db      = DatabaseConnection::getInstance();
@@ -698,7 +712,14 @@ class LogOutput {
     private $websocketText;
     private $isError;
 
-    function __construct(string $logText, string $eventType, string $barcode = null, bool $isError = false) {
+    /**
+     * LogOutput constructor.
+     * @param string $logText
+     * @param int $eventType
+     * @param string|null $barcode
+     * @param bool $isError
+     */
+    function __construct(string $logText, int $eventType, string $barcode = null, bool $isError = false) {
         $this->logText       = $logText;
         $this->eventType     = $eventType;
         $this->websocketText = $logText;

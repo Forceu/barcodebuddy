@@ -137,7 +137,7 @@ class DatabaseConnection {
      *
      * @throws DbConnectionDuringEstablishException
      */
-    static function getInstance(): ?DatabaseConnection {
+    static function getInstance(): DatabaseConnection {
         if (self::$_StartingConnection) {
             throw new DbConnectionDuringEstablishException();
         }
@@ -171,7 +171,7 @@ class DatabaseConnection {
         $this->db->exec("CREATE TABLE IF NOT EXISTS Quantities(id INTEGER PRIMARY KEY, barcode TEXT NOT NULL UNIQUE, quantity INTEGER NOT NULL, product TEXT)");
         $this->db->exec("CREATE TABLE IF NOT EXISTS ApiKeys(id INTEGER PRIMARY KEY, key TEXT NOT NULL UNIQUE, lastused INTEGER NOT NULL)");
         $this->insertDefaultValues();
-        $previousVersion = BBConfig::getInstance($this)["version"];
+        $previousVersion = intval(BBConfig::getInstance($this)["version"]);
         if ($previousVersion < BB_VERSION) {
             $this->upgradeBarcodeBuddy($previousVersion);
             BBConfig::forceRefresh();
@@ -467,14 +467,14 @@ class DatabaseConnection {
 
     /**
      * Add an unknown barcode
-     * @param $barcode
+     * @param string $barcode
      * @param int $amount
-     * @param null $bestBeforeInDays
-     * @param null $price
+     * @param string|null $bestBeforeInDays
+     * @param string|null $price
      * @param string $productname
      * @param int $match
      */
-    public function insertUnrecognizedBarcode($barcode, $amount = 1, $bestBeforeInDays = null, $price = null, $productname = "N/A", $match = 0) {
+    public function insertUnrecognizedBarcode(string $barcode, int $amount = 1, string $bestBeforeInDays = null, string $price = null, string $productname = "N/A", int $match = 0) {
         if ($bestBeforeInDays == null)
             $bestBeforeInDays = "NULL";
 
@@ -573,11 +573,11 @@ class DatabaseConnection {
     /**
      * Save a log
      * @param $log
-     * @param false $isVerbose
-     * @param false $isError
-     * @param false $isDebug
+     * @param bool $isVerbose
+     * @param bool $isError
+     * @param bool $isDebug
      */
-    public function saveLog($log, $isVerbose = false, $isError = false, $isDebug = false) {
+    public function saveLog($log, bool $isVerbose = false, bool $isError = false, bool $isDebug = false) {
         if ($isVerbose == false || BBConfig::getInstance()["MORE_VERBOSE"] == true) {
             $date = date('Y-m-d H:i:s');
             if ($isError || $isDebug) {

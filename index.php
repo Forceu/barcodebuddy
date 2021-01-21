@@ -168,16 +168,6 @@ function processButtons() {
         header("Location: " . $CONFIG->getPhpSelfWithBaseUrl());
     }
 
-
-    if (isset($_POST["button_delete"])) {
-        $id = $_POST["button_delete"];
-        checkIfNumeric($id);
-        $db->deleteBarcode($id);
-        //Hide POST, so we can refresh
-        header("Location: " . $CONFIG->getPhpSelfWithBaseUrl());
-        die();
-    }
-
     if (isset($_POST["button_add_manual"])) {
         if (isset($_POST["newbarcodes"]) && strlen(trim($_POST["newbarcodes"])) > 0) {
             $barcodes = explode("\n", trim($_POST['newbarcodes']));

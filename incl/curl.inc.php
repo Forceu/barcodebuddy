@@ -133,7 +133,7 @@ class CurlGenerator {
     }
 
     /**
-     * @param false $decode
+     * @param bool $decode
      * @return bool|mixed|string
      * @throws DbConnectionDuringEstablishException
      * @throws InternalServerErrorException
@@ -145,7 +145,7 @@ class CurlGenerator {
      * @throws NotFoundException
      * @throws UnauthorizedException
      */
-    function execute($decode = false) {
+    function execute(bool $decode = false) {
         if (DISPLAY_DEBUG) {
             $startTime = microtime(true);
             DatabaseConnection::getInstance()->saveLog("<i>Executing API call: " . $this->urlApi . "</i>", false, false, true);

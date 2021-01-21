@@ -56,6 +56,18 @@ class CurlGenerator {
         '/No product with barcode .+ found/'
     );
 
+    /**
+     * CurlGenerator constructor.
+     * @param string $url
+     * @param string $method
+     * @param string|null $jasonData
+     * @param array|null $loginOverride
+     * @param bool $noApiCall
+     * @param array|null $ignoredResultCodes
+     * @param array|null $formData
+     * @param string|null $userAgent
+     * @param array|null $headers
+     */
     function __construct(string $url, string $method = METHOD_GET,
                          string $jasonData = null, array $loginOverride = null,
                          bool $noApiCall = false, array $ignoredResultCodes = null,
@@ -120,6 +132,19 @@ class CurlGenerator {
         }
     }
 
+    /**
+     * @param false $decode
+     * @return bool|mixed|string
+     * @throws DbConnectionDuringEstablishException
+     * @throws InternalServerErrorException
+     * @throws InvalidJsonResponseException
+     * @throws InvalidParameterException
+     * @throws InvalidSSLException
+     * @throws InvalidServerResponseException
+     * @throws LimitExceededException
+     * @throws NotFoundException
+     * @throws UnauthorizedException
+     */
     function execute($decode = false) {
         if (DISPLAY_DEBUG) {
             $startTime = microtime(true);
@@ -153,6 +178,16 @@ class CurlGenerator {
     }
 
 
+    /**
+     * @param $curlResult
+     * @throws InternalServerErrorException
+     * @throws InvalidParameterException
+     * @throws InvalidSSLException
+     * @throws InvalidServerResponseException
+     * @throws LimitExceededException
+     * @throws NotFoundException
+     * @throws UnauthorizedException
+     */
     private function checkForErrorsAndThrow($curlResult) {
         $curlError    = curl_errno($this->ch);
         $responseCode = curl_getinfo($this->ch, CURLINFO_RESPONSE_CODE);
@@ -163,19 +198,14 @@ class CurlGenerator {
         switch ($responseCode) {
             case 400:
                 throw new InvalidParameterException();
-                break;
             case 401:
                 throw new UnauthorizedException();
-                break;
             case 404:
                 throw new NotFoundException();
-                break;
             case 429:
                 throw new LimitExceededException();
-                break;
             case 500:
                 throw new InternalServerErrorException();
-                break;
         }
         if ($curlResult === false) {
             if (self::isErrorSslRelated($curlError))
@@ -187,7 +217,7 @@ class CurlGenerator {
         }
     }
 
-    private static function isErrorSslRelated($curlError) {
+    private static function isErrorSslRelated($curlError): bool {
         return ($curlError == CURLE_SSL_CERTPROBLEM || $curlError == CURLE_SSL_CIPHER || $curlError == CURLE_SSL_CACERT);
     }
 }

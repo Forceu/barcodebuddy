@@ -247,7 +247,7 @@ function stateToString(int $state): string {
     return $allowedModes[$state];
 }
 
-function changeWeightTareItem($barcode, $newWeight) {
+function changeWeightTareItem($barcode, $newWeight): bool {
     $product = API::getProductByBarcode($barcode);
     if ($product == null)
         return false;
@@ -390,7 +390,6 @@ function processKnownBarcode(GrocyProduct $productInfo, $barcode, $websocketEnab
             $fileLock->removeLock();
             return $output;
         case STATE_CONSUME_SPOILED:
-            //TODO respect quantity factor
             if ($productInfo->stockAmount > 0) {
                 $log    = new LogOutput("Consuming 1 spoiled " . $productInfo->unit . " of " . $productInfo->name, EVENT_TYPE_ADD_KNOWN_BARCODE, $barcode);
                 $output = $log
@@ -547,7 +546,11 @@ function cleanNameForTagLookup($input) {
     return explode(' ', $cleanWords);
 }
 
-//If a quantity barcode was scanned, add the quantitiy and process further
+/**
+ * If a quantity barcode was scanned, add the quantity and process further
+ * @param $amount
+ * @throws DbConnectionDuringEstablishException
+ */
 function changeQuantityAfterScan($amount) {
     $config = BBConfig::getInstance();
 
@@ -671,7 +674,7 @@ function generateRandomString($length = 30) {
     return substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
 }
 
-function getApiUrl($removeAfter) {
+function getApiUrl($removeAfter): string {
     $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
 
     $url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -706,23 +709,23 @@ class LogOutput {
             $this->logText .= " [$barcode]";
     }
 
-    public function setVerbose() {
+    public function setVerbose(): LogOutput {
         $this->isVerbose = true;
         return $this;
     }
 
-    public function insertBarcodeInWebsocketText() {
+    public function insertBarcodeInWebsocketText(): LogOutput {
         if ($this->barcode != null)
             $this->websocketText .= " Barcode: $this->barcode";
         return $this;
     }
 
-    public function dontSendWebsocket() {
+    public function dontSendWebsocket(): LogOutput {
         $this->sendWebsocketMessage = false;
         return $this;
     }
 
-    public function addStockToText($amount) {
+    public function addStockToText($amount): LogOutput {
         if (!BBConfig::getInstance()["SHOW_STOCK_ON_SCAN"])
             return $this;
         //Do not have "." at the beginning if last character was "!"
@@ -738,27 +741,31 @@ class LogOutput {
     }
 
 
-    public function addProductFoundText() {
+    public function addProductFoundText(): LogOutput {
         $this->logText = "Product found. " . $this->logText;
         return $this;
     }
 
-    public function setSendWebsocket($sendWebsocket) {
+    public function setSendWebsocket($sendWebsocket): LogOutput {
         $this->sendWebsocketMessage = $sendWebsocket;
         return $this;
     }
 
-    public function setWebsocketResultCode($code) {
+    public function setWebsocketResultCode($code): LogOutput {
         $this->websocketResultCode = $code;
         return $this;
     }
 
-    public function setCustomWebsocketText($text) {
+    public function setCustomWebsocketText($text): LogOutput {
         $this->websocketText = $text;
         return $this;
     }
 
-    public function createLog() {
+    /**
+     * @return string
+     * @throws DbConnectionDuringEstablishException
+     */
+    public function createLog(): string {
         global $LOADED_PLUGINS;
 
         if ($this->isError) {

@@ -29,8 +29,6 @@ checkForMissingConstants();
 global $CONFIG;
 $CONFIG = new GlobalConfig();
 $CONFIG->configureDebugOutput();
-//For debugging:
-//$CONFIG->echoConfig();
 
 
 function loadConfigPhp() {
@@ -157,7 +155,7 @@ class GlobalConfig {
         return $input;
     }
 
-    static private function convertToArray($input) {
+    static private function convertToArray($input): array {
         $result          = array();
         $passedArguments = explode(";", $input);
         foreach ($passedArguments as $argument) {
@@ -169,22 +167,6 @@ class GlobalConfig {
         return $result;
     }
 
-
-    function echoConfig() {
-        $environmentVariables = getenv();
-        $reflect              = new ReflectionClass($this);
-        $props                = $reflect->getProperties(ReflectionProperty::IS_PUBLIC);
-        foreach ($props as $prop) {
-
-            $variableName = $prop->getName();
-            $variable     =& $this->{$variableName};
-
-            echo $variableName . ": ";
-            var_dump($variable);
-            echo "\n";
-        }
-    }
-
     public function configureDebugOutput() {
         //Enable debug as well if file "debug" exists in this directory
         if ($this->IS_DEBUG || file_exists(__DIR__ . "/debug")) {
@@ -194,7 +176,7 @@ class GlobalConfig {
         }
     }
 
-    public function checkIfAuthenticated($redirect = true, $ismenu = false) {
+    public function checkIfAuthenticated($redirect = true, $ismenu = false): bool {
         global $auth;
         require_once __DIR__ . '/authentication/authentication.inc.php';
 
@@ -284,7 +266,7 @@ class GlobalConfig {
         return $ip;
     }
 
-    private function ipInSubnet($ip, $subnet) {
+    private function ipInSubnet($ip, $subnet): bool {
         $subnetComponents = explode("/", $subnet);
         $subnetAddress    = $subnetComponents[0];
 
@@ -332,8 +314,12 @@ class GlobalConfig {
         }
     }
 
-    // IPv6 address to list of bits.
-    private function inet_to_bits($inet) {
+    /**
+     * IPv6 address to list of bits
+     * @param $inet
+     * @return string
+     */
+    private function inet_to_bits($inet): string {
         $unpacked = unpack('A16', $inet);
         $unpacked = str_split($unpacked[1]);
         $binaryip = '';

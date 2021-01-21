@@ -141,10 +141,10 @@ class API {
      * @return GrocyProduct Product info or array of products
      */
     public static function getProductInfo($productId): ?GrocyProduct {
-        $apiurl = API_STOCK_PRODUCTS . "/" . $productId;
+        $url = API_STOCK_PRODUCTS . "/" . $productId;
 
         $result = null;  // Assure assignment in event curl throws exception.
-        $curl   = new CurlGenerator($apiurl);
+        $curl   = new CurlGenerator($url);
         try {
             $result = $curl->execute(true);
         } catch (Exception $e) {
@@ -187,8 +187,8 @@ class API {
      * @return string
      */
     public static function getLocalTimeGrocy(int $offset = 0): string {
-        $apiurl = API_SYTEM_TIME . "?offset=" . $offset;
-        $curl   = new CurlGenerator($apiurl);
+        $url  = API_SYTEM_TIME . "?offset=" . $offset;
+        $curl = new CurlGenerator($url);
         try {
             $result = $curl->execute(true);
         } catch (Exception $e) {
@@ -210,12 +210,12 @@ class API {
      */
     public static function openProduct($id) {
 
-        $data   = json_encode(array(
+        $data = json_encode(array(
             'amount' => "1"
         ));
-        $apiurl = API_STOCK . "/" . $id . "/open";
+        $url  = API_STOCK . "/" . $id . "/open";
 
-        $curl = new CurlGenerator($apiurl, METHOD_POST, $data);
+        $curl = new CurlGenerator($url, METHOD_POST, $data);
         try {
             $curl->execute();
         } catch (Exception $e) {
@@ -231,6 +231,7 @@ class API {
      * @param String $apikey API key
      *
      * @return String | true Returns String with error or true if connection could be established
+     * @throws DbConnectionDuringEstablishException
      */
     public static function checkApiConnection(string $givenurl, string $apikey) {
         $loginInfo = array(LOGIN_URL => $givenurl, LOGIN_API_KEY => $apikey);
@@ -349,9 +350,9 @@ class API {
         }
         $data['best_before_date'] = self::formatBestBeforeDays($daysBestBefore);
         $data_json                = json_encode($data);
-        $apiurl                   = API_STOCK . "/" . $id . "/add";
+        $url                      = API_STOCK . "/" . $id . "/add";
 
-        $curl = new CurlGenerator($apiurl, METHOD_POST, $data_json);
+        $curl = new CurlGenerator($url, METHOD_POST, $data_json);
         try {
             $curl->execute();
         } catch (Exception $e) {
@@ -374,13 +375,13 @@ class API {
      * @param Int amount
      */
     public static function removeFromShoppinglist($productid, $amount) {
-        $data   = json_encode(array(
+        $data = json_encode(array(
             'product_id'     => $productid,
             'product_amount' => $amount
         ));
-        $apiurl = API_SHOPPINGLIST . "remove-product";
+        $url  = API_SHOPPINGLIST . "remove-product";
 
-        $curl = new CurlGenerator($apiurl, METHOD_POST, $data);
+        $curl = new CurlGenerator($url, METHOD_POST, $data);
         try {
             $curl->execute();
         } catch (Exception $e) {
@@ -397,13 +398,13 @@ class API {
      * @param Int amount
      */
     public static function addToShoppinglist($productid, $amount) {
-        $data   = json_encode(array(
+        $data = json_encode(array(
             'product_id'     => $productid,
             'product_amount' => $amount
         ));
-        $apiurl = API_SHOPPINGLIST . "add-product";
+        $url  = API_SHOPPINGLIST . "add-product";
 
-        $curl = new CurlGenerator($apiurl, METHOD_POST, $data);
+        $curl = new CurlGenerator($url, METHOD_POST, $data);
         try {
             $curl->execute();
         } catch (Exception $e) {
@@ -429,9 +430,9 @@ class API {
             'spoiled'          => $spoiled
         ));
 
-        $apiurl = API_STOCK . "/" . $id . "/consume";
+        $url = API_STOCK . "/" . $id . "/consume";
 
-        $curl = new CurlGenerator($apiurl, METHOD_POST, $data);
+        $curl = new CurlGenerator($url, METHOD_POST, $data);
         try {
             $curl->execute();
         } catch (Exception $e) {
@@ -608,10 +609,10 @@ class API {
      */
     public static function getProductLocations(int $productid): ?array {
 
-        $apiurl = API_STOCK . "/" . $productid . "/locations";
+        $url = API_STOCK . "/" . $productid . "/locations";
 
         $result = null;
-        $curl   = new CurlGenerator($apiurl);
+        $curl   = new CurlGenerator($url);
         try {
             $result = $curl->execute(true);
         } catch (Exception $e) {
@@ -627,8 +628,8 @@ class API {
      * @return null|array       Either chore if ID, or all chores
      */
     public static function getChoreInfo(string $choreId): ?array {
-        $apiurl = API_CHORES . "/" . $choreId;
-        $curl   = new CurlGenerator($apiurl);
+        $url  = API_CHORES . "/" . $choreId;
+        $curl = new CurlGenerator($url);
         try {
             $result = $curl->execute(true);
         } catch (Exception $e) {
@@ -644,8 +645,8 @@ class API {
      * @return array|null       Array with all chore infos or null
      */
     public static function getAllChoresInfo(): ?array {
-        $apiurl = API_CHORES;
-        $curl   = new CurlGenerator($apiurl);
+        $url  = API_CHORES;
+        $curl = new CurlGenerator($url);
         try {
             $result = $curl->execute(true);
         } catch (Exception $e) {
@@ -662,16 +663,16 @@ class API {
      */
     public static function executeChore($choreId) {
 
-        $apiurl = API_CHORE_EXECUTE . $choreId . "/execute";
-        $data   = json_encode(array(
+        $url  = API_CHORE_EXECUTE . $choreId . "/execute";
+        $data = json_encode(array(
             'tracked_time' => "",
             'done_by'      => ""
         ));
 
 
-        $curl = new CurlGenerator($apiurl, METHOD_POST, $data);
+        $curl = new CurlGenerator($url, METHOD_POST, $data);
         try {
-            $result = $curl->execute(true);
+            $curl->execute(true);
         } catch (Exception $e) {
             self::processError($e, "Could not execute chore");
         }

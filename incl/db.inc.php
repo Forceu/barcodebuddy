@@ -137,7 +137,7 @@ class DatabaseConnection {
      *
      * @throws DbConnectionDuringEstablishException
      */
-    static function getInstance() {
+    static function getInstance(): ?DatabaseConnection {
         if (self::$_StartingConnection) {
             throw new DbConnectionDuringEstablishException();
         }
@@ -152,7 +152,10 @@ class DatabaseConnection {
         return self::$_ConnectionInstance;
     }
 
-    //Initiate database and create global variable for config
+    /**
+     * Initiate database and create global variable for config
+     * @throws DbConnectionDuringEstablishException
+     */
     private function initDb() {
         global $CONFIG;
 
@@ -175,7 +178,9 @@ class DatabaseConnection {
         }
     }
 
-    //Inserts default values for Barcode Buddy Config
+    /**
+     * Inserts default values for Barcode Buddy Config
+     */
     private function insertDefaultValues() {
         $this->db->exec("INSERT INTO TransactionState(id,currentState,since) SELECT 1, 0, datetime('now','localtime') WHERE NOT EXISTS(SELECT 1 FROM TransactionState WHERE id = 1)");
         $this->db->exec("INSERT INTO BBConfig(id,data,value) SELECT 1, \"version\", \"" . BB_VERSION . "\" WHERE NOT EXISTS(SELECT 1 FROM BBConfig WHERE id = 1)");
@@ -184,13 +189,19 @@ class DatabaseConnection {
         }
     }
 
-    //Save last used barcode into DB
+    /**
+     * Save last used barcode into DB
+     * @param $barcode
+     * @param null $name
+     */
     public function saveLastBarcode($barcode, $name = null) {
         $this->updateConfig("LAST_BARCODE", $barcode);
         $this->updateConfig("LAST_PRODUCT", $name);
     }
 
-    //Checks if database is writable
+    /**
+     * Checks if database is writable
+     */
     private function checkPermissions() {
         global $CONFIG;
         if (file_exists($CONFIG->DATABASE_PATH)) {
@@ -236,6 +247,7 @@ class DatabaseConnection {
     /**
      * Is called after updating Barcode Buddy to a new version
      * @param int $previousVersion Previously installed version
+     * @throws DbConnectionDuringEstablishException
      */
     private function upgradeBarcodeBuddy(int $previousVersion) {
         //We update version before the actual update routine, as otherwise the user cannot
@@ -281,7 +293,7 @@ class DatabaseConnection {
                     try {
                         QuantityManager::syncBarcodeToGrocy($quantity->barcode, $this->db);
                     } catch (DbConnectionDuringEstablishException $e) {
-                        $this->saveError("Unable to sync quantity to Grocy: Barcode " . $quantity->barcode . ", Amount " . $quantity->quantity, true);
+                        $this->saveError("Unable to sync quantity to Grocy: Barcode " . $quantity->barcode . ", Amount " . $quantity->quantity);
                     }
                 } else {
                     $this->saveError("Unable to sync quantity to Grocy, as barcode does not exist in Grocy: Barcode " . $quantity->barcode . ", Amount " . $quantity->quantity, true);
@@ -310,8 +322,12 @@ class DatabaseConnection {
     }
 
 
-    //Getting the state TODO change date
-    public function getTransactionState() {
+    /**
+     * Getting the state
+     * TODO: Change date in log
+     * @return int
+     */
+    public function getTransactionState(): int {
         $res = $this->db->query("SELECT * FROM TransactionState");
         if ($row = $res->fetchArray()) {
             $state = $row["currentState"];
@@ -334,20 +350,29 @@ class DatabaseConnection {
         }
     }
 
-    //Gets the local tine with the DB function, more reliable than PHP
+    /**
+     * Gets the local tine with the DB function, more reliable than PHP
+     * @return mixed
+     */
     private function getDbTimeInLC() {
         return $this->db->querySingle("SELECT datetime('now','localtime');");
     }
 
-    //Setting the state
+    /**
+     * Setting the state
+     * @param $state
+     */
     public function setTransactionState($state) {
         /** @noinspection SqlWithoutWhere */
         $this->db->exec("UPDATE TransactionState SET currentState=$state, since=datetime('now','localtime')");
         sendWebsocketStateChange($state);
     }
 
-    //Gets an array of locally stored barcodes
-    public function getStoredBarcodes() {
+    /**
+     * Gets an array of locally stored barcodes
+     * @return array
+     */
+    public function getStoredBarcodes(): array {
         $res                 = $this->db->query('SELECT * FROM Barcodes');
         $barcodes            = array();
         $barcodes["known"]   = array();
@@ -374,9 +399,13 @@ class DatabaseConnection {
         return $barcodes;
     }
 
-    //Returns stored amount of saved barcodes that is not associated with a product yet
-    //Not to be confused with default amount for barcodes
-    public function getStoredBarcodeAmount($barcode) {
+    /**
+     * Returns stored amount of saved barcodes that is not associated with a product yet
+     * Not to be confused with default amount for barcodes
+     * @param $barcode
+     * @return int
+     */
+    public function getStoredBarcodeAmount($barcode): int {
         $res = $this->db->query("SELECT * FROM Barcodes WHERE barcode='$barcode'");
         if ($row = $res->fetchArray()) {
             return $row['amount'];
@@ -385,38 +414,66 @@ class DatabaseConnection {
         }
     }
 
-    //gets barcode stored in DB by ID
+    /**
+     * gets barcode stored in DB by ID
+     * @param $id
+     * @return array|false
+     */
     public function getBarcodeById($id) {
         $res = $this->db->query("SELECT * FROM Barcodes WHERE id='$id'");
         return $res->fetchArray();
     }
 
 
-    //Sets the possible match for a barcode that has a tag in its name
+    /**
+     * Sets the possible match for a barcode that has a tag in its name
+     * @param $barcode
+     * @param $productId
+     */
     public function updateSavedBarcodeMatch($barcode, $productId) {
         checkIfNumeric($productId);
         $this->db->exec("UPDATE Barcodes SET possibleMatch='$productId' WHERE barcode='$barcode'");
     }
 
 
-    //Returns true if an unknown barcode is already in the list
+    /**
+     * Returns true if an unknown barcode is already in the list
+     * @param $barcode
+     * @return bool
+     */
     public function isUnknownBarcodeAlreadyStored($barcode): bool {
         $count = $this->db->querySingle("SELECT COUNT(*) as count FROM Barcodes WHERE barcode='$barcode'");
         return ($count != 0);
     }
 
-    //Increases quantity of a saved barcode (not to confuse with default quantity)
+    /**
+     * Increases quantity of a saved barcode (not to confuse with default quantity)
+     * @param $barcode
+     * @param $amount
+     */
     public function addQuantityToUnknownBarcode($barcode, $amount) {
         $this->db->exec("UPDATE Barcodes SET amount = amount + $amount WHERE barcode = '$barcode'");
 
     }
 
-    //Sets quantity of a saved barcode (not to confuse with default quantity)
+    /**
+     * Sets quantity of a saved barcode (not to confuse with default quantity)
+     * @param $barcode
+     * @param $amount
+     */
     public function setQuantityToUnknownBarcode($barcode, $amount) {
         $this->db->exec("UPDATE Barcodes SET amount = $amount WHERE barcode = '$barcode'");
     }
 
-    //Add an unknown barcode
+    /**
+     * Add an unknown barcode
+     * @param $barcode
+     * @param int $amount
+     * @param null $bestBeforeInDays
+     * @param null $price
+     * @param string $productname
+     * @param int $match
+     */
     public function insertUnrecognizedBarcode($barcode, $amount = 1, $bestBeforeInDays = null, $price = null, $productname = "N/A", $match = 0) {
         if ($bestBeforeInDays == null)
             $bestBeforeInDays = "NULL";
@@ -433,8 +490,11 @@ class DatabaseConnection {
                              VALUES('$barcode', 'N/A', 1, 0, 1, $bestBeforeInDays, '$price')");
     }
 
-    //Gets an array of BBuddy API keys
-    public function getStoredApiKeys() {
+    /**
+     * Gets an array of BBuddy API keys
+     * @return array
+     */
+    public function getStoredApiKeys(): array {
         $res     = $this->db->query('SELECT * FROM ApiKeys');
         $apikeys = array();
         while ($row = $res->fetchArray()) {
@@ -447,7 +507,7 @@ class DatabaseConnection {
         return $apikeys;
     }
 
-    public function isValidApiKey($apiKey) {
+    public function isValidApiKey($apiKey): bool {
         foreach ($this->getStoredApiKeys() as $key) {
             if ($apiKey === $key["key"]) {
                 $this->db->exec("UPDATE ApiKeys SET lastused=datetime('now','localtime') WHERE id=" . $key["id"]);
@@ -458,7 +518,10 @@ class DatabaseConnection {
     }
 
 
-    //Generates API key
+    /**
+     * Generates API key
+     * @return false|string
+     */
     public function generateApiKey() {
         $key = generateRandomString();
         $this->db->exec("INSERT INTO ApiKeys(key, lastused) VALUES('" . $key . "', 'Never');");
@@ -466,22 +529,30 @@ class DatabaseConnection {
     }
 
 
-    //Deletes API key
+    /**
+     * Deletes API key
+     * @param $id
+     */
     public function deleteApiKey($id) {
         checkIfNumeric($id);
         $this->db->exec("DELETE FROM ApiKeys WHERE id='$id'");
     }
 
 
-    //Deletes API key
+    /**
+     * Deletes all API keys
+     */
     public function deleteAllApiKeys() {
         /** @noinspection SqlWithoutWhere */
         $this->db->exec("DELETE FROM ApiKeys");
     }
 
 
-    //Get all stored logs
-    public function getLogs() {
+    /**
+     * Get all stored logs
+     * @return array
+     */
+    public function getLogs(): array {
         $res  = $this->db->query('SELECT * FROM BarcodeLogs ORDER BY id DESC');
         $logs = array();
         while ($row = $res->fetchArray()) {
@@ -499,7 +570,13 @@ class DatabaseConnection {
         }
     }
 
-    //Save a log
+    /**
+     * Save a log
+     * @param $log
+     * @param false $isVerbose
+     * @param false $isError
+     * @param false $isDebug
+     */
     public function saveLog($log, $isVerbose = false, $isError = false, $isDebug = false) {
         if ($isVerbose == false || BBConfig::getInstance()["MORE_VERBOSE"] == true) {
             $date = date('Y-m-d H:i:s');
@@ -513,13 +590,19 @@ class DatabaseConnection {
     }
 
 
-    //Delete barcode from local db
+    /**
+     * Delete barcode from local db
+     * @param $id
+     */
     public function deleteBarcode($id) {
         $this->db->exec("DELETE FROM Barcodes WHERE id='$id'");
     }
 
 
-    //Delete all saved barcodes
+    /**
+     * Delete all saved barcodes
+     * @param $section
+     */
     public function deleteAll($section) {
         switch ($section) {
             case SECTION_KNOWN_BARCODES:

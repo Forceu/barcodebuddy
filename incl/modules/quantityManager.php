@@ -60,13 +60,12 @@ class QuantityManager {
         }
     }
 
-    //TODO CONSUME_SAVED_QUANTITY not working
-
     /**
      * @param $barcode string
      * @param $isConsume bool
      * @param $productInfo GrocyProduct
      * @return int
+     * @throws DbConnectionDuringEstablishException
      */
     public static function getQuantityForBarcode(string $barcode, bool $isConsume, GrocyProduct $productInfo): int {
         $config = BBConfig::getInstance();
@@ -79,20 +78,6 @@ class QuantityManager {
         if ($config["USE_GROCY_QU_FACTOR"] && $amountSavedInProduct > 1)
             return $amountSavedInProduct;
         return $amount = QuantityManager::getStoredQuantityForBarcode($barcode);
-    }
-
-    /**
-     * Save product name if already stored as Quantity
-     *
-     * @param $barcode
-     * @param $productname
-     */
-    public static function refreshProductName($barcode, $productname) {
-        $db  = DatabaseConnection::getInstance()->getDatabaseReference();
-        $res = $db->query("SELECT * FROM Quantities WHERE barcode='$barcode'");
-        if ($row = $res->fetchArray()) {
-            $db->exec("UPDATE Quantities SET product='$productname' WHERE barcode='$barcode'");
-        }
     }
 
 

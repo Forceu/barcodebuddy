@@ -513,7 +513,7 @@ class UiEditor {
         return $this;
     }
 
-    function addSelectBox($name, $label, $valueLabels, $values = null, $preselected = null) { //TODO disabled
+    function addSelectBox($name, $label, $valueLabels, $values = null, $preselected = null) {
         if ($values == null) {
             $values = $valueLabels;
         }

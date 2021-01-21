@@ -246,7 +246,6 @@ function processButtons() {
                         $log->setVerbose()->dontSendWebsocket()->createLog();
                     }
                 }
-                QuantityManager::refreshProductName($barcode, $product->name);
             }
         }
         //Hide POST, so we can refresh
@@ -256,8 +255,12 @@ function processButtons() {
 }
 
 
-//Generate the table with barcodes that require actions
-function getHtmlMainMenuReqActions($barcodes) {
+/**
+ * Generate the table with barcodes that require actions
+ * @param array $barcodes
+ * @return string
+ */
+function getHtmlMainMenuReqActions(array $barcodes): string {
     $html = new UiEditor(true, null, "f4");
     if (sizeof($barcodes['tare']) == 0) {
         return "null";
@@ -296,8 +299,12 @@ function getHtmlMainMenuReqActions($barcodes) {
 }
 
 
-//Generate the table with barcodes
-function getHtmlMainMenuTableKnown($barcodes) {
+/**
+ * Generate the table with barcodes
+ * @param array $barcodes
+ * @return string
+ */
+function getHtmlMainMenuTableKnown(array $barcodes): string {
     global $productinfo;
 
     $html = new UiEditor(true, null, "f1");
@@ -355,8 +362,12 @@ function getHtmlMainMenuTableKnown($barcodes) {
 }
 
 
-//Generate the table with barcodes
-function getHtmlMainMenuTableUnknown($barcodes) {
+/**
+ * Generate the table with barcodes
+ * @param array $barcodes
+ * @return string
+ */
+function getHtmlMainMenuTableUnknown(array $barcodes):string {
     global $productinfo;
     global $CONFIG;
     $html = new UiEditor(true, null, "f2");
@@ -415,6 +426,7 @@ function getHtmlMainMenuTableUnknown($barcodes) {
 /**
  * Outputs stored logs to the textarea
  * @return string
+ * @throws DbConnectionDuringEstablishException
  */
 function getHtmlLogTextArea(): string {
     $db   = DatabaseConnection::getInstance();

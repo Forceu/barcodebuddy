@@ -60,7 +60,10 @@ class BarcodeServer {
         $products = API::getAllProductsInfo();
         $barcodes = API::getAllBarcodes();
 
+        if ($products == null || $barcodes == null)
+            return;
         $items = array();
+
         foreach ($barcodes as $barcode) {
             $name = $products[$barcode["id"]]->name;
             if (strlen($name) > 1 && strlen($barcode["barcode"]) > 4)
@@ -97,11 +100,14 @@ class BarcodeServer {
     public static function getCountStoredBarcodes(): string {
         $url = self::HOST . "/amount";
         try {
-            $curl = new CurlGenerator($url, METHOD_GET, null, null, true);
-            return sanitizeString($curl->execute());
+            $curl   = new CurlGenerator($url, METHOD_GET, null, null, true);
+            $result = $curl->execute();
+            if (is_string($result)) {
+                return sanitizeString($result);
+            }
         } catch (Exception $ignored) {
-            return "Unavailable";
         }
+        return "Unavailable";
     }
 
     /**
@@ -128,7 +134,7 @@ class BarcodeServer {
      * @return string
      */
     private static function getRandomUuid(): string {
-        return md5(microtime() . rand(0));
+        return md5(microtime() . rand(0, getrandmax()));
     }
 }
 

@@ -130,12 +130,6 @@
     <DeprecatedMethod occurrences="1">
       <code>BBConfig::getInstance()</code>
     </DeprecatedMethod>
-    <PossiblyNullArgument occurrences="4">
-      <code>$config["BARCODE_C"]</code>
-      <code>$config["BARCODE_CS"]</code>
-      <code>$config["BARCODE_O"]</code>
-      <code>$config["BARCODE_P"]</code>
-    </PossiblyNullArgument>
     <UndefinedConstant occurrences="7">
       <code>DEFAULT_USE_REDIS</code>
       <code>LOOKUP_ID_ALBERTHEIJN</code>

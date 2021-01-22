@@ -30,9 +30,9 @@ class ProviderUpcDatabase extends LookupProvider {
     /**
      * Looks up a barcode
      * @param string $barcode The barcode to lookup
-     * @return null|string         Name of product, null if none found
+     * @return array|null Name of product, null if none found
      */
-    public function lookupBarcode(string $barcode): ?string {
+    public function lookupBarcode(string $barcode): ?array {
         $upcdb_key = BBConfig::getInstance()['LOOKUP_UPC_DATABASE_KEY'];
         if (!$this->isProviderEnabled() || !$upcdb_key)
             return null;
@@ -53,7 +53,7 @@ class ProviderUpcDatabase extends LookupProvider {
         if (!empty($result["title"])) {
             return sanitizeString($result["title"]);
         } else if (!empty($result["description"])) {
-            return sanitizeString($result["description"]);
+            return self::createReturnArray(sanitizeString($result["description"]));
         }
         return null;
     }

@@ -27,7 +27,7 @@ class ProviderDebug extends LookupProvider {
         $this->providerConfigKey = "USE_DEBUG_LOOKUP";
     }
 
-    public function lookupBarcode(string $barcode): ?string {
-        return self::RETURN_STRING;
+    public function lookupBarcode(string $barcode): ?array {
+        return self::createReturnArray(self::RETURN_STRING);
     }
 }

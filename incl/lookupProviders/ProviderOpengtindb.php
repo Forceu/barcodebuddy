@@ -30,9 +30,9 @@ class ProviderOpengtindb extends LookupProvider {
     /**
      * Looks up a barcode
      * @param string $barcode The barcode to lookup
-     * @return null|string         Name of product, null if none found
+     * @return array|null Name of product, null if none found
      */
-    public function lookupBarcode(string $barcode): ?string {
+    public function lookupBarcode(string $barcode): ?array {
         $opoengtinKey = BBConfig::getInstance()['LOOKUP_OPENGTIN_KEY'];
         if (!$this->isProviderEnabled() || !$opoengtinKey)
             return null;
@@ -61,6 +61,6 @@ class ProviderOpengtindb extends LookupProvider {
             $nameDetailed = $matches[1];
         }
 
-        return $this->returnNameOrGenericName($nameDetailed, $name);
+        return self::createReturnArray($this->returnNameOrGenericName($nameDetailed, $name));
     }
 }

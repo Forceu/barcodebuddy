@@ -29,3 +29,5 @@ if ($config["USE_REDIS"])
 
 if (isset($_GET["ajax"]))
     die("OK");
+
+BarcodeServer::doScheduledSyncBarcodes();

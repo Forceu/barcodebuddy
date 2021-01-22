@@ -22,6 +22,7 @@ require_once __DIR__ . "/ProviderUpcDatabase.php";
 require_once __DIR__ . "/ProviderDebug.php";
 require_once __DIR__ . "/ProviderAlbertHeijn.php";
 require_once __DIR__ . "/ProviderOpengtindb.php";
+require_once __DIR__ . "/ProviderBbuddy.php";
 
 class LookupProvider {
 
@@ -36,6 +37,9 @@ class LookupProvider {
         $this->apiKey         = $apiKey;
     }
 
+    /**
+     * @return bool
+     */
     protected function isProviderEnabled(): bool {
         if ($this->providerConfigKey == null)
             throw new Exception('providerConfigKey needs to be overriden!');
@@ -45,10 +49,10 @@ class LookupProvider {
     /**
      * Looks up a barcode
      * @param string $barcode The barcode to lookup
-     * @return null|string         Name of product, null if none found
+     * @return array|null Name of product, null if none found
      * @throws Exception
      */
-    public function lookupBarcode(string $barcode): ?string {
+    public function lookupBarcode(string $barcode): ?array {
         throw new Exception('lookupBarcode needs to be overriden!');
     }
 
@@ -76,9 +80,15 @@ class LookupProvider {
         return null;
     }
 
+    public static function createReturnArray(string $name, ?string $alternateBBuddyName = null): ?array {
+        if ($name == null)
+            return null;
+        return array("name" => $name, "altNames" => $alternateBBuddyName);
+    }
 
-    protected function execute(string $url, string $method = METHOD_GET, array $formdata = null, string $userAgent = null, $headers = null, $decodeJson = true) {
-        $curl = new CurlGenerator($url, $method, null, null, true, $this->ignoredResultCodes, $formdata, $userAgent, $headers);
+
+    protected function execute(string $url, string $method = METHOD_GET, array $formdata = null, string $userAgent = null, $headers = null, $decodeJson = true, $jsonData = null) {
+        $curl = new CurlGenerator($url, $method, $jsonData, null, true, $this->ignoredResultCodes, $formdata, $userAgent, $headers);
         try {
             $result = $curl->execute($decodeJson);
         } catch (Exception $e) {

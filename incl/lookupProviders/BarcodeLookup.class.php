@@ -29,15 +29,16 @@ class BarcodeLookup {
         LOOKUP_ID_UPCDATABASE   => "ProviderUpcDatabase",
         LOOKUP_ID_ALBERTHEIJN   => "ProviderAlbertHeijn",
         LOOKUP_ID_JUMBO         => "ProviderJumbo",
-        LOOKUP_ID_OPENGTINDB    => "ProviderOpengtindb"
+        LOOKUP_ID_OPENGTINDB    => "ProviderOpengtindb",
+        LOOKUP_ID_BBUDDY_SERVER => "ProviderBbuddy"
     );
 
     /**
      * Look up a barcode using providers
      * @param string $barcode Input barcode
-     * @return string Returns product name or null if not found
+     * @return array Returns product name array or null if not found
      */
-    public static function lookUp(string $barcode): ?string {
+    public static function lookUp(string $barcode): ?array {
         if (self::USE_DEBUG_PROVIDER) {
             return (new ProviderDebug)->lookupBarcode($barcode);
         }

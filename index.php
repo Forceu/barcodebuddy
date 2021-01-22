@@ -26,7 +26,6 @@ require_once __DIR__ . "/incl/processing.inc.php";
 require_once __DIR__ . "/incl/websocketconnection.inc.php";
 require_once __DIR__ . "/incl/webui.inc.php";
 
-
 //If barcodes or parameters are passed through CLI or GET, process them and do not do anything else
 if (isset($_GET["version"]) || (isset($argv[1]) && $argv[1] == "-v")) {
     die("BarcodeBuddy " . BB_VERSION);
@@ -85,6 +84,16 @@ if (isset($_GET["text"])) {
     hideGetPostParameters();
 }
 
+//After clicking on buttons on Federation popup
+if (isset($_GET["fed"])) {
+    if ($_GET["fed"] == 1) {
+        BarcodeServer::enableFederation();
+    } else {
+        BarcodeServer::disableFederation();
+    }
+    hideGetPostParameters();
+}
+
 // If a button was pressed, we are processing everything here.
 // Only one row can be processed at a time
 processButtons();
@@ -104,9 +113,10 @@ if (isset($_GET["ajaxrefresh"])) {
     die();
 }
 
+BarcodeServer::doScheduledSyncBarcodes();
 
 $webUi = new WebUiGenerator(MENU_MAIN);
-$webUi->addHeader('<link rel="stylesheet" href="./incl/css/styleMain.css">');
+$webUi->addHeader('<link rel="stylesheet" href="./incl/css/styleMain.css">', true);
 
 
 $link = (new MenuItemLink())
@@ -131,8 +141,24 @@ $link = (new MenuItemLink())
     ->setLink('window.location.href=\'' . $CONFIG->getPhpSelfWithBaseUrl() . '?delete=log\'');
 $webUi->addCard("Processed Barcodes", getHtmlLogTextArea(), $link);
 $webUi->addFooter();
+displayFederationPopupHtml($webUi);
 $webUi->printHtml();
 
+function displayFederationPopupHtml(WebUiGenerator &$webUi) {
+    $config = BBConfig::getInstance();
+    if (!$config["BBUDDY_SERVER_ENABLED"] && !$config["BBUDDY_SERVER_POPUPSHOWN"]) {
+        $webUi->addConfirmDialog("We are proud to introduce Barcode Buddy Federation, which enables you to lookup " .
+            "barcodes that other users have already associated with a Grocy product before. The lookup is very fast " .
+            "(around 20ms, depending on your location) and should be quite accurate.<br>It requires no signup, but " .
+            "is limited to 200 requests per day.<br><br><span style='font-size: smaller'><i>By using this method, you agree that all your Grocy product " .
+            "names that are associated with barcodes, the barcodes itself, your IP address and an unique ID will be " .
+            "sent and stored at a remote Barcode Buddy server located in Germany. No other data is sent or stored and " .
+            "no data will be used for commercial purposes. The sourcecode for the server application is available on " .
+            "Github and can be selfhosted as well.</i></span><br><br><b>Would you like to enable Barcode Buddy Federation?</b>",
+            "if (result) { location.href='./index.php?fed=1'; } else { location.href='./index.php?fed=0';}",
+            "Introducing Barcode Buddy Federation", "Use Federation", "Cancel", "large");
+    }
+}
 
 //Check if a button on the web ui was pressed and process
 function processButtons() {
@@ -319,7 +345,11 @@ function getHtmlMainMenuTableKnown(array $barcodes): string {
             }
             $itemId = $item['id'];
             $table->startRow();
-            $table->addCell(UiEditor::addTextWrap($item['name'], 15));
+            $bbServerButton = "";
+            if ($item['bbServerAltNames'] != null) {
+                $bbServerButton = " TODO";
+            }
+            $table->addCell(UiEditor::addTextWrap($item['name'], 15) . $bbServerButton);
             $table->addCell($item['barcode']);
             $table->addCell($item['amount']);
             $table->addCell('<select style="max-width: 20em;" onchange=\'enableButton("select_' . $itemId . '", "button_add_' . $item['id'] . '", "button_consume_' . $item['id'] . '")\' id="select_' . $itemId . '" name="select_' . $itemId . '">' . printSelections($item['match'], $productinfo) . '</select>');
@@ -357,7 +387,7 @@ function getHtmlMainMenuTableKnown(array $barcodes): string {
  * @param array $barcodes
  * @return string
  */
-function getHtmlMainMenuTableUnknown(array $barcodes):string {
+function getHtmlMainMenuTableUnknown(array $barcodes): string {
     global $productinfo;
     global $CONFIG;
     $html = new UiEditor(true, null, "f2");

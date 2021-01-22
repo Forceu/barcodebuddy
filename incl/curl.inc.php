@@ -67,6 +67,7 @@ class CurlGenerator {
      * @param array|null $formData
      * @param string|null $userAgent
      * @param array|null $headers
+     * @throws DbConnectionDuringEstablishException
      */
     function __construct(string $url, string $method = METHOD_GET,
                          string $jasonData = null, array $loginOverride = null,

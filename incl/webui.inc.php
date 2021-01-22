@@ -69,26 +69,26 @@ class WebUiGenerator {
     private $htmlOutput = "";
     private $menu = MENU_GENERIC;
 
-    function __construct($menu) {
+    public function __construct($menu) {
         $this->menu = $menu;
     }
 
 
-    function addHtml($html) {
+    public function addHtml($html) {
         $this->htmlOutput = $this->htmlOutput . $html;
     }
 
-    function addScript($js) {
+    public function addScript($js) {
         $this->htmlOutput = $this->htmlOutput . "<script>" . $js . "</script>";
     }
 
 
-    function printHtml() {
+    public function printHtml() {
         echo $this->htmlOutput;
     }
 
 
-    function addCard($title, $html, $links = null) {
+    public function addCard($title, $html, $links = null) {
         $this->addHtml('
         <section class="section--center mdl-grid--no-spacing mdl-grid mdl-shadow--2dp">
             <div class="mdl-card mdl-cell  mdl-cell--12-col">
@@ -118,7 +118,7 @@ class WebUiGenerator {
         $this->addHtml('</section>');
     }
 
-    function addHeader($additionalHeader = null) {
+    public function addHeader($additionalHeader = null, $enableDialogs = false) {
         global $CONFIG;
 
         if ($this->menu == MENU_SETTINGS || $this->menu === MENU_GENERIC) {
@@ -189,16 +189,37 @@ class WebUiGenerator {
           text-transform: none;
           display: inline-block;
           white-space: nowrap;
+          speak: never;
           word-wrap: normal;
           direction: ltr;
           -webkit-font-feature-settings: "liga";
           -webkit-font-smoothing: antialiased;
         }
+        
+        
+        .material-icons-small {
+          font-family: "Material Icons";
+          display: inline-block;
+          font: normal normal normal 14px/1 "Material Icons";
+          font-size: inherit;
+          text-rendering: auto; 
+           font-weight: normal;
+          font-style: normal;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+        
         </style>
         <link rel="stylesheet" href="' . $folder . 'incl/css/material.indigo-blue.min.css">
-        <link rel="stylesheet" href="' . $folder . 'incl/css/main.css">');
+        <link rel="stylesheet" href="' . $folder . 'incl/css/main.css"> ');
         if ($additionalHeader != null) {
             $this->addHtml($additionalHeader);
+        }
+        if ($enableDialogs) {
+            $this->addHtml(' <link rel="stylesheet" href="' . $folder . 'incl/css/bootstrap.min.css">
+                                 <script src="' . $folder . 'incl/js/jquery-3.5.1.slim.min.js"></script>
+                                 <script src="' . $folder . 'incl/js/bootstrap.bundle.min.js"></script>
+                                 <script src="' . $folder . 'incl/js/bootbox.min.js"></script>');
         }
 
         $this->addHtml('</head>
@@ -233,7 +254,8 @@ class WebUiGenerator {
           <a class="mdl-navigation__link" href="' . $folder . 'menu/quantities.php">Quantities</a>
           <a class="mdl-navigation__link" href="' . $folder . 'menu/chores.php">Chores</a>
           <a class="mdl-navigation__link" href="' . $folder . 'menu/tags.php">Tags</a>
-          <a class="mdl-navigation__link" href="' . $folder . 'menu/apimanagement.php">API</a>');
+          <a class="mdl-navigation__link" href="' . $folder . 'menu/apimanagement.php">API</a>
+          <a class="mdl-navigation__link" href="' . $folder . 'menu/federation.php">Federation</a>');
             if (!$CONFIG->DISABLE_AUTHENTICATION) {
                 $this->addHtml('
              <a class="mdl-navigation__link" href="' . $folder . 'menu/admin.php">Admin</a>');
@@ -245,7 +267,7 @@ class WebUiGenerator {
       <div class="mdl-layout__tab-panel is-active" id="overview">');
     }
 
-    function addFooter() {
+    public function addFooter() {
         global $CONFIG;
 
         if ($this->menu == MENU_SETTINGS || $this->menu === MENU_GENERIC) {
@@ -390,6 +412,44 @@ class WebUiGenerator {
         }
         $this->addHtml('</body>
     </html>');
+    }
+
+
+    public function addAlert(string $text, string $title = null, string $callback = null, string $size = "medium") {
+        $alert = 'bootbox.alert({
+                message: "' . $text . '",
+                size: "' . $size . '",';
+        if ($callback != null)
+            $alert .= "\ncallback: function(){" . $callback . "},";
+        if ($title != null)
+            $alert .= "\ntitle: '" . $title . "',";
+        $alert .= '});';
+        $this->addScript($alert);
+    }
+
+
+    public function addConfirmDialog(string $text, string $callback, string $title = null, string $buttonPositive = "Confirm",
+                                     string $buttonNegative = "Cancel", string $size = "medium") {
+        $alert = 'bootbox.confirm({
+                message: "' . $text . '",
+                size: "' . $size . '",
+                buttons: {
+                    cancel: {
+                        label: "' . $buttonNegative . '",
+                        className: "btn-secondary"
+                    },
+                    confirm: {
+                        label: "' . $buttonPositive . '",
+                        className: "btn-success"
+                    }
+                },
+                callback: function (result) {' . $callback . '},';
+        if ($callback != null)
+            $alert .= "\n";
+        if ($title != null)
+            $alert .= "\ntitle: '" . $title . "',";
+        $alert .= '});';
+        $this->addScript($alert);
     }
 }
 

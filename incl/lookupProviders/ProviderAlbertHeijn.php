@@ -32,9 +32,9 @@ class ProviderAlbertHeijn extends LookupProvider {
     /**
      * Looks up a barcode
      * @param string $barcode The barcode to lookup
-     * @return null|string         Name of product, null if none found
+     * @return array|null Name of product, null if none found
      */
-    public function lookupBarcode(string $barcode): ?string {
+    public function lookupBarcode(string $barcode): ?array {
         if (!$this->isProviderEnabled())
             return null;
         $authkey = $this->getAuthToken();
@@ -45,7 +45,7 @@ class ProviderAlbertHeijn extends LookupProvider {
         $url     = "https://ms.ah.nl/mobile-services/product/search/v1/gtin/" . $barcode;
         $result  = $this->execute($url, METHOD_GET, null, self::USER_AGENT, $headers);
         if (isset($result["title"]))
-            return sanitizeString($result["title"]);
+            return self::createReturnArray(sanitizeString($result["title"]));
         else
             return null;
     }

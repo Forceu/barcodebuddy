@@ -25,6 +25,8 @@ require_once __DIR__ . "/configProcessing.inc.php";
 require_once __DIR__ . "/modules/tagManager.php";
 require_once __DIR__ . "/modules/choreManager.php";
 require_once __DIR__ . "/modules/quantityManager.php";
+require_once __DIR__ . "/modules/barcodeServer.php";
+require_once __DIR__ . "/modules/dbUpgrade.php";
 
 
 //States to tell the script what to do with the barcodes that were scanned
@@ -48,6 +50,7 @@ const LOOKUP_ID_UPCDATABASE   = "3";
 const LOOKUP_ID_ALBERTHEIJN   = "4";
 const LOOKUP_ID_JUMBO         = "5";
 const LOOKUP_ID_OPENGTINDB    = "6";
+const LOOKUP_ID_BBUDDY_SERVER = "7";
 
 /**
  * Dockerfile changes this to "1", so that the default is true
@@ -101,17 +104,23 @@ class DatabaseConnection {
         "LOOKUP_USE_AH"                 => "0",
         "LOOKUP_USE_UPC_DATABASE"       => "0",
         "LOOKUP_USE_OPEN_GTIN_DATABASE" => "0",
+        "LOOKUP_USE_BBUDDY_SERVER"      => "0",
         "LOOKUP_UPC_DATABASE_KEY"       => null,
         "LOOKUP_OPENGTIN_KEY"           => null,
         "USE_REDIS"                     => DEFAULT_USE_REDIS,
         "REDIS_IP"                      => "127.0.0.1",
         "REDIS_PORT"                    => "6379",
+        "BBUDDY_SERVER_UUID"            => null,
+        "BBUDDY_SERVER_ENABLED"         => "0",
+        "BBUDDY_SERVER_POPUPSHOWN"      => "0",
+        "BBUDDY_SERVER_NEXTSYNC"        => "0",
         "LOOKUP_ORDER"                  => LOOKUP_ID_OPENFOODFACTS . "," .
             LOOKUP_ID_UPCDB . "," .
             LOOKUP_ID_UPCDATABASE . "," .
             LOOKUP_ID_ALBERTHEIJN . "," .
             LOOKUP_ID_JUMBO . "," .
-            LOOKUP_ID_OPENGTINDB);
+            LOOKUP_ID_OPENGTINDB . "," .
+            LOOKUP_ID_BBUDDY_SERVER);
 
 
     const DB_INT_VALUES = array("REVERT_TIME");
@@ -173,7 +182,7 @@ class DatabaseConnection {
         $this->insertDefaultValues();
         $previousVersion = intval(BBConfig::getInstance($this)["version"]);
         if ($previousVersion < BB_VERSION) {
-            $this->upgradeBarcodeBuddy($previousVersion);
+            (new DbUpgrade($this->db))->upgradeBarcodeBuddy($previousVersion);
             BBConfig::forceRefresh();
         }
     }
@@ -209,115 +218,11 @@ class DatabaseConnection {
                 showErrorNotWritable("DB Error: DB_Not_Writable");
             }
         } else {
-            self::createDbDirectory();
-            self::checkAndMoveIfOldDbLocation();
+            DbUpgrade::createDbDirectory();
+            DbUpgrade::checkAndMoveIfOldDbLocation();
             if (!is_writable(dirname($CONFIG->DATABASE_PATH))) {
                 showErrorNotWritable("DB Error Not_Writable");
             }
-        }
-    }
-
-    private function createDbDirectory() {
-        global $CONFIG;
-        $dirName = dirname($CONFIG->DATABASE_PATH);
-        if (!file_exists($dirName)) {
-            $couldCreateDir = mkdir($dirName, 0700, true);
-            if (!$couldCreateDir) {
-                showErrorNotWritable("DB Error Could_Not_Create_Dir");
-            }
-        }
-    }
-
-    /**
-     * Since BB 1.3.2 the database is in the /data/ folder.
-     * If there is an old database, create the new folder and move it there.
-     */
-    private function checkAndMoveIfOldDbLocation() {
-        global $CONFIG;
-        //If only old db exists, create directory and move file
-        if (file_exists(LEGACY_DATABASE_PATH) && !file_exists($CONFIG->DATABASE_PATH)) {
-            self::createDbDirectory();
-            $couldMove = rename(LEGACY_DATABASE_PATH, $CONFIG->DATABASE_PATH);
-            if (!$couldMove) {
-                showErrorNotWritable("DB Error Could_Not_Move");
-            }
-        }
-    }
-
-    /**
-     * Is called after updating Barcode Buddy to a new version
-     * @param int $previousVersion Previously installed version
-     * @throws DbConnectionDuringEstablishException
-     */
-    private function upgradeBarcodeBuddy(int $previousVersion) {
-        //We update version before the actual update routine, as otherwise the user cannot
-        //reenter setup. As the login gets invalidated in such a case, the Grocy version
-        //will be checked upon reentering.
-        $this->db->exec("UPDATE BBConfig SET value='" . BB_VERSION . "' WHERE data='version'");
-        //Place for future update protocols
-        if ($previousVersion < 1211) {
-            $config = BBConfig::getInstance();
-            $this->updateConfig("BARCODE_C", strtoupper($config["BARCODE_C"]));
-            $this->updateConfig("BARCODE_O", strtoupper($config["BARCODE_O"]));
-            $this->updateConfig("BARCODE_P", strtoupper($config["BARCODE_P"]));
-            $this->updateConfig("BARCODE_CS", strtoupper($config["BARCODE_CS"]));
-        }
-        if ($previousVersion < 1303) {
-            $this->isSupportedGrocyVersionOrDie();
-        }
-        if ($previousVersion < 1501) {
-            $this->db->exec("ALTER TABLE Barcodes ADD COLUMN requireWeight INTEGER");
-        }
-        if ($previousVersion < 1504) {
-            $this->db->exec("ALTER TABLE Barcodes ADD COLUMN bestBeforeInDays INTEGER");
-            $this->db->exec("ALTER TABLE Barcodes ADD COLUMN price TEXT");
-            $this->isSupportedGrocyVersionOrDie();
-        }
-        if ($previousVersion < 1511) {
-            //Only sqlite 3.25+ supports renaming columns, therefore creating new table instead
-            $this->db->exec("ALTER TABLE Quantities RENAME TO Quantities_temp;");
-            $this->db->exec("CREATE TABLE Quantities(id INTEGER PRIMARY KEY, barcode TEXT NOT NULL UNIQUE, quantity INTEGER NOT NULL, product TEXT)");
-            $this->db->exec("INSERT INTO Quantities(id, barcode, quantity, product) SELECT id, barcode, quantitiy, product FROM Quantities_temp;");
-            $this->db->exec("DROP TABLE Quantities_temp;");
-        }
-        if ($previousVersion < 1653) {
-            $config = BBConfig::getInstance();
-            if ($config["LOOKUP_ORDER"] != self::DEFAULT_VALUES["LOOKUP_ORDER"]) {
-                $this->updateConfig("LOOKUP_ORDER", $config["LOOKUP_ORDER"] . ",6");
-            }
-        }
-        if ($previousVersion < 1660) {
-            $quantities = $this->getQuantitiesForUpgrade();
-            foreach ($quantities as $quantity) {
-                if ($quantity->product != null) {
-                    try {
-                        QuantityManager::syncBarcodeToGrocy($quantity->barcode, $this->db);
-                    } catch (DbConnectionDuringEstablishException $e) {
-                        $this->saveError("Unable to sync quantity to Grocy: Barcode " . $quantity->barcode . ", Amount " . $quantity->quantity);
-                    }
-                } else {
-                    $this->saveError("Unable to sync quantity to Grocy, as barcode does not exist in Grocy: Barcode " . $quantity->barcode . ", Amount " . $quantity->quantity, true);
-                    QuantityManager::delete($quantity->id, $this->db);
-                }
-            }
-        }
-        RedisConnection::updateCache();
-    }
-
-    private function isSupportedGrocyVersionOrDie() {
-        global $ERROR_MESSAGE;
-        $ERROR_MESSAGE = null;
-        $version       = API::getGrocyVersion();
-        if ($version == null) {
-            $ERROR_MESSAGE = "Unable to communicate with Grocy and get Grocy version.";
-        } elseif (!API::isSupportedGrocyVersion($version)) {
-            $ERROR_MESSAGE = "Grocy " . MIN_GROCY_VERSION . " or newer required. You are running $version, please upgrade your Grocy instance.";
-        }
-        if ($ERROR_MESSAGE != null) {
-            $ERROR_MESSAGE .= " Click <a href=\"./setup.php\">here</a> to re-enter your credentials.";
-            $this->updateConfig("GROCY_API_KEY", null);
-            include __DIR__ . "/../error.php";
-            die();
         }
     }
 
@@ -388,6 +293,8 @@ class DatabaseConnection {
             $item['tare']             = $row['requireWeight'];
             $item['bestBeforeInDays'] = $row['bestBeforeInDays'];
             $item['price']            = $row['price'];
+            $item['bbServerAltNames'] = json_decode($row['bbServerAltNames']);
+
             if ($item['tare'] == "1") {
                 array_push($barcodes["tare"], $item);
             } elseif ($row['name'] != "N/A") {
@@ -471,15 +378,23 @@ class DatabaseConnection {
      * @param int $amount
      * @param string|null $bestBeforeInDays
      * @param string|null $price
-     * @param string $productname
+     * @param array|null $productname
      * @param int $match
      */
-    public function insertUnrecognizedBarcode(string $barcode, int $amount = 1, string $bestBeforeInDays = null, string $price = null, string $productname = "N/A", int $match = 0) {
+    public function insertUnrecognizedBarcode(string $barcode, int $amount = 1, string $bestBeforeInDays = null, string $price = null, ?array $productname = null, int $match = 0) {
         if ($bestBeforeInDays == null)
             $bestBeforeInDays = "NULL";
 
-        $this->db->exec("INSERT INTO Barcodes(barcode, name, amount, possibleMatch, requireWeight, bestBeforeInDays, price)
-                             VALUES('$barcode', '$productname', $amount, $match, 0, $bestBeforeInDays, '$price')");
+        if ($productname == null) {
+            $name     = "N/A";
+            $altNames = "NULL";
+        } else {
+            $name     = $productname["name"];
+            $altNames = "'" . $productname["altNames"] . "'";
+        }
+
+        $this->db->exec("INSERT INTO Barcodes(barcode, name, amount, possibleMatch, requireWeight, bestBeforeInDays, price, bbServerAltNames)
+                             VALUES('$barcode', '$name', $amount, $match, 0, $bestBeforeInDays, '$price', $altNames)");
     }
 
     public function insertActionRequiredBarcode($barcode, $bestBeforeInDays = null, $price = null) {
@@ -640,19 +555,5 @@ class DatabaseConnection {
 
     public function getDatabaseReference(): SQLite3 {
         return $this->db;
-    }
-
-
-    /**
-     * Gets the legacy Quantities stored, needed for the upgrade to 1.6.6.0
-     * @return array
-     */
-    private function getQuantitiesForUpgrade(): array {
-        $res      = $this->db->query('SELECT * FROM Quantities');
-        $barcodes = array();
-        while ($row = $res->fetchArray()) {
-            array_push($barcodes, new Quantity($row));
-        }
-        return $barcodes;
     }
 }

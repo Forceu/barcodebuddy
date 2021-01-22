@@ -30,9 +30,9 @@ class ProviderUpcDb extends LookupProvider {
     /**
      * Looks up a barcode
      * @param string $barcode The barcode to lookup
-     * @return null|string         Name of product, null if none found
+     * @return array|null Name of product, null if none found
      */
-    public function lookupBarcode(string $barcode): ?string {
+    public function lookupBarcode(string $barcode): ?array {
         if (!$this->isProviderEnabled())
             return null;
 
@@ -42,7 +42,7 @@ class ProviderUpcDb extends LookupProvider {
             return null;
 
         if (isset($result["items"][0]["title"]) && $result["items"][0]["title"] != "") {
-            return sanitizeString($result["items"][0]["title"]);
+            return self::createReturnArray(sanitizeString($result["items"][0]["title"]));
         } else
             return null;
     }

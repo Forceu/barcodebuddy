@@ -299,10 +299,10 @@ class WebUiGenerator {
           </div></main>');
 
         if ($this->menu == MENU_MAIN) {
-            $this->addHtml('<div id="myModal" class="modal">
+            $this->addHtml('<div id="myModal" class="modalmain">
 
           <!-- Modal content -->
-          <div class="modal-content">
+          <div class="modalmain-content">
             <span class="close">&times;</span>
             <div>
             <h2>Add barcode</h2>

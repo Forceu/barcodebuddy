@@ -216,7 +216,7 @@ function getProviderListItems(UiEditor $html): array {
         generateApiKeyChangeScript("handleUPCDBChange", "LOOKUP_UPC_DATABASE_KEY"))
         ->generate(true), "Uses UPCDatabase.org", LOOKUP_ID_UPCDATABASE, true);
 
-    $result["id" . LOOKUP_ID_OPENGTINDB]    = $html->addListItem((new CheckBoxBuilder(
+    $result["id" . LOOKUP_ID_OPENGTINDB] = $html->addListItem((new CheckBoxBuilder(
         "LOOKUP_USE_OPEN_GTIN_DATABASE",
         "Open EAN / GTIN Database",
         $config["LOOKUP_USE_OPEN_GTIN_DATABASE"],
@@ -225,7 +225,10 @@ function getProviderListItems(UiEditor $html): array {
         "handleOpenGtinChange(this)",
         generateApiKeyChangeScript("handleOpenGtinChange", "LOOKUP_OPENGTIN_KEY"))
         ->generate(true), "Uses OpenGtinDb.org", LOOKUP_ID_OPENGTINDB, true);
-    $result["id" . LOOKUP_ID_BBUDDY_SERVER] = $html->addListItem($html->addCheckbox('LOOKUP_USE_BBUDDY_SERVER', 'Barcode Buddy Federation', $config["LOOKUP_USE_BBUDDY_SERVER"], false, false, true), "Uses " . BarcodeServer::HOST_READABLE, LOOKUP_ID_BBUDDY_SERVER, true);
+    $bbServerSubtitle                    = "Uses " . BarcodeServer::HOST_READABLE;
+    if (!$config["LOOKUP_USE_BBUDDY_SERVER"])
+        $bbServerSubtitle = "Enable Federation for this feature";
+    $result["id" . LOOKUP_ID_BBUDDY_SERVER] = $html->addListItem($html->addCheckbox('LOOKUP_USE_BBUDDY_SERVER', 'Barcode Buddy Federation', $config["LOOKUP_USE_BBUDDY_SERVER"], !$config["LOOKUP_USE_BBUDDY_SERVER"], false, true), $bbServerSubtitle, LOOKUP_ID_BBUDDY_SERVER, true);
     return $result;
 }
 

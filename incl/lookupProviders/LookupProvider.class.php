@@ -80,7 +80,7 @@ class LookupProvider {
         return null;
     }
 
-    public static function createReturnArray(string $name, ?string $alternateBBuddyName = null): ?array {
+    public static function createReturnArray(?string $name, ?string $alternateBBuddyName = null): ?array {
         if ($name == null)
             return null;
         return array("name" => $name, "altNames" => $alternateBBuddyName);

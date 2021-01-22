@@ -182,7 +182,7 @@ class DatabaseConnection {
         $this->insertDefaultValues();
         $previousVersion = intval(BBConfig::getInstance($this)["version"]);
         if ($previousVersion < BB_VERSION) {
-            (new DbUpgrade($this->db))->upgradeBarcodeBuddy($previousVersion);
+            (new DbUpgrade($this))->upgradeBarcodeBuddy($previousVersion);
             BBConfig::forceRefresh();
         }
     }

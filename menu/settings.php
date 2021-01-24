@@ -253,7 +253,7 @@ function checkRedisConnection(UiEditor &$html) {
     } else {
         $html->addHtml('<span style="color:green">Redis cache is available.</span>');
         $html->addSpaces(4);
-        $html->addButton("updatecache", "Update Cache", "updateRedisCache(true)");
+        $html->addButton("updatecache", "Update Cache", "updateRedisCacheAndFederation(true)");
     }
 }
 

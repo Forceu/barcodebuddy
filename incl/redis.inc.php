@@ -25,16 +25,19 @@
 require_once __DIR__ . "/config.inc.php";
 
 class RedisConnection {
-    const KEY_CACHE_AVAILABLE        = "bbuddy_isavail";
-    const KEY_CACHE_ALL_PRODUCT_INFO = "bbuddy_apo";
-    const KEY_CACHE_ALL_BARCODES     = "bbuddy_abc";
-    const TIMEOUT_REDIS_CACHE_S      = 5 * 60;
+    const KEY_CACHE_AVAILABLE               = "bbuddy_isavail";
+    const KEY_CACHE_ALL_PRODUCT_INFO        = "bbuddy_apo";
+    const KEY_CACHE_ALL_BARCODES            = "bbuddy_abc";
+    const KEY_CACHE_NO_SOFT_UPDATE          = "bbuddy_softup";
+    const TIMEOUT_REDIS_CACHE_S             = 5 * 60;
+    const TIMEOUT_MAX_UPDATE_SOFT_REFRESH_S = 90;
 
 
     /**
      * Connects to Redis server
      * @return Redis|null
      * @throws RedisException Exception when unable to connect, for some reason not documented
+     * @throws DbConnectionDuringEstablishException
      */
     private static function establishConnection(): ?Redis {
         $config = BBConfig::getInstance();
@@ -107,12 +110,15 @@ class RedisConnection {
      * Forces an update for all cache entries:
      * API::getAllProductsInfo()
      * API::getAllBarcodes()
+     * @param bool $softUpdate If true, do not update if less than 90 (TIMEOUT_MAX_UPDATE_SOFT_REFRESH_S) seconds have passed
      */
-    public static function updateCache() {
+    public static function updateCache(bool $softUpdate = false) {
         if (self::isRedisAvailable()) {
             require_once __DIR__ . "/api.inc.php";
-            API::getAllProductsInfo(true);
-            API::getAllBarcodes(true);
+            if (!$softUpdate || self::isSoftUpdateAllowed()) {
+                API::getAllProductsInfo(true);
+                API::getAllBarcodes(true);
+            }
         }
     }
 
@@ -124,8 +130,17 @@ class RedisConnection {
     public static function cacheAllBarcodes($input) {
         self::setData(self::KEY_CACHE_AVAILABLE, true);
         self::setData(self::KEY_CACHE_ALL_BARCODES, serialize($input));
+        self::setLimitSoftUpdate();
     }
 
+    private static function setLimitSoftUpdate() {
+        self::setData(self::KEY_CACHE_NO_SOFT_UPDATE, 1, self::TIMEOUT_MAX_UPDATE_SOFT_REFRESH_S);
+    }
+
+    private static function isSoftUpdateAllowed(): bool {
+        return (self::getData(self::KEY_CACHE_NO_SOFT_UPDATE) === false);
+
+    }
 
     public static function expireAllBarcodes() {
         self::expire(self::KEY_CACHE_ALL_BARCODES);
@@ -149,10 +164,10 @@ class RedisConnection {
         }
     }
 
-    private static function setData($key, $data) {
+    private static function setData(string $key, string $data, int $timeout = self::TIMEOUT_REDIS_CACHE_S) {
         $redis = self::connectToRedis();
         if ($redis != null) {
-            $redis->set($key, $data, self::TIMEOUT_REDIS_CACHE_S);
+            $redis->set($key, $data, $timeout);
         }
     }
 

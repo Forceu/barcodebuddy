@@ -113,8 +113,6 @@ if (isset($_GET["ajaxrefresh"])) {
     die();
 }
 
-BarcodeServer::doScheduledSyncBarcodes();
-
 $webUi = new WebUiGenerator(MENU_MAIN);
 $webUi->addHeader('<link rel="stylesheet" href="./incl/css/styleMain.css">', true);
 
@@ -140,6 +138,7 @@ $link = (new MenuItemLink())
     ->setText("Clear log")
     ->setLink('window.location.href=\'' . $CONFIG->getPhpSelfWithBaseUrl() . '?delete=log\'');
 $webUi->addCard("Processed Barcodes", getHtmlLogTextArea(), $link);
+$webUi->addScript("updateRedisCacheAndFederation(false)");
 $webUi->addFooter();
 displayFederationPopupHtml($webUi);
 $webUi->printHtml();

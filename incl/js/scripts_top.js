@@ -38,3 +38,22 @@ function updateQrCode() {
     qrData["key"] = document.getElementById("qr_key").value;
     generateAppQrCode(qrData);
 }
+
+
+function updateRedisCacheAndFederation(isMenu) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200 && isMenu) {
+            if (xhttp.responseText === "OK") {
+                showToast("Cache updated");
+            } else {
+                showToast("Error: Could not update cache!");
+            }
+        }
+    };
+    if (isMenu)
+        xhttp.open("GET", "../cron.php?ajax&force", true);
+    else
+        xhttp.open("GET", "./cron.php?ajax", true);
+    xhttp.send();
+}

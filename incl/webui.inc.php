@@ -210,22 +210,22 @@ class WebUiGenerator {
         }
         
         </style>
-        <link rel="stylesheet" href="' . $folder . 'incl/css/material.indigo-blue.min.css">
-        <link rel="stylesheet" href="' . $folder . 'incl/css/main.css"> ');
+        <link rel="stylesheet" href="' . $folder . 'incl/css/material.indigo-blue.min.css?v=' . BB_VERSION . '">
+        <link rel="stylesheet" href="' . $folder . 'incl/css/main.css?v=' . BB_VERSION . '"> ');
         if ($additionalHeader != null) {
             $this->addHtml($additionalHeader);
         }
         if ($enableDialogs) {
-            $this->addHtml(' <link rel="stylesheet" href="' . $folder . 'incl/css/bootstrap.min.css">
-                                 <script src="' . $folder . 'incl/js/jquery-3.5.1.slim.min.js"></script>
-                                 <script src="' . $folder . 'incl/js/bootstrap.bundle.min.js"></script>
-                                 <script src="' . $folder . 'incl/js/bootbox.min.js"></script>');
+            $this->addHtml(' <link rel="stylesheet" href="' . $folder . 'incl/css/bootstrap.min.css?v=' . BB_VERSION . '">
+                                 <script src="' . $folder . 'incl/js/jquery-3.5.1.slim.min.js?v=' . BB_VERSION . '"></script>
+                                 <script src="' . $folder . 'incl/js/bootstrap.bundle.min.js?v=' . BB_VERSION . '"></script>
+                                 <script src="' . $folder . 'incl/js/bootbox.min.js?v=' . BB_VERSION . '"></script>');
         }
 
         $this->addHtml('</head>
 
      <body class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
-     <script src="' . $folder . 'incl/js/scripts_top.js"></script>
+     <script src="' . $folder . 'incl/js/scripts_top.js?v=' . BB_VERSION . '"></script>
 
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
       <header class="mdl-layout__header">
@@ -328,7 +328,8 @@ class WebUiGenerator {
         if ($this->menu == MENU_SETTINGS) {
             $this->addHtml('<button id="save-settings" onclick="checkAndReturn()" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast">Save</button>');
         }
-        $this->addHtml('</div><script src="' . $folder . 'incl/js/material.min.js"></script><script src="' . $folder . 'incl/js/scripts.js"></script>');
+        $this->addHtml('</div><script src="' . $folder . 'incl/js/material.min.js?v=' . BB_VERSION . '">' .
+            '</script><script src="' . $folder . 'incl/js/scripts.js?v=' . BB_VERSION . '"></script>');
 
         if ($this->menu == MENU_MAIN) {
             $this->addHtml('<script> 

@@ -22,6 +22,12 @@
       <code>include_once $filename</code>
     </UnresolvableInclude>
   </file>
+  <file src="../../incl/ajax.php">
+    <PossiblyNullArgument occurrences="2">
+      <code>sanitizeString($barcode)</code>
+      <code>sanitizeString($name)</code>
+    </PossiblyNullArgument>
+  </file>
   <file src="../../incl/api.inc.php">
     <InvalidReturnStatement occurrences="4">
       <code>$days</code>

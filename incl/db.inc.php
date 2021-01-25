@@ -50,7 +50,7 @@ const LOOKUP_ID_UPCDATABASE   = "3";
 const LOOKUP_ID_ALBERTHEIJN   = "4";
 const LOOKUP_ID_JUMBO         = "5";
 const LOOKUP_ID_OPENGTINDB    = "6";
-const LOOKUP_ID_Federation = "7";
+const LOOKUP_ID_Federation    = "7";
 
 /**
  * Dockerfile changes this to "1", so that the default is true
@@ -405,9 +405,9 @@ class DatabaseConnection {
                              VALUES('$barcode', 'N/A', 1, 0, 1, $bestBeforeInDays, '$price')");
     }
 
-    public function updateUnrecognizedBarcodeName(int $id, string $name) {
+    public function updateUnrecognizedBarcodeName(string $barcode, string $name) {
         $match = TagManager::getProductIdByPossibleTag($name, $this->db);
-        $this->db->exec("UPDATE Barcodes SET name='$name', possibleMatch=$match WHERE id=$id");
+        $this->db->exec("UPDATE Barcodes SET name='$name', possibleMatch=$match WHERE barcode='$barcode'");
     }
 
     /**

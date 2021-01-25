@@ -34,24 +34,33 @@ function showMultipleFederationNames(barcode, namesJson) {
         callback: function (result) {
             if (result != null) {
                 voteName(barcode, result);
+                changeName(barcode, result);
             }
         }
     });
 }
 
 function voteName(barcode, name) {
-    contactFederation("voteFederation", barcode, name)
+    contactFederation("voteFederation", barcode, name, false)
 }
 
 function reportName(barcode, name) {
-    contactFederation("reportFederation", barcode, name)
+    contactFederation("reportFederation", barcode, name, false)
 }
 
-function contactFederation(action, barcode, name) {
+function changeName(barcode, name) {
+    contactFederation("nameChangeFederation", barcode, name, true)
+}
+
+function contactFederation(action, barcode, name, refresh) {
     let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (this.readyState === 4) {
-            if (this.status !== 200) {
+            if (this.status === 200) {
+                if (refresh) {
+                    location.reload();
+                }
+            } else {
                 showToast("Error communicating with federation server");
             }
         }

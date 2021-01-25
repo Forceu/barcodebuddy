@@ -13,10 +13,11 @@
  * @since      File available since Release 1.8
  */
 
-$isVote   = isset($_GET["voteFederation"]);
-$isReport = isset($_GET["reportFederation"]);
+$isVote       = isset($_GET["voteFederation"]);
+$isReport     = isset($_GET["reportFederation"]);
+$isNameChange = isset($_GET["nameChangeFederation"]);
 
-if ($isVote || $isReport) {
+if ($isVote || $isReport || $isNameChange) {
     require_once __DIR__ . "/modules/barcodeFederation.php";
     if (!isset($_POST["barcode"]) || !isset($_POST["name"]))
         die("Illegal request");
@@ -25,6 +26,9 @@ if ($isVote || $isReport) {
     $name    = $_POST["name"];
     if ($isVote)
         echo BarcodeFederation::voteName($barcode, $name);
-    else
+    elseif ($isReport)
         echo BarcodeFederation::reportName($barcode, $name);
+    elseif ($isNameChange)
+        echo BarcodeFederation::chooseOtherBarcodeName(sanitizeString($barcode), sanitizeString($name));
+    die();
 }

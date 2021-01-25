@@ -178,9 +178,10 @@ class BarcodeFederation {
         return md5(microtime() . rand(0, getrandmax()));
     }
 
-    public static function chooseOtherBarcodeName(int $id, string $newName) {
+    public static function chooseOtherBarcodeName(string $barcode, string $newName): string {
         $db = DatabaseConnection::getInstance();
-        $db->updateUnrecognizedBarcodeName($id, $newName);
+        $db->updateUnrecognizedBarcodeName($barcode, $newName);
+        return "OK";
     }
 }
 

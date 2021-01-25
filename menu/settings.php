@@ -226,9 +226,9 @@ function getProviderListItems(UiEditor $html): array {
         generateApiKeyChangeScript("handleOpenGtinChange", "LOOKUP_OPENGTIN_KEY"))
         ->generate(true), "Uses OpenGtinDb.org", LOOKUP_ID_OPENGTINDB, true);
     $bbServerSubtitle                    = "Uses " . BarcodeFederation::HOST_READABLE;
-    if (!$config["LOOKUP_USE_BBUDDY_SERVER"])
+    if (!$config["BBUDDY_SERVER_ENABLED"])
         $bbServerSubtitle = "Enable Federation for this feature";
-    $result["id" . LOOKUP_ID_Federation] = $html->addListItem($html->addCheckbox('LOOKUP_USE_BBUDDY_SERVER', 'Barcode Buddy Federation', $config["LOOKUP_USE_BBUDDY_SERVER"], !$config["LOOKUP_USE_BBUDDY_SERVER"], false, true), $bbServerSubtitle, LOOKUP_ID_Federation, true);
+    $result["id" . LOOKUP_ID_Federation] = $html->addListItem($html->addCheckbox('LOOKUP_USE_BBUDDY_SERVER', 'Barcode Buddy Federation', $config["LOOKUP_USE_BBUDDY_SERVER"], !$config["BBUDDY_SERVER_ENABLED"], false, true), $bbServerSubtitle, LOOKUP_ID_Federation, true);
     return $result;
 }
 

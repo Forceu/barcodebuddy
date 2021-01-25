@@ -25,7 +25,7 @@ require_once __DIR__ . "/configProcessing.inc.php";
 require_once __DIR__ . "/modules/tagManager.php";
 require_once __DIR__ . "/modules/choreManager.php";
 require_once __DIR__ . "/modules/quantityManager.php";
-require_once __DIR__ . "/modules/barcodeServer.php";
+require_once __DIR__ . "/modules/barcodeFederation.php";
 require_once __DIR__ . "/modules/dbUpgrade.php";
 
 
@@ -50,7 +50,7 @@ const LOOKUP_ID_UPCDATABASE   = "3";
 const LOOKUP_ID_ALBERTHEIJN   = "4";
 const LOOKUP_ID_JUMBO         = "5";
 const LOOKUP_ID_OPENGTINDB    = "6";
-const LOOKUP_ID_BBUDDY_SERVER = "7";
+const LOOKUP_ID_Federation = "7";
 
 /**
  * Dockerfile changes this to "1", so that the default is true
@@ -59,8 +59,6 @@ const LOOKUP_ID_BBUDDY_SERVER = "7";
  * disable Redis.
  */
 const DEFAULT_USE_REDIS = "0";
-
-const LEGACY_DATABASE_PATH = __DIR__ . '/../barcodebuddy.db';
 
 /**
  * Thrown when a database connection is already being setup and a new connection is requested
@@ -120,7 +118,7 @@ class DatabaseConnection {
             LOOKUP_ID_ALBERTHEIJN . "," .
             LOOKUP_ID_JUMBO . "," .
             LOOKUP_ID_OPENGTINDB . "," .
-            LOOKUP_ID_BBUDDY_SERVER);
+            LOOKUP_ID_Federation);
 
 
     const DB_INT_VALUES = array("REVERT_TIME");

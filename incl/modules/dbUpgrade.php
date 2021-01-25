@@ -18,6 +18,8 @@ require_once __DIR__ . "/../db.inc.php";
 
 class DbUpgrade {
 
+    const LEGACY_DATABASE_PATH = __DIR__ . '/../barcodebuddy.db';
+
     private $db;
     private $databaseConnection;
 
@@ -33,9 +35,9 @@ class DbUpgrade {
     public static function checkAndMoveIfOldDbLocation() {
         global $CONFIG;
         //If only old db exists, create directory and move file
-        if (file_exists(LEGACY_DATABASE_PATH) && !file_exists($CONFIG->DATABASE_PATH)) {
+        if (file_exists(self::LEGACY_DATABASE_PATH) && !file_exists($CONFIG->DATABASE_PATH)) {
             self::createDbDirectory();
-            $couldMove = rename(LEGACY_DATABASE_PATH, $CONFIG->DATABASE_PATH);
+            $couldMove = rename(self::LEGACY_DATABASE_PATH, $CONFIG->DATABASE_PATH);
             if (!$couldMove) {
                 showErrorNotWritable("DB Error Could_Not_Move");
             }

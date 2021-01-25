@@ -18,7 +18,7 @@ require_once __DIR__ . "/../configProcessing.inc.php";
 require_once __DIR__ . "/../api.inc.php";
 require_once __DIR__ . "/../db.inc.php";
 
-class BarcodeServer {
+class BarcodeFederation {
     public const  HOST             = "https://bb.bulling-it.de";
     public const  HOST_READABLE    = "Barcode Buddy servers";
     private const SECONDS_24_HOURS = 86400;

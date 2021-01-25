@@ -44,7 +44,7 @@ class RedisConnection {
         if (!$config["USE_REDIS"])
             return null;
         $redis       = new Redis();
-        $isConnected = $redis->connect($config["REDIS_IP"], $config["REDIS_PORT"], 0.2);
+        $isConnected = $redis->connect($config["REDIS_IP"], intval($config["REDIS_PORT"]), 0.2);
         if (!$isConnected)
             return null;
         return $redis;
@@ -87,7 +87,7 @@ class RedisConnection {
      * @param $input
      */
     public static function cacheAllProductsInfo($input) {
-        self::setData(self::KEY_CACHE_AVAILABLE, true);
+        self::setData(self::KEY_CACHE_AVAILABLE, "1");
         self::setData(self::KEY_CACHE_ALL_PRODUCT_INFO, serialize($input));
     }
 
@@ -128,13 +128,13 @@ class RedisConnection {
      * @param $input
      */
     public static function cacheAllBarcodes($input) {
-        self::setData(self::KEY_CACHE_AVAILABLE, true);
+        self::setData(self::KEY_CACHE_AVAILABLE, "1");
         self::setData(self::KEY_CACHE_ALL_BARCODES, serialize($input));
         self::setLimitSoftUpdate();
     }
 
     private static function setLimitSoftUpdate() {
-        self::setData(self::KEY_CACHE_NO_SOFT_UPDATE, 1, self::TIMEOUT_MAX_UPDATE_SOFT_REFRESH_S);
+        self::setData(self::KEY_CACHE_NO_SOFT_UPDATE, "1", self::TIMEOUT_MAX_UPDATE_SOFT_REFRESH_S);
     }
 
     private static function isSoftUpdateAllowed(): bool {

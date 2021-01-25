@@ -23,12 +23,12 @@ $CONFIG->checkIfAuthenticated(true, true);
 
 
 if (isset($_POST["federation_agree"])) {
-    BarcodeServer::enableFederation();
+    BarcodeFederation::enableFederation();
     header("Location: " . $CONFIG->getPhpSelfWithBaseUrl());
     die();
 }
 if (isset($_POST["federation_disable"])) {
-    BarcodeServer::disableFederation();
+    BarcodeFederation::disableFederation();
     header("Location: " . $CONFIG->getPhpSelfWithBaseUrl());
     die();
 }
@@ -36,7 +36,7 @@ if (isset($_POST["federation_disable"])) {
 
 $webUi = new WebUiGenerator(MENU_GENERIC);
 $webUi->addHeader();
-$isOnline = BarcodeServer::isReachable();
+$isOnline = BarcodeFederation::isReachable();
 if ($isOnline) {
     $webUi->addCard('Barcode Buddy Federation <span style="color:forestgreen">available</span>', getHtmlFederation());
     $webUi->addCard('Info', getHtmlFederationInfo());
@@ -74,7 +74,7 @@ function getHtmlFederation(): string {
 
 function getHtmlFederationInfo(): string {
     $startTime    = microtime(true);
-    $amountStored = BarcodeServer::getCountStoredBarcodes();
+    $amountStored = BarcodeFederation::getCountStoredBarcodes();
     $endTime      = microtime(true);
     $responseTime = round(($endTime - $startTime) * 1000);
     $html         = new UiEditor();

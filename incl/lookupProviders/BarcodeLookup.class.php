@@ -30,7 +30,7 @@ class BarcodeLookup {
         LOOKUP_ID_ALBERTHEIJN   => "ProviderAlbertHeijn",
         LOOKUP_ID_JUMBO         => "ProviderJumbo",
         LOOKUP_ID_OPENGTINDB    => "ProviderOpengtindb",
-        LOOKUP_ID_BBUDDY_SERVER => "ProviderBbuddy"
+        LOOKUP_ID_Federation    => "ProviderFederation"
     );
 
     /**

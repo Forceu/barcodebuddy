@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="4.1.1@16bfbd9224698bd738c665f33039fade2a1a3977">
+<files psalm-version="4.4.1@9fd7a7d885b3a216cff8dec9d8c21a132f275224">
   <file src="../../api/index.php">
     <InvalidScalarArgument occurrences="2">
       <code>$bestBefore</code>
@@ -11,6 +11,11 @@
     <PossiblyNullArgument occurrences="1">
       <code>sanitizeString($barcode)</code>
     </PossiblyNullArgument>
+  </file>
+  <file src="../../error.php">
+    <TypeDoesNotContainNull occurrences="1">
+      <code>isset($ERROR_MESSAGE)</code>
+    </TypeDoesNotContainNull>
   </file>
   <file src="../../incl/PluginLoader.php">
     <UnresolvableInclude occurrences="1">
@@ -30,25 +35,16 @@
     <InvalidScalarArgument occurrences="1">
       <code>$daysBestBefore</code>
     </InvalidScalarArgument>
-    <PossiblyInvalidArrayOffset occurrences="3">
-      <code>$result["grocy_version"]</code>
-      <code>$result["grocy_version"]</code>
-      <code>$result["time_local_sqlite3"]</code>
-    </PossiblyInvalidArrayOffset>
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$result</code>
+    </PossiblyInvalidArgument>
     <PossiblyInvalidIterator occurrences="2">
       <code>$curlResult</code>
       <code>$result</code>
     </PossiblyInvalidIterator>
-    <PossiblyNullArrayAccess occurrences="1">
-      <code>$barcodes[$barcode]</code>
-    </PossiblyNullArrayAccess>
     <PossiblyNullIterator occurrences="1">
       <code>$products</code>
     </PossiblyNullIterator>
-    <PossiblyUndefinedVariable occurrences="2">
-      <code>$result</code>
-      <code>$result</code>
-    </PossiblyUndefinedVariable>
   </file>
   <file src="../../incl/authentication/authentication.inc.php">
     <InvalidGlobal occurrences="1">
@@ -130,9 +126,10 @@
     <DeprecatedMethod occurrences="1">
       <code>BBConfig::getInstance()</code>
     </DeprecatedMethod>
-    <UndefinedConstant occurrences="7">
+    <UndefinedConstant occurrences="8">
       <code>DEFAULT_USE_REDIS</code>
       <code>LOOKUP_ID_ALBERTHEIJN</code>
+      <code>LOOKUP_ID_Federation</code>
       <code>LOOKUP_ID_JUMBO</code>
       <code>LOOKUP_ID_OPENFOODFACTS</code>
       <code>LOOKUP_ID_OPENGTINDB</code>
@@ -147,14 +144,20 @@
     <PossiblyNullArgument occurrences="1">
       <code>$config["LOOKUP_ORDER"]</code>
     </PossiblyNullArgument>
-    <UndefinedConstant occurrences="6">
+    <UndefinedConstant occurrences="7">
       <code>LOOKUP_ID_ALBERTHEIJN</code>
+      <code>LOOKUP_ID_Federation</code>
       <code>LOOKUP_ID_JUMBO</code>
       <code>LOOKUP_ID_OPENFOODFACTS</code>
       <code>LOOKUP_ID_OPENGTINDB</code>
       <code>LOOKUP_ID_UPCDATABASE</code>
       <code>LOOKUP_ID_UPCDB</code>
     </UndefinedConstant>
+  </file>
+  <file src="../../incl/modules/barcodeFederation.php">
+    <NullableReturnStatement occurrences="1">
+      <code>sanitizeString($result)</code>
+    </NullableReturnStatement>
   </file>
   <file src="../../incl/modules/choreManager.php">
     <InvalidScalarArgument occurrences="2">
@@ -165,6 +168,14 @@
       <code>checkIfNumeric($choreId)</code>
       <code>checkIfNumeric($id)</code>
     </UndefinedFunction>
+  </file>
+  <file src="../../incl/modules/dbUpgrade.php">
+    <PossiblyNullArgument occurrences="4">
+      <code>$config["BARCODE_C"]</code>
+      <code>$config["BARCODE_CS"]</code>
+      <code>$config["BARCODE_O"]</code>
+      <code>$config["BARCODE_P"]</code>
+    </PossiblyNullArgument>
   </file>
   <file src="../../incl/modules/quantityManager.php">
     <PossiblyNullIterator occurrences="1">

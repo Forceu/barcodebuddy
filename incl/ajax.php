@@ -17,14 +17,14 @@ $isVote   = isset($_GET["voteFederation"]);
 $isReport = isset($_GET["reportFederation"]);
 
 if ($isVote || $isReport) {
-    require_once __DIR__ . "/modules/barcodeServer.php";
+    require_once __DIR__ . "/modules/barcodeFederation.php";
     if (!isset($_POST["barcode"]) || !isset($_POST["name"]))
         die("Illegal request");
 
     $barcode = $_POST["barcode"];
     $name    = $_POST["name"];
     if ($isVote)
-        echo BarcodeServer::voteName($barcode, $name);
+        echo BarcodeFederation::voteName($barcode, $name);
     else
-        echo BarcodeServer::reportName($barcode, $name);
+        echo BarcodeFederation::reportName($barcode, $name);
 }

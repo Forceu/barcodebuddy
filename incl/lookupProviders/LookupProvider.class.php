@@ -22,7 +22,7 @@ require_once __DIR__ . "/ProviderUpcDatabase.php";
 require_once __DIR__ . "/ProviderDebug.php";
 require_once __DIR__ . "/ProviderAlbertHeijn.php";
 require_once __DIR__ . "/ProviderOpengtindb.php";
-require_once __DIR__ . "/ProviderBbuddy.php";
+require_once __DIR__ . "/ProviderFederation.php";
 
 class LookupProvider {
 

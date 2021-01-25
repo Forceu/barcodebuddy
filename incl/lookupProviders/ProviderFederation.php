@@ -17,7 +17,7 @@
 
 require_once __DIR__ . "/../api.inc.php";
 
-class ProviderBbuddy extends LookupProvider {
+class ProviderFederation extends LookupProvider {
 
 
     function __construct($apiKey = null) {
@@ -36,8 +36,8 @@ class ProviderBbuddy extends LookupProvider {
         if (!$this->isProviderEnabled())
             return null;
 
-        $url                = BarcodeServer::HOST . "/get";
-        $headers            = BarcodeServer::getUuidAsArray();
+        $url                = BarcodeFederation::HOST . "/get";
+        $headers            = BarcodeFederation::getUuidAsArray();
         $headers["barcode"] = $barcode;
 
         $result = $this->execute($url, METHOD_GET, null, null, $headers);

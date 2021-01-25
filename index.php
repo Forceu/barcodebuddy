@@ -87,9 +87,9 @@ if (isset($_GET["text"])) {
 //After clicking on buttons on Federation popup
 if (isset($_GET["fed"])) {
     if ($_GET["fed"] == 1) {
-        BarcodeServer::enableFederation();
+        BarcodeFederation::enableFederation();
     } else {
-        BarcodeServer::disableFederation();
+        BarcodeFederation::disableFederation();
     }
     hideGetPostParameters();
 }

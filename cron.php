@@ -29,7 +29,7 @@ if ($config["USE_REDIS"]) {
     RedisConnection::updateCache($softUpdate);
 }
 
-BarcodeServer::doScheduledSyncBarcodes();
+BarcodeFederation::doScheduledSyncBarcodes();
 
 if (isset($_GET["ajax"]))
     echo "OK";

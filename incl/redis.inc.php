@@ -38,6 +38,7 @@ class RedisConnection {
      * @return Redis|null
      * @throws RedisException Exception when unable to connect, for some reason not documented
      * @throws DbConnectionDuringEstablishException
+     * @psalm-suppress PossiblyNullArgument
      */
     private static function establishConnection(): ?Redis {
         $config = BBConfig::getInstance();

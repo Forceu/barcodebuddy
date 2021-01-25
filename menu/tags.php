@@ -39,28 +39,34 @@ if (isset($_POST["button_delete"])) {
 
 $webUi = new WebUiGenerator(MENU_GENERIC);
 $webUi->addHeader();
-$webUi->addCard("Stored Tags", getHtmlTagTable());
+$webUi->addCard("Active Tags", getHtmlTagTable(true));
+$webUi->addCard("Inactive Tags", getHtmlTagTable(false));
 $webUi->addFooter();
 $webUi->printHtml();
 
 
-function getHtmlTagTable() {
-    $tags = getAllTags();
+function getHtmlTagTable($isActive) {
+    $allTags = getAllTags();
+
+    if ($isActive) {
+        $tags = $allTags["active"];
+        $rows = array("Tag", "Product", "Action");
+    } else {
+        $tags = $allTags["inactive"];
+        $rows = array("Tag", "Action");
+    }
     $html = new UiEditor();
     if (sizeof($tags) == 0) {
-        $html->addHtml("No tags yet.");
+        $html->addHtml("No tags stored.");
         return $html->getHtml();
     } else {
-        $table = new TableGenerator(array(
-            "Tag",
-            "Product",
-            "Action"
-        ));
+        $table = new TableGenerator($rows);
 
         foreach ($tags as $tag) {
             $table->startRow();
             $table->addCell($tag->name);
-            $table->addCell($tag->item);
+            if ($isActive)
+                $table->addCell($tag->item);
             $table->addCell($html->buildButton("button_delete", "Delete")
                 ->setSubmit()
                 ->setValue($tag->id)

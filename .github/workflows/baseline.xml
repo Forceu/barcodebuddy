@@ -214,10 +214,9 @@
       <code>API::getChoreInfo($id)["name"]</code>
       <code>ChoreManager::getChoreBarcode(sanitizeString($barcode))['choreId']</code>
     </PossiblyNullArrayAccess>
-    <PossiblyNullIterator occurrences="3">
+    <PossiblyNullIterator occurrences="2">
       <code>$chores</code>
       <code>$locationInfo</code>
-      <code>$products</code>
     </PossiblyNullIterator>
     <ReferenceConstraintViolation occurrences="1">
       <code>return $output;</code>
@@ -226,17 +225,6 @@
       <code>pluginEventReceiver_processEvent($this-&gt;eventType, $this-&gt;logText)</code>
       <code>sendWebsocketMessage($this-&gt;websocketText, $this-&gt;websocketResultCode)</code>
     </UndefinedFunction>
-  </file>
-  <file src="../../incl/redis.inc.php">
-    <UndefinedClass occurrences="7">
-      <code>$redis</code>
-      <code>$redis</code>
-      <code>$redis</code>
-      <code>?Redis</code>
-      <code>?Redis</code>
-      <code>RedisException</code>
-      <code>RedisException</code>
-    </UndefinedClass>
   </file>
   <file src="../../incl/sse/sse_data.php">
     <InvalidScalarArgument occurrences="4">

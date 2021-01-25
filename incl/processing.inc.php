@@ -588,24 +588,23 @@ function changeQuantityAfterScan(int $amount) {
 
 /**
  * Merge tags and product info
- * @return Tag[]
+ * @return array[Tag[],Tag[]]
  * @throws DbConnectionDuringEstablishException
  */
 function getAllTags(): array {
     $tags       = TagManager::getStoredTags();
     $products   = API::getAllProductsInfo();
-    $returnTags = array();
+    $returnTags = array("active" => array(), "inactive" => array());
+
 
     foreach ($tags as $tag) {
-        foreach ($products as $product) {
-            if ($product->id == $tag->itemId) {
-                $tag->setName($product->name);
-                array_push($returnTags, $tag);
-                break;
-            }
-        }
+        if (isset($products[$tag->itemId])) {
+            $tag->item = $products[$tag->itemId]->name;
+            array_push($returnTags["active"], $tag);
+        } else
+            array_push($returnTags["inactive"], $tag);
     }
-    usort($returnTags, "sortTags");
+    usort($returnTags["active"], "sortTags");
     return $returnTags;
 }
 

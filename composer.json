@@ -1,5 +1,8 @@
 {
-    "require-dev": {
-        "vimeo/psalm": "4.4.1"
-    }
+  "require-dev": {
+    "vimeo/psalm": "4.4.1"
+  },
+  "require": {
+    "ext-redis": "*"
+  }
 }

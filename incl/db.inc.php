@@ -381,15 +381,17 @@ class DatabaseConnection {
      * @param array|null $productname
      * @param int $match
      */
-    public function insertUnrecognizedBarcode(string $barcode, int $amount = 1, string $bestBeforeInDays = null, string $price = null, ?array $productname = null, int $match = 0) {
+    public function insertUnrecognizedBarcode(string $barcode, int $amount = 1, string $bestBeforeInDays = null, string $price = null, ?array $productname = null) {
         if ($bestBeforeInDays == null)
             $bestBeforeInDays = "NULL";
 
         if ($productname == null) {
             $name     = "N/A";
             $altNames = "NULL";
+            $match    = 0;
         } else {
             $name     = $productname["name"];
+            $match    = TagManager::getProductIdByPossibleTag($name, $this->db);
             $altNames = "'" . $productname["altNames"] . "'";
         }
 
@@ -403,6 +405,11 @@ class DatabaseConnection {
 
         $this->db->exec("INSERT INTO Barcodes(barcode, name, amount, possibleMatch, requireWeight, bestBeforeInDays, price)
                              VALUES('$barcode', 'N/A', 1, 0, 1, $bestBeforeInDays, '$price')");
+    }
+
+    public function updateUnrecognizedBarcodeName(int $id, string $name) {
+        $match = TagManager::getProductIdByPossibleTag($name, $this->db);
+        $this->db->exec("UPDATE Barcodes SET name='$name', possibleMatch=$match WHERE id=$id");
     }
 
     /**

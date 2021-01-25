@@ -13,27 +13,28 @@ function showReportFederationName(barcode, name) {
     });
 }
 
-function showMultipleFederationNames(names) {
+function showMultipleFederationNames(barcode, namesJson) {
+    let maxLength = 0;
+    let names = JSON.parse(atob(namesJson));
+    names.forEach(function (item, index) {
+        if (item.length > maxLength)
+            maxLength = item.length;
+    });
+    let inputOptions = [];
+    names.forEach(function (name, index) {
+        let paddedString = name.padEnd(maxLength + 3, ' ');
+        let reportString = '<pre>  <span style="font-family: \'Courier New\', monospace;">' + paddedString + '</span><a href="#" style="color: inherit;" onclick="bootbox.hideAll(); showReportFederationName(\'' + barcode + '\', \'' + name + '\');"><span style="color: #6c757d" class="icon-flag"></span></pre></a>';
+        inputOptions.push({text: reportString, value: name})
+    });
     bootbox.prompt({
         title: "Multiple Names Submitted",
         message: '<p>Please select a name below:</p>',
         inputType: 'radio',
-        inputOptions: [
-            {
-                text: '<span style="font-family: \'Courier New\', monospace;">Choice One &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="icon-flag"></span>',
-                value: '1',
-            },
-            {
-                text: '<span style="font-family: \'Courier New\', monospace;">Choice Two &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="icon-flag"></span>',
-                value: '2',
-            },
-            {
-                text: '<span style="font-family: \'Courier New\', monospace;">Choice Three &nbsp;&nbsp;&nbsp;&nbsp;</span><span class="icon-flag"></span>',
-                value: '3',
-            }
-        ],
+        inputOptions: inputOptions,
         callback: function (result) {
-            console.log(result);
+            if (result != null) {
+                voteName(barcode, result);
+            }
         }
     });
 }

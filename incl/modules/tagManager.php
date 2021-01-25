@@ -48,12 +48,11 @@ class TagManager {
     /**
      * Check if the given name includes any words that are associated with a product
      *
-     * @param $name
+     * @param string $name
+     * @param SQLite3 $db
      * @return int
-     * @throws DbConnectionDuringEstablishException
      */
-    public static function getProductIdByPossibleTag($name): int {
-        $db  = DatabaseConnection::getInstance()->getDatabaseReference();
+    public static function getProductIdByPossibleTag(string $name, SQLite3 $db): int {
         $res = $db->query(self::generateQueryFromName($name));
         if ($row = $res->fetchArray()) {
             return $row["itemId"];

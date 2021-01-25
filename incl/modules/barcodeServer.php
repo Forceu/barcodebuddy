@@ -177,6 +177,11 @@ class BarcodeServer {
     private static function getRandomUuid(): string {
         return md5(microtime() . rand(0, getrandmax()));
     }
+
+    public static function chooseOtherBarcodeName(int $id, string $newName) {
+        $db = DatabaseConnection::getInstance();
+        $db->updateUnrecognizedBarcodeName($id, $newName);
+    }
 }
 
 class ServerBarcode {

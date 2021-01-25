@@ -205,7 +205,7 @@ function processUnknownBarcode(string $barcode, bool $websocketEnabled, LockGene
             $productname = BarcodeLookup::lookup($barcode);
         }
         if ($productname != null) {
-            $db->insertUnrecognizedBarcode($barcode, $amount, $bestBeforeInDays, $price, $productname, TagManager::getProductIdByPossibleTag($productname["name"]));
+            $db->insertUnrecognizedBarcode($barcode, $amount, $bestBeforeInDays, $price, $productname);
             $log    = new LogOutput("Unknown barcode looked up, found name: " . $productname["name"], EVENT_TYPE_ADD_NEW_BARCODE, $barcode);
             $output = $log
                 ->insertBarcodeInWebsocketText()

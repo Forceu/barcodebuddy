@@ -357,7 +357,7 @@ function getHtmlMainMenuTableKnown(array $barcodes): string {
             $bbServerButton = "";
             if ($item['bbServerAltNames'] != null) {
                 if (sizeof($item['bbServerAltNames']) > 1)
-                    $bbServerButton = '<button type="button" class="btn btn-primary  btn-sm"><span class="icon-navigation-more"></span></button> ' . getReportButton($item);
+                    $bbServerButton = getVoteButton($item) . getReportButton($item);
                 else
                     $bbServerButton = getReportButton($item);
             }
@@ -397,6 +397,11 @@ function getHtmlMainMenuTableKnown(array $barcodes): string {
 
 function getReportButton(array $item): string {
     return '<button type="button" class="btn btn-outline-secondary btn-sm" onclick="showReportFederationName(\'' . $item['barcode'] . '\',\'' . $item['name'] . '\')"><span class="icon-flag"></span></button>';
+}
+
+
+function getVoteButton(array $item): string {
+    return '<button type="button" class="btn btn-primary  btn-sm" onclick="showMultipleFederationNames(\'' . $item['barcode'] . '\',\'' . base64_encode(json_encode($item['bbServerAltNames'])) . '\')"><span class="icon-navigation-more"></span></button> ';
 }
 
 

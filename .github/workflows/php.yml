@@ -13,7 +13,7 @@ jobs:
           php-version: 7.2
           coverage: none # disable xdebug, pcov
 
-      - run: composer require --dev vimeo/psalm 4.1.1
+      - run: composer require --dev vimeo/psalm 4.4.1
         name: Install Psalm
 
       - run: vendor/bin/psalm --output-format=github --config=.github/workflows/psalm.xml

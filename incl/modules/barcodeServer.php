@@ -18,12 +18,10 @@ require_once __DIR__ . "/../configProcessing.inc.php";
 require_once __DIR__ . "/../api.inc.php";
 require_once __DIR__ . "/../db.inc.php";
 
-//TODO report / vote
-
 class BarcodeServer {
-    public const HOST             = "https://bb.bulling-it.de";
-    public const HOST_READABLE    = "Barcode Buddy servers";
-    public const SECONDS_24_HOURS = 86400;
+    public const  HOST             = "https://bb.bulling-it.de";
+    public const  HOST_READABLE    = "Barcode Buddy servers";
+    private const SECONDS_24_HOURS = 86400;
 
     public static function doScheduledSyncBarcodes() {
         $config = BBConfig::getInstance();
@@ -76,6 +74,49 @@ class BarcodeServer {
         } catch (Exception $ignored) {
         }
 
+    }
+
+    /**
+     * Votes a name
+     * @param string $barcode
+     * @param string $name
+     * @return string "OK" if successful, otherwise error message
+     */
+    public static function voteName(string $barcode, string $name): string {
+        return self::execRequest("vote", $barcode, $name);
+    }
+
+
+    /**
+     * Reports a name
+     * @param string $barcode
+     * @param string $name
+     * @return string "OK" if successful, otherwise error message
+     */
+    public static function reportName(string $barcode, string $name): string {
+        return self::execRequest("report", $barcode, $name);
+    }
+
+
+    /**
+     * Performs a GET request to the server
+     * @param string $action
+     * @param string $barcode
+     * @param string $name
+     * @return string "OK" if successful, otherwise error message
+     */
+    private static function execRequest(string $action, string $barcode, string $name): string {
+        $url                = self::HOST . "/" . $action;
+        $headers            = self::getUuidAsArray();
+        $headers["name"]    = $name;
+        $headers["barcode"] = $barcode;
+        try {
+            $curl = new CurlGenerator($url, METHOD_GET, null, null, true, null, null, null, $headers);
+            $curl->execute(true);
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+        return "OK";
     }
 
     /**

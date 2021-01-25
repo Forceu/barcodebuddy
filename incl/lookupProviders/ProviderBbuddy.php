@@ -44,15 +44,11 @@ class ProviderBbuddy extends LookupProvider {
         if (!isset($result["Result"]) || $result["Result"] != "OK")
             return null;
 
-        $foundName  = sanitizeString($result["FoundNames"][0]);
-        $altNames   = null;
-        $totalNames = count($result["FoundNames"]);
-        if ($totalNames > 1) {
-            $altNamesArray = array();
-            for ($i = 1; $i < $totalNames; $i++)
-                array_push($altNamesArray, sanitizeString($result["FoundNames"][$i]));
-            $altNames = json_encode($altNamesArray);
-        }
+        $foundName = sanitizeString($result["FoundNames"][0]);
+        $names     = array();
+        foreach ($result["FoundNames"] as $name)
+            array_push($names, sanitizeString($name));
+        $altNames = json_encode($names);
         return self::createReturnArray($foundName, $altNames);
     }
 }

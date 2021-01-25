@@ -1,8 +1,7 @@
 function enableButton(idSelect, idButtonAdd, idButtonConsume) {
-
-    var oSelect = document.getElementById(idSelect);
-    var oButtonAdd = document.getElementById(idButtonAdd);
-    var oButtonConsume = document.getElementById(idButtonConsume);
+    let oSelect = document.getElementById(idSelect);
+    let oButtonAdd = document.getElementById(idButtonAdd);
+    let oButtonConsume = document.getElementById(idButtonConsume);
     oButtonAdd.disabled = oSelect.value == "0";
     oButtonConsume.disabled = oSelect.value == "0";
 }
@@ -13,19 +12,19 @@ function sleep(time) {
 
 
 function checkAndReturn() {
-    var button = document.getElementById("save-settings");
+    let button = document.getElementById("save-settings");
 
     button.setAttribute("disabled", "");
     componentHandler.upgradeElement(button);
 
-    var form1 = document.getElementById("settings1_form");
-    var form2 = document.getElementById("settings2_form");
-    var form3 = document.getElementById("settings3_form");
-    var form4 = document.getElementById("settings4_form");
+    let form1 = document.getElementById("settings1_form");
+    let form2 = document.getElementById("settings2_form");
+    let form3 = document.getElementById("settings3_form");
+    let form4 = document.getElementById("settings4_form");
 
-    var postString = serialize(form1) + '&' + serialize(form2) + '&' + serialize(form3) + '&' + serialize(form4);
+    let postString = serialize(form1) + '&' + serialize(form2) + '&' + serialize(form3) + '&' + serialize(form4);
 
-    var xhr = new XMLHttpRequest();
+    let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (this.readyState == 4) {
             if (this.status == 200) {
@@ -85,13 +84,13 @@ var serialize = function (form) {
 };
 
 function enableButtonGen(buttonId, textId, previousInput) {
-    var text = document.getElementById(textId).value;
+    let text = document.getElementById(textId).value;
     document.getElementById(buttonId).disabled = (text === previousInput);
 }
 
 function openNewTab(url, barcode) {
-    var win = window.open(url, "New Grocy product");
-    var timer = setInterval(function () {
+    let win = window.open(url, "New Grocy product");
+    let timer = setInterval(function () {
         if (win.closed) {
             clearInterval(timer);
             window.location = "index.php?refreshbarcode=" + barcode;
@@ -100,7 +99,7 @@ function openNewTab(url, barcode) {
 }
 
 function showToast(messageText) {
-    var snackbarContainer = document.querySelector('#snackbar');
+    let snackbarContainer = document.querySelector('#snackbar');
     snackbarContainer.MaterialSnackbar.showSnackbar({
         message: messageText
     });
@@ -112,7 +111,7 @@ function showQrCode(content) {
         document.getElementById("qrcode-modal").style.display = "none";
         document.getElementById('btn_apilinks').style.display = "block";
     }
-    var qr = qrcode(0, 'L');
+    let qr = qrcode(0, 'L');
     qr.addData(content);
     qr.make();
     document.getElementById('btn_apilinks').style.display = "none";

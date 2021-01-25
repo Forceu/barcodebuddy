@@ -10,7 +10,7 @@
  * @author     Marc Ole Bulling
  * @copyright  2019 Marc Ole Bulling
  * @license    https://www.gnu.org/licenses/gpl-3.0.en.html  GNU GPL v3.0
- * @since      File available since Release 1.5
+ * @since      File available since Release 1.8
  */
 
 
@@ -36,10 +36,7 @@ if (isset($_POST["federation_disable"])) {
 
 $webUi = new WebUiGenerator(MENU_GENERIC);
 $webUi->addHeader();
-$startTimeFederationResponse = microtime(true);
-$isOnline                    = BarcodeServer::isReachable();
-$stopTimeFederationResponse  = microtime(true);
-$totalTimeFederationResponse = round(($stopTimeFederationResponse - $startTimeFederationResponse) * 1000);
+$isOnline = BarcodeServer::isReachable();
 if ($isOnline) {
     $webUi->addCard('Barcode Buddy Federation <span style="color:forestgreen">available</span>', getHtmlFederation());
     $webUi->addCard('Info', getHtmlFederationInfo());
@@ -76,10 +73,13 @@ function getHtmlFederation(): string {
 
 
 function getHtmlFederationInfo(): string {
-    global $totalTimeFederationResponse;
-    $html = new UiEditor();
+    $startTime    = microtime(true);
+    $amountStored = BarcodeServer::getCountStoredBarcodes();
+    $endTime      = microtime(true);
+    $responseTime = round(($endTime - $startTime) * 1000);
+    $html         = new UiEditor();
     $html->addHtml("<b>Status:</b> <span style=\"color:forestgreen\">online</span> <br>
-                         <b>Response Time: </b> " . $totalTimeFederationResponse . "ms <br>
-                         <b>Barcodes stored:</b> " . BarcodeServer::getCountStoredBarcodes() . " (updated every 6 hours)");
+                         <b>Response Time: </b> " . $responseTime . "ms <br>
+                         <b>Barcodes stored:</b> " . $amountStored . " (updated every 6 hours)");
     return $html->getHtml();
 }

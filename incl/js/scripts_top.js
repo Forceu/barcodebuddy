@@ -13,7 +13,7 @@
         }
         return thisEleObj;
     };
-    var oldJSONStringify = JSON.stringify;
+    let oldJSONStringify = JSON.stringify;
     JSON.stringify = function (input) {
         if (oldJSONStringify(input) == '[]')
             return oldJSONStringify(convArrToObj(input));
@@ -24,7 +24,7 @@
 
 
 function generateAppQrCode(data) {
-    var qr = qrcode(0, 'M');
+    let qr = qrcode(0, 'M');
     qr.addData(JSON.stringify(data));
     qr.make();
     document.getElementById('placeHolder').innerHTML = qr.createImgTag(8, 5);
@@ -32,7 +32,7 @@ function generateAppQrCode(data) {
 
 
 function updateQrCode() {
-    var qrData = [];
+    let qrData = [];
     qrData["issetup"] = true;
     qrData["url"] = document.getElementById("qr_url").value;
     qrData["key"] = document.getElementById("qr_key").value;
@@ -41,7 +41,7 @@ function updateQrCode() {
 
 
 function updateRedisCacheAndFederation(isMenu) {
-    var xhttp = new XMLHttpRequest();
+    let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200 && isMenu) {
             if (xhttp.responseText === "OK") {

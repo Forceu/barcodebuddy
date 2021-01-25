@@ -328,7 +328,13 @@ function getHtmlMainMenuTableKnown(array $barcodes): string {
         $html->addHtml("No known barcodes yet.");
         return $html->getHtml();
     } else {
-        $table = new TableGenerator(array(
+
+        $containsFederationName = false;
+        foreach ($barcodes['known'] as $item) {
+            if ($item['bbServerAltNames'] != null)
+                $containsFederationName = true;
+        }
+        $arrayTableEntries = array(
             "Name",
             "Barcode",
             "Quantity",
@@ -336,8 +342,11 @@ function getHtmlMainMenuTableKnown(array $barcodes): string {
             "Action",
             "Tags",
             "Create",
-            "Remove"
-        ));
+            "Remove");
+        if ($containsFederationName)
+            array_splice($arrayTableEntries, 1, 0, array("Federation"));
+
+        $table = new TableGenerator($arrayTableEntries);
         foreach ($barcodes['known'] as $item) {
             $isDisabled = "disabled";
             if ($item['match'] != 0) {
@@ -347,9 +356,14 @@ function getHtmlMainMenuTableKnown(array $barcodes): string {
             $table->startRow();
             $bbServerButton = "";
             if ($item['bbServerAltNames'] != null) {
-                $bbServerButton = " TODO";
+                if (sizeof($item['bbServerAltNames']) > 1)
+                    $bbServerButton = '<button type="button" class="btn btn-primary  btn-sm"><span class="icon-navigation-more"></span></button> ' . getReportButton($item);
+                else
+                    $bbServerButton = getReportButton($item);
             }
-            $table->addCell(UiEditor::addTextWrap($item['name'], 15) . $bbServerButton);
+            $table->addCell(UiEditor::addTextWrap($item['name'], 15));
+            if ($containsFederationName)
+                $table->addCell($bbServerButton);
             $table->addCell($item['barcode']);
             $table->addCell($item['amount']);
             $table->addCell('<select style="max-width: 20em;" onchange=\'enableButton("select_' . $itemId . '", "button_add_' . $item['id'] . '", "button_consume_' . $item['id'] . '")\' id="select_' . $itemId . '" name="select_' . $itemId . '">' . printSelections($item['match'], $productinfo) . '</select>');
@@ -379,6 +393,10 @@ function getHtmlMainMenuTableKnown(array $barcodes): string {
         $html->addTableClass($table);
         return $html->getHtml();
     }
+}
+
+function getReportButton(array $item): string {
+    return '<button type="button" class="btn btn-outline-secondary btn-sm" onclick="showReportFederationName(\'' . $item['barcode'] . '\',\'' . $item['name'] . '\')"><span class="icon-flag"></span></button>';
 }
 
 

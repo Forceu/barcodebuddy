@@ -171,45 +171,7 @@ class WebUiGenerator {
                url(' . $folder . 'incl/fonts/roboto-v20-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-regular.woff2) format("woff2"), /* Chrome 26+, Opera 23+, Firefox 39+ */
                url(' . $folder . 'incl/fonts/roboto-v20-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-regular.woff) format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
         }
-        
-        @font-face {
-          font-family: "Material Icons";
-          font-style: normal;
-          font-weight: 400;
-          src: url(' . $folder . 'incl/fonts/materialicons.woff2) format("woff2");
-        }
-        
-        .material-icons {
-          font-family: "Material Icons";
-          font-weight: normal;
-          font-style: normal;
-          font-size: 24px;
-          line-height: 1;
-          letter-spacing: normal;
-          text-transform: none;
-          display: inline-block;
-          white-space: nowrap;
-          speak: never;
-          word-wrap: normal;
-          direction: ltr;
-          -webkit-font-feature-settings: "liga";
-          -webkit-font-smoothing: antialiased;
-        }
-        
-        
-        .material-icons-small {
-          font-family: "Material Icons";
-          display: inline-block;
-          font: normal normal normal 14px/1 "Material Icons";
-          font-size: inherit;
-          text-rendering: auto; 
-           font-weight: normal;
-          font-style: normal;
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-        }
-        
-        </style>
+        </style>' . self::getIcons($folder) . '
         <link rel="stylesheet" href="' . $folder . 'incl/css/material.indigo-blue.min.css?v=' . BB_VERSION . '">
         <link rel="stylesheet" href="' . $folder . 'incl/css/main.css?v=' . BB_VERSION . '"> ');
         if ($additionalHeader != null) {
@@ -219,7 +181,8 @@ class WebUiGenerator {
             $this->addHtml(' <link rel="stylesheet" href="' . $folder . 'incl/css/bootstrap.min.css?v=' . BB_VERSION . '">
                                  <script src="' . $folder . 'incl/js/jquery-3.5.1.slim.min.js?v=' . BB_VERSION . '"></script>
                                  <script src="' . $folder . 'incl/js/bootstrap.bundle.min.js?v=' . BB_VERSION . '"></script>
-                                 <script src="' . $folder . 'incl/js/bootbox.min.js?v=' . BB_VERSION . '"></script>');
+                                 <script src="' . $folder . 'incl/js/bootbox.min.js?v=' . BB_VERSION . '"></script>
+                                 <script src="' . $folder . 'incl/js/federation.js?v=' . BB_VERSION . '"></script>');
         }
 
         $this->addHtml('</head>
@@ -332,8 +295,7 @@ class WebUiGenerator {
             '</script><script src="' . $folder . 'incl/js/scripts.js?v=' . BB_VERSION . '"></script>');
 
         if ($this->menu == MENU_MAIN) {
-            $this->addHtml('<script> 
-
+            $this->addScript('
         var eventSource = null;
 
         function disableSSE() {
@@ -407,9 +369,7 @@ class WebUiGenerator {
                   };
                 };
                 if(typeof(EventSource) !== "undefined")
-                  startWebsocket();
-
-        </script>');
+                  startWebsocket();');
         }
         $this->addHtml('</body>
     </html>');
@@ -451,6 +411,94 @@ class WebUiGenerator {
             $alert .= "\ntitle: '" . $title . "',";
         $alert .= '});';
         $this->addScript($alert);
+    }
+
+    private static function getIcons(string $folder): string {
+        return "<style>
+        
+        
+        @font-face {
+          font-family: \"Material Icons\";
+          font-style: normal;
+          font-weight: 400;
+          src: url(" . $folder . "incl/fonts/materialicons.woff2) format(\"woff2\");
+        }
+        
+        .material-icons {
+          font-family: \"Material Icons\";
+          font-weight: normal;
+          font-style: normal;
+          font-size: 24px;
+          line-height: 1;
+          letter-spacing: normal;
+          text-transform: none;
+          display: inline-block;
+          white-space: nowrap;
+          speak: never;
+          word-wrap: normal;
+          direction: ltr;
+          -webkit-font-feature-settings: \"liga\";
+          -webkit-font-smoothing: antialiased;
+        }
+        
+        
+        .material-icons-small {
+          font-family: \"Material Icons\";
+          display: inline-block;
+          font: normal normal normal 14px/1 \"Material Icons\";
+          font-size: inherit;
+          text-rendering: auto; 
+           font-weight: normal;
+          font-style: normal;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+        
+        @font-face {
+          font-family: 'icomoon';
+          src:  url('" . $folder . "incl/fonts/icomoon.woff') format('woff');
+          font-weight: normal;
+          font-style: normal;
+          font-display: block;
+        }
+
+        [class^=\"icon-\"], [class*=\" icon-\"] {
+          /* use !important to prevent issues with browser extensions that change fonts */
+          font-family: 'icomoon' !important;
+          speak: never;
+          font-style: normal;
+          font-weight: normal;
+          font-variant: normal;
+          text-transform: none;
+          line-height: 1;
+        
+          /* Better Font Rendering =========== */
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .icon-navigation-more:before {
+          content: \"\\e900\";
+        }
+        .icon-cog:before {
+          content: \"\\e994\";
+        }
+        .icon-bin:before {
+          content: \"\\e9ac\";
+        }
+        .icon-flag:before {
+          content: \"\\e9cc\";
+        }
+        .icon-notification:before {
+          content: \"\\ea08\";
+        }
+        .icon-plus:before {
+          content: \"\\ea0a\";
+        }
+        .icon-checkmark:before {
+          content: \"\\ea10\";
+        }
+        </style>";
     }
 }
 

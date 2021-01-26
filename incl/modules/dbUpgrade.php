@@ -121,6 +121,12 @@ class DbUpgrade {
             $this->db->exec("ALTER TABLE Barcodes ADD COLUMN bbServerAltNames TEXT");
             $this->isSupportedGrocyVersionOrDie();
         }
+        if ($previousVersion < 1802) {
+            //In v1800 the db was not initialised properly for new installations. This has to be done again
+            $columnInfo = $this->db->querySingle("SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Barcodes') WHERE name='bbServerAltNames'");
+            if ($columnInfo == 0)
+                $this->db->exec("ALTER TABLE Barcodes ADD COLUMN bbServerAltNames TEXT");
+        }
         RedisConnection::updateCache();
     }
 

@@ -169,7 +169,7 @@ class DatabaseConnection {
         self::checkPermissions();
         $this->db = new SQLite3($CONFIG->DATABASE_PATH);
         $this->db->busyTimeout(5000);
-        $this->db->exec("CREATE TABLE IF NOT EXISTS Barcodes(id INTEGER PRIMARY KEY, barcode TEXT NOT NULL, name TEXT NOT NULL, possibleMatch INTEGER, amount INTEGER NOT NULL, requireWeight INTEGER, bestBeforeInDays INTEGER, price TEXT)");
+        $this->db->exec("CREATE TABLE IF NOT EXISTS Barcodes(id INTEGER PRIMARY KEY, barcode TEXT NOT NULL, name TEXT NOT NULL, possibleMatch INTEGER, amount INTEGER NOT NULL, requireWeight INTEGER, bestBeforeInDays INTEGER, price TEXT, bbServerAltNames TEXT)");
         $this->db->exec("CREATE TABLE IF NOT EXISTS Tags(id INTEGER PRIMARY KEY, tag TEXT NOT NULL, itemId INTEGER NOT NULL)");
         $this->db->exec("CREATE TABLE IF NOT EXISTS TransactionState(id INTEGER PRIMARY KEY, currentState TINYINT NOT NULL, since INTEGER NOT NULL)");
         $this->db->exec("CREATE TABLE IF NOT EXISTS BarcodeLogs(id INTEGER PRIMARY KEY, log TEXT NOT NULL)");

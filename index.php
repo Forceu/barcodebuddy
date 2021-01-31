@@ -114,7 +114,7 @@ if (isset($_GET["ajaxrefresh"])) {
 }
 
 $webUi = new WebUiGenerator(MENU_MAIN);
-$webUi->addHeader('<link rel="stylesheet" href="./incl/css/styleMain.css">', true);
+$webUi->addHeader('<link rel="stylesheet" href="./incl/css/styleMain.css?v=' . BB_VERSION . '">', true);
 
 
 $link = (new MenuItemLink())

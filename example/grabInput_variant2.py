@@ -2,11 +2,16 @@
 
 from evdev import InputDevice, categorize, ecodes
 import requests
+import yaml
 
 
-SERVER_ADDRESS = 'http://10.0.20.2/barcodebuddy/api/' # Replace with your Barcode Buddy URL
-API_KEY = 'MyApiKey' # Replace with your Barcode Buddy API key
-device = InputDevice('/dev/input/event1') # Replace with your device
+with open('config.yaml') as f:
+    config = yaml.safe_load(f)
+
+SERVER_ADDRESS = config['server_address']
+API_KEY = config['api_key']
+device_id = config['device_id']
+device = InputDevice(f'/dev/input/event{device_id}')
 
 scancodes = {
 	1:  u'?1',
@@ -64,7 +69,7 @@ NOT_RECOGNIZED_KEY = u'?'
 
 barcode = ''
 
-print 'Please begin scanning...'
+print('Please begin scanning...')
 
 for event in device.read_loop():
     if event.type == ecodes.EV_KEY:
@@ -72,11 +77,11 @@ for event in device.read_loop():
 	if eventdata.keystate == 1:
 		scancode = eventdata.scancode
 		if scancode == 28:
-			print 'Sending: ' + barcode
-			requests.get(SERVER_ADDRESS + 'action/scan?apikey=' + API_KEY + '&add=' + barcode)
+			print('Sending: {barcode}')
+			requests.get('{SERVER_ADDRESS}action/scan?apikey={API_KEY}&add={barcode}')
 			barcode = ''
 		else:
 			key = scancodes.get(scancode, NOT_RECOGNIZED_KEY)
 			barcode = barcode + key
 			if key == NOT_RECOGNIZED_KEY:
-				print('unknown key, scancode=' + str(scancode))
+				print('unknown key, scancode={scancode}')

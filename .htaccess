@@ -8,3 +8,9 @@
     order allow,deny
     deny from all
 </Files>
+
+# Prevent viewing of example folder.
+<Files example>
+    order allow,deny
+    deny from all
+</Files>

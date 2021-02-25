@@ -33,4 +33,4 @@ Uses udev rules. If you have a barcode scanner that disconnects (eg. Bluetooth),
 
 ### grabInput_variant2.py
 
-A Python script that sends the output to a server instead through PHP.
+A Python script that sends the output to a server instead through PHP. This scripts configuration can be found in the file config.yaml

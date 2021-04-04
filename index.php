@@ -372,6 +372,8 @@ function getHtmlMainMenuTableKnown(array $barcodes): string {
         if ($containsFederationName)
             array_splice($arrayTableEntries, 1, 0, array("Federation"));
 
+        addModifyAllButtons($html);
+
         $table = new TableGenerator($arrayTableEntries);
         foreach ($barcodes['known'] as $item) {
             $isDisabled = "disabled";
@@ -444,18 +446,7 @@ function getHtmlMainMenuTableUnknown(array $barcodes): string {
         $html->addHtml("No unknown barcodes yet.");
         return $html->getHtml();
     } else {
-        $html->addHtml($html->buildButton("button_add_all", "Add all")
-                ->setSubmit()
-                ->setRaised()
-                ->setIsAccent()
-                ->setId('button_add_all')
-                ->generate(true));
-        $html->addHtml($html->buildButton("button_consume_all", "Consume all")
-            ->setSubmit()
-            ->setRaised()
-            ->setIsAccent()
-            ->setId('button_consume_all')
-            ->generate(true));
+        addModifyAllButtons($html);
         $table = new TableGenerator(array(
             "Barcode",
             "Look up",
@@ -501,6 +492,24 @@ function getHtmlMainMenuTableUnknown(array $barcodes): string {
         $html->addTableClass($table);
         return $html->getHtml();
     }
+}
+
+
+function addModifyAllButtons($html) {
+    $html->addHtml('<div class="mdl-cell">');
+    $html->addHtml($html->buildButton("button_add_all", "Add all")
+        ->setSubmit()
+        ->setRaised()
+        ->setIsAccent()
+        ->setId('button_add_all')
+        ->generate(true));
+    $html->addHtml($html->buildButton("button_consume_all", "Consume all")
+        ->setSubmit()
+        ->setRaised()
+        ->setIsAccent()
+        ->setId('button_consume_all')
+        ->generate(true));
+    $html->addHtml('</div>');
 }
 
 

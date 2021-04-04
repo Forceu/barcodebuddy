@@ -210,63 +210,89 @@ function processButtons() {
         die();
     }
 
-    if (isset($_POST["button_add"]) || isset($_POST["button_consume"])) {
-        if (isset($_POST["button_consume"])) {
-            $isConsume = true;
-            $id        = $_POST["button_consume"];
-        } else {
-            $isConsume = false;
-            $id        = $_POST["button_add"];
-        }
-        checkIfNumeric($id);
-        $gidSelected = $_POST["select_" . $id];
-        if ($gidSelected != 0) {
-            $row = $db->getBarcodeById($id);
-            if ($row !== false) {
-                $barcode = sanitizeString($row["barcode"], true);
-                $amount  = $row["amount"];
-                checkIfNumeric($amount);
-                if (isset($_POST["tags"])) {
-                    foreach ($_POST["tags"][$id] as $tag) {
-                        TagManager::add(sanitizeString($tag), $gidSelected);
-                    }
-                }
-                $product = API::getProductInfo(sanitizeString($gidSelected));
-                API::addBarcode($gidSelected, $barcode);
-                $log = new LogOutput("Associated barcode $barcode with " . $product->name, EVENT_TYPE_ASSOCIATE_PRODUCT);
-                $log->setVerbose()->dontSendWebsocket()->createLog();
-                $db->deleteBarcode($id);
-                QuantityManager::syncBarcodeToGrocy($barcode);
-                if ($product->isTare) {
-                    if (!$db->isUnknownBarcodeAlreadyStored($barcode))
-                        $db->insertActionRequiredBarcode($barcode, $row["bestBeforeInDays"], $row["price"]);
-                    $log = new LogOutput("Action required: Enter weight for " . $product->name, EVENT_TYPE_ACTION_REQUIRED, $barcode);
-                    $log->setVerbose()->dontSendWebsocket()->createLog();
-                } else {
-                    if ($isConsume) {
-                        if ($product->stockAmount < $amount)
-                            $amount = $product->stockAmount;
-                        if ($amount > 0) {
-                            API::consumeProduct($gidSelected, $amount);
-                            $log = new LogOutput("Consuming $amount " . $product->unit . " of " . $product->name, EVENT_TYPE_ADD_KNOWN_BARCODE);
-                        } else {
-                            $log = new LogOutput("None in stock, not consuming: " . $product->name, EVENT_TYPE_ADD_KNOWN_BARCODE);
-                        }
-                        $log->setVerbose()->dontSendWebsocket()->createLog();
-                    } else {
-                        $additionalLog = "";
-                        if (!API::purchaseProduct($gidSelected, $amount, $row["bestBeforeInDays"], $row["price"])) {
-                            $additionalLog = " [WARNING]: No default best before date set!";
-                        }
-                        $log = new LogOutput("Adding $amount " . $product->unit . " of " . $product->name . $additionalLog, EVENT_TYPE_ADD_KNOWN_BARCODE);
-                        $log->setVerbose()->dontSendWebsocket()->createLog();
-                    }
-                }
+    if (isset($_POST["button_add_all"]) || isset($_POST["button_consume_all"])) {
+        $isConsume = isset($_POST["button_consume_all"]);
+        $selectValues = array_filter($_POST, function($key, $value) {
+            return strpos($value, 'select_') !== false;
+        }, ARRAY_FILTER_USE_BOTH);
+
+        foreach ($selectValues as $key => $value) {
+            preg_match('/select_(\d*)/', $key, $matches);
+
+            if (count($matches) !== 2) {
+                continue;
             }
+
+            $id = $matches[1];
+            $gidSelected = $value;
+
+            addOrConsume($isConsume, $id, $gidSelected, $db);
         }
+
         //Hide POST, so we can refresh
         header("Location: " . $CONFIG->getPhpSelfWithBaseUrl());
         die();
+    }
+
+    if (isset($_POST["button_add"]) || isset($_POST["button_consume"])) {
+        $isConsume = isset($_POST["button_consume"]);
+        $id = $isConsume ? $_POST["button_consume"] : $_POST["button_add"];
+
+        checkIfNumeric($id);
+        $gidSelected = $_POST["select_" . $id];
+
+        addOrConsume($isConsume, $id, $gidSelected, $db);
+
+        //Hide POST, so we can refresh
+        header("Location: " . $CONFIG->getPhpSelfWithBaseUrl());
+        die();
+    }
+}
+
+function addOrConsume($isConsume, $id, $gidSelected, $db) {
+    if ($gidSelected != 0) {
+        $row = $db->getBarcodeById($id);
+        if ($row !== false) {
+            $barcode = sanitizeString($row["barcode"], true);
+            $amount  = $row["amount"];
+            checkIfNumeric($amount);
+            if (isset($_POST["tags"])) {
+                foreach ($_POST["tags"][$id] as $tag) {
+                    TagManager::add(sanitizeString($tag), $gidSelected);
+                }
+            }
+            $product = API::getProductInfo(sanitizeString($gidSelected));
+            API::addBarcode($gidSelected, $barcode);
+            $log = new LogOutput("Associated barcode $barcode with " . $product->name, EVENT_TYPE_ASSOCIATE_PRODUCT);
+            $log->setVerbose()->dontSendWebsocket()->createLog();
+            $db->deleteBarcode($id);
+            QuantityManager::syncBarcodeToGrocy($barcode);
+            if ($product->isTare) {
+                if (!$db->isUnknownBarcodeAlreadyStored($barcode))
+                    $db->insertActionRequiredBarcode($barcode, $row["bestBeforeInDays"], $row["price"]);
+                $log = new LogOutput("Action required: Enter weight for " . $product->name, EVENT_TYPE_ACTION_REQUIRED, $barcode);
+                $log->setVerbose()->dontSendWebsocket()->createLog();
+            } else {
+                if ($isConsume) {
+                    if ($product->stockAmount < $amount)
+                        $amount = $product->stockAmount;
+                    if ($amount > 0) {
+                        API::consumeProduct($gidSelected, $amount);
+                        $log = new LogOutput("Consuming $amount " . $product->unit . " of " . $product->name, EVENT_TYPE_ADD_KNOWN_BARCODE);
+                    } else {
+                        $log = new LogOutput("None in stock, not consuming: " . $product->name, EVENT_TYPE_ADD_KNOWN_BARCODE);
+                    }
+                    $log->setVerbose()->dontSendWebsocket()->createLog();
+                } else {
+                    $additionalLog = "";
+                    if (!API::purchaseProduct($gidSelected, $amount, $row["bestBeforeInDays"], $row["price"])) {
+                        $additionalLog = " [WARNING]: No default best before date set!";
+                    }
+                    $log = new LogOutput("Adding $amount " . $product->unit . " of " . $product->name . $additionalLog, EVENT_TYPE_ADD_KNOWN_BARCODE);
+                    $log->setVerbose()->dontSendWebsocket()->createLog();
+                }
+            }
+        }
     }
 }
 
@@ -418,6 +444,18 @@ function getHtmlMainMenuTableUnknown(array $barcodes): string {
         $html->addHtml("No unknown barcodes yet.");
         return $html->getHtml();
     } else {
+        $html->addHtml($html->buildButton("button_add_all", "Add all")
+                ->setSubmit()
+                ->setRaised()
+                ->setIsAccent()
+                ->setId('button_add_all')
+                ->generate(true));
+        $html->addHtml($html->buildButton("button_consume_all", "Consume all")
+            ->setSubmit()
+            ->setRaised()
+            ->setIsAccent()
+            ->setId('button_consume_all')
+            ->generate(true));
         $table = new TableGenerator(array(
             "Barcode",
             "Look up",

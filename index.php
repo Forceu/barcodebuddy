@@ -212,8 +212,8 @@ function processButtons() {
 
     if (isset($_POST["button_add_all"]) || isset($_POST["button_consume_all"])) {
         $isConsume = isset($_POST["button_consume_all"]);
-        $selectValues = array_filter($_POST, function($key, $value) {
-            return strpos($value, 'select_') !== false;
+        $selectValues = array_filter($_POST, function($value, $key) {
+            return strpos($key, 'select_') !== false && $value !== 0;
         }, ARRAY_FILTER_USE_BOTH);
 
         foreach ($selectValues as $key => $value) {

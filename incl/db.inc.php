@@ -108,6 +108,7 @@ class DatabaseConnection {
         "USE_REDIS"                     => DEFAULT_USE_REDIS,
         "REDIS_IP"                      => "127.0.0.1",
         "REDIS_PORT"                    => "6379",
+        "REDIS_PW"                      => "",
         "BBUDDY_SERVER_UUID"            => null,
         "BBUDDY_SERVER_ENABLED"         => "0",
         "BBUDDY_SERVER_POPUPSHOWN"      => "0",

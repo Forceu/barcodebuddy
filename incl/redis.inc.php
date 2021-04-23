@@ -46,6 +46,9 @@ class RedisConnection {
             return null;
         $redis       = new Redis();
         $isConnected = $redis->connect($config["REDIS_IP"], intval($config["REDIS_PORT"]), 0.2);
+        if ($isConnected && $config["REDIS_PW"] != "") {
+            $isConnected = $redis->auth($config["REDIS_PW"]);
+        }
         if (!$isConnected)
             return null;
         return $redis;
@@ -182,6 +185,24 @@ class RedisConnection {
 
     public static function isRedisAvailable(): bool {
         return self::connectToRedis() != null;
+    }
+
+    /**
+     * Checks if redis can be pinged.
+     * @return bool true if successful
+     * @throws Exception Errormessage if unsuccessful
+     */
+    public static function ping(): bool {
+        $redis = self::connectToRedis();
+        if ($redis != null) {
+            $result = $redis->ping();
+            if ($result === true)
+                return true;
+            else {
+                throw new Exception($result);
+            }
+        }
+        return false;
     }
 
     public static function getErrorMessage(): ?string {

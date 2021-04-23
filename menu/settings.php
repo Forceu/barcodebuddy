@@ -247,8 +247,16 @@ function checkGrocyConnection(): string {
 }
 
 function checkRedisConnection(UiEditor &$html) {
-    if (!RedisConnection::isRedisAvailable()) {
-        $error = RedisConnection::getErrorMessage();
+    $error = null;
+    try {
+        $connected = RedisConnection::ping();
+    } catch (Exception $error) {
+        $error     = $error->getMessage();
+        $connected = false;
+    }
+    if (!$connected) {
+        if ($error == null)
+            $error = RedisConnection::getErrorMessage();
         $html->addHtml('<span style="color:red">Cannot connect to Rediscache! ' . $error . '</span>');
     } else {
         $html->addHtml('<span style="color:green">Redis cache is available.</span>');
@@ -285,6 +293,12 @@ function getHtmlSettingsRedis(): string {
     $html->buildEditField('REDIS_PORT', 'Redis Server Port', $config["REDIS_PORT"])
         ->setPlaceholder('e.g. 6379')
         ->pattern('^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$')
+        ->generate();
+    $html->addLineBreak();
+    $html->buildEditField('REDIS_PW', 'Redis Password', $config["REDIS_PW"])
+        ->setPlaceholder('leave blank if none set')
+        ->required(false)
+        ->type("password")
         ->generate();
     if ($config["USE_REDIS"]) {
         $html->addLineBreak(2);

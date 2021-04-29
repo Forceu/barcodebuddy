@@ -127,6 +127,12 @@ class DbUpgrade {
             if ($columnInfo == 0)
                 $this->db->exec("ALTER TABLE Barcodes ADD COLUMN bbServerAltNames TEXT");
         }
+        if ($previousVersion < 1803) {
+            $config = BBConfig::getInstance();
+            if ($config["LOOKUP_ORDER"] != DatabaseConnection::DEFAULT_VALUES["LOOKUP_ORDER"]) {
+                $this->databaseConnection->updateConfig("LOOKUP_ORDER", $config["LOOKUP_ORDER"] . ",8");
+            }
+        }
         RedisConnection::updateCache();
     }
 

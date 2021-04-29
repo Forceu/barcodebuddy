@@ -104,6 +104,7 @@ const OVERRIDDEN_USER_CONFIG       = array(
                                          // "LOOKUP_USE_OFF"             => "1",
                                          // "LOOKUP_USE_UPC"             => "1",
                                          // "LOOKUP_USE_JUMBO"           => "0",
+                                         // "LOOKUP_USE_PLUS"            => "0",
                                          // "LOOKUP_USE_UPC_DATABASE"    => "0",
                                          // "LOOKUP_UPC_DATABASE_KEY"    => null
                                          );

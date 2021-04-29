@@ -28,6 +28,7 @@ class BarcodeLookup {
         LOOKUP_ID_UPCDB         => "ProviderUpcDb",
         LOOKUP_ID_UPCDATABASE   => "ProviderUpcDatabase",
         LOOKUP_ID_ALBERTHEIJN   => "ProviderAlbertHeijn",
+        LOOKUP_ID_PLUS          => "ProviderPlusSupermarkt",
         LOOKUP_ID_JUMBO         => "ProviderJumbo",
         LOOKUP_ID_OPENGTINDB    => "ProviderOpengtindb",
         LOOKUP_ID_Federation    => "ProviderFederation"

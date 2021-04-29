@@ -21,6 +21,7 @@ require_once __DIR__ . "/ProviderJumbo.php";
 require_once __DIR__ . "/ProviderUpcDatabase.php";
 require_once __DIR__ . "/ProviderDebug.php";
 require_once __DIR__ . "/ProviderAlbertHeijn.php";
+require_once __DIR__ . "/ProviderPlusSupermarkt.php";
 require_once __DIR__ . "/ProviderOpengtindb.php";
 require_once __DIR__ . "/ProviderFederation.php";
 

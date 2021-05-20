@@ -9,6 +9,18 @@ WWW_USER="${WWW_USER:="www-data"}"
 IS_DOCKER="${IS_DOCKER:="false"}"
 API_KEY="${API_KEY:="YOUR_API_KEY"}"
 
+#Set a custom barcode below. If this barcode is scanned, specialAction() will be executed
+SPECIAL_BARCODE="${SPECIAL_BARCODE:="YOUR_API_KEY"}"
+
+#Change the function below to have a custom command executed when the custom barcode was scanned
+specialAction() {
+    echo "Custom barcode scanned"
+}
+
+
+
+
+
 declare -A CODE_MAP_CHAR=( ["(KEY_0)"]="0" \
     ["(KEY_1)"]="1" \
     ["(KEY_2)"]="2" \
@@ -128,10 +140,14 @@ evtest --grab "$deviceToUse" | while read line; do
       enteredText+="$key"
     else
       echo "[ScannerConnection] Received: $enteredText"
-      if [[ $USE_CURL == false ]]; then
-          sudo -H -u $WWW_USER /usr/bin/screen -dm /usr/bin/php "$SCRIPT_LOCATION" $enteredText
+      if [[ "$enteredText" -eq "$SPECIAL_BARCODE" ]]; then
+        specialAction
       else
-          curl "${SERVER_ADDRESS}action/scan?apikey=${API_KEY}&add=${enteredText}"
+        if [[ $USE_CURL == false ]]; then
+            sudo -H -u $WWW_USER /usr/bin/screen -dm /usr/bin/php "$SCRIPT_LOCATION" $enteredText
+        else
+            curl "${SERVER_ADDRESS}action/scan?apikey=${API_KEY}&add=${enteredText}"
+        fi
       fi
       enteredText=""
     fi

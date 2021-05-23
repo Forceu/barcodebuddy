@@ -1,16 +1,18 @@
 #!/bin/bash
 
-
+#Needs to be adjusted if Barcode Buddy runs on the same server
 SCRIPT_LOCATION="${SCRIPT_LOCATION:="/var/www/html/barcodebuddy/index.php"}"
+#Needs to be adjusted if Barcode Buddy runs on an external server
 SERVER_ADDRESS="${SERVER_ADDRESS:="https://your.bbuddy.url/api/"}"
-
+#Set to true if an external server is used
 USE_CURL="${USE_CURL:="false"}"
 WWW_USER="${WWW_USER:="www-data"}"
 IS_DOCKER="${IS_DOCKER:="false"}"
+#Enter API key if an external server is being used
 API_KEY="${API_KEY:="YOUR_API_KEY"}"
 
 #Set a custom barcode below. If this barcode is scanned, specialAction() will be executed
-SPECIAL_BARCODE="${SPECIAL_BARCODE:="YOUR_API_KEY"}"
+SPECIAL_BARCODE="${SPECIAL_BARCODE:="YOUR_CUSTOM_BARCODE"}"
 
 #Change the function below to have a custom command executed when the custom barcode was scanned
 specialAction() {

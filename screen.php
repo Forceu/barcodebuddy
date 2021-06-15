@@ -15,6 +15,7 @@
  * @since      File available since Release 1.0
  */
 
+require_once __DIR__ . "/incl/locale.inc.php";
 require_once __DIR__ . "/incl/configProcessing.inc.php";
 require_once __DIR__ . "/incl/config.inc.php";
 require_once __DIR__ . "/incl/redis.inc.php";

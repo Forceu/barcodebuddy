@@ -1,0 +1,113 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.2\n"
+"X-Poedit-Basepath: locale\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: nb_NO\n"
+
+msgid "Unknown barcode looked up, found name: %s"
+msgstr "Unknown barcode looked up, found name: %s"
+
+msgid "Unknown product already scanned. Increasing quantity."
+msgstr "Unknown product already scanned. Increasing quantity."
+
+msgid "Unknown barcode could not be looked up"
+msgstr "Unknown barcode could not be looked up"
+
+msgid "Product found. None in stock, not consuming: %s"
+msgstr "Product found. None in stock, not consuming: %s"
+
+msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
+msgstr "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
+
+msgid "Product found. Opening %d %s of %s"
+msgstr "Product found. Opening %d %s of %s"
+
+msgid "Set state to Open"
+msgstr "Set state to Open"
+
+msgid "Set state to Consume"
+msgstr "Set state to Consume"
+
+msgid "Set state to Purchase"
+msgstr "Set state to Purchase"
+
+msgid "Adding %d %s of %s"
+msgstr "Adding %d %s of %s"
+
+msgid "Associated barcode %d with %s"
+msgstr "Associated barcode %d with %s"
+
+msgid "Product found. Adding %d %s of %s"
+msgstr "Product found. Adding %d %s of %s"
+
+msgid "None in stock, not consuming: %s"
+msgstr "None in stock, not consuming: %s"
+
+msgid "Reverting back to Consume"
+msgstr "Reverting back to Consume"
+
+msgid "Product found. Consuming %d %s of %s"
+msgstr "Product found. Consuming %d %s of %s"
+
+msgid "New Barcodes"
+msgstr "New Barcodes"
+
+msgid "Unknown Barcodes"
+msgstr "Unknown Barcodes"
+
+msgid "No unknown barcodes yet."
+msgstr "No unknown barcodes yet."
+
+msgid "No known barcodes yet."
+msgstr "No known barcodes yet."
+
+msgid "No processed items yet."
+msgstr "No processed items yet."
+
+msgid "Delete all"
+msgstr "Delete all"
+
+msgid "Processed Barcodes"
+msgstr "Processed Barcodes"
+
+msgid "Barcode"
+msgstr "Barcode"
+
+msgid "Look up"
+msgstr "Look up"
+
+msgid "Quantity"
+msgstr "Quantity"
+
+msgid "Product"
+msgstr "Product"
+
+msgid "Action"
+msgstr "Action"
+
+msgid "Create"
+msgstr "Create"
+
+msgid "Remove"
+msgstr "Remove"
+
+msgid "Clear log"
+msgstr "Clear log"
+
+msgid "Create Product"
+msgstr "Create Product"
+
+msgid "Add"
+msgstr "Add"
+
+msgid "Consume"
+msgstr "Consume"

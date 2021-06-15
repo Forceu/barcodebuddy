@@ -16,6 +16,7 @@
  * @since      File available since Release 1.0
  */
 
+require_once __DIR__ . "/locale.inc.php";
 require_once __DIR__ . "/lockGenerator.inc.php";
 require_once __DIR__ . "/db.inc.php";
 require_once __DIR__ . "/config.inc.php";
@@ -783,6 +784,13 @@ class LogOutput {
 
     /**
      * @return string
+     */
+    private function translate(string $str): string {
+        return _($str);
+    }
+
+    /**
+     * @return string
      * @throws DbConnectionDuringEstablishException
      */
     public function createLog(): string {
@@ -792,6 +800,8 @@ class LogOutput {
             $this->websocketText = str_replace("</span>", "", $this->websocketText);
             $this->websocketText = preg_replace("/<span .*?>+/", "- WARNING: ", $this->websocketText);
         }
+
+        $this->logText = $this->translate($this->logText);
 
         DatabaseConnection::getInstance()->saveLog($this->logText, $this->isVerbose, $this->isError);
         if ($this->sendWebsocketMessage) {

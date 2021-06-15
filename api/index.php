@@ -16,11 +16,11 @@
  * @since      File available since Release 1.4
  */
 
-
+require_once __DIR__ . "/../incl/locale.inc.php";
 require_once __DIR__ . "/../incl/configProcessing.inc.php";
 require_once __DIR__ . "/../incl/db.inc.php";
 require_once __DIR__ . "/../incl/processing.inc.php";
-require_once __dir__ . "/../incl/config.inc.php";
+require_once __DIR__ . "/../incl/config.inc.php";
 
 //removes Get parameters
 $requestedUrl = strtok($_SERVER["REQUEST_URI"], '?');

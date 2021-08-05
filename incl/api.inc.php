@@ -592,10 +592,11 @@ class API {
         foreach ($curlResult as $item) {
             if (!isset($item["barcode"]) || !isset($item["product_id"]))
                 continue;
-            $result[$item["barcode"]]["id"]         = $item["product_id"];
-            $result[$item["barcode"]]["factor"]     = $item["amount"];
-            $result[$item["barcode"]]["barcode_id"] = $item["id"];
-            $result[$item["barcode"]]["barcode"]    = $item["barcode"];
+            $barcode = strval($item["barcode"]);
+            $result[$barcode]["id"]         = $item["product_id"];
+            $result[$barcode]["factor"]     = $item["amount"];
+            $result[$barcode]["barcode_id"] = $item["id"];
+            $result[$barcode]["barcode"]    = $barcode;
         }
         if ($updateRedis)
             RedisConnection::cacheAllBarcodes($result);

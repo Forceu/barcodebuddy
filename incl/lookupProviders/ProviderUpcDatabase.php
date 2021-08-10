@@ -51,7 +51,7 @@ class ProviderUpcDatabase extends LookupProvider {
             return null;
 
         if (!empty($result["title"])) {
-            return sanitizeString($result["title"]);
+            return self::createReturnArray(sanitizeString($result["title"]));
         } else if (!empty($result["description"])) {
             return self::createReturnArray(sanitizeString($result["description"]));
         }

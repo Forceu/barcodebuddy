@@ -133,6 +133,9 @@ class DbUpgrade {
                 $this->databaseConnection->updateConfig("LOOKUP_ORDER", $config["LOOKUP_ORDER"] . ",8");
             }
         }
+        if ($previousVersion < 1804) {
+            $this->databaseConnection->setTransactionState(STATE_CONSUME);
+        }
         RedisConnection::updateCache();
     }
 

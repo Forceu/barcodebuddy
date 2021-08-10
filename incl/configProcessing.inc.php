@@ -17,8 +17,8 @@
  */
 
 
-const BB_VERSION          = "1803";
-const BB_VERSION_READABLE = "1.8.0.3";
+const BB_VERSION          = "1804";
+const BB_VERSION_READABLE = "1.8.0.4";
 
 const CONFIG_PATH = __DIR__ . '/../data/config.php';
 const AUTHDB_PATH = __DIR__ . '/../data/users.db';

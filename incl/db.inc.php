@@ -242,9 +242,8 @@ class DatabaseConnection {
             if ($state == STATE_CONSUME) {
                 return STATE_CONSUME;
             } else {
-                $stateSet            = strtotime($since);
-                $now                 = strtotime($this->getDbTimeInLC());
-                $differenceInMinutes = round(abs($now - $stateSet) / 60, 0);
+                $now                 = $this->getTimestamp();
+                $differenceInMinutes = round(abs($now - $since) / 60, 0);
                 if ($differenceInMinutes > BBConfig::getInstance()["REVERT_TIME"]) {
                     $this->setTransactionState(STATE_CONSUME);
                     return STATE_CONSUME;
@@ -258,11 +257,12 @@ class DatabaseConnection {
     }
 
     /**
-     * Gets the local tine with the DB function, more reliable than PHP
-     * @return mixed
+     * Returns the current timestamp
+     * @return int
      */
-    private function getDbTimeInLC() {
-        return $this->db->querySingle("SELECT datetime('now','localtime');");
+    private function getTimestamp(): int {
+        $date = new DateTime();
+        return $date->getTimestamp();
     }
 
     /**
@@ -271,7 +271,7 @@ class DatabaseConnection {
      */
     public function setTransactionState($state) {
         /** @noinspection SqlWithoutWhere */
-        $this->db->exec("UPDATE TransactionState SET currentState=$state, since=datetime('now','localtime')");
+        $this->db->exec("UPDATE TransactionState SET currentState=$state, since=" . $this->getTimestamp());
         sendWebsocketStateChange($state);
     }
 

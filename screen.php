@@ -259,6 +259,7 @@ $CONFIG->checkIfAuthenticated(true);
 <audio id="beep_nosuccess" muted="muted" src="incl/websocket/buzzer.ogg" type="audio/ogg" preload="auto"></audio>
 <div id="soundbuttondiv">
     <button class="bottom-button" onclick="toggleSound()" id="soundbutton"><img class="bottom-img"
+                                                                                id="muteimg"
                                                                                 src="incl/img/mute.svg"
                                                                                 alt="Toggle sound and wakelock">
     </button>

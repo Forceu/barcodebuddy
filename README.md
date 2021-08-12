@@ -9,7 +9,7 @@
 - [Docker](https://github.com/Forceu/barcodebuddy-docker)
 - [Android](https://play.google.com/store/apps/details?id=de.bulling.barcodebuddyscanner)
 - [Kubernetes](https://git.sr.ht/~johnhamelink/k8s-barcodebuddy) *(Community support only)*
-- [Home Assistant](https://github.com/Forceu/barcodebuddy-homeassistant)
+- [Home Assistant](https://github.com/Forceu/barcodebuddy-homeassistant) *(Community support only)*
 
 ## About
 

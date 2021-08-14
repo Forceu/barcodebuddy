@@ -12,7 +12,6 @@
         <directory name="../../"/>
         <ignoreFiles>
             <directory name="../../incl/authentication/composer/vendor/"/>
-            <directory name="../../incl/websocket/"/>
             <directory name="../../vendor/"/>
         </ignoreFiles>
     </projectFiles>

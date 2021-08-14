@@ -229,7 +229,7 @@ function getProviderListItems(UiEditor $html): array {
     $bbServerSubtitle                    = "Uses " . BarcodeFederation::HOST_READABLE;
     if (!$config["BBUDDY_SERVER_ENABLED"])
         $bbServerSubtitle = "Enable Federation for this feature";
-    $result["id" . LOOKUP_ID_Federation] = $html->addListItem($html->addCheckbox('LOOKUP_USE_BBUDDY_SERVER', 'Barcode Buddy Federation', $config["LOOKUP_USE_BBUDDY_SERVER"], !$config["BBUDDY_SERVER_ENABLED"], false, true), $bbServerSubtitle, LOOKUP_ID_Federation, true);
+    $result["id" . LOOKUP_ID_FEDERATION] = $html->addListItem($html->addCheckbox('LOOKUP_USE_BBUDDY_SERVER', 'Barcode Buddy Federation', $config["LOOKUP_USE_BBUDDY_SERVER"], !$config["BBUDDY_SERVER_ENABLED"], false, true), $bbServerSubtitle, LOOKUP_ID_FEDERATION, true);
     return $result;
 }
 

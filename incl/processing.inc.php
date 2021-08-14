@@ -236,13 +236,13 @@ function processUnknownBarcode(string $barcode, bool $websocketEnabled, LockGene
  */
 function stateToString(int $state): string {
     $allowedModes = array(
-        STATE_CONSUME         => "Consume",
+        STATE_CONSUME => "Consume",
         STATE_CONSUME_SPOILED => "Consume (spoiled)",
-        STATE_CONSUME_ALL     => "Consume (all)",
-        STATE_PURCHASE        => "Purchase",
-        STATE_OPEN            => "Open",
-        STATE_GETSTOCK        => "Inventory",
-        STATE_ADD_SL          => "Add to shoppinglist"
+        STATE_CONSUME_ALL => "Consume (all)",
+        STATE_PURCHASE => "Purchase",
+        STATE_OPEN => "Open",
+        STATE_GETSTOCK => "Inventory",
+        STATE_ADD_SL => "Add to shoppinglist"
     );
     return $allowedModes[$state];
 }
@@ -612,9 +612,9 @@ function getAllTags(): array {
  * Sorts the tags by name
  * @param Tag $a
  * @param Tag $b
- * @return bool
+ * @return int
  */
-function sortTags(Tag $a, Tag $b): bool {
+function sortTags(Tag $a, Tag $b): int {
     return $a->compare($b);
 }
 
@@ -622,10 +622,10 @@ function sortTags(Tag $a, Tag $b): bool {
  * Sorts the chores by name
  * @param $a
  * @param $b
- * @return bool
+ * @return int
  */
-function sortChores($a, $b) {
-    return $a['name'] > $b['name'];
+function sortChores($a, $b): int {
+    return strcmp($a['name'], $b['name']);
 }
 
 
@@ -684,7 +684,7 @@ function strrtrim(string $message, string $strip): string {
 }
 
 function generateRandomString($length = 30) {
-    return substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
+    return substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', intval(ceil($length / strlen($x))))), 1, $length);
 }
 
 function getApiUrl($removeAfter): string {

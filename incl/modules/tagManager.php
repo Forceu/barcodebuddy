@@ -117,14 +117,14 @@ class Tag {
         $this->item = $name;
     }
 
-    public function compare(Tag $otherTag): bool {
+    public function compare(Tag $otherTag): int {
         if ($this->item != "" && $otherTag->item != "")
-            return strtoupper($this->item) > strtoupper($otherTag->item);
+            return strcmp(strtoupper($this->item), strtoupper($otherTag->item));
         if ($this->item == "" && $otherTag->item != "")
-            return false;
+            return -1;
         if ($this->item != "" && $otherTag->item == "")
-            return true;
-        return strtoupper($this->name) > strtoupper($otherTag->name);
+            return 1;
+        return strcmp(strtoupper($this->name), strtoupper($otherTag->name));
     }
 
     private function isValidRow($dbRow): bool {

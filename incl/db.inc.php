@@ -50,7 +50,7 @@ const LOOKUP_ID_UPCDATABASE   = "3";
 const LOOKUP_ID_ALBERTHEIJN   = "4";
 const LOOKUP_ID_JUMBO         = "5";
 const LOOKUP_ID_OPENGTINDB    = "6";
-const LOOKUP_ID_Federation    = "7";
+const LOOKUP_ID_FEDERATION    = "7";
 const LOOKUP_ID_PLUS          = "8";
 
 /**
@@ -122,7 +122,7 @@ class DatabaseConnection {
             LOOKUP_ID_PLUS . "," .
             LOOKUP_ID_JUMBO . "," .
             LOOKUP_ID_OPENGTINDB . "," .
-            LOOKUP_ID_Federation);
+            LOOKUP_ID_FEDERATION);
 
 
     const DB_INT_VALUES = array("REVERT_TIME");

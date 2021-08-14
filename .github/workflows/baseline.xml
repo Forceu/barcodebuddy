@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="4.4.1@9fd7a7d885b3a216cff8dec9d8c21a132f275224">
+<files psalm-version="4.9.0@c62adf965241f65aa4f899a050a94b70bbce19fd">
   <file src="../../api/index.php">
     <InvalidScalarArgument occurrences="2">
       <code>$bestBefore</code>
@@ -132,17 +132,6 @@
     <DeprecatedMethod occurrences="1">
       <code>BBConfig::getInstance()</code>
     </DeprecatedMethod>
-    <UndefinedConstant occurrences="8">
-      <code>DEFAULT_USE_REDIS</code>
-      <code>LOOKUP_ID_ALBERTHEIJN</code>
-      <code>LOOKUP_ID_Federation</code>
-      <code>LOOKUP_ID_JUMBO</code>
-      <code>LOOKUP_ID_PLUS</code>
-      <code>LOOKUP_ID_OPENFOODFACTS</code>
-      <code>LOOKUP_ID_OPENGTINDB</code>
-      <code>LOOKUP_ID_UPCDATABASE</code>
-      <code>LOOKUP_ID_UPCDB</code>
-    </UndefinedConstant>
     <UndefinedFunction occurrences="1">
       <code>sendWebsocketStateChange($state)</code>
     </UndefinedFunction>
@@ -151,16 +140,6 @@
     <PossiblyNullArgument occurrences="1">
       <code>$config["LOOKUP_ORDER"]</code>
     </PossiblyNullArgument>
-    <UndefinedConstant occurrences="7">
-      <code>LOOKUP_ID_ALBERTHEIJN</code>
-      <code>LOOKUP_ID_Federation</code>
-      <code>LOOKUP_ID_JUMBO</code>
-      <code>LOOKUP_ID_PLUS</code>
-      <code>LOOKUP_ID_OPENFOODFACTS</code>
-      <code>LOOKUP_ID_OPENGTINDB</code>
-      <code>LOOKUP_ID_UPCDATABASE</code>
-      <code>LOOKUP_ID_UPCDB</code>
-    </UndefinedConstant>
   </file>
   <file src="../../incl/modules/barcodeFederation.php">
     <NullableReturnStatement occurrences="1">
@@ -186,6 +165,9 @@
     </PossiblyNullArgument>
   </file>
   <file src="../../incl/modules/quantityManager.php">
+    <PossiblyNullArgument occurrences="1">
+      <code>$products</code>
+    </PossiblyNullArgument>
     <PossiblyNullIterator occurrences="1">
       <code>$storedBarcodes</code>
     </PossiblyNullIterator>
@@ -199,12 +181,10 @@
     </UndefinedFunction>
   </file>
   <file src="../../incl/processing.inc.php">
-    <InvalidScalarArgument occurrences="5">
-      <code>"sortTags"</code>
+    <InvalidScalarArgument occurrences="3">
       <code>$id</code>
       <code>$id</code>
       <code>$quantity</code>
-      <code>ceil($length / strlen($x))</code>
     </InvalidScalarArgument>
     <PossiblyFalseArgument occurrences="1">
       <code>strpos($url, $removeAfter)</code>
@@ -242,10 +222,13 @@
       <code>85</code>
     </InvalidScalarArgument>
   </file>
-  <file src="../../incl/sse/websocket_client.php">
-    <PossiblyUndefinedVariable occurrences="1">
-      <code>$mask</code>
-    </PossiblyUndefinedVariable>
+  <file src="../../incl/websocket/client_internal.php">
+    <UndefinedFunction occurrences="4">
+      <code>getClient()</code>
+      <code>getClient()</code>
+      <code>getClient()</code>
+      <code>getLastError()</code>
+    </UndefinedFunction>
   </file>
   <file src="../../incl/websocketconnection.inc.php">
     <UndefinedFunction occurrences="3">
@@ -292,8 +275,10 @@
     </PossiblyNullPropertyFetch>
   </file>
   <file src="../../login.php">
-    <UndefinedClass occurrences="2">
+    <UndefinedClass occurrences="4">
+      <code>\Delight\Auth\InvalidPasswordException</code>
       <code>\Delight\Auth\Role</code>
+      <code>\Delight\Auth\TooManyRequestsException</code>
       <code>\Delight\Auth\UnknownUsernameException</code>
     </UndefinedClass>
   </file>

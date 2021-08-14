@@ -50,6 +50,7 @@ function readData() {
         else
             sendStillAlive();
     }
+    $client->close();
 }
 
 function sendData($data, $retryMs = 10) {

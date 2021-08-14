@@ -77,34 +77,36 @@ while (true) {
 
     //loop through all connected sockets
     foreach ($changed as $changed_socket) {
-        $buf = @socket_read($changed_socket, 1024, PHP_NORMAL_READ);
+        $buf = @socket_read($changed_socket, 1024, PHP_BINARY_READ);
         if ($buf === false) { // check disconnected client
             // remove client for $clients array
             $found_socket = array_search($changed_socket, $clients);
             unset($clients[$found_socket]);
         } else {
             // A message was received
-            $command = $buf[0];
-            $data    = substr($buf, 1);
-            switch ($command) {
-                // Get mode
-                case '0':
-                    sendMode();
-                    break;
-                // Set mode
-                case '1':
-                    if (in_array($data, $allowedModes)) {
-                        $currentBBMode = $data;
-                    }
-                    sendMode();
-                    break;
-                // Echo
-                case '2':
-                    sendMessage('{"action":"echo","data":"' . $data . '"}');
-                    break;
-                // Invalid command
-                default:
-                    echo "Unknown command " . $buf;
+            if (strlen($buf) > 1) {
+                $command = $buf[0];
+                $data    = substr($buf, 1);
+                switch ($command) {
+                    // Get mode
+                    case '0':
+                        sendMode();
+                        break;
+                    // Set mode
+                    case '1':
+                        if (in_array($data, $allowedModes)) {
+                            $currentBBMode = $data;
+                        }
+                        sendMode();
+                        break;
+                    // Echo
+                    case '2':
+                        sendMessage('{"action":"echo","data":"' . $data . '"}');
+                        break;
+                    // Invalid command
+                    default:
+                        echo "Unknown command " . $buf;
+                }
             }
         }
     }

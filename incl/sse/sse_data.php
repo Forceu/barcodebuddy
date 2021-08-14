@@ -44,7 +44,7 @@ function readData() {
     global $client;
     $timeStart = microtime(true);
     while (microtime(true) - $timeStart < MAX_EXECUTION_TIME_S) {
-        $data = $client->read();
+        $data = $client->readData();
         if ($data !== false)
             sendData($data);
         else

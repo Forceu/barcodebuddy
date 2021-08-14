@@ -20,7 +20,7 @@ require_once __DIR__ . "/../incl/api.inc.php";
 require_once __DIR__ . "/../incl/db.inc.php";
 require_once __DIR__ . "/../incl/processing.inc.php";
 require_once __DIR__ . "/../incl/websocketconnection.inc.php";
-require_once __DIR__ . "/../incl/sse/websocket_client.php";
+require_once __DIR__ . "/../incl/websocket/client_internal.php";
 require_once __DIR__ . "/../incl/webui.inc.php";
 require_once __DIR__ . "/../incl/config.inc.php";
 
@@ -272,11 +272,11 @@ function checkRedisConnection(UiEditor &$html) {
  */
 function getHtmlSettingsWebsockets(): string {
     global $CONFIG;
-    $sp = websocket_open('localhost', $CONFIG->PORT_WEBSOCKET_SERVER, '', $errorstr, 5);
-    if ($sp !== false) {
+    $client = new SocketClient('127.0.0.1', $CONFIG->PORT_WEBSOCKET_SERVER);
+    if ($client->connect() !== false) {
         return '<span style="color:green">Websocket server is running.</span>';
     } else {
-        return '<span style="color:red">Websocket server is not running! ' . $errorstr . '</span>';
+        return '<span style="color:red">Websocket server is not running! ' . $client->getLastError() . '</span>';
     }
 }
 

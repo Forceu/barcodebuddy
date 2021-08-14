@@ -37,7 +37,7 @@ if (checkExtensionsInstalled()["result"] != RESULT_ALL_INSTALLED) {
 $address = '127.0.0.1';
 $port    = $CONFIG->PORT_WEBSOCKET_SERVER;
 
-echo "Starting socket server on $address:$port\n";
+echo "[info] Starting socket server on $address:$port\n";
 
 set_time_limit(0);
 ob_implicit_flush();
@@ -50,13 +50,22 @@ $allowedModes = array("Consume", "Consume (spoiled)", "Purchase", "Open", "Inven
 $null = null;
 
 
-//Create TCP/IP sream socket
 $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-//reuseable port
-socket_set_option($socket, SOL_SOCKET, SO_REUSEADDR, 1);
+if ($socket === false) {
+    showErrorAndDie("socket_create()");
+}
 
-socket_bind($socket, $address, $port);
-socket_listen($socket);
+if (socket_set_option($socket, SOL_SOCKET, SO_REUSEADDR, 1) === false) {
+    showErrorAndDie("socket_set_option()");
+}
+
+if (socket_bind($socket, $address, $port) === false) {
+    showErrorAndDie("socket_bind()");
+}
+
+if (socket_listen($socket) === false) {
+    showErrorAndDie("socket_listen()");
+}
 
 $clients = array($socket);
 
@@ -66,18 +75,17 @@ while (true) {
     //returns the socket resources in $changed array
     socket_select($changed, $null, $null, 0, 10);
 
-    //check for new socket
+    //check for new clients
     if (in_array($socket, $changed)) {
         $socket_new = socket_accept($socket); //accept new socket
         $clients[]  = $socket_new; //add socket to client array
-        //make room for new socket
         $found_socket = array_search($socket, $changed);
         unset($changed[$found_socket]);
     }
 
-    //loop through all connected sockets
+    //loop through all connected clients
     foreach ($changed as $changed_socket) {
-        $buf = @socket_read($changed_socket, 1024, PHP_BINARY_READ);
+        $buf = @socket_read($changed_socket, 1024);
         if ($buf === false) { // check disconnected client
             // remove client for $clients array
             $found_socket = array_search($changed_socket, $clients);
@@ -117,9 +125,15 @@ function sendMode() {
     sendMessage('{"action":"getmode","data":"4' . $currentBBMode . '"}');
 }
 
-function sendMessage($msg) {
+function sendMessage(string $msg) {
     global $clients;
     foreach ($clients as $changed_socket) {
         @socket_write($changed_socket, $msg, strlen($msg));
     }
+}
+
+function showErrorAndDie(string $functionName) {
+    echo $functionName . " failed. Reason: " . socket_strerror(socket_last_error()) . "\n";
+    sleep(5);
+    die();
 }

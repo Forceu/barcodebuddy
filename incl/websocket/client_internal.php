@@ -28,45 +28,80 @@ require_once __DIR__ . '/../configProcessing.inc.php';
 require_once __DIR__ . '/../websocketconnection.inc.php';
 require_once __DIR__ . '/../processing.inc.php';
 
-//Send result of a barcode entry
-function sendWSResult($resultValue, $name) {
-    global $CONFIG;
-    $client = getClient();
-    if ($client->connect('127.0.0.1', $CONFIG->PORT_WEBSOCKET_SERVER, '/screen')) {
-        $payload = json_encode(array(
-            'action' => 'echo',
-            'data'   => $resultValue . $name
-        ));
-        $client->sendData($payload);
-    }
-}
 
 function requestSavedState() {
-    global $CONFIG;
     $client = getClient();
-    if ($client->connect('127.0.0.1', $CONFIG->PORT_WEBSOCKET_SERVER, '/screen')) {
-        $payload = json_encode(array(
-            'action' => 'getmode',
-            'data'   => ''
-        ));
-        $client->sendData($payload);
+    if ($client->connect()) {
+        $client->sendData('0 ');
+        $client->close();
     }
 }
 
 //Send current Barcode Buddy state
 function sendNewState($newState) {
-    global $CONFIG;
     $client = getClient();
-    if ($client->connect('127.0.0.1', $CONFIG->PORT_WEBSOCKET_SERVER, '/screen')) {
-        $payload = json_encode(array(
-            'action' => 'setmode',
-            'data'   => stateToString($newState)
-        ));
-        $client->sendData($payload);
+    if ($client->connect()) {
+        $client->sendData('1' . stateToString($newState));
+        $client->close();
     }
 }
 
-function getClient() {
-    require_once __DIR__ . '/php-websocket/src/Client.php';
-    return new \Bloatless\WebSocket\Client;
+//Send result of a barcode entry
+function sendWSResult($resultValue, $name) {
+    $client = getClient();
+    if ($client->connect()) {
+        $client->sendData('2' . $resultValue . $name);
+        $client->close();
+    }
+}
+
+function getClient(): SocketClient {
+    global $CONFIG;
+    return new SocketClient('127.0.0.1', $CONFIG->PORT_WEBSOCKET_SERVER);
+}
+
+class SocketClient {
+    private $address;
+    private $port;
+    private $socket;
+
+    public function __construct(string $address, int $port) {
+        $this->address = $address;
+        $this->port    = $port;
+    }
+
+    public function connect(): bool {
+        $this->socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+        if ($this->socket === false) {
+            echo "socket_create() failed: reason: " . getLastError() . "\n";
+            return false;
+        }
+        if (socket_connect($this->socket, $this->address, $this->port) === false) {
+            echo "socket_connect() failed.\nReason: " . socket_strerror(socket_last_error($this->socket)) . "\n";
+            return false;
+        }
+        return true;
+    }
+
+    public function sendData(string $data) {
+        socket_write($this->socket, $data, strlen($data));
+    }
+
+    /**
+     * @return false|string
+     */
+    public function readData() {
+        socket_set_option($this->socket, SOL_SOCKET, SO_RCVTIMEO, array("sec" => 60, "usec" => 0));
+        return socket_read($this->socket, 2048);
+    }
+
+    public function close() {
+        socket_close($this->socket);
+    }
+
+
+    public function getLastError(): string {
+        return socket_strerror(socket_last_error());
+    }
+
 }

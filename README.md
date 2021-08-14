@@ -47,7 +47,6 @@ If you are using a reverse proxy, please make sure to disable caching, see [docu
 
 * Bernd Bestel for creating the [Grocy](https://github.com/grocy/grocy) Project
 * openfoodfacts.org/upcitemdb.com for providing the barcode lookup API
-* [PHP-Websocket](https://github.com/bloatless/php-websocket)
 * [PHP-Auth](https://github.com/delight-im/PHP-Auth)
 * [NoSleep.js](https://github.com/richtr/NoSleep.js)
 * [SortableJS](https://github.com/SortableJS/Sortable)

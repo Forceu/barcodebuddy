@@ -1,6 +1,7 @@
 {
   "require-dev": {
-    "vimeo/psalm": "4.4.1"
+    "vimeo/psalm": "4.9.0",
+    "nikic/php-parser": "4.12.0"
   },
   "require": {
     "ext-redis": "*"

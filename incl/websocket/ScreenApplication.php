@@ -86,6 +86,27 @@ class ScreenApplication extends Application {
         }
     }
 
+
+
+    /**
+     * Handles data pushed into the websocket server using the push-client.
+     *
+     * @param array $data
+     */
+    public function onIPCData(array $data): void
+    {
+        try {
+            $decodedData = $this->decodeData($data);
+            $actionName = 'action' . ucfirst($decodedData['action']);
+            if (method_exists($this, $actionName)) {
+                call_user_func([$this, $actionName], $decodedData['data']);
+            }
+        } catch (\RuntimeException $e) {
+            // @todo Handle/Log error
+        }
+    }
+
+
     /**
      * Echoes data back to client(s).
      *

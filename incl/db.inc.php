@@ -229,6 +229,7 @@ class DatabaseConnection {
     }
 
 
+
     /**
      * Getting the state
      * TODO: Change date in log
@@ -239,21 +240,26 @@ class DatabaseConnection {
         if ($row = $res->fetchArray()) {
             $state = $row["currentState"];
             $since = $row["since"];
-            if ($state == STATE_CONSUME) {
+            if ($state == STATE_CONSUME || $this->revertBackToConsume($since))
                 return STATE_CONSUME;
-            } else {
-                $now                 = $this->getTimestamp();
-                $differenceInMinutes = round(abs($now - $since) / 60, 0);
-                if ($differenceInMinutes > BBConfig::getInstance()["REVERT_TIME"]) {
-                    $this->setTransactionState(STATE_CONSUME);
-                    return STATE_CONSUME;
-                } else {
-                    return $state;
-                }
-            }
+            else
+                return $state;
         } else {
             die("DB Error");
         }
+    }
+
+    /**
+     * Checks if enough time has passed to revert to STATE_CONSUME
+     * @param int $timestamp timestamp when state was set
+     * @return bool True if REVERT_TIME = 0 or enough time has passed
+     */
+    private function revertBackToConsume(int $timestamp): bool {
+        $revertTime = BBConfig::getInstance()["REVERT_TIME"];
+        if ($revertTime == 0)
+            return false;
+        $differenceInMinutes = round(abs($this->getTimestamp() - $timestamp) / 60, 0);
+        return ($differenceInMinutes > BBConfig::getInstance()["REVERT_TIME"]);
     }
 
     /**
@@ -264,6 +270,7 @@ class DatabaseConnection {
         $date = new DateTime();
         return $date->getTimestamp();
     }
+
 
     /**
      * Setting the state

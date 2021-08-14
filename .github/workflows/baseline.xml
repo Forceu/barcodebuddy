@@ -132,6 +132,17 @@
     <DeprecatedMethod occurrences="1">
       <code>BBConfig::getInstance()</code>
     </DeprecatedMethod>
+    <UndefinedConstant occurrences="9">
+      <code>DEFAULT_USE_REDIS</code>
+      <code>LOOKUP_ID_ALBERTHEIJN</code>
+      <code>LOOKUP_ID_FEDERATION</code>
+      <code>LOOKUP_ID_JUMBO</code>
+      <code>LOOKUP_ID_OPENFOODFACTS</code>
+      <code>LOOKUP_ID_OPENGTINDB</code>
+      <code>LOOKUP_ID_PLUS</code>
+      <code>LOOKUP_ID_UPCDATABASE</code>
+      <code>LOOKUP_ID_UPCDB</code>
+    </UndefinedConstant>
     <UndefinedFunction occurrences="1">
       <code>sendWebsocketStateChange($state)</code>
     </UndefinedFunction>
@@ -140,6 +151,16 @@
     <PossiblyNullArgument occurrences="1">
       <code>$config["LOOKUP_ORDER"]</code>
     </PossiblyNullArgument>
+    <UndefinedConstant occurrences="8">
+      <code>LOOKUP_ID_ALBERTHEIJN</code>
+      <code>LOOKUP_ID_FEDERATION</code>
+      <code>LOOKUP_ID_JUMBO</code>
+      <code>LOOKUP_ID_OPENFOODFACTS</code>
+      <code>LOOKUP_ID_OPENGTINDB</code>
+      <code>LOOKUP_ID_PLUS</code>
+      <code>LOOKUP_ID_UPCDATABASE</code>
+      <code>LOOKUP_ID_UPCDB</code>
+    </UndefinedConstant>
   </file>
   <file src="../../incl/modules/barcodeFederation.php">
     <NullableReturnStatement occurrences="1">

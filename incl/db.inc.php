@@ -229,7 +229,6 @@ class DatabaseConnection {
     }
 
 
-
     /**
      * Getting the state
      * TODO: Change date in log
@@ -279,7 +278,7 @@ class DatabaseConnection {
     public function setTransactionState($state) {
         /** @noinspection SqlWithoutWhere */
         $this->db->exec("UPDATE TransactionState SET currentState=$state, since=" . $this->getTimestamp());
-        sendWebsocketStateChange($state);
+        SocketConnection::sendWebsocketStateChange($state);
     }
 
     /**

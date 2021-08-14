@@ -13,7 +13,7 @@ if (!connectToSocket()) {
 }
 sendStillAlive();
 if (isset($_GET["getState"])) {
-    requestCurrentState();
+    SocketConnection::requestCurrentState();
     die("OK");
 }
 readData();

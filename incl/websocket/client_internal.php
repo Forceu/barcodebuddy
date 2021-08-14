@@ -25,40 +25,8 @@
  */
 
 require_once __DIR__ . '/../configProcessing.inc.php';
-require_once __DIR__ . '/../websocketconnection.inc.php';
 require_once __DIR__ . '/../processing.inc.php';
 
-
-function requestSavedState() {
-    $client = getClient();
-    if ($client->connect()) {
-        $client->sendData('0 ');
-        $client->close();
-    }
-}
-
-//Send current Barcode Buddy state
-function sendNewState($newState) {
-    $client = getClient();
-    if ($client->connect()) {
-        $client->sendData('1' . stateToString($newState));
-        $client->close();
-    }
-}
-
-//Send result of a barcode entry
-function sendWSResult($resultValue, $name) {
-    $client = getClient();
-    if ($client->connect()) {
-        $client->sendData('2' . $resultValue . $name);
-        $client->close();
-    }
-}
-
-function getClient(): SocketClient {
-    global $CONFIG;
-    return new SocketClient('127.0.0.1', $CONFIG->PORT_WEBSOCKET_SERVER);
-}
 
 class SocketClient {
     private $address;

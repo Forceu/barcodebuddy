@@ -19,7 +19,6 @@ require_once __DIR__ . "/../incl/configProcessing.inc.php";
 require_once __DIR__ . "/../incl/api.inc.php";
 require_once __DIR__ . "/../incl/db.inc.php";
 require_once __DIR__ . "/../incl/processing.inc.php";
-require_once __DIR__ . "/../incl/websocketconnection.inc.php";
 require_once __DIR__ . "/../incl/websocket/client_internal.php";
 require_once __DIR__ . "/../incl/webui.inc.php";
 require_once __DIR__ . "/../incl/config.inc.php";

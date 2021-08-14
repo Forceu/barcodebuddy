@@ -795,7 +795,7 @@ class LogOutput {
 
         DatabaseConnection::getInstance()->saveLog($this->logText, $this->isVerbose, $this->isError);
         if ($this->sendWebsocketMessage) {
-            sendWebsocketMessage($this->websocketText, $this->websocketResultCode);
+            SocketConnection::sendWebsocketMessage($this->websocketText, $this->websocketResultCode);
         }
         if (in_array("EventReceiver", $LOADED_PLUGINS)) {
             pluginEventReceiver_processEvent($this->eventType, $this->logText);

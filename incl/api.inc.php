@@ -788,6 +788,9 @@ class API {
         die();
     }
 
+    /**
+     * @param int|string|true $param
+     */
     private static function benchmarkApiCall(string $apiCall, ...$param): void {
         $timeStart = microtime(true);
         $name      = "$apiCall(";

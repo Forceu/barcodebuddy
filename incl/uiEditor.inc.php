@@ -45,7 +45,7 @@ class ElementBuilder {
         return $this;
     }
 
-    function generate($asHtml = false) {
+    function generate(bool $asHtml = false) {
         $result = $this->generateInternal() . $this->generateScript();
         if ($asHtml) {
             return $result;
@@ -87,7 +87,7 @@ class ButtonBuilder extends ElementBuilder {
     /**
      * @return static
      */
-    function setId($id): self {
+    function setId(string $id): self {
         $this->id = $id;
         return $this;
     }
@@ -95,7 +95,7 @@ class ButtonBuilder extends ElementBuilder {
     /**
      * @return static
      */
-    function setOnClick($onClick): self {
+    function setOnClick(string $onClick): self {
         $this->onClick = $onClick;
         return $this;
     }
@@ -135,6 +135,8 @@ class ButtonBuilder extends ElementBuilder {
 
     /**
      * @return static
+     *
+     * @param string|true $isDisabled
      */
     function setDisabled($isDisabled = true): self {
         $this->isDisabled = $isDisabled;
@@ -203,7 +205,11 @@ class CheckBoxBuilder extends ElementBuilder {
         return $this;
     }
 
-    function onCheckChanged($onCheckChanged, $changeScript = null): ElementBuilder {
+    /**
+     * @param string $onCheckChanged
+     * @param null|string $changeScript
+     */
+    function onCheckChanged(string $onCheckChanged, ?string $changeScript = null): ElementBuilder {
         $this->onChanged = $onCheckChanged;
         return $this->addScript($changeScript);
     }
@@ -244,15 +250,17 @@ class EditFieldBuilder extends ElementBuilder {
     /**
      * @return static
      */
-    function pattern($pattern): self {
+    function pattern(string $pattern): self {
         $this->pattern = $pattern;
         return $this;
     }
 
     /**
      * @return static
+     *
+     * @param string $type
      */
-    function type($type): self {
+    function type(string $type): self {
         // Max length does not work with "number"
         if ($this->maxlength != null && $type == "number") {
             $this->type = "tel";
@@ -270,7 +278,7 @@ class EditFieldBuilder extends ElementBuilder {
     /**
      * @return static
      */
-    function disabled($disabled = true): self {
+    function disabled(bool $disabled = true): self {
         $this->disabled = $disabled;
         return $this;
     }
@@ -287,6 +295,8 @@ class EditFieldBuilder extends ElementBuilder {
 
     /**
      * @return static
+     *
+     * @param false|null|string $required
      */
     function required($required): self {
         $this->required = $required;
@@ -305,8 +315,10 @@ class EditFieldBuilder extends ElementBuilder {
 
     /**
      * @return static
+     *
+     * @param (mixed|null)[] $minmax
      */
-    function minmax($minmax): self {
+    function minmax(array $minmax): self {
         $this->minmax = $minmax;
         return $this;
     }
@@ -325,16 +337,20 @@ class EditFieldBuilder extends ElementBuilder {
 
     /**
      * @return static
+     *
+     * @param string $width
      */
-    function setWidth($width): self {
+    function setWidth(string $width): self {
         $this->width = $width;
         return $this;
     }
 
     /**
      * @return static
+     *
+     * @param int $minlength
      */
-    function minlength($minlength): self {
+    function minlength(int $minlength): self {
         $this->minlength = $minlength;
         if ($this->type == "number") {
             // Max length does not work with "number"
@@ -354,15 +370,17 @@ class EditFieldBuilder extends ElementBuilder {
     /**
      * @return static
      */
-    function setPlaceholder($placeHolder): self {
+    function setPlaceholder(string $placeHolder): self {
         $this->placeHolder = $placeHolder;
         return $this;
     }
 
     /**
      * @return static
+     *
+     * @param string $onfocusout
      */
-    function onfocusout($onfocusout): self {
+    function onfocusout(string $onfocusout): self {
         $this->onfocusout = $onfocusout;
         return $this;
     }
@@ -370,23 +388,27 @@ class EditFieldBuilder extends ElementBuilder {
     /**
      * @return static
      */
-    function onKeyUp($onkeyup): self {
+    function onKeyUp(string $onkeyup): self {
         $this->onkeyup = $onkeyup;
         return $this;
     }
 
     /**
      * @return static
+     *
+     * @param string $onKeyPress
      */
-    function onKeyPress($onKeyPress): self {
+    function onKeyPress(string $onKeyPress): self {
         $this->onKeyPress = $onKeyPress;
         return $this;
     }
 
     /**
      * @return static
+     *
+     * @param false $floatingLabel
      */
-    function setFloatingLabel($floatingLabel = false): self {
+    function setFloatingLabel(bool $floatingLabel = false): self {
         $this->floatingLabel = $floatingLabel;
         return $this;
     }
@@ -465,17 +487,20 @@ class UiEditor {
         $this->createForm   = $createForm;
     }
 
-    function buildEditField($name, $label, $value = ""): EditFieldBuilder {
+    /**
+     * @param null|string $value
+     */
+    function buildEditField(string $name, string $label, ?string $value = ""): EditFieldBuilder {
         $editor = new EditFieldBuilder($name, $label, $value, $this);
         return $editor;
     }
 
-    function buildButton($name, $label): ButtonBuilder {
+    function buildButton(string $name, string $label): ButtonBuilder {
         $editor = new ButtonBuilder($name, $label, null, $this);
         return $editor;
     }
 
-    function addTableClass($table): void {
+    function addTableClass(TableGenerator $table): void {
         $this->addHtml($table->getHtml());
     }
 
@@ -598,8 +623,11 @@ class UiEditor {
 
     /**
      * @return static|string
+     *
+     * @param string $name
+     * @param null|string $value
      */
-    function addHiddenField($name, $value, $asHtml = false) {
+    function addHiddenField(string $name, ?string $value, $asHtml = false) {
         $html = '<input type="hidden" id="' . $name . '" value="' . $value . '" name="' . $name . '"/>';
         if ($asHtml) {
             return $html;
@@ -649,8 +677,10 @@ class UiEditor {
 
     /**
      * @return static|string
+     *
+     * @param null|string $isChecked
      */
-    function addCheckbox($name, $label, $isChecked, $isDisabled = false, $useSpaces = true, $asHtml = false) {
+    function addCheckbox(string $name, string $label, ?string $isChecked, bool $isDisabled = false, bool $useSpaces = true, bool $asHtml = false) {
         $checkedHtml = "";
         if ($isChecked) {
             $checkedHtml = "checked";
@@ -705,7 +735,11 @@ class UiEditor {
         return $this;
     }
 
-    function addDiv($htmlToDiv, $id = null, $class = null): void {
+    /**
+     * @param string $htmlToDiv
+     * @param null|string $class
+     */
+    function addDiv(string $htmlToDiv, $id = null, ?string $class = null): void {
         $idHtml = "";
         if ($id != null) {
             $idHtml = 'id="' . $id . '"';
@@ -726,8 +760,19 @@ class UiEditor {
         $this->addScript("addCollapsables()");
     }
 
-    function addButton($name, $label, $onClick = null, $isRaised = false, $isHidden = false, $asHtml = false, $isColoured = false,
-                       $isDisabled = false, $additionalClasses = null, $id = null, $isSubmit = false, $value = null, $isAccent = false): string {
+    /**
+     * @param string $name
+     * @param null|string $onClick
+     * @param false $isRaised
+     * @param false $isHidden
+     * @param false $asHtml
+     * @param false $isColoured
+     * @param false $isDisabled
+     * @param null|string $additionalClasses
+     * @param string $label
+     */
+    function addButton(string $name, string $label, ?string $onClick = null, bool $isRaised = false, bool $isHidden = false, bool $asHtml = false, bool $isColoured = false,
+                       bool $isDisabled = false, ?string $additionalClasses = null, $id = null, $isSubmit = false, $value = null, $isAccent = false): string {
 
         if ($id == null)
             $id = $name;
@@ -813,26 +858,31 @@ class UiEditor {
         return $this;
     }
 
-    function addLineBreak($count = 1): void {
+    function addLineBreak(int $count = 1): void {
         for ($i = 0; $i < $count; $i++) {
             $this->addHtml('<br>');
         }
     }
 
-    function addSpaces($count = 2): void {
+    /**
+     * @param int $count
+     */
+    function addSpaces(int $count = 2): void {
         for ($i = 0; $i < $count; $i++) {
             $this->addHtml('&nbsp;');
         }
     }
 
-    function addHtml($html): void {
+    function addHtml(string $html): void {
         $this->htmlOutput = $this->htmlOutput . $html . "\n";
     }
 
     /**
      * @return null|string
+     *
+     * @param static|string $htmlHeader
      */
-    function addListItem($htmlHeader, $htmlBody, $data = "", $asHtml = false) {
+    function addListItem($htmlHeader, string $htmlBody, string $data = "", bool $asHtml = false) {
         //Add spaces if there is a checkbox
         if (strpos($htmlHeader, "mdl-checkbox") !== false) {
             $htmlBody = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $htmlBody;
@@ -845,15 +895,21 @@ class UiEditor {
             $this->htmlOutput = $this->htmlOutput . $result;
     }
 
-    function addScript($html): void {
+    function addScript(string $html): void {
         $this->htmlOutput = $this->htmlOutput . "\n" . "<script>" . $html . "</script>\n";
     }
 
-    function addScriptFile($file): void {
+    /**
+     * @param string $file
+     */
+    function addScriptFile(string $file): void {
         $this->htmlOutput = $this->htmlOutput . "\n" . "<script src=\"$file\"></script>\n";
     }
 
-    static function addTextWrap($text, $maxSize = 12, $minSize = 10): string {
+    /**
+     * @param int $maxSize
+     */
+    static function addTextWrap($text, int $maxSize = 12, $minSize = 10): string {
         return '<div style="max-width: ' . $maxSize . 'em; min-width: ' . $minSize . 'em; overflow-wrap: break-word; white-space: normal; overflow: auto;">' . $text . '</div>';
     }
 

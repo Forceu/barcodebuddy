@@ -135,7 +135,7 @@ class GlobalConfig {
         }
     }
 
-    static private function convertCorrectType($input, $originalVar) {
+    static private function convertCorrectType(string $input, $originalVar) {
         if (!is_array($originalVar)) {
             $variableType = gettype($originalVar);
             $result       = self::convertPossibleBoolean($input);
@@ -147,7 +147,7 @@ class GlobalConfig {
     }
 
     //PHP converts String "false" to true...
-    static private function convertPossibleBoolean($input) {
+    static private function convertPossibleBoolean(string $input) {
         if ($input === "true")
             return true;
         if ($input === "false")
@@ -176,7 +176,7 @@ class GlobalConfig {
         }
     }
 
-    public function checkIfAuthenticated($redirect = true, $ismenu = false): bool {
+    public function checkIfAuthenticated(bool $redirect = true, bool $ismenu = false): bool {
         global $auth;
         require_once __DIR__ . '/authentication/authentication.inc.php';
 
@@ -266,7 +266,7 @@ class GlobalConfig {
         return $ip;
     }
 
-    private function ipInSubnet($ip, $subnet): bool {
+    private function ipInSubnet(string $ip, $subnet): bool {
         $subnetComponents = explode("/", $subnet);
         $subnetAddress    = $subnetComponents[0];
 
@@ -316,7 +316,10 @@ class GlobalConfig {
 
     /**
      * IPv6 address to list of bits
+     *
      * @param $inet
+     * @param false|string $inet
+     *
      * @return string
      */
     private function inet_to_bits($inet): string {

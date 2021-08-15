@@ -793,17 +793,20 @@ class LogOutput {
         return $this;
     }
 
-    public function setSendWebsocket($sendWebsocket): LogOutput {
+    public function setSendWebsocket(bool $sendWebsocket): LogOutput {
         $this->sendWebsocketMessage = $sendWebsocket;
         return $this;
     }
 
-    public function setWebsocketResultCode($code): LogOutput {
+    /**
+     * @param int $code
+     */
+    public function setWebsocketResultCode(int $code): LogOutput {
         $this->websocketResultCode = $code;
         return $this;
     }
 
-    public function setCustomWebsocketText($text): LogOutput {
+    public function setCustomWebsocketText(string $text): LogOutput {
         $this->websocketText = $text;
         return $this;
     }

@@ -213,7 +213,7 @@ class DatabaseConnection {
      *
      * @return void
      */
-    public function saveLastBarcode($barcode, $name = null): void {
+    public function saveLastBarcode(string $barcode, $name = null): void {
         $this->updateConfig("LAST_BARCODE", $barcode);
         $this->updateConfig("LAST_PRODUCT", $name);
     }
@@ -288,7 +288,7 @@ class DatabaseConnection {
      *
      * @return void
      */
-    public function setTransactionState($state): void {
+    public function setTransactionState(int $state): void {
         /** @noinspection SqlWithoutWhere */
         $this->db->exec("UPDATE TransactionState SET currentState=$state, since=" . $this->getTimestamp());
         SocketConnection::sendWebsocketStateChange($state);
@@ -333,7 +333,7 @@ class DatabaseConnection {
      * @param $barcode
      * @return int
      */
-    public function getStoredBarcodeAmount($barcode): int {
+    public function getStoredBarcodeAmount(string $barcode): int {
         $res = $this->db->query("SELECT * FROM Barcodes WHERE barcode='$barcode'");
         if ($row = $res->fetchArray()) {
             return $row['amount'];
@@ -347,7 +347,7 @@ class DatabaseConnection {
      * @param $id
      * @return array|false
      */
-    public function getBarcodeById($id) {
+    public function getBarcodeById(string $id) {
         $res = $this->db->query("SELECT * FROM Barcodes WHERE id='$id'");
         return $res->fetchArray();
     }
@@ -361,7 +361,7 @@ class DatabaseConnection {
      *
      * @return void
      */
-    public function updateSavedBarcodeMatch($barcode, $productId): void {
+    public function updateSavedBarcodeMatch(string $barcode, $productId): void {
         checkIfNumeric($productId);
         $this->db->exec("UPDATE Barcodes SET possibleMatch='$productId' WHERE barcode='$barcode'");
     }
@@ -372,7 +372,7 @@ class DatabaseConnection {
      * @param $barcode
      * @return bool
      */
-    public function isUnknownBarcodeAlreadyStored($barcode): bool {
+    public function isUnknownBarcodeAlreadyStored(string $barcode): bool {
         $count = $this->db->querySingle("SELECT COUNT(*) as count FROM Barcodes WHERE barcode='$barcode'");
         return ($count != 0);
     }
@@ -385,7 +385,7 @@ class DatabaseConnection {
      *
      * @return void
      */
-    public function addQuantityToUnknownBarcode($barcode, $amount): void {
+    public function addQuantityToUnknownBarcode(string $barcode, int $amount): void {
         $this->db->exec("UPDATE Barcodes SET amount = amount + $amount WHERE barcode = '$barcode'");
 
     }
@@ -398,7 +398,7 @@ class DatabaseConnection {
      *
      * @return void
      */
-    public function setQuantityToUnknownBarcode($barcode, $amount): void {
+    public function setQuantityToUnknownBarcode(string $barcode, int $amount): void {
         $this->db->exec("UPDATE Barcodes SET amount = $amount WHERE barcode = '$barcode'");
     }
 
@@ -432,7 +432,11 @@ class DatabaseConnection {
                              VALUES('$barcode', '$name', $amount, $match, 0, $bestBeforeInDays, '$price', $altNames)");
     }
 
-    public function insertActionRequiredBarcode($barcode, $bestBeforeInDays = null, $price = null): void {
+    /**
+     * @param null|string $bestBeforeInDays
+     * @param null|string $price
+     */
+    public function insertActionRequiredBarcode(string $barcode, ?string $bestBeforeInDays = null, ?string $price = null): void {
         if ($bestBeforeInDays == null)
             $bestBeforeInDays = "NULL";
 
@@ -522,7 +526,7 @@ class DatabaseConnection {
     }
 
 
-    public function saveError($errorMessage, $isFatal = true): void {
+    public function saveError(string $errorMessage, bool $isFatal = true): void {
         $verboseError = '<span style="color: red;">' . sanitizeString($errorMessage) . '</span> Please check your URL and API key in the settings menu!';
         $this->saveLog($verboseError, false, true);
         if ($isFatal) {
@@ -540,7 +544,7 @@ class DatabaseConnection {
      *
      * @return void
      */
-    public function saveLog($log, bool $isVerbose = false, bool $isError = false, bool $isDebug = false): void {
+    public function saveLog(string $log, bool $isVerbose = false, bool $isError = false, bool $isDebug = false): void {
         if ($isVerbose == false || BBConfig::getInstance()["MORE_VERBOSE"] == true) {
             $date = date('Y-m-d H:i:s');
             if ($isError || $isDebug) {
@@ -560,7 +564,7 @@ class DatabaseConnection {
      *
      * @return void
      */
-    public function deleteBarcode($id): void {
+    public function deleteBarcode(string $id): void {
         $this->db->exec("DELETE FROM Barcodes WHERE id='$id'");
     }
 
@@ -599,7 +603,10 @@ class DatabaseConnection {
     }
 
     //Sets the config key with new value
-    public function updateConfig($key, $value): void {
+    /**
+     * @param int|null|string $value
+     */
+    public function updateConfig(string $key, $value): void {
         if (in_array($key, self::DB_INT_VALUES)) {
             checkIfNumeric($value);
         }

@@ -50,8 +50,10 @@ class MenuItemLink {
 
     /**
      * @return static
+     *
+     * @param string $text
      */
-    public function setText($text): self {
+    public function setText(string $text): self {
         $this->itemText = $text;
         return $this;
     }
@@ -59,15 +61,17 @@ class MenuItemLink {
     /**
      * @return static
      */
-    public function setLink($link): self {
+    public function setLink(string $link): self {
         $this->itemLink = $link;
         return $this;
     }
 
     /**
      * @return static
+     *
+     * @param string $id
      */
-    public function setId($id): self {
+    public function setId(string $id): self {
         $this->itemId = $id;
         return $this;
     }
@@ -83,11 +87,11 @@ class WebUiGenerator {
     }
 
 
-    public function addHtml($html): void {
+    public function addHtml(string $html): void {
         $this->htmlOutput = $this->htmlOutput . $html;
     }
 
-    public function addScript($js): void {
+    public function addScript(string $js): void {
         $this->htmlOutput = $this->htmlOutput . "<script>" . $js . "</script>";
     }
 
@@ -97,7 +101,12 @@ class WebUiGenerator {
     }
 
 
-    public function addCard($title, $html, $links = null): void {
+    /**
+     * @param string $title
+     * @param string $html
+     * @param MenuItemLink|null $links
+     */
+    public function addCard(string $title, string $html, ?MenuItemLink $links = null): void {
         $this->addHtml('
         <section class="section--center mdl-grid--no-spacing mdl-grid mdl-shadow--2dp">
             <div class="mdl-card mdl-cell  mdl-cell--12-col">
@@ -127,7 +136,10 @@ class WebUiGenerator {
         $this->addHtml('</section>');
     }
 
-    public function addHeader($additionalHeader = null, $enableDialogs = false): void {
+    /**
+     * @param string|null $additionalHeader
+     */
+    public function addHeader(string $additionalHeader = null, bool $enableDialogs = false): void {
         global $CONFIG;
 
         if ($this->menu == MENU_SETTINGS || $this->menu === MENU_GENERIC) {
@@ -531,7 +543,7 @@ class TableGenerator {
         $this->htmlOutput = $this->htmlOutput . '<tr>';
     }
 
-    function addCell($html): void {
+    function addCell(string $html): void {
         $this->htmlOutput = $this->htmlOutput . '<td class="mdl-data-table__cell--non-numeric">' . $html . '</td>';
     }
 

@@ -181,6 +181,7 @@ class CurlGenerator {
 
     /**
      * @param $curlResult
+     * @param bool|string $curlResult
      *
      * @throws InternalServerErrorException
      * @throws InvalidParameterException
@@ -221,7 +222,7 @@ class CurlGenerator {
         }
     }
 
-    private static function isErrorSslRelated($curlError): bool {
+    private static function isErrorSslRelated(int $curlError): bool {
         return ($curlError == CURLE_SSL_CERTPROBLEM || $curlError == CURLE_SSL_CIPHER || $curlError == CURLE_SSL_CACERT);
     }
 }

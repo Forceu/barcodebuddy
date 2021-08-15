@@ -96,7 +96,7 @@ class QuantityManager {
      *
      * @return void
      */
-    public static function addUpdateEntry($barcode, $amount, $product = null): void {
+    public static function addUpdateEntry(string $barcode, int $amount, $product = null): void {
         checkIfNumeric($amount);
         $db = DatabaseConnection::getInstance()->getDatabaseReference();
         if ($product == null) {

@@ -90,10 +90,11 @@ class RedisConnection {
      * Saves the result of API::getAllProductsInfo() to cache
      *
      * @param $input
+     * @param GrocyProduct[] $input
      *
      * @return void
      */
-    public static function cacheAllProductsInfo($input): void {
+    public static function cacheAllProductsInfo(array $input): void {
         self::setData(self::KEY_CACHE_AVAILABLE, "1");
         self::setData(self::KEY_CACHE_ALL_PRODUCT_INFO, serialize($input));
     }
@@ -137,10 +138,11 @@ class RedisConnection {
      * Saves the result of API::getAllBarcodes() to cache
      *
      * @param $input
+     * @param (mixed|string)[][] $input
      *
      * @return void
      */
-    public static function cacheAllBarcodes($input): void {
+    public static function cacheAllBarcodes(array $input): void {
         self::setData(self::KEY_CACHE_AVAILABLE, "1");
         self::setData(self::KEY_CACHE_ALL_BARCODES, serialize($input));
         self::setLimitSoftUpdate();
@@ -187,7 +189,7 @@ class RedisConnection {
     /**
      * @return false|string
      */
-    private static function getData($key) {
+    private static function getData(string $key) {
         $redis = self::connectToRedis();
         if ($redis != null) {
             return $redis->get($key);

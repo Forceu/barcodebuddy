@@ -88,7 +88,10 @@ class LookupProvider {
     }
 
 
-    protected function execute(string $url, string $method = METHOD_GET, array $formdata = null, string $userAgent = null, $headers = null, $decodeJson = true, $jsonData = null) {
+    /**
+     * @param array|null $headers
+     */
+    protected function execute(string $url, string $method = METHOD_GET, array $formdata = null, string $userAgent = null, ?array $headers = null, bool $decodeJson = true, $jsonData = null) {
         $curl = new CurlGenerator($url, $method, $jsonData, null, true, $this->ignoredResultCodes, $formdata, $userAgent, $headers);
         try {
             $result = $curl->execute($decodeJson);

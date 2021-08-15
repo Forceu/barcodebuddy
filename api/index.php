@@ -74,7 +74,7 @@ class BBuddyApi {
         die();
     }
 
-    function execute($url): void {
+    function execute(string $url): void {
         global $CONFIG;
 
         //Turn off all error reporting, as it could cause problems with parsing json clientside
@@ -95,11 +95,12 @@ class BBuddyApi {
 
 
     /**
-     * @return (array|mixed)[]
-     *
-     * @psalm-return array{data: mixed, result: array{result: mixed, http_code: mixed}}
+     * @param array|null $data
+     * @param string $result
+     * @param int $http_int
+     * @return array (array|mixed)[]
      */
-    static function createResultArray($data = null, $result = "OK", $http_int = 200): array {
+    static function createResultArray(array $data = null, string $result = "OK", int $http_int = 200): array {
         return array(
             "data" => $data,
             "result" => array(
@@ -109,7 +110,7 @@ class BBuddyApi {
         );
     }
 
-    function addRoute($route): void {
+    function addRoute(ApiRoute $route): void {
         $this->routes[$route->path] = $route;
     }
 
@@ -164,12 +165,12 @@ class BBuddyApi {
         $this->addRoute(new ApiRoute("/system/barcodes", function () {
             $config = BBConfig::getInstance();
             return self::createResultArray(array(
-                "BARCODE_C"  => $config["BARCODE_C"],
+                "BARCODE_C" => $config["BARCODE_C"],
                 "BARCODE_CS" => $config["BARCODE_CS"],
-                "BARCODE_P"  => $config["BARCODE_P"],
-                "BARCODE_O"  => $config["BARCODE_O"],
+                "BARCODE_P" => $config["BARCODE_P"],
+                "BARCODE_O" => $config["BARCODE_O"],
                 "BARCODE_GS" => $config["BARCODE_GS"],
-                "BARCODE_Q"  => $config["BARCODE_Q"],
+                "BARCODE_Q" => $config["BARCODE_Q"],
                 "BARCODE_AS" => $config["BARCODE_AS"],
                 "BARCODE_CA" => $config["BARCODE_CA"]
             ));
@@ -187,7 +188,7 @@ class BBuddyApi {
     /**
      * @return never
      */
-    static function sendResult($data, $result): void {
+    static function sendResult(array $data, int $result): void {
         header('Content-Type: application/json');
         http_response_code($result);
         echo trim(json_encode($data, JSON_HEX_QUOT));
@@ -202,7 +203,10 @@ class ApiRoute {
     public $path;
     private $function;
 
-    function __construct($path, $function) {
+    /**
+     * @param string $path API path
+     */
+    function __construct(string $path, $function) {
         $this->path     = '/api' . $path;
         $this->function = $function;
     }

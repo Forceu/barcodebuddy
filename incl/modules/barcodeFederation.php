@@ -23,17 +23,20 @@ class BarcodeFederation {
     public const  HOST_READABLE    = "Barcode Buddy servers";
     private const SECONDS_24_HOURS = 86400;
 
+    /**
+     * @return void
+     */
     public static function doScheduledSyncBarcodes() {
         $config = BBConfig::getInstance();
         if (!$config["BBUDDY_SERVER_ENABLED"])
             return;
         if (time() < $config["BBUDDY_SERVER_NEXTSYNC"])
             return;
-        DatabaseConnection::getInstance()->updateConfig("BBUDDY_SERVER_NEXTSYNC", time() + rand(self::SECONDS_24_HOURS, self::SECONDS_24_HOURS * 2));
+        DatabaseConnection::getInstance()->updateConfig("BBUDDY_SERVER_NEXTSYNC", strval(time() + rand(self::SECONDS_24_HOURS, self::SECONDS_24_HOURS * 2)));
         self::syncBarcodes();
     }
 
-    public static function enableFederation() {
+    public static function enableFederation(): void {
         $db = DatabaseConnection::getInstance();
         $db->updateConfig("BBUDDY_SERVER_ENABLED", "1");
         $db->updateConfig("BBUDDY_SERVER_NEXTSYNC", "0");
@@ -41,7 +44,7 @@ class BarcodeFederation {
         $db->updateConfig("LOOKUP_USE_BBUDDY_SERVER", "1");
     }
 
-    public static function disableFederation() {
+    public static function disableFederation(): void {
         $db = DatabaseConnection::getInstance();
         $db->updateConfig("BBUDDY_SERVER_ENABLED", "0");
         $db->updateConfig("BBUDDY_SERVER_NEXTSYNC", "0");
@@ -51,6 +54,8 @@ class BarcodeFederation {
 
     /**
      * Sends all barcodes stored by Grocy to the BBuddy Server
+     *
+     * @return void
      */
     private static function syncBarcodes() {
         $url = self::HOST . "/add";

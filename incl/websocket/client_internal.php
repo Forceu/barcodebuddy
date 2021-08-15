@@ -51,7 +51,7 @@ class SocketClient {
         return true;
     }
 
-    public function sendData(string $data) {
+    public function sendData(string $data): void {
         socket_write($this->socket, $data, strlen($data));
     }
 
@@ -63,7 +63,7 @@ class SocketClient {
         return socket_read($this->socket, 2048);
     }
 
-    public function close() {
+    public function close(): void {
         socket_close($this->socket);
     }
 

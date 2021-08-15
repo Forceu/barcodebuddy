@@ -31,8 +31,10 @@ class DbUpgrade {
     /**
      * Since BB 1.3.2 the database is in the /data/ folder.
      * If there is an old database, create the new folder and move it there.
+     *
+     * @return void
      */
-    public static function checkAndMoveIfOldDbLocation() {
+    public static function checkAndMoveIfOldDbLocation(): void {
         global $CONFIG;
         //If only old db exists, create directory and move file
         if (file_exists(self::LEGACY_DATABASE_PATH) && !file_exists($CONFIG->DATABASE_PATH)) {
@@ -45,7 +47,7 @@ class DbUpgrade {
     }
 
 
-    public static function createDbDirectory() {
+    public static function createDbDirectory(): void {
         global $CONFIG;
         $dirName = dirname($CONFIG->DATABASE_PATH);
         if (!file_exists($dirName)) {
@@ -58,10 +60,14 @@ class DbUpgrade {
 
     /**
      * Is called after updating Barcode Buddy to a new version
+     *
      * @param int $previousVersion Previously installed version
+     *
      * @throws DbConnectionDuringEstablishException
+     *
+     * @return void
      */
-    public function upgradeBarcodeBuddy(int $previousVersion) {
+    public function upgradeBarcodeBuddy(int $previousVersion): void {
         //We update version before the actual update routine, as otherwise the user cannot
         //reenter setup. As the login gets invalidated in such a case, the Grocy version
         //will be checked upon reentering.
@@ -134,13 +140,13 @@ class DbUpgrade {
             }
         }
         if ($previousVersion < 1804) {
-            $this->databaseConnection->setTransactionState(STATE_CONSUME);
+            $this->databaseConnection->setTransactionState(0);
         }
         RedisConnection::updateCache();
     }
 
 
-    private function isSupportedGrocyVersionOrDie() {
+    private function isSupportedGrocyVersionOrDie(): void {
         global $ERROR_MESSAGE;
         $ERROR_MESSAGE = null;
         $version       = API::getGrocyVersion();

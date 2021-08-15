@@ -31,8 +31,10 @@ class SocketConnection {
 
     /**
      * Requests the current consumption state
+     *
+     * @return void
      */
-    public static function requestCurrentState() {
+    public static function requestCurrentState(): void {
         $client = SocketConnection::getClient();
         if ($client->connect()) {
             $client->sendData('0 ');
@@ -42,9 +44,12 @@ class SocketConnection {
 
     /**
      * Send current Barcode Buddy state
+     *
      * @param int $newState Identifier of BB state
+     *
+     * @return void
      */
-    public static function sendWebsocketStateChange(int $newState) {
+    public static function sendWebsocketStateChange(int $newState): void {
         $client = SocketConnection::getClient();
         if ($client->connect()) {
             $client->sendData('1' . stateToString($newState));
@@ -56,7 +61,7 @@ class SocketConnection {
      * @param int $resultValue
      * @param string $text
      */
-    public static function sendWebsocketMessage(int $resultValue, string $text) {
+    public static function sendWebsocketMessage(int $resultValue, string $text): void {
         $client = SocketConnection::getClient();
         if ($client->connect()) {
             $client->sendData('2' . $resultValue . $text);

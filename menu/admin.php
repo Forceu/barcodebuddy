@@ -40,7 +40,7 @@ $webUi->addFooter();
 $webUi->printHtml();
 
 
-function getHtmlAdminMenu() {
+function getHtmlAdminMenu():string {
     global $CONFIG;
     $html = new UiEditor();
     $html->buildButton("button_backup", "Logout")

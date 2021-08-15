@@ -20,7 +20,7 @@
 require_once __DIR__ . "/../incl/configProcessing.inc.php";
 require_once __DIR__ . "/../incl/db.inc.php";
 require_once __DIR__ . "/../incl/processing.inc.php";
-require_once __dir__ . "/../incl/config.inc.php";
+require_once __DIR__ . "/../incl/config.inc.php";
 
 //removes Get parameters
 $requestedUrl = strtok($_SERVER["REQUEST_URI"], '?');
@@ -69,12 +69,12 @@ class BBuddyApi {
         return false;
     }
 
-    static function sendUnauthorizedAndDie() {
+    static function sendUnauthorizedAndDie(): void {
         self::sendResult(self::createResultArray(null, "Unauthorized", 401), 401);
         die();
     }
 
-    function execute($url) {
+    function execute(string $url): void {
         global $CONFIG;
 
         //Turn off all error reporting, as it could cause problems with parsing json clientside
@@ -94,21 +94,27 @@ class BBuddyApi {
     }
 
 
-    static function createResultArray($data = null, $result = "OK", $http_int = 200) {
+    /**
+     * @param array|null $data
+     * @param string $result
+     * @param int $http_int
+     * @return array (array|mixed)[]
+     */
+    static function createResultArray(array $data = null, string $result = "OK", int $http_int = 200): array {
         return array(
-            "data"   => $data,
+            "data" => $data,
             "result" => array(
-                "result"    => $result,
+                "result" => $result,
                 "http_code" => $http_int
             )
         );
     }
 
-    function addRoute($route) {
+    function addRoute(ApiRoute $route): void {
         $this->routes[$route->path] = $route;
     }
 
-    private function initRoutes() {
+    private function initRoutes(): void {
 
         $this->addRoute(new ApiRoute("/action/scan", function () {
             $barcode = "";
@@ -159,12 +165,12 @@ class BBuddyApi {
         $this->addRoute(new ApiRoute("/system/barcodes", function () {
             $config = BBConfig::getInstance();
             return self::createResultArray(array(
-                "BARCODE_C"  => $config["BARCODE_C"],
+                "BARCODE_C" => $config["BARCODE_C"],
                 "BARCODE_CS" => $config["BARCODE_CS"],
-                "BARCODE_P"  => $config["BARCODE_P"],
-                "BARCODE_O"  => $config["BARCODE_O"],
+                "BARCODE_P" => $config["BARCODE_P"],
+                "BARCODE_O" => $config["BARCODE_O"],
                 "BARCODE_GS" => $config["BARCODE_GS"],
-                "BARCODE_Q"  => $config["BARCODE_Q"],
+                "BARCODE_Q" => $config["BARCODE_Q"],
                 "BARCODE_AS" => $config["BARCODE_AS"],
                 "BARCODE_CA" => $config["BARCODE_CA"]
             ));
@@ -172,14 +178,17 @@ class BBuddyApi {
 
         $this->addRoute(new ApiRoute("/system/info", function () {
             return self::createResultArray(array(
-                "version"     => BB_VERSION_READABLE,
+                "version" => BB_VERSION_READABLE,
                 "version_int" => BB_VERSION
             ));
         }));
     }
 
 
-    static function sendResult($data, $result) {
+    /**
+     * @return never
+     */
+    static function sendResult(array $data, int $result): void {
         header('Content-Type: application/json');
         http_response_code($result);
         echo trim(json_encode($data, JSON_HEX_QUOT));
@@ -194,12 +203,15 @@ class ApiRoute {
     public $path;
     private $function;
 
-    function __construct($path, $function) {
+    /**
+     * @param string $path API path
+     */
+    function __construct(string $path, $function) {
         $this->path     = '/api' . $path;
         $this->function = $function;
     }
 
-    function execute() {
+    function execute(): void {
         $result = $this->function->__invoke();
         BBuddyApi::sendResult($result, $result["result"]["http_code"]);
     }

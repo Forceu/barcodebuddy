@@ -20,7 +20,7 @@ require_once __DIR__ . "/../api.inc.php";
 class ProviderOpengtindb extends LookupProvider {
 
 
-    function __construct($apiKey = null) {
+    function __construct(string $apiKey = null) {
         parent::__construct($apiKey);
         $this->providerName       = "Open EAN / GTIN Database";
         $this->providerConfigKey  = "LOOKUP_USE_OPEN_GTIN_DATABASE";
@@ -40,6 +40,9 @@ class ProviderOpengtindb extends LookupProvider {
         $paddedBarcode = str_pad($barcode, 13, "0", STR_PAD_LEFT);
         $url           = "https://opengtindb.org/?ean=" . $paddedBarcode . "&cmd=query&queryid=" . $opoengtinKey;
         $result        = $this->execute($url, METHOD_GET, null, null, null, false);
+        if ($result === false || $result === null) {
+            return null;
+        }
         if (strpos($result, "error") === false) {
             DatabaseConnection::getInstance()->saveError("Open EAN / GTIN Database API key is invalid!");
             return null;

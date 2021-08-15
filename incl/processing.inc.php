@@ -20,6 +20,7 @@ require_once __DIR__ . "/lockGenerator.inc.php";
 require_once __DIR__ . "/db.inc.php";
 require_once __DIR__ . "/config.inc.php";
 require_once __DIR__ . "/lookupProviders/BarcodeLookup.class.php";
+require_once __DIR__ . "/modules/choreManager.php";
 
 /**
  *
@@ -65,7 +66,7 @@ function processNewBarcode(string $barcodeInput, ?string $bestBeforeInDays = nul
     }
     if (stringStartsWith($barcode, $config["BARCODE_Q"])) {
         $quantity = str_replace($config["BARCODE_Q"], "", $barcode);
-        checkIfNumeric($quantity);
+        $quantity = checkIfNumeric($quantity);
         if ($config["LAST_PRODUCT"] != null) {
             $lastBarcode = $config["LAST_BARCODE"] . " (" . $config["LAST_PRODUCT"] . ")";
         } else {
@@ -281,10 +282,14 @@ function changeWeightTareItem(string $barcode, int $newWeight): bool {
 
 /**
  * Change mode if it was supplied by GET parameter
+ *
  * @param string $modeParameter
+ *
+ * @return void
  * @throws DbConnectionDuringEstablishException
+ *
  */
-function processModeChangeGetParameter(string $modeParameter) {
+function processModeChangeGetParameter(string $modeParameter): void {
     $db = DatabaseConnection::getInstance();
     switch (trim($modeParameter)) {
         case "consume":
@@ -311,10 +316,14 @@ function processModeChangeGetParameter(string $modeParameter) {
 
 /**
  * This will be called when a new grocy product is created from BB and the grocy tab is closed
+ *
  * @param string $barcode
+ *
+ * @return void
  * @throws DbConnectionDuringEstablishException
+ *
  */
-function processRefreshedBarcode(string $barcode) {
+function processRefreshedBarcode(string $barcode): void {
     RedisConnection::expireAllProductInfo();
     $productInfo = API::getLastCreatedProduct(5);
     if ($productInfo != null) {
@@ -509,9 +518,9 @@ function printSelections(string $selected, ?array $productinfo): string {
  * Sanitizes a string for database input
  * @param string|null $input
  * @param bool $strongFilter
- * @return mixed|null
+ * @return string|null
  */
-function sanitizeString(?string $input, bool $strongFilter = false) {
+function sanitizeString(?string $input, bool $strongFilter = false): ?string {
     if ($input == null)
         return null;
     if ($strongFilter) {
@@ -570,10 +579,14 @@ function cleanNameForTagLookup(string $input): array {
 
 /**
  * If a quantity barcode was scanned, add the quantity and process further
+ *
  * @param int $amount
+ *
+ * @return void
  * @throws DbConnectionDuringEstablishException
+ *
  */
-function changeQuantityAfterScan(int $amount) {
+function changeQuantityAfterScan(int $amount): void {
     $config = BBConfig::getInstance();
 
     $db      = DatabaseConnection::getInstance();
@@ -632,7 +645,7 @@ function sortTags(Tag $a, Tag $b): int {
  * @param $b
  * @return int
  */
-function sortChores($a, $b): int {
+function sortChores(array $a, array $b): int {
     return strcmp($a['name'], $b['name']);
 }
 
@@ -691,18 +704,24 @@ function strrtrim(string $message, string $strip): string {
     return implode($strip, array_merge($lines, array($last)));
 }
 
-function generateRandomString($length = 30) {
+/**
+ * @return string
+ */
+function generateRandomString(int $length = 30): string {
     return substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', intval(ceil($length / strlen($x))))), 1, $length);
 }
 
-function getApiUrl($removeAfter): string {
+function getApiUrl(string $removeAfter): string {
     $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
 
     $url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     return $requestedUrl = trim(substr($url, 0, strpos($url, $removeAfter))) . "api/";
 }
 
-function showErrorNotWritable($error = "DB Error") {
+/**
+ * @return never
+ */
+function showErrorNotWritable(string $error = "DB Error") {
     die($error . ": Database file cannot be created, as folder or database file is not writable. Please check your permissions.<br>
              Have a look at this link to find out how to do this:
              <a href='https://github.com/olab/Open-Labyrinth/wiki/How-do-I-make-files-and-folders-writable-for-the-web-server%3F'>" . "How do I make files and folders writable for the web server?</a>");
@@ -753,7 +772,7 @@ class LogOutput {
         return $this;
     }
 
-    public function addStockToText($amount): LogOutput {
+    public function addStockToText(int $amount): LogOutput {
         if (!BBConfig::getInstance()["SHOW_STOCK_ON_SCAN"])
             return $this;
         //Do not have "." at the beginning if last character was "!"
@@ -774,17 +793,20 @@ class LogOutput {
         return $this;
     }
 
-    public function setSendWebsocket($sendWebsocket): LogOutput {
+    public function setSendWebsocket(bool $sendWebsocket): LogOutput {
         $this->sendWebsocketMessage = $sendWebsocket;
         return $this;
     }
 
-    public function setWebsocketResultCode($code): LogOutput {
+    /**
+     * @param int $code
+     */
+    public function setWebsocketResultCode(int $code): LogOutput {
         $this->websocketResultCode = $code;
         return $this;
     }
 
-    public function setCustomWebsocketText($text): LogOutput {
+    public function setCustomWebsocketText(string $text): LogOutput {
         $this->websocketText = $text;
         return $this;
     }

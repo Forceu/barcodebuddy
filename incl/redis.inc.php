@@ -88,9 +88,13 @@ class RedisConnection {
 
     /**
      * Saves the result of API::getAllProductsInfo() to cache
+     *
      * @param $input
+     * @param GrocyProduct[] $input
+     *
+     * @return void
      */
-    public static function cacheAllProductsInfo($input) {
+    public static function cacheAllProductsInfo(array $input): void {
         self::setData(self::KEY_CACHE_AVAILABLE, "1");
         self::setData(self::KEY_CACHE_ALL_PRODUCT_INFO, serialize($input));
     }
@@ -114,9 +118,12 @@ class RedisConnection {
      * Forces an update for all cache entries:
      * API::getAllProductsInfo()
      * API::getAllBarcodes()
+     *
      * @param bool $softUpdate If true, do not update if less than 90 (TIMEOUT_MAX_UPDATE_SOFT_REFRESH_S) seconds have passed
+     *
+     * @return void
      */
-    public static function updateCache(bool $softUpdate = false) {
+    public static function updateCache(bool $softUpdate = false): void {
         if (self::isRedisAvailable()) {
             require_once __DIR__ . "/api.inc.php";
             if (!$softUpdate || self::isSoftUpdateAllowed()) {
@@ -129,15 +136,19 @@ class RedisConnection {
 
     /**
      * Saves the result of API::getAllBarcodes() to cache
+     *
      * @param $input
+     * @param (mixed|string)[][] $input
+     *
+     * @return void
      */
-    public static function cacheAllBarcodes($input) {
+    public static function cacheAllBarcodes(array $input): void {
         self::setData(self::KEY_CACHE_AVAILABLE, "1");
         self::setData(self::KEY_CACHE_ALL_BARCODES, serialize($input));
         self::setLimitSoftUpdate();
     }
 
-    private static function setLimitSoftUpdate() {
+    private static function setLimitSoftUpdate(): void {
         self::setData(self::KEY_CACHE_NO_SOFT_UPDATE, "1", self::TIMEOUT_MAX_UPDATE_SOFT_REFRESH_S);
     }
 
@@ -146,36 +157,39 @@ class RedisConnection {
 
     }
 
-    public static function expireAllBarcodes() {
+    public static function expireAllBarcodes(): void {
         self::expire(self::KEY_CACHE_ALL_BARCODES);
     }
 
-    public static function expireAllProductInfo() {
+    public static function expireAllProductInfo(): void {
         self::expire(self::KEY_CACHE_ALL_PRODUCT_INFO);
     }
 
-    public static function invalidateCache() {
+    public static function invalidateCache(): void {
         self::expire(self::KEY_CACHE_AVAILABLE,
             self::KEY_CACHE_ALL_BARCODES,
             self::KEY_CACHE_ALL_PRODUCT_INFO
         );
     }
 
-    private static function expire(string ...$keys) {
+    private static function expire(string ...$keys): void {
         $redis = self::connectToRedis();
         if ($redis != null) {
             $redis->del($keys);
         }
     }
 
-    private static function setData(string $key, string $data, int $timeout = self::TIMEOUT_REDIS_CACHE_S) {
+    private static function setData(string $key, string $data, int $timeout = self::TIMEOUT_REDIS_CACHE_S): void {
         $redis = self::connectToRedis();
         if ($redis != null) {
             $redis->set($key, $data, $timeout);
         }
     }
 
-    private static function getData($key) {
+    /**
+     * @return false|string
+     */
+    private static function getData(string $key) {
         $redis = self::connectToRedis();
         if ($redis != null) {
             return $redis->get($key);

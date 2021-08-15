@@ -65,7 +65,7 @@ $webUi->addFooter();
 $webUi->printHtml();
 
 
-function getMobileAppPage() {
+function getMobileAppPage(): string {
     global $mobileKey;
     $apiUrl    = getApiUrl("menu/");
     $infoArray = array("issetup" => true, "url" => $apiUrl, "key" => $mobileKey);
@@ -97,7 +97,7 @@ function getMobileAppPage() {
 }
 
 
-function getApiTable() {
+function getApiTable(): string {
     global $CONFIG;
 
     $apikeys = DatabaseConnection::getInstance()->getStoredApiKeys();

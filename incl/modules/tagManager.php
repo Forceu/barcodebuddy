@@ -22,11 +22,15 @@ class TagManager {
 
     /**
      * Adds tag to DB
+     *
      * @param $tagName
      * @param $itemid
+     *
+     * @return void
      * @throws DbConnectionDuringEstablishException
+     *
      */
-    public static function add($tagName, $itemid) {
+    public static function add(string $tagName, int $itemid): void {
         $db = DatabaseConnection::getInstance()->getDatabaseReference();
         $db->exec("INSERT INTO Tags(tag, itemId) VALUES('$tagName', $itemid);");
     }
@@ -34,11 +38,11 @@ class TagManager {
     /**
      * Returns true if $name is not saved as a tag yet
      *
-     * @param $name
+     * @param string $name
      * @return bool
      * @throws DbConnectionDuringEstablishException
      */
-    public static function tagNotInUse($name): bool {
+    public static function tagNotInUse(string $name): bool {
         $db    = DatabaseConnection::getInstance()->getDatabaseReference();
         $count = $db->querySingle("SELECT COUNT(*) as count FROM Tags WHERE tag='" . $name . "' COLLATE NOCASE");
         return ($count == 0);
@@ -66,9 +70,12 @@ class TagManager {
      * Delete tag from local db
      *
      * @param int $id
+     *
+     * @return void
      * @throws DbConnectionDuringEstablishException
+     *
      */
-    public static function delete(int $id) {
+    public static function delete(int $id): void {
         $db = DatabaseConnection::getInstance()->getDatabaseReference();
         $db->exec("DELETE FROM Tags WHERE id='$id'");
     }
@@ -103,7 +110,7 @@ class Tag {
     public $itemId;
     public $item;
 
-    public function __construct($dbRow) {
+    public function __construct(array $dbRow) {
         if (!$this->isValidRow($dbRow)) {
             throw new RuntimeException("Invalid row supplied to create Tag Object");
         }
@@ -113,7 +120,7 @@ class Tag {
         $this->item   = "";
     }
 
-    public function setName($name) {
+    public function setName(string $name): void {
         $this->item = $name;
     }
 
@@ -127,7 +134,7 @@ class Tag {
         return strcmp(strtoupper($this->name), strtoupper($otherTag->name));
     }
 
-    private function isValidRow($dbRow): bool {
+    private function isValidRow(array $dbRow): bool {
         return (array_key_exists('id', $dbRow) &&
             array_key_exists('tag', $dbRow) &&
             array_key_exists('itemId', $dbRow));

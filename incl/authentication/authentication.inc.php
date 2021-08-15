@@ -30,24 +30,24 @@ $auth    = new \Delight\Auth\Auth($db_auth);
 \header_remove('X-Frame-Options');
 
 
-function isUserSetUp() {
+function isUserSetUp(): bool {
 	global $auth;
 	return $auth->admin()->doesUserHaveRole(1, \Delight\Auth\Role::ADMIN);
 }
 
-function createSqlFile() {
+function createSqlFile(): void {
 	global $CONFIG;
     $db = new SQLite3($CONFIG->AUTHDB_PATH);
     $db->exec(getInitialSetupSql());
 }
 
-function changeUserName($newName) {
+function changeUserName(string $newName): void {
 	global $CONFIG;
     $db = new SQLite3($CONFIG->AUTHDB_PATH);
     $db->exec("UPDATE users SET username='$newName'");
 }
 
-function getInitialSetupSql() {
+function getInitialSetupSql(): string {
 
     return 'PRAGMA foreign_keys=OFF;
 			BEGIN TRANSACTION;

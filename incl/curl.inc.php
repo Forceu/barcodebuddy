@@ -71,9 +71,9 @@ class CurlGenerator {
      */
     function __construct(string $url, string $method = METHOD_GET,
                          string $jasonData = null, array $loginOverride = null,
-                         bool $noApiCall = false, array $ignoredResultCodes = null,
-                         array $formData = null, string $userAgent = null,
-                         array $headers = null) {
+                         bool   $noApiCall = false, array $ignoredResultCodes = null,
+                         array  $formData = null, string $userAgent = null,
+                         array  $headers = null) {
         global $CONFIG;
 
         $config = BBConfig::getInstance();
@@ -180,7 +180,9 @@ class CurlGenerator {
 
 
     /**
-     * @param $curlResult
+     * @param bool|string $curlResult
+     *
+     * @return void
      * @throws InternalServerErrorException
      * @throws InvalidParameterException
      * @throws InvalidSSLException
@@ -189,7 +191,7 @@ class CurlGenerator {
      * @throws NotFoundException
      * @throws UnauthorizedException
      */
-    private function checkForErrorsAndThrow($curlResult) {
+    private function checkForErrorsAndThrow($curlResult): void {
         $curlError    = curl_errno($this->ch);
         $responseCode = curl_getinfo($this->ch, CURLINFO_RESPONSE_CODE);
 
@@ -218,7 +220,7 @@ class CurlGenerator {
         }
     }
 
-    private static function isErrorSslRelated($curlError): bool {
+    private static function isErrorSslRelated(int $curlError): bool {
         return ($curlError == CURLE_SSL_CERTPROBLEM || $curlError == CURLE_SSL_CIPHER || $curlError == CURLE_SSL_CACERT);
     }
 }

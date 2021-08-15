@@ -65,13 +65,21 @@ function checkExtensionsInstalled(): array {
 }
 
 
-//Check a specific extension
-function isExtensionInstalled($name): bool {
+/**
+ * Check a specific extension
+ * @param string $name
+ * @return bool
+ */
+function isExtensionInstalled(string $name): bool {
     $loadedExtensions = get_loaded_extensions();
     return in_array($name, $loadedExtensions);
 }
 
-//Check if Grocy API config is set in the database
+/**
+ * Check if Grocy API config is set in the database
+ * @return bool
+ * @throws DbConnectionDuringEstablishException
+ */
 function isGrocyApiSet(): bool {
     $config = BBConfig::getInstance();
     return ($config["GROCY_API_URL"] != null && $config["GROCY_API_KEY"] != null);

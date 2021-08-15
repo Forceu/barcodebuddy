@@ -29,18 +29,18 @@ function connectToSocket(): bool {
     return $client->connect();
 }
 
-function outputSocketError() {
+function outputSocketError(): void {
     $errorcode = socket_last_error();
     $errormsg  = socket_strerror($errorcode);
-    sendData('{"action":"error","data":"E' . $errorcode . ' ' . $errormsg . '"}', "100000000");
+    sendData('{"action":"error","data":"E' . $errorcode . ' ' . $errormsg . '"}', 100000000);
 }
 
-function sendStillAlive() {
+function sendStillAlive(): void {
     sendData('{"action":"status","data":"9Connected"}');
 }
 
 
-function readData() {
+function readData(): void {
     global $client;
     $timeStart = microtime(true);
     while (microtime(true) - $timeStart < MAX_EXECUTION_TIME_S) {
@@ -53,13 +53,13 @@ function readData() {
     $client->close();
 }
 
-function sendData($data, $retryMs = 10) {
+function sendData(string $data, int $retryMs = 10): void {
     echo "retry: {$retryMs}\n";
     echo "data: {$data}\n\n";
     flush();
 }
 
-function initStream() {
+function initStream(): void {
     set_time_limit(85);
     @ini_set('auto_detect_line_endings', 1);
     @ini_set('max_execution_time', 85);

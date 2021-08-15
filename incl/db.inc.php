@@ -76,46 +76,46 @@ class DatabaseConnection {
 
     /* 1 is used for true and 0 for false, as PHP interprets the String "false" as Boolean "true" */
     const DEFAULT_VALUES = array(
-        "BARCODE_C"                     => "BBUDDY-C",
-        "BARCODE_CS"                    => "BBUDDY-CS",
-        "BARCODE_CA"                    => "BBUDDY-CA",
-        "BARCODE_P"                     => "BBUDDY-P",
-        "BARCODE_O"                     => "BBUDDY-O",
-        "BARCODE_GS"                    => "BBUDDY-I",
-        "BARCODE_Q"                     => "BBUDDY-Q-",
-        "BARCODE_AS"                    => "BBUDDY-AS",
-        "REVERT_TIME"                   => "10",
-        "REVERT_SINGLE"                 => "1",
-        "MORE_VERBOSE"                  => "1",
-        "GROCY_API_URL"                 => null,
-        "GROCY_API_KEY"                 => null,
-        "LAST_BARCODE"                  => null,
-        "LAST_PRODUCT"                  => null,
-        "WS_FULLSCREEN"                 => "0",
-        "SHOPPINGLIST_REMOVE"           => "1",
-        "USE_GENERIC_NAME"              => "1",
-        "CONSUME_SAVED_QUANTITY"        => "0",
-        "USE_GROCY_QU_FACTOR"           => "0",
-        "SHOW_STOCK_ON_SCAN"            => "0",
-        "LOOKUP_USE_OFF"                => "1",
-        "LOOKUP_USE_UPC"                => "1",
-        "LOOKUP_USE_JUMBO"              => "0",
-        "LOOKUP_USE_AH"                 => "0",
-        "LOOKUP_USE_PLUS"               => "0",
-        "LOOKUP_USE_UPC_DATABASE"       => "0",
+        "BARCODE_C" => "BBUDDY-C",
+        "BARCODE_CS" => "BBUDDY-CS",
+        "BARCODE_CA" => "BBUDDY-CA",
+        "BARCODE_P" => "BBUDDY-P",
+        "BARCODE_O" => "BBUDDY-O",
+        "BARCODE_GS" => "BBUDDY-I",
+        "BARCODE_Q" => "BBUDDY-Q-",
+        "BARCODE_AS" => "BBUDDY-AS",
+        "REVERT_TIME" => "10",
+        "REVERT_SINGLE" => "1",
+        "MORE_VERBOSE" => "1",
+        "GROCY_API_URL" => null,
+        "GROCY_API_KEY" => null,
+        "LAST_BARCODE" => null,
+        "LAST_PRODUCT" => null,
+        "WS_FULLSCREEN" => "0",
+        "SHOPPINGLIST_REMOVE" => "1",
+        "USE_GENERIC_NAME" => "1",
+        "CONSUME_SAVED_QUANTITY" => "0",
+        "USE_GROCY_QU_FACTOR" => "0",
+        "SHOW_STOCK_ON_SCAN" => "0",
+        "LOOKUP_USE_OFF" => "1",
+        "LOOKUP_USE_UPC" => "1",
+        "LOOKUP_USE_JUMBO" => "0",
+        "LOOKUP_USE_AH" => "0",
+        "LOOKUP_USE_PLUS" => "0",
+        "LOOKUP_USE_UPC_DATABASE" => "0",
         "LOOKUP_USE_OPEN_GTIN_DATABASE" => "0",
-        "LOOKUP_USE_BBUDDY_SERVER"      => "0",
-        "LOOKUP_UPC_DATABASE_KEY"       => null,
-        "LOOKUP_OPENGTIN_KEY"           => null,
-        "USE_REDIS"                     => DEFAULT_USE_REDIS,
-        "REDIS_IP"                      => "127.0.0.1",
-        "REDIS_PORT"                    => "6379",
-        "REDIS_PW"                      => "",
-        "BBUDDY_SERVER_UUID"            => null,
-        "BBUDDY_SERVER_ENABLED"         => "0",
-        "BBUDDY_SERVER_POPUPSHOWN"      => "0",
-        "BBUDDY_SERVER_NEXTSYNC"        => "0",
-        "LOOKUP_ORDER"                  => LOOKUP_ID_OPENFOODFACTS . "," .
+        "LOOKUP_USE_BBUDDY_SERVER" => "0",
+        "LOOKUP_UPC_DATABASE_KEY" => null,
+        "LOOKUP_OPENGTIN_KEY" => null,
+        "USE_REDIS" => DEFAULT_USE_REDIS,
+        "REDIS_IP" => "127.0.0.1",
+        "REDIS_PORT" => "6379",
+        "REDIS_PW" => "",
+        "BBUDDY_SERVER_UUID" => null,
+        "BBUDDY_SERVER_ENABLED" => "0",
+        "BBUDDY_SERVER_POPUPSHOWN" => "0",
+        "BBUDDY_SERVER_NEXTSYNC" => "0",
+        "LOOKUP_ORDER" => LOOKUP_ID_OPENFOODFACTS . "," .
             LOOKUP_ID_UPCDB . "," .
             LOOKUP_ID_UPCDATABASE . "," .
             LOOKUP_ID_ALBERTHEIJN . "," .
@@ -165,9 +165,12 @@ class DatabaseConnection {
 
     /**
      * Initiate database and create global variable for config
+     *
+     * @return void
      * @throws DbConnectionDuringEstablishException
+     *
      */
-    private function initDb() {
+    private function initDb(): void {
         global $CONFIG;
 
         self::checkPermissions();
@@ -191,8 +194,10 @@ class DatabaseConnection {
 
     /**
      * Inserts default values for Barcode Buddy Config
+     *
+     * @return void
      */
-    private function insertDefaultValues() {
+    private function insertDefaultValues(): void {
         $this->db->exec("INSERT INTO TransactionState(id,currentState,since) SELECT 1, 0, datetime('now','localtime') WHERE NOT EXISTS(SELECT 1 FROM TransactionState WHERE id = 1)");
         $this->db->exec("INSERT INTO BBConfig(id,data,value) SELECT 1, \"version\", \"" . BB_VERSION . "\" WHERE NOT EXISTS(SELECT 1 FROM BBConfig WHERE id = 1)");
         foreach (self::DEFAULT_VALUES as $key => $value) {
@@ -202,18 +207,23 @@ class DatabaseConnection {
 
     /**
      * Save last used barcode into DB
+     *
      * @param $barcode
      * @param null $name
+     *
+     * @return void
      */
-    public function saveLastBarcode($barcode, $name = null) {
+    public function saveLastBarcode(string $barcode, $name = null): void {
         $this->updateConfig("LAST_BARCODE", $barcode);
         $this->updateConfig("LAST_PRODUCT", $name);
     }
 
     /**
      * Checks if database is writable
+     *
+     * @return void
      */
-    private function checkPermissions() {
+    private function checkPermissions(): void {
         global $CONFIG;
         if (file_exists($CONFIG->DATABASE_PATH)) {
             if (!is_writable($CONFIG->DATABASE_PATH)) {
@@ -273,9 +283,12 @@ class DatabaseConnection {
 
     /**
      * Setting the state
+     *
      * @param $state
+     *
+     * @return void
      */
-    public function setTransactionState($state) {
+    public function setTransactionState(int $state): void {
         /** @noinspection SqlWithoutWhere */
         $this->db->exec("UPDATE TransactionState SET currentState=$state, since=" . $this->getTimestamp());
         SocketConnection::sendWebsocketStateChange($state);
@@ -320,7 +333,7 @@ class DatabaseConnection {
      * @param $barcode
      * @return int
      */
-    public function getStoredBarcodeAmount($barcode): int {
+    public function getStoredBarcodeAmount(string $barcode): int {
         $res = $this->db->query("SELECT * FROM Barcodes WHERE barcode='$barcode'");
         if ($row = $res->fetchArray()) {
             return $row['amount'];
@@ -334,7 +347,7 @@ class DatabaseConnection {
      * @param $id
      * @return array|false
      */
-    public function getBarcodeById($id) {
+    public function getBarcodeById(string $id) {
         $res = $this->db->query("SELECT * FROM Barcodes WHERE id='$id'");
         return $res->fetchArray();
     }
@@ -342,54 +355,63 @@ class DatabaseConnection {
 
     /**
      * Sets the possible match for a barcode that has a tag in its name
-     * @param $barcode
-     * @param $productId
+     *
+     * @param string $barcode
+     * @param int $productId
+     *
+     * @return void
      */
-    public function updateSavedBarcodeMatch($barcode, $productId) {
-        checkIfNumeric($productId);
+    public function updateSavedBarcodeMatch(string $barcode, int $productId): void {
         $this->db->exec("UPDATE Barcodes SET possibleMatch='$productId' WHERE barcode='$barcode'");
     }
 
 
     /**
      * Returns true if an unknown barcode is already in the list
-     * @param $barcode
+     * @param string $barcode
      * @return bool
      */
-    public function isUnknownBarcodeAlreadyStored($barcode): bool {
+    public function isUnknownBarcodeAlreadyStored(string $barcode): bool {
         $count = $this->db->querySingle("SELECT COUNT(*) as count FROM Barcodes WHERE barcode='$barcode'");
         return ($count != 0);
     }
 
     /**
      * Increases quantity of a saved barcode (not to confuse with default quantity)
-     * @param $barcode
-     * @param $amount
+     *
+     * @param string $barcode
+     * @param int $amount
+     *
+     * @return void
      */
-    public function addQuantityToUnknownBarcode($barcode, $amount) {
+    public function addQuantityToUnknownBarcode(string $barcode, int $amount): void {
         $this->db->exec("UPDATE Barcodes SET amount = amount + $amount WHERE barcode = '$barcode'");
 
     }
 
     /**
      * Sets quantity of a saved barcode (not to confuse with default quantity)
-     * @param $barcode
-     * @param $amount
+     *
+     * @param string $barcode
+     * @param int $amount
+     *
+     * @return void
      */
-    public function setQuantityToUnknownBarcode($barcode, $amount) {
+    public function setQuantityToUnknownBarcode(string $barcode, int $amount): void {
         $this->db->exec("UPDATE Barcodes SET amount = $amount WHERE barcode = '$barcode'");
     }
 
     /**
      * Add an unknown barcode
+     *
      * @param string $barcode
      * @param int $amount
      * @param string|null $bestBeforeInDays
      * @param string|null $price
      * @param array|null $productname
-     * @param int $match
+     * @return void
      */
-    public function insertUnrecognizedBarcode(string $barcode, int $amount = 1, string $bestBeforeInDays = null, string $price = null, ?array $productname = null) {
+    public function insertUnrecognizedBarcode(string $barcode, int $amount = 1, string $bestBeforeInDays = null, string $price = null, ?array $productname = null): void {
         if ($bestBeforeInDays == null)
             $bestBeforeInDays = "NULL";
 
@@ -407,7 +429,12 @@ class DatabaseConnection {
                              VALUES('$barcode', '$name', $amount, $match, 0, $bestBeforeInDays, '$price', $altNames)");
     }
 
-    public function insertActionRequiredBarcode($barcode, $bestBeforeInDays = null, $price = null) {
+    /**
+     * @param string $barcode
+     * @param null|string $bestBeforeInDays
+     * @param null|string $price
+     */
+    public function insertActionRequiredBarcode(string $barcode, ?string $bestBeforeInDays = null, ?string $price = null): void {
         if ($bestBeforeInDays == null)
             $bestBeforeInDays = "NULL";
 
@@ -415,7 +442,7 @@ class DatabaseConnection {
                              VALUES('$barcode', 'N/A', 1, 0, 1, $bestBeforeInDays, '$price')");
     }
 
-    public function updateUnrecognizedBarcodeName(string $barcode, string $name) {
+    public function updateUnrecognizedBarcodeName(string $barcode, string $name): void {
         $match = TagManager::getProductIdByPossibleTag($name, $this->db);
         $this->db->exec("UPDATE Barcodes SET name='$name', possibleMatch=$match WHERE barcode='$barcode'");
     }
@@ -437,7 +464,7 @@ class DatabaseConnection {
         return $apikeys;
     }
 
-    public function isValidApiKey($apiKey): bool {
+    public function isValidApiKey(string $apiKey): bool {
         foreach ($this->getStoredApiKeys() as $key) {
             if ($apiKey === $key["key"]) {
                 $this->db->exec("UPDATE ApiKeys SET lastused=datetime('now','localtime') WHERE id=" . $key["id"]);
@@ -450,9 +477,9 @@ class DatabaseConnection {
 
     /**
      * Generates API key
-     * @return false|string
+     * @return string
      */
-    public function generateApiKey() {
+    public function generateApiKey(): string {
         $key = generateRandomString();
         $this->db->exec("INSERT INTO ApiKeys(key, lastused) VALUES('" . $key . "', 'Never');");
         return $key;
@@ -461,9 +488,12 @@ class DatabaseConnection {
 
     /**
      * Deletes API key
-     * @param $id
+     *
+     * @param string $id
+     *
+     * @return void
      */
-    public function deleteApiKey($id) {
+    public function deleteApiKey(string $id): void {
         checkIfNumeric($id);
         $this->db->exec("DELETE FROM ApiKeys WHERE id='$id'");
     }
@@ -471,8 +501,10 @@ class DatabaseConnection {
 
     /**
      * Deletes all API keys
+     *
+     * @return void
      */
-    public function deleteAllApiKeys() {
+    public function deleteAllApiKeys(): void {
         /** @noinspection SqlWithoutWhere */
         $this->db->exec("DELETE FROM ApiKeys");
     }
@@ -492,7 +524,7 @@ class DatabaseConnection {
     }
 
 
-    public function saveError($errorMessage, $isFatal = true) {
+    public function saveError(string $errorMessage, bool $isFatal = true): void {
         $verboseError = '<span style="color: red;">' . sanitizeString($errorMessage) . '</span> Please check your URL and API key in the settings menu!';
         $this->saveLog($verboseError, false, true);
         if ($isFatal) {
@@ -502,12 +534,16 @@ class DatabaseConnection {
 
     /**
      * Save a log
-     * @param $log
+     *
+     * @param string $log
      * @param bool $isVerbose
      * @param bool $isError
      * @param bool $isDebug
+     *
+     * @return void
+     * @throws DbConnectionDuringEstablishException
      */
-    public function saveLog($log, bool $isVerbose = false, bool $isError = false, bool $isDebug = false) {
+    public function saveLog(string $log, bool $isVerbose = false, bool $isError = false, bool $isDebug = false): void {
         if ($isVerbose == false || BBConfig::getInstance()["MORE_VERBOSE"] == true) {
             $date = date('Y-m-d H:i:s');
             if ($isError || $isDebug) {
@@ -522,18 +558,24 @@ class DatabaseConnection {
 
     /**
      * Delete barcode from local db
+     *
      * @param $id
+     *
+     * @return void
      */
-    public function deleteBarcode($id) {
+    public function deleteBarcode(string $id): void {
         $this->db->exec("DELETE FROM Barcodes WHERE id='$id'");
     }
 
 
     /**
      * Delete all saved barcodes
-     * @param $section
+     *
+     * @param string $section
+     *
+     * @return void
      */
-    public function deleteAll($section) {
+    public function deleteAll(string $section): void {
         switch ($section) {
             case SECTION_KNOWN_BARCODES:
                 $this->db->exec("DELETE FROM Barcodes WHERE name IS NOT 'N/A'");
@@ -553,14 +595,19 @@ class DatabaseConnection {
 
 
     /**
-     * @return mixed
+     * @return false|SQLite3Result
      */
     function getRawConfig() {
         return $this->db->query("SELECT * FROM BBConfig");
     }
 
     //Sets the config key with new value
-    public function updateConfig($key, $value) {
+
+    /**
+     * @param string $key
+     * @param string|null $value
+     */
+    public function updateConfig(string $key, ?string $value): void {
         if (in_array($key, self::DB_INT_VALUES)) {
             checkIfNumeric($value);
         }

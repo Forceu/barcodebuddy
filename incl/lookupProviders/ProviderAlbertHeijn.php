@@ -22,7 +22,7 @@ class ProviderAlbertHeijn extends LookupProvider {
 
     const USER_AGENT = "android/6.29.3 Model/phone Android/7.0-API24";
 
-    function __construct($apiKey = null) {
+    function __construct(string $apiKey = null) {
         parent::__construct($apiKey);
         $this->providerName       = "Albert Heijn";
         $this->providerConfigKey  = "LOOKUP_USE_AH";

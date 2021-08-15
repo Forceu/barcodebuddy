@@ -5,6 +5,9 @@
       <code>$bestBefore</code>
       <code>$price</code>
     </InvalidScalarArgument>
+    <MissingParamType occurrences="1">
+      <code>$function</code>
+    </MissingParamType>
     <PossiblyFalseArgument occurrences="1">
       <code>strpos($requestedUrl, '/api')</code>
     </PossiblyFalseArgument>
@@ -29,15 +32,11 @@
     </PossiblyNullArgument>
   </file>
   <file src="../../incl/api.inc.php">
-    <InvalidReturnStatement occurrences="4">
-      <code>$days</code>
+    <InvalidReturnStatement occurrences="3">
       <code>$result</code>
       <code>$result</code>
       <code>$result</code>
     </InvalidReturnStatement>
-    <InvalidReturnType occurrences="1">
-      <code>int</code>
-    </InvalidReturnType>
     <InvalidScalarArgument occurrences="1">
       <code>$daysBestBefore</code>
     </InvalidScalarArgument>
@@ -69,6 +68,9 @@
     <InvalidReturnStatement occurrences="1">
       <code>next($this-&gt;container)</code>
     </InvalidReturnStatement>
+    <PossiblyFalseReference occurrences="1">
+      <code>fetchArray</code>
+    </PossiblyFalseReference>
   </file>
   <file src="../../incl/configProcessing.inc.php">
     <InvalidGlobal occurrences="1">
@@ -87,6 +89,9 @@
       <code>$subnet</code>
       <code>$subnet</code>
     </MissingClosureParamType>
+    <RedundantCondition occurrences="1">
+      <code>is_array($originalVar)</code>
+    </RedundantCondition>
     <UndefinedConstant occurrences="19">
       <code>AUTHDB_PATH</code>
       <code>AUTHENTICATION_BYPASS_NETS</code>
@@ -132,6 +137,10 @@
     <DeprecatedMethod occurrences="1">
       <code>BBConfig::getInstance()</code>
     </DeprecatedMethod>
+    <PossiblyNullArgument occurrences="2">
+      <code>$value</code>
+      <code>$value</code>
+    </PossiblyNullArgument>
     <UndefinedConstant occurrences="9">
       <code>DEFAULT_USE_REDIS</code>
       <code>LOOKUP_ID_ALBERTHEIJN</code>
@@ -143,9 +152,6 @@
       <code>LOOKUP_ID_UPCDATABASE</code>
       <code>LOOKUP_ID_UPCDB</code>
     </UndefinedConstant>
-    <UndefinedFunction occurrences="1">
-      <code>sendWebsocketStateChange($state)</code>
-    </UndefinedFunction>
   </file>
   <file src="../../incl/lookupProviders/BarcodeLookup.class.php">
     <PossiblyNullArgument occurrences="1">
@@ -163,6 +169,9 @@
     </UndefinedConstant>
   </file>
   <file src="../../incl/modules/barcodeFederation.php">
+    <InvalidNullableReturnType occurrences="1">
+      <code>string</code>
+    </InvalidNullableReturnType>
     <NullableReturnStatement occurrences="1">
       <code>sanitizeString($result)</code>
     </NullableReturnStatement>
@@ -172,10 +181,6 @@
       <code>$choreId</code>
       <code>$id</code>
     </InvalidScalarArgument>
-    <UndefinedFunction occurrences="2">
-      <code>checkIfNumeric($choreId)</code>
-      <code>checkIfNumeric($id)</code>
-    </UndefinedFunction>
   </file>
   <file src="../../incl/modules/dbUpgrade.php">
     <PossiblyNullArgument occurrences="4">
@@ -202,11 +207,6 @@
     </UndefinedFunction>
   </file>
   <file src="../../incl/processing.inc.php">
-    <InvalidScalarArgument occurrences="3">
-      <code>$id</code>
-      <code>$id</code>
-      <code>$quantity</code>
-    </InvalidScalarArgument>
     <PossiblyFalseArgument occurrences="1">
       <code>strpos($url, $removeAfter)</code>
     </PossiblyFalseArgument>
@@ -230,9 +230,8 @@
     <ReferenceConstraintViolation occurrences="1">
       <code>return $output;</code>
     </ReferenceConstraintViolation>
-    <UndefinedFunction occurrences="2">
+    <UndefinedFunction occurrences="1">
       <code>pluginEventReceiver_processEvent($this-&gt;eventType, $this-&gt;logText)</code>
-      <code>sendWebsocketMessage($this-&gt;websocketText, $this-&gt;websocketResultCode)</code>
     </UndefinedFunction>
   </file>
   <file src="../../incl/sse/sse_data.php">
@@ -243,46 +242,122 @@
       <code>85</code>
     </InvalidScalarArgument>
   </file>
+  <file src="../../incl/uiEditor.inc.php">
+    <InvalidArgument occurrences="1">
+      <code>$this-&gt;value</code>
+    </InvalidArgument>
+    <InvalidReturnStatement occurrences="2"/>
+    <InvalidReturnType occurrences="3">
+      <code>null|string</code>
+      <code>string</code>
+      <code>string</code>
+    </InvalidReturnType>
+    <MismatchingDocblockParamType occurrences="1">
+      <code>string|true</code>
+    </MismatchingDocblockParamType>
+    <MissingParamType occurrences="56">
+      <code>$asHtml</code>
+      <code>$asHtml</code>
+      <code>$asHtml</code>
+      <code>$asHtml</code>
+      <code>$autocompleteEntries</code>
+      <code>$autocompleteEntries</code>
+      <code>$autocompleteEntriesLinked</code>
+      <code>$autocompleteRunAjax</code>
+      <code>$capitalize</code>
+      <code>$content</code>
+      <code>$disabled</code>
+      <code>$floatingLabel</code>
+      <code>$hint</code>
+      <code>$id</code>
+      <code>$id</code>
+      <code>$isChecked</code>
+      <code>$isColoured</code>
+      <code>$isDisabled</code>
+      <code>$isDisabled</code>
+      <code>$isRaised</code>
+      <code>$isTimeInput</code>
+      <code>$label</code>
+      <code>$label</code>
+      <code>$label</code>
+      <code>$label</code>
+      <code>$label</code>
+      <code>$label</code>
+      <code>$label</code>
+      <code>$linked</code>
+      <code>$maxlength</code>
+      <code>$minSize</code>
+      <code>$minlength</code>
+      <code>$minmax</code>
+      <code>$name</code>
+      <code>$name</code>
+      <code>$name</code>
+      <code>$name</code>
+      <code>$name</code>
+      <code>$onClick</code>
+      <code>$onKeyPress</code>
+      <code>$onKeyUp</code>
+      <code>$onfocusout</code>
+      <code>$pattern</code>
+      <code>$placeHolder</code>
+      <code>$preselected</code>
+      <code>$required</code>
+      <code>$returnAsHtml</code>
+      <code>$runAjax</code>
+      <code>$text</code>
+      <code>$type</code>
+      <code>$value</code>
+      <code>$value</code>
+      <code>$value</code>
+      <code>$valueLabels</code>
+      <code>$values</code>
+      <code>$width</code>
+    </MissingParamType>
+    <PossiblyNullPropertyAssignmentValue occurrences="3">
+      <code>null</code>
+      <code>null</code>
+      <code>null</code>
+    </PossiblyNullPropertyAssignmentValue>
+    <RedundantConditionGivenDocblockType occurrences="2">
+      <code>$id == null</code>
+      <code>$value == null</code>
+    </RedundantConditionGivenDocblockType>
+  </file>
   <file src="../../incl/websocket/client_internal.php">
-    <UndefinedFunction occurrences="4">
-      <code>getClient()</code>
-      <code>getClient()</code>
-      <code>getClient()</code>
+    <UndefinedFunction occurrences="1">
       <code>getLastError()</code>
     </UndefinedFunction>
   </file>
-  <file src="../../incl/websocketconnection.inc.php">
-    <UndefinedFunction occurrences="3">
-      <code>requestSavedState()</code>
-      <code>sendNewState($newState)</code>
-      <code>sendWSResult($resultCode, $resultText)</code>
-    </UndefinedFunction>
-  </file>
   <file src="../../incl/webui.inc.php">
+    <RedundantCondition occurrences="1">
+      <code>is_array($links)</code>
+    </RedundantCondition>
     <UndefinedConstant occurrences="1">
       <code>MENU_GENERIC</code>
     </UndefinedConstant>
   </file>
   <file src="../../index.php">
-    <InvalidScalarArgument occurrences="6">
-      <code>$amount</code>
-      <code>$amount</code>
+    <InvalidScalarArgument occurrences="1">
       <code>$argv[2]</code>
-      <code>$gidSelected</code>
-      <code>$gidSelected</code>
-      <code>$gidSelected</code>
     </InvalidScalarArgument>
+    <PossiblyInvalidArgument occurrences="7">
+      <code>$html-&gt;buildButton("button_delete", "Remove")-&gt;setSubmit()-&gt;setValue($item['id'])-&gt;generate(true)</code>
+      <code>$html-&gt;buildButton("button_delete", "Remove")-&gt;setSubmit()-&gt;setValue($item['id'])-&gt;generate(true)</code>
+      <code>$html-&gt;buildButton("button_delete", "Remove")-&gt;setSubmit()-&gt;setValue($item['id'])-&gt;generate(true)</code>
+    </PossiblyInvalidArgument>
     <PossiblyInvalidArrayAccess occurrences="1">
       <code>$barcode["barcode"]</code>
     </PossiblyInvalidArrayAccess>
-    <PossiblyNullArgument occurrences="7">
+    <PossiblyInvalidOperand occurrences="4"/>
+    <PossiblyNullArgument occurrences="8">
       <code>$barcode</code>
+      <code>$product-&gt;name</code>
       <code>sanitizeString($_GET["add"], true)</code>
       <code>sanitizeString($_GET["refreshbarcode"])</code>
       <code>sanitizeString($_GET["text"], true)</code>
       <code>sanitizeString($argv[1], true)</code>
       <code>sanitizeString($barcode)</code>
-      <code>sanitizeString($gidSelected)</code>
+      <code>sanitizeString($tag)</code>
     </PossiblyNullArgument>
     <PossiblyNullPropertyFetch occurrences="8">
       <code>$product-&gt;isTare</code>
@@ -296,6 +371,9 @@
     </PossiblyNullPropertyFetch>
   </file>
   <file src="../../login.php">
+    <PossiblyNullArgument occurrences="1">
+      <code>sanitizeString($_POST["username"])</code>
+    </PossiblyNullArgument>
     <UndefinedClass occurrences="4">
       <code>\Delight\Auth\InvalidPasswordException</code>
       <code>\Delight\Auth\Role</code>
@@ -303,16 +381,43 @@
       <code>\Delight\Auth\UnknownUsernameException</code>
     </UndefinedClass>
   </file>
+  <file src="../../menu/apimanagement.php">
+    <PossiblyInvalidArgument occurrences="2"/>
+  </file>
   <file src="../../menu/chores.php">
     <InvalidScalarArgument occurrences="2">
       <code>$id</code>
       <code>$id</code>
     </InvalidScalarArgument>
+    <PossiblyInvalidArgument occurrences="2"/>
     <PossiblyNullArgument occurrences="1">
       <code>$barcode</code>
     </PossiblyNullArgument>
   </file>
+  <file src="../../menu/quantities.php">
+    <PossiblyInvalidArgument occurrences="1"/>
+  </file>
   <file src="../../menu/settings.php">
+    <InvalidScalarArgument occurrences="2">
+      <code>$config["LOOKUP_USE_OPEN_GTIN_DATABASE"]</code>
+      <code>$config["LOOKUP_USE_UPC_DATABASE"]</code>
+    </InvalidScalarArgument>
+    <PossiblyInvalidArgument occurrences="19">
+      <code>$html-&gt;addCheckbox('LOOKUP_USE_AH', 'Albert Heijn', $config["LOOKUP_USE_AH"], false, false, true)</code>
+      <code>$html-&gt;addCheckbox('LOOKUP_USE_BBUDDY_SERVER', 'Barcode Buddy Federation', $config["LOOKUP_USE_BBUDDY_SERVER"], !$config["BBUDDY_SERVER_ENABLED"], false, true)</code>
+      <code>$html-&gt;addCheckbox('LOOKUP_USE_JUMBO', 'Jumbo', $config["LOOKUP_USE_JUMBO"], false, false, true)</code>
+      <code>$html-&gt;addCheckbox('LOOKUP_USE_OFF', 'Open Food Facts', $config["LOOKUP_USE_OFF"], false, false, true)</code>
+      <code>$html-&gt;addCheckbox('LOOKUP_USE_PLUS', 'Plus Supermarkt', $config["LOOKUP_USE_PLUS"], false, false, true)</code>
+      <code>$html-&gt;addCheckbox('LOOKUP_USE_UPC', 'UPC Item DB', $config["LOOKUP_USE_UPC"], false, false, true)</code>
+      <code>$html-&gt;buildEditField("BARCODE_AS", "Barcode: Add to shopping list", $config["BARCODE_AS"])-&gt;generate(true)</code>
+      <code>$html-&gt;buildEditField("BARCODE_C", "Barcode: Consume", $config["BARCODE_C"])-&gt;generate(true)</code>
+      <code>$html-&gt;buildEditField("BARCODE_CA", "Barcode: Consume all", $config["BARCODE_CA"])-&gt;generate(true)</code>
+      <code>$html-&gt;buildEditField("BARCODE_CS", "Barcode: Consume (spoiled)", $config["BARCODE_CS"])-&gt;generate(true)</code>
+      <code>$html-&gt;buildEditField("BARCODE_GS", "Barcode: Inventory", $config["BARCODE_GS"])-&gt;generate(true)</code>
+      <code>$html-&gt;buildEditField("BARCODE_O", "Barcode: Open", $config["BARCODE_O"])-&gt;generate(true)</code>
+      <code>$html-&gt;buildEditField("BARCODE_P", "Barcode: Purchase", $config["BARCODE_P"])-&gt;generate(true)</code>
+      <code>$html-&gt;buildEditField("BARCODE_Q", "Barcode: Quantity", $config["BARCODE_Q"])-&gt;generate(true)</code>
+    </PossiblyInvalidArgument>
     <PossiblyNullArgument occurrences="4">
       <code>$config["GROCY_API_KEY"]</code>
       <code>$config["GROCY_API_URL"]</code>
@@ -324,5 +429,12 @@
     <InvalidScalarArgument occurrences="1">
       <code>$id</code>
     </InvalidScalarArgument>
+    <PossiblyInvalidArgument occurrences="1"/>
+  </file>
+  <file src="../../plugins/EventReceiver.php">
+    <MissingParamType occurrences="2">
+      <code>$eventType</code>
+      <code>$log</code>
+    </MissingParamType>
   </file>
 </files>

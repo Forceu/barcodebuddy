@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . "/../processing.inc.php";
 
 class ChoreManager {
 
@@ -26,9 +27,12 @@ class ChoreManager {
      *
      * @param int $choreId
      * @param string $choreBarcode
+     *
+     * @return void
      * @throws DbConnectionDuringEstablishException
+     *
      */
-    public static function updateBarcode(int $choreId, string $choreBarcode) {
+    public static function updateBarcode(int $choreId, string $choreBarcode): void {
         checkIfNumeric($choreId);
         $db = DatabaseConnection::getInstance()->getDatabaseReference();
         $db->exec("REPLACE INTO ChoreBarcodes(choreId, barcode) VALUES(" . $choreId . ", '" . str_replace('&#39;', "", $choreBarcode) . "')");
@@ -37,10 +41,14 @@ class ChoreManager {
 
     /**
      * Deletes a barcode associated with a chore
+     *
      * @param int $id
+     *
+     * @return void
      * @throws DbConnectionDuringEstablishException
+     *
      */
-    public static function deleteBarcode(int $id) {
+    public static function deleteBarcode(int $id): void {
         checkIfNumeric($id);
         $db = DatabaseConnection::getInstance()->getDatabaseReference();
         $db->exec("DELETE FROM ChoreBarcodes WHERE choreId='$id'");
@@ -100,7 +108,7 @@ class Chore {
     public $barcode;
 
 
-    public function __construct($dbRow) {
+    public function __construct(array $dbRow) {
         if (!$this->isValidRow($dbRow)) {
             throw new RuntimeException("Invalid row supplied to create Chore Object");
         }
@@ -110,7 +118,7 @@ class Chore {
     }
 
 
-    private function isValidRow($dbRow): bool {
+    private function isValidRow(array $dbRow): bool {
         return (array_key_exists('id', $dbRow) &&
             array_key_exists('choreId', $dbRow) &&
             array_key_exists('barcode', $dbRow));

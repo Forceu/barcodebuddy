@@ -33,7 +33,7 @@ class LookupProvider {
     protected $ignoredResultCodes = null;
     protected $providerConfigKey = null;
 
-    function __construct($apiKey = null) {
+    function __construct(string $apiKey = null) {
         $this->useGenericName = BBConfig::getInstance()["USE_GENERIC_NAME"];
         $this->apiKey         = $apiKey;
     }
@@ -88,7 +88,17 @@ class LookupProvider {
     }
 
 
-    protected function execute(string $url, string $method = METHOD_GET, array $formdata = null, string $userAgent = null, $headers = null, $decodeJson = true, $jsonData = null) {
+    /**
+     * @param string $url
+     * @param string $method
+     * @param array|null $formdata
+     * @param string|null $userAgent
+     * @param array|null $headers
+     * @param bool $decodeJson
+     * @param string|null $jsonData
+     * @return bool|mixed|string|null
+     */
+    protected function execute(string $url, string $method = METHOD_GET, array $formdata = null, string $userAgent = null, ?array $headers = null, bool $decodeJson = true, string $jsonData = null) {
         $curl = new CurlGenerator($url, $method, $jsonData, null, true, $this->ignoredResultCodes, $formdata, $userAgent, $headers);
         try {
             $result = $curl->execute($decodeJson);

@@ -31,7 +31,7 @@ $CONFIG = new GlobalConfig();
 $CONFIG->configureDebugOutput();
 
 
-function loadConfigPhp() {
+function loadConfigPhp(): void {
     $env        = getenv();
     $configPath = CONFIG_PATH;
     if (isset($env["BBUDDY_CONFIG_PATH"])) {
@@ -44,7 +44,7 @@ function loadConfigPhp() {
     require_once $configPath;
 }
 
-function createConfigPhp($configPath) {
+function createConfigPhp(string $configPath): void {
     require_once __DIR__ . "/processing.inc.php";
     if (!is_writable(dirname($configPath))) {
         showErrorNotWritable("FS Error DATA_PATH_NOT_WRITABLE");
@@ -56,7 +56,7 @@ function createConfigPhp($configPath) {
     }
 }
 
-function checkForMissingConstants() {
+function checkForMissingConstants(): void {
     $defaultValues = array(
         "PORT_WEBSOCKET_SERVER"        => 47631,
         "DATABASE_PATH"                => __DIR__ . '/../data/barcodebuddy.db',
@@ -110,14 +110,14 @@ class GlobalConfig {
         $this->loadConfig();
     }
 
-    function getPhpSelfWithBaseUrl() {
+    function getPhpSelfWithBaseUrl(): string {
         return rtrim($this->BASEURL, "/") . $_SERVER['PHP_SELF'];
     }
 
     //Gets all the public variables declared above and checks if there
     //is an environment variable for this function. If yes, the
     //environment variable replaces the values in config.php
-    private function loadConfig() {
+    private function loadConfig(): void {
         $environmentVariables = getenv();
         $reflect              = new ReflectionClass($this);
         $props                = $reflect->getProperties(ReflectionProperty::IS_PUBLIC);
@@ -135,7 +135,12 @@ class GlobalConfig {
         }
     }
 
-    static private function convertCorrectType($input, $originalVar) {
+    /**
+     * @param string $input
+     * @param object $originalVar
+     * @return array|bool|string
+     */
+    static private function convertCorrectType(string $input, object $originalVar) {
         if (!is_array($originalVar)) {
             $variableType = gettype($originalVar);
             $result       = self::convertPossibleBoolean($input);
@@ -146,8 +151,12 @@ class GlobalConfig {
 
     }
 
-    //PHP converts String "false" to true...
-    static private function convertPossibleBoolean($input) {
+    /**
+     * PHP converts String "false" to true...
+     * @param string $input
+     * @return bool|string
+     */
+    static private function convertPossibleBoolean(string $input) {
         if ($input === "true")
             return true;
         if ($input === "false")
@@ -155,7 +164,7 @@ class GlobalConfig {
         return $input;
     }
 
-    static private function convertToArray($input): array {
+    static private function convertToArray(string $input): array {
         $result          = array();
         $passedArguments = explode(";", $input);
         foreach ($passedArguments as $argument) {
@@ -167,7 +176,7 @@ class GlobalConfig {
         return $result;
     }
 
-    public function configureDebugOutput() {
+    public function configureDebugOutput(): void {
         //Enable debug as well if file "debug" exists in this directory
         if ($this->IS_DEBUG || file_exists(__DIR__ . "/debug")) {
             ini_set('display_errors', 1);
@@ -176,7 +185,7 @@ class GlobalConfig {
         }
     }
 
-    public function checkIfAuthenticated($redirect = true, $ismenu = false): bool {
+    public function checkIfAuthenticated(bool $redirect = true, bool $ismenu = false): bool {
         global $auth;
         require_once __DIR__ . '/authentication/authentication.inc.php';
 
@@ -266,7 +275,7 @@ class GlobalConfig {
         return $ip;
     }
 
-    private function ipInSubnet($ip, $subnet): bool {
+    private function ipInSubnet(string $ip, string $subnet): bool {
         $subnetComponents = explode("/", $subnet);
         $subnetAddress    = $subnetComponents[0];
 
@@ -316,10 +325,12 @@ class GlobalConfig {
 
     /**
      * IPv6 address to list of bits
-     * @param $inet
+     *
+     * @param string $inet
+     *
      * @return string
      */
-    private function inet_to_bits($inet): string {
+    private function inet_to_bits(string $inet): string {
         $unpacked = unpack('A16', $inet);
         $unpacked = str_split($unpacked[1]);
         $binaryip = '';

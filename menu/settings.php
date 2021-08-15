@@ -49,8 +49,10 @@ $webUi->printHtml();
 /**
  * Called when settings were saved. For each input, the setting
  * is saved as a database entry
+ *
+ * @return void
  */
-function saveSettings() {
+function saveSettings(): void {
     $db     = DatabaseConnection::getInstance();
     $config = BBConfig::getInstance();
     foreach ($config as $key => $value) {
@@ -246,7 +248,7 @@ function checkGrocyConnection(): string {
     }
 }
 
-function checkRedisConnection(UiEditor &$html) {
+function checkRedisConnection(UiEditor &$html): void {
     $error = null;
     try {
         $connected = RedisConnection::ping();

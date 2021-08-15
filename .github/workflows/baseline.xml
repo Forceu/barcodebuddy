@@ -132,35 +132,11 @@
     <DeprecatedMethod occurrences="1">
       <code>BBConfig::getInstance()</code>
     </DeprecatedMethod>
-    <UndefinedConstant occurrences="9">
-      <code>DEFAULT_USE_REDIS</code>
-      <code>LOOKUP_ID_ALBERTHEIJN</code>
-      <code>LOOKUP_ID_FEDERATION</code>
-      <code>LOOKUP_ID_JUMBO</code>
-      <code>LOOKUP_ID_OPENFOODFACTS</code>
-      <code>LOOKUP_ID_OPENGTINDB</code>
-      <code>LOOKUP_ID_PLUS</code>
-      <code>LOOKUP_ID_UPCDATABASE</code>
-      <code>LOOKUP_ID_UPCDB</code>
-    </UndefinedConstant>
-    <UndefinedFunction occurrences="1">
-      <code>sendWebsocketStateChange($state)</code>
-    </UndefinedFunction>
   </file>
   <file src="../../incl/lookupProviders/BarcodeLookup.class.php">
     <PossiblyNullArgument occurrences="1">
       <code>$config["LOOKUP_ORDER"]</code>
     </PossiblyNullArgument>
-    <UndefinedConstant occurrences="8">
-      <code>LOOKUP_ID_ALBERTHEIJN</code>
-      <code>LOOKUP_ID_FEDERATION</code>
-      <code>LOOKUP_ID_JUMBO</code>
-      <code>LOOKUP_ID_OPENFOODFACTS</code>
-      <code>LOOKUP_ID_OPENGTINDB</code>
-      <code>LOOKUP_ID_PLUS</code>
-      <code>LOOKUP_ID_UPCDATABASE</code>
-      <code>LOOKUP_ID_UPCDB</code>
-    </UndefinedConstant>
   </file>
   <file src="../../incl/modules/barcodeFederation.php">
     <NullableReturnStatement occurrences="1">
@@ -172,10 +148,6 @@
       <code>$choreId</code>
       <code>$id</code>
     </InvalidScalarArgument>
-    <UndefinedFunction occurrences="2">
-      <code>checkIfNumeric($choreId)</code>
-      <code>checkIfNumeric($id)</code>
-    </UndefinedFunction>
   </file>
   <file src="../../incl/modules/dbUpgrade.php">
     <PossiblyNullArgument occurrences="4">
@@ -202,9 +174,7 @@
     </UndefinedFunction>
   </file>
   <file src="../../incl/processing.inc.php">
-    <InvalidScalarArgument occurrences="3">
-      <code>$id</code>
-      <code>$id</code>
+    <InvalidScalarArgument occurrences="1">
       <code>$quantity</code>
     </InvalidScalarArgument>
     <PossiblyFalseArgument occurrences="1">
@@ -230,9 +200,8 @@
     <ReferenceConstraintViolation occurrences="1">
       <code>return $output;</code>
     </ReferenceConstraintViolation>
-    <UndefinedFunction occurrences="2">
+    <UndefinedFunction occurrences="1">
       <code>pluginEventReceiver_processEvent($this-&gt;eventType, $this-&gt;logText)</code>
-      <code>sendWebsocketMessage($this-&gt;websocketText, $this-&gt;websocketResultCode)</code>
     </UndefinedFunction>
   </file>
   <file src="../../incl/sse/sse_data.php">
@@ -244,18 +213,8 @@
     </InvalidScalarArgument>
   </file>
   <file src="../../incl/websocket/client_internal.php">
-    <UndefinedFunction occurrences="4">
-      <code>getClient()</code>
-      <code>getClient()</code>
-      <code>getClient()</code>
+    <UndefinedFunction occurrences="1">
       <code>getLastError()</code>
-    </UndefinedFunction>
-  </file>
-  <file src="../../incl/websocketconnection.inc.php">
-    <UndefinedFunction occurrences="3">
-      <code>requestSavedState()</code>
-      <code>sendNewState($newState)</code>
-      <code>sendWSResult($resultCode, $resultText)</code>
     </UndefinedFunction>
   </file>
   <file src="../../incl/webui.inc.php">

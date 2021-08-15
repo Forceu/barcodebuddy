@@ -556,8 +556,8 @@ class API {
     public static function getProductByBarcode(string $barcode, bool $ignoreCache = false): ?GrocyProduct {
         if (stringStartsWith($barcode, "GRCY:P:")) {
             $id = str_replace("GRCY:P:", "", $barcode);
-            checkIfNumeric($id);
-            return self::getProductInfo(intval($id));
+            $id = checkIfNumeric($id);
+            return self::getProductInfo($id);
         }
         $allBarcodes = self::getAllBarcodes($ignoreCache);
         if (!isset($allBarcodes[$barcode])) {

@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . "/../processing.inc.php";
 
 class ChoreManager {
 

@@ -134,7 +134,7 @@ class DbUpgrade {
             }
         }
         if ($previousVersion < 1804) {
-            $this->databaseConnection->setTransactionState(STATE_CONSUME);
+            $this->databaseConnection->setTransactionState(0);
         }
         RedisConnection::updateCache();
     }

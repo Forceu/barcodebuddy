@@ -1,9 +1,6 @@
 <?xml version="1.0"?>
 <psalm xmlns="https://getpsalm.org/schema/config" errorBaseline="baseline.xml">
     <issueHandlers>
-        <MissingParamType errorLevel="suppress" />
-        <MissingReturnType  errorLevel="suppress" />
-        <MissingClosureReturnType errorLevel="suppress" />
         <MissingPropertyType errorLevel="suppress" />
         <TypeDoesNotContainType errorLevel="info" />
         <InvalidDocblock errorLevel="info" />

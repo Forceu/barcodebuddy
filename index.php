@@ -143,7 +143,7 @@ $webUi->addFooter();
 displayFederationPopupHtml($webUi);
 $webUi->printHtml();
 
-function displayFederationPopupHtml(WebUiGenerator &$webUi) {
+function displayFederationPopupHtml(WebUiGenerator &$webUi): void {
     $config = BBConfig::getInstance();
     if (!$config["BBUDDY_SERVER_ENABLED"] && !$config["BBUDDY_SERVER_POPUPSHOWN"]) {
         $webUi->addConfirmDialog("We are proud to introduce Barcode Buddy Federation, which enables you to lookup " .
@@ -161,7 +161,7 @@ function displayFederationPopupHtml(WebUiGenerator &$webUi) {
 }
 
 //Check if a button on the web ui was pressed and process
-function processButtons() {
+function processButtons(): void {
     global $CONFIG;
     $db = DatabaseConnection::getInstance();
 

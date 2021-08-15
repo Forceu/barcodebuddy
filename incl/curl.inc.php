@@ -181,6 +181,7 @@ class CurlGenerator {
 
     /**
      * @param $curlResult
+     *
      * @throws InternalServerErrorException
      * @throws InvalidParameterException
      * @throws InvalidSSLException
@@ -188,6 +189,8 @@ class CurlGenerator {
      * @throws LimitExceededException
      * @throws NotFoundException
      * @throws UnauthorizedException
+     *
+     * @return void
      */
     private function checkForErrorsAndThrow($curlResult) {
         $curlError    = curl_errno($this->ch);

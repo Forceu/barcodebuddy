@@ -44,11 +44,15 @@ class QuantityManager {
 
     /**
      * If a stored amount was found, add this to Grocy
+     *
      * @param SQLite3|null $db A DB reference can be passed. Only use for upgrading DB to new version!
      * @param string $barcode
+     *
      * @throws DbConnectionDuringEstablishException
+     *
+     * @return void
      */
-    public static function syncBarcodeToGrocy(string $barcode, SQLite3 $db = null) {
+    public static function syncBarcodeToGrocy(string $barcode, SQLite3 $db = null): void {
         $storedAmount = self::getStoredQuantityForBarcode($barcode, true, $db);
         if ($storedAmount != 1) {
             API::addBarcodeQuantity($barcode, $storedAmount);
@@ -87,9 +91,12 @@ class QuantityManager {
      * @param $barcode
      * @param $amount
      * @param $product
+     *
      * @throws DbConnectionDuringEstablishException
+     *
+     * @return void
      */
-    public static function addUpdateEntry($barcode, $amount, $product = null) {
+    public static function addUpdateEntry($barcode, $amount, $product = null): void {
         checkIfNumeric($amount);
         $db = DatabaseConnection::getInstance()->getDatabaseReference();
         if ($product == null) {
@@ -102,11 +109,15 @@ class QuantityManager {
 
     /**
      * Deletes Quantity barcode
+     *
      * @param $id
      * @param SQLite3|null $db A DB reference can be passed. Only use for upgrading DB to new version!
+     *
      * @throws DbConnectionDuringEstablishException
+     *
+     * @return void
      */
-    public static function delete($id, SQLite3 $db = null) {
+    public static function delete($id, SQLite3 $db = null): void {
         checkIfNumeric($id);
         if ($db == null)
             $db = DatabaseConnection::getInstance()->getDatabaseReference();

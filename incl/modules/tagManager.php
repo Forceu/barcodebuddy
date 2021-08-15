@@ -22,11 +22,15 @@ class TagManager {
 
     /**
      * Adds tag to DB
+     *
      * @param $tagName
      * @param $itemid
+     *
      * @throws DbConnectionDuringEstablishException
+     *
+     * @return void
      */
-    public static function add($tagName, $itemid) {
+    public static function add($tagName, $itemid): void {
         $db = DatabaseConnection::getInstance()->getDatabaseReference();
         $db->exec("INSERT INTO Tags(tag, itemId) VALUES('$tagName', $itemid);");
     }
@@ -66,9 +70,12 @@ class TagManager {
      * Delete tag from local db
      *
      * @param int $id
+     *
      * @throws DbConnectionDuringEstablishException
+     *
+     * @return void
      */
-    public static function delete(int $id) {
+    public static function delete(int $id): void {
         $db = DatabaseConnection::getInstance()->getDatabaseReference();
         $db->exec("DELETE FROM Tags WHERE id='$id'");
     }
@@ -113,7 +120,7 @@ class Tag {
         $this->item   = "";
     }
 
-    public function setName($name) {
+    public function setName($name): void {
         $this->item = $name;
     }
 

@@ -78,7 +78,7 @@ function printSettingsQuantityTable(): string {
 
 }
 
-function sortQuantityArray(&$arr) {
+function sortQuantityArray(&$arr): void {
     usort($arr, function (ApiQuantity $a, ApiQuantity $b) {
         return strtolower($a->product) <=> strtolower($b->product);
     });

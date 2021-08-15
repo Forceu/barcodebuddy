@@ -20,7 +20,7 @@
 require_once __DIR__ . "/../incl/configProcessing.inc.php";
 require_once __DIR__ . "/../incl/db.inc.php";
 require_once __DIR__ . "/../incl/processing.inc.php";
-require_once __dir__ . "/../incl/config.inc.php";
+require_once __DIR__ . "/../incl/config.inc.php";
 
 //removes Get parameters
 $requestedUrl = strtok($_SERVER["REQUEST_URI"], '?');
@@ -69,12 +69,12 @@ class BBuddyApi {
         return false;
     }
 
-    static function sendUnauthorizedAndDie() {
+    static function sendUnauthorizedAndDie(): void {
         self::sendResult(self::createResultArray(null, "Unauthorized", 401), 401);
         die();
     }
 
-    function execute($url) {
+    function execute($url): void {
         global $CONFIG;
 
         //Turn off all error reporting, as it could cause problems with parsing json clientside
@@ -94,21 +94,26 @@ class BBuddyApi {
     }
 
 
-    static function createResultArray($data = null, $result = "OK", $http_int = 200) {
+    /**
+     * @return (array|mixed)[]
+     *
+     * @psalm-return array{data: mixed, result: array{result: mixed, http_code: mixed}}
+     */
+    static function createResultArray($data = null, $result = "OK", $http_int = 200): array {
         return array(
-            "data"   => $data,
+            "data" => $data,
             "result" => array(
-                "result"    => $result,
+                "result" => $result,
                 "http_code" => $http_int
             )
         );
     }
 
-    function addRoute($route) {
+    function addRoute($route): void {
         $this->routes[$route->path] = $route;
     }
 
-    private function initRoutes() {
+    private function initRoutes(): void {
 
         $this->addRoute(new ApiRoute("/action/scan", function () {
             $barcode = "";
@@ -172,14 +177,17 @@ class BBuddyApi {
 
         $this->addRoute(new ApiRoute("/system/info", function () {
             return self::createResultArray(array(
-                "version"     => BB_VERSION_READABLE,
+                "version" => BB_VERSION_READABLE,
                 "version_int" => BB_VERSION
             ));
         }));
     }
 
 
-    static function sendResult($data, $result) {
+    /**
+     * @return never
+     */
+    static function sendResult($data, $result): void {
         header('Content-Type: application/json');
         http_response_code($result);
         echo trim(json_encode($data, JSON_HEX_QUOT));
@@ -199,7 +207,7 @@ class ApiRoute {
         $this->function = $function;
     }
 
-    function execute() {
+    function execute(): void {
         $result = $this->function->__invoke();
         BBuddyApi::sendResult($result, $result["result"]["http_code"]);
     }

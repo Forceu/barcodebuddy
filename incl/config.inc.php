@@ -61,8 +61,10 @@ class BBConfig implements ArrayAccess, Iterator, Countable {
 
     /**
      * Force config to update from the DB
+     *
+     * @return void
      */
-    public static function forceRefresh() {
+    public static function forceRefresh(): void {
         self::$_BBConfigInstance = null;
     }
 

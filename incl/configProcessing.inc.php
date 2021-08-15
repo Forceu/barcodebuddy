@@ -31,7 +31,7 @@ $CONFIG = new GlobalConfig();
 $CONFIG->configureDebugOutput();
 
 
-function loadConfigPhp() {
+function loadConfigPhp(): void {
     $env        = getenv();
     $configPath = CONFIG_PATH;
     if (isset($env["BBUDDY_CONFIG_PATH"])) {
@@ -44,7 +44,7 @@ function loadConfigPhp() {
     require_once $configPath;
 }
 
-function createConfigPhp($configPath) {
+function createConfigPhp($configPath): void {
     require_once __DIR__ . "/processing.inc.php";
     if (!is_writable(dirname($configPath))) {
         showErrorNotWritable("FS Error DATA_PATH_NOT_WRITABLE");
@@ -56,7 +56,7 @@ function createConfigPhp($configPath) {
     }
 }
 
-function checkForMissingConstants() {
+function checkForMissingConstants(): void {
     $defaultValues = array(
         "PORT_WEBSOCKET_SERVER"        => 47631,
         "DATABASE_PATH"                => __DIR__ . '/../data/barcodebuddy.db',
@@ -110,14 +110,14 @@ class GlobalConfig {
         $this->loadConfig();
     }
 
-    function getPhpSelfWithBaseUrl() {
+    function getPhpSelfWithBaseUrl(): string {
         return rtrim($this->BASEURL, "/") . $_SERVER['PHP_SELF'];
     }
 
     //Gets all the public variables declared above and checks if there
     //is an environment variable for this function. If yes, the
     //environment variable replaces the values in config.php
-    private function loadConfig() {
+    private function loadConfig(): void {
         $environmentVariables = getenv();
         $reflect              = new ReflectionClass($this);
         $props                = $reflect->getProperties(ReflectionProperty::IS_PUBLIC);
@@ -167,7 +167,7 @@ class GlobalConfig {
         return $result;
     }
 
-    public function configureDebugOutput() {
+    public function configureDebugOutput(): void {
         //Enable debug as well if file "debug" exists in this directory
         if ($this->IS_DEBUG || file_exists(__DIR__ . "/debug")) {
             ini_set('display_errors', 1);

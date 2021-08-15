@@ -35,19 +35,19 @@ function isUserSetUp() {
 	return $auth->admin()->doesUserHaveRole(1, \Delight\Auth\Role::ADMIN);
 }
 
-function createSqlFile() {
+function createSqlFile(): void {
 	global $CONFIG;
     $db = new SQLite3($CONFIG->AUTHDB_PATH);
     $db->exec(getInitialSetupSql());
 }
 
-function changeUserName($newName) {
+function changeUserName($newName): void {
 	global $CONFIG;
     $db = new SQLite3($CONFIG->AUTHDB_PATH);
     $db->exec("UPDATE users SET username='$newName'");
 }
 
-function getInitialSetupSql() {
+function getInitialSetupSql(): string {
 
     return 'PRAGMA foreign_keys=OFF;
 			BEGIN TRANSACTION;

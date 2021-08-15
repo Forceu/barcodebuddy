@@ -53,7 +53,7 @@ $webUi->printHtml();
 
 
 
-function login() {
+function login(): void {
     global $result;
     global $auth;
 
@@ -74,7 +74,7 @@ function login() {
 }
 
 
-function createUser() {
+function createUser(): void {
     global $result;
     global $auth;
     if (isUserSetUp())

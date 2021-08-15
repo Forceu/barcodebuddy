@@ -282,10 +282,14 @@ function changeWeightTareItem(string $barcode, int $newWeight): bool {
 
 /**
  * Change mode if it was supplied by GET parameter
+ *
  * @param string $modeParameter
+ *
  * @throws DbConnectionDuringEstablishException
+ *
+ * @return void
  */
-function processModeChangeGetParameter(string $modeParameter) {
+function processModeChangeGetParameter(string $modeParameter): void {
     $db = DatabaseConnection::getInstance();
     switch (trim($modeParameter)) {
         case "consume":
@@ -312,10 +316,14 @@ function processModeChangeGetParameter(string $modeParameter) {
 
 /**
  * This will be called when a new grocy product is created from BB and the grocy tab is closed
+ *
  * @param string $barcode
+ *
  * @throws DbConnectionDuringEstablishException
+ *
+ * @return void
  */
-function processRefreshedBarcode(string $barcode) {
+function processRefreshedBarcode(string $barcode): void {
     RedisConnection::expireAllProductInfo();
     $productInfo = API::getLastCreatedProduct(5);
     if ($productInfo != null) {
@@ -571,10 +579,14 @@ function cleanNameForTagLookup(string $input): array {
 
 /**
  * If a quantity barcode was scanned, add the quantity and process further
+ *
  * @param int $amount
+ *
  * @throws DbConnectionDuringEstablishException
+ *
+ * @return void
  */
-function changeQuantityAfterScan(int $amount) {
+function changeQuantityAfterScan(int $amount): void {
     $config = BBConfig::getInstance();
 
     $db      = DatabaseConnection::getInstance();
@@ -692,6 +704,9 @@ function strrtrim(string $message, string $strip): string {
     return implode($strip, array_merge($lines, array($last)));
 }
 
+/**
+ * @return false|string
+ */
 function generateRandomString($length = 30) {
     return substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', intval(ceil($length / strlen($x))))), 1, $length);
 }
@@ -703,6 +718,9 @@ function getApiUrl($removeAfter): string {
     return $requestedUrl = trim(substr($url, 0, strpos($url, $removeAfter))) . "api/";
 }
 
+/**
+ * @return never
+ */
 function showErrorNotWritable($error = "DB Error") {
     die($error . ": Database file cannot be created, as folder or database file is not writable. Please check your permissions.<br>
              Have a look at this link to find out how to do this:

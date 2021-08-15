@@ -120,18 +120,21 @@ while (true) {
     }
 }
 
-function sendMode() {
+function sendMode(): void {
     global $currentBBMode;
     sendMessage('{"action":"getmode","data":"4' . $currentBBMode . '"}');
 }
 
-function sendMessage(string $msg) {
+function sendMessage(string $msg): void {
     global $clients;
     foreach ($clients as $changed_socket) {
         @socket_write($changed_socket, $msg, strlen($msg));
     }
 }
 
+/**
+ * @return never
+ */
 function showErrorAndDie(string $functionName) {
     echo $functionName . " failed. Reason: " . socket_strerror(socket_last_error()) . "\n";
     sleep(5);

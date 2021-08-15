@@ -21,13 +21,13 @@ class LockGenerator {
 	private $file = null;
 	private $isLocked = false;
 
-	function createLock() {
+	function createLock(): void {
 		$this->file     = fopen(__DIR__ . '/lockGenerator.inc.php', "r");
 		$this->isLocked = true;
 		flock($this->file, LOCK_EX);
 	}
 
-	function removeLock() {
+	function removeLock(): void {
 		if ($this->file == null)
 			throw new Exception("Lock has not been created!");
 		if ($this->isLocked) {

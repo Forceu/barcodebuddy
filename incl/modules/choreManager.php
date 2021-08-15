@@ -27,9 +27,12 @@ class ChoreManager {
      *
      * @param int $choreId
      * @param string $choreBarcode
+     *
      * @throws DbConnectionDuringEstablishException
+     *
+     * @return void
      */
-    public static function updateBarcode(int $choreId, string $choreBarcode) {
+    public static function updateBarcode(int $choreId, string $choreBarcode): void {
         checkIfNumeric($choreId);
         $db = DatabaseConnection::getInstance()->getDatabaseReference();
         $db->exec("REPLACE INTO ChoreBarcodes(choreId, barcode) VALUES(" . $choreId . ", '" . str_replace('&#39;', "", $choreBarcode) . "')");
@@ -38,10 +41,14 @@ class ChoreManager {
 
     /**
      * Deletes a barcode associated with a chore
+     *
      * @param int $id
+     *
      * @throws DbConnectionDuringEstablishException
+     *
+     * @return void
      */
-    public static function deleteBarcode(int $id) {
+    public static function deleteBarcode(int $id): void {
         checkIfNumeric($id);
         $db = DatabaseConnection::getInstance()->getDatabaseReference();
         $db->exec("DELETE FROM ChoreBarcodes WHERE choreId='$id'");

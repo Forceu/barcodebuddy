@@ -48,17 +48,26 @@ class MenuItemLink {
         return $this;
     }
 
-    public function setText($text) {
+    /**
+     * @return static
+     */
+    public function setText($text): self {
         $this->itemText = $text;
         return $this;
     }
 
-    public function setLink($link) {
+    /**
+     * @return static
+     */
+    public function setLink($link): self {
         $this->itemLink = $link;
         return $this;
     }
 
-    public function setId($id) {
+    /**
+     * @return static
+     */
+    public function setId($id): self {
         $this->itemId = $id;
         return $this;
     }
@@ -74,21 +83,21 @@ class WebUiGenerator {
     }
 
 
-    public function addHtml($html) {
+    public function addHtml($html): void {
         $this->htmlOutput = $this->htmlOutput . $html;
     }
 
-    public function addScript($js) {
+    public function addScript($js): void {
         $this->htmlOutput = $this->htmlOutput . "<script>" . $js . "</script>";
     }
 
 
-    public function printHtml() {
+    public function printHtml(): void {
         echo $this->htmlOutput;
     }
 
 
-    public function addCard($title, $html, $links = null) {
+    public function addCard($title, $html, $links = null): void {
         $this->addHtml('
         <section class="section--center mdl-grid--no-spacing mdl-grid mdl-shadow--2dp">
             <div class="mdl-card mdl-cell  mdl-cell--12-col">
@@ -118,7 +127,7 @@ class WebUiGenerator {
         $this->addHtml('</section>');
     }
 
-    public function addHeader($additionalHeader = null, $enableDialogs = false) {
+    public function addHeader($additionalHeader = null, $enableDialogs = false): void {
         global $CONFIG;
 
         if ($this->menu == MENU_SETTINGS || $this->menu === MENU_GENERIC) {
@@ -229,7 +238,7 @@ class WebUiGenerator {
       <div class="mdl-layout__tab-panel is-active" id="overview">');
     }
 
-    public function addFooter() {
+    public function addFooter(): void {
         global $CONFIG;
 
         if ($this->menu == MENU_SETTINGS || $this->menu === MENU_GENERIC) {
@@ -376,7 +385,7 @@ class WebUiGenerator {
     }
 
 
-    public function addAlert(string $text, string $title = null, string $callback = null, string $size = "medium") {
+    public function addAlert(string $text, string $title = null, string $callback = null, string $size = "medium"): void {
         $alert = 'bootbox.alert({
                 message: "' . $text . '",
                 size: "' . $size . '",';
@@ -390,7 +399,7 @@ class WebUiGenerator {
 
 
     public function addConfirmDialog(string $text, string $callback, string $title = null, string $buttonPositive = "Confirm",
-                                     string $buttonNegative = "Cancel", string $size = "medium") {
+                                     string $buttonNegative = "Cancel", string $size = "medium"): void {
         $alert = 'bootbox.confirm({
                 message: "' . $text . '",
                 size: "' . $size . '",
@@ -518,25 +527,28 @@ class TableGenerator {
     }
 
 
-    function startRow() {
+    function startRow(): void {
         $this->htmlOutput = $this->htmlOutput . '<tr>';
     }
 
-    function addCell($html) {
+    function addCell($html): void {
         $this->htmlOutput = $this->htmlOutput . '<td class="mdl-data-table__cell--non-numeric">' . $html . '</td>';
     }
 
-    function endRow() {
+    function endRow(): void {
         $this->htmlOutput = $this->htmlOutput . '</tr>';
     }
 
-    function getHtml() {
+    function getHtml(): string {
         return $this->htmlOutput . '</tbody></table>';
     }
 
 }
 
 
+/**
+ * @return never
+ */
 function hideGetPostParameters() {
     global $CONFIG;
     header("Location: " . $CONFIG->getPhpSelfWithBaseUrl());

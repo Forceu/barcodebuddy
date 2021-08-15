@@ -227,12 +227,13 @@ class API {
 
 
     /**
-     *   Check if API details are correct
+     * Check if API details are correct
      *
      * @param String $givenurl URL to Grocy API
      * @param String $apikey API key
      *
-     * @return String | true Returns String with error or true if connection could be established
+     * @return string|true Returns String with error or true if connection could be established
+     *
      * @throws DbConnectionDuringEstablishException
      */
     public static function checkApiConnection(string $givenurl, string $apikey) {
@@ -535,10 +536,12 @@ class API {
 
     /**
      * Formats the amount of days into future date
+     *
      * @param int $days Amount of days a product is consumable, or -1 if it does not expire
-     * @return false|string  Formatted date
+     *
+     * @return string Formatted date
      */
-    private static function formatBestBeforeDays(int $days) {
+    private static function formatBestBeforeDays(int $days): string {
         if ($days == -1) {
             return "2999-12-31";
         } else {

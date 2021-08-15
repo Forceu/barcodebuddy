@@ -200,6 +200,11 @@ function generateApiKeyChangeScript(string $functionName, string $keyId): string
             }";
 }
 
+/**
+ * @return (null|string)[]
+ *
+ * @psalm-return array{id1: null|string, id2: null|string, id4: null|string, id8: null|string, id5: null|string, id3: null|string, id6: null|string, id7: null|string}
+ */
 function getProviderListItems(UiEditor $html): array {
     $config                                 = BBConfig::getInstance();
     $result                                 = array();

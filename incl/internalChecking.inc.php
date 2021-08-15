@@ -38,8 +38,9 @@ const OPTIONAL_EXTENSIONS = array();
 /**
  * Checks if the required PHP extensions are installed and active
  *
- * @return array  Returns an array for all modules. $return["result"] is
- *                 RESULT_ALL_INSTALLED, RESULT_OPT_MISSING or RESULT_REQ_MISSING
+ * @return (bool[]|int)[] Returns an array for all modules. $return["result"] is RESULT_ALL_INSTALLED, RESULT_OPT_MISSING or RESULT_REQ_MISSING
+ *
+ * @psalm-return array{req: array<string, bool>, opt: array<bool>, result: 0|1|2}
  */
 function checkExtensionsInstalled(): array {
     $loadedExtensions = get_loaded_extensions();

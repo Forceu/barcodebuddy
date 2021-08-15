@@ -8,7 +8,10 @@ class TagManager {
      * Gets an array of locally stored tags
      *
      * @return Tag[]
+     *
      * @throws DbConnectionDuringEstablishException
+     *
+     * @psalm-return list<Tag>
      */
     public static function getStoredTags(): array {
         $db   = DatabaseConnection::getInstance()->getDatabaseReference();

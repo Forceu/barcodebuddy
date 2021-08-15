@@ -141,9 +141,10 @@ class BarcodeFederation {
 
     /**
      * Gets the amount of stored barcodes
-     * @return string
+     *
+     * @return null|string
      */
-    public static function getCountStoredBarcodes(): string {
+    public static function getCountStoredBarcodes(): ?string {
         $url = self::HOST . "/amount";
         try {
             $curl   = new CurlGenerator($url, METHOD_GET, null, null, true);
@@ -171,6 +172,11 @@ class BarcodeFederation {
         return $uuid;
     }
 
+    /**
+     * @return string[]
+     *
+     * @psalm-return array{uuid: string}
+     */
     public static function getUuidAsArray(): array {
         return array("uuid" => self::getUuid());
     }

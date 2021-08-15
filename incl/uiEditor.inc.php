@@ -32,7 +32,10 @@ class ElementBuilder {
         $this->editorUi = $editorUi;
     }
 
-    function addScript(?string $script): ElementBuilder {
+    /**
+     * @return static
+     */
+    function addScript(?string $script): self {
         if (empty($script)) {
             return $this;
         }
@@ -40,7 +43,10 @@ class ElementBuilder {
         return $this;
     }
 
-    function addSpaces(): ElementBuilder {
+    /**
+     * @return static
+     */
+    function addSpaces(): self {
         $this->spaced = true;
         return $this;
     }
@@ -135,9 +141,9 @@ class ButtonBuilder extends ElementBuilder {
     }
 
     /**
-     * @param string|true $isDisabled
-     * @return static
+     * @param bool $isDisabled
      *
+     * @return static
      */
     function setDisabled(bool $isDisabled = true): self {
         $this->isDisabled = $isDisabled;
@@ -543,10 +549,12 @@ class UiEditor {
 
     /**
      * @return static|string
+     *
+     * @param null|string $value
      */
-    function addEditFieldInternal($name, $label, $value, $pattern = null, $type = "text", $disabled = false, $autocompleteEntries = null, $autocompleteEntriesLinked = null,
+    function addEditFieldInternal(string $name, string $label, ?string $value, $pattern = null, $type = "text", $disabled = false, $autocompleteEntries = null, $autocompleteEntriesLinked = null,
                                   $autocompleteRunAjax = false, $required = true, $minmax = null, $maxlength = null, $minlength = null, $capitalize = false, $onfocusout = null, $isTimeInput = false,
-                                  $onKeyUp = null, $floatingLabel = true, $placeHolder = null, $onKeyPress = null, $width = null, $asHtml = false) {
+                                  $onKeyUp = null, $floatingLabel = true, $placeHolder = null, $onKeyPress = null, $width = null, bool $asHtml = false) {
 
         $minmaxHtml = "";
         if ($minmax != null) {
@@ -922,6 +930,8 @@ class UiEditor {
 
     /**
      * @param int $maxSize
+     *
+     * @return string
      */
     static function addTextWrap($text, int $maxSize = 12, $minSize = 10): string {
         return '<div style="max-width: ' . $maxSize . 'em; min-width: ' . $minSize . 'em; overflow-wrap: break-word; white-space: normal; overflow: auto;">' . $text . '</div>';

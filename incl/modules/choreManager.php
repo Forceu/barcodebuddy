@@ -8,8 +8,12 @@ class ChoreManager {
 
     /**
      * Gets an array of locally stored chore barcodes
+     *
      * @return Chore[]
+     *
      * @throws DbConnectionDuringEstablishException
+     *
+     * @psalm-return list<Chore>
      */
     public static function getBarcodes(): array {
         $db     = DatabaseConnection::getInstance()->getDatabaseReference();
@@ -85,8 +89,11 @@ class ChoreManager {
 
     /**
      * Get chore row from barcode
+     *
      * @param string $barcode Barcode to check
+     *
      * @return array|null DB row or null if not found
+     *
      * @throws DbConnectionDuringEstablishException
      */
     public static function getChoreBarcode(string $barcode): ?array {

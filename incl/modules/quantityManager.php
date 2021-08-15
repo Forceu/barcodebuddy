@@ -4,7 +4,10 @@ class QuantityManager {
 
     /**
      * Gets an array of locally stored quantities
+     *
      * @return ApiQuantity[]
+     *
+     * @psalm-return list<ApiQuantity>
      */
     public static function getQuantities(): array {
         $barcodes       = array();

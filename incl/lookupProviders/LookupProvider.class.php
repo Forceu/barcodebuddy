@@ -60,11 +60,9 @@ class LookupProvider {
     /**
      * Returns the generic or product name, depending what user set in config or if
      * a product / generic name is available
-     *
      * @param string|null $productName
      * @param string|null $genericName
-     *
-     * @return null|string
+     * @return string|null
      */
     public function returnNameOrGenericName(?string $productName, ?string $genericName): ?string {
         $productName = sanitizeString($productName);
@@ -83,11 +81,6 @@ class LookupProvider {
         return null;
     }
 
-    /**
-     * @return (null|string)[]|null
-     *
-     * @psalm-return array{name: string, altNames: null|string}|null
-     */
     public static function createReturnArray(?string $name, ?string $alternateBBuddyName = null): ?array {
         if ($name == null)
             return null;

@@ -164,11 +164,6 @@ class GlobalConfig {
         return $input;
     }
 
-    /**
-     * @return (bool|string)[]
-     *
-     * @psalm-return array<string, bool|string>
-     */
     static private function convertToArray(string $input): array {
         $result          = array();
         $passedArguments = explode(";", $input);

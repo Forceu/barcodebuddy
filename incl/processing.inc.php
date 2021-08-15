@@ -571,11 +571,6 @@ function explodeWordsAndMakeCheckboxes(string $productName, int $id): string {
     return $selections;
 }
 
-/**
- * @return string[]
- *
- * @psalm-return non-empty-list<string>
- */
 function cleanNameForTagLookup(string $input): array {
     $ignoreChars = array(",", ".", "-", ":", "(", ")");
     $cleanWords  = str_replace($ignoreChars, " ", $input);
@@ -614,12 +609,8 @@ function changeQuantityAfterScan(int $amount): void {
 
 /**
  * Merge tags and product info
- *
- * @return Tag[][]
- *
+ * @return array[Tag[],Tag[]]
  * @throws DbConnectionDuringEstablishException
- *
- * @psalm-return array{active: list<Tag>, inactive: list<Tag>}
  */
 function getAllTags(): array {
     $tags       = TagManager::getStoredTags();
@@ -661,12 +652,8 @@ function sortChores(array $a, array $b): int {
 
 /**
  * Merges chores with chore info
- *
  * @return array
- *
  * @throws DbConnectionDuringEstablishException
- *
- * @psalm-return list<mixed>
  */
 function getAllChores(): array {
     $chores       = API::getAllChoresInfo();
@@ -769,35 +756,23 @@ class LogOutput {
             $this->logText .= " [$barcode]";
     }
 
-    /**
-     * @return static
-     */
-    public function setVerbose(): self {
+    public function setVerbose(): LogOutput {
         $this->isVerbose = true;
         return $this;
     }
 
-    /**
-     * @return static
-     */
-    public function insertBarcodeInWebsocketText(): self {
+    public function insertBarcodeInWebsocketText(): LogOutput {
         if ($this->barcode != null)
             $this->websocketText .= " Barcode: $this->barcode";
         return $this;
     }
 
-    /**
-     * @return static
-     */
-    public function dontSendWebsocket(): self {
+    public function dontSendWebsocket(): LogOutput {
         $this->sendWebsocketMessage = false;
         return $this;
     }
 
-    /**
-     * @return static
-     */
-    public function addStockToText(int $amount): self {
+    public function addStockToText(int $amount): LogOutput {
         if (!BBConfig::getInstance()["SHOW_STOCK_ON_SCAN"])
             return $this;
         //Do not have "." at the beginning if last character was "!"
@@ -813,36 +788,25 @@ class LogOutput {
     }
 
 
-    /**
-     * @return static
-     */
-    public function addProductFoundText(): self {
+    public function addProductFoundText(): LogOutput {
         $this->logText = "Product found. " . $this->logText;
         return $this;
     }
 
-    /**
-     * @return static
-     */
-    public function setSendWebsocket(bool $sendWebsocket): self {
+    public function setSendWebsocket(bool $sendWebsocket): LogOutput {
         $this->sendWebsocketMessage = $sendWebsocket;
         return $this;
     }
 
     /**
      * @param int $code
-     *
-     * @return static
      */
-    public function setWebsocketResultCode(int $code): self {
+    public function setWebsocketResultCode(int $code): LogOutput {
         $this->websocketResultCode = $code;
         return $this;
     }
 
-    /**
-     * @return static
-     */
-    public function setCustomWebsocketText(string $text): self {
+    public function setCustomWebsocketText(string $text): LogOutput {
         $this->websocketText = $text;
         return $this;
     }

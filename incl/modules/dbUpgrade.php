@@ -166,10 +166,7 @@ class DbUpgrade {
 
     /**
      * Gets the legacy Quantities stored, needed for the upgrade to 1.6.6.0
-     *
-     * @return Quantity[]
-     *
-     * @psalm-return list<Quantity>
+     * @return array
      */
     private function getQuantitiesForUpgrade(): array {
         $res      = $this->db->query('SELECT * FROM Quantities');

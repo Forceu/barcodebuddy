@@ -98,10 +98,7 @@ class BBuddyApi {
      * @param array|null $data
      * @param string $result
      * @param int $http_int
-     *
-     * @return (array|null)[] (array|mixed)[]
-     *
-     * @psalm-return array{data: array|null, result: array{result: string, http_code: int}}
+     * @return array (array|mixed)[]
      */
     static function createResultArray(array $data = null, string $result = "OK", int $http_int = 200): array {
         return array(

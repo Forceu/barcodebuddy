@@ -296,10 +296,7 @@ class DatabaseConnection {
 
     /**
      * Gets an array of locally stored barcodes
-     *
-     * @return array[][]
-     *
-     * @psalm-return array{known: list<array{id: mixed, barcode: mixed, amount: mixed, name: mixed, match: mixed, tare: mixed, bestBeforeInDays: mixed, price: mixed, bbServerAltNames: mixed}>, unknown: list<array{id: mixed, barcode: mixed, amount: mixed, name: mixed, match: mixed, tare: mixed, bestBeforeInDays: mixed, price: mixed, bbServerAltNames: mixed}>, tare: list<array{id: mixed, barcode: mixed, amount: mixed, name: mixed, match: mixed, tare: mixed, bestBeforeInDays: mixed, price: mixed, bbServerAltNames: mixed}>}
+     * @return array
      */
     public function getStoredBarcodes(): array {
         $res                 = $this->db->query('SELECT * FROM Barcodes');
@@ -452,10 +449,7 @@ class DatabaseConnection {
 
     /**
      * Gets an array of BBuddy API keys
-     *
-     * @return array[]
-     *
-     * @psalm-return list<array{id: mixed, key: mixed, lastused: mixed}>
+     * @return array
      */
     public function getStoredApiKeys(): array {
         $res     = $this->db->query('SELECT * FROM ApiKeys');
@@ -518,10 +512,7 @@ class DatabaseConnection {
 
     /**
      * Get all stored logs
-     *
      * @return array
-     *
-     * @psalm-return list<mixed>
      */
     public function getLogs(): array {
         $res  = $this->db->query('SELECT * FROM BarcodeLogs ORDER BY id DESC');

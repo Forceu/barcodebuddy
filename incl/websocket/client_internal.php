@@ -41,11 +41,9 @@ class SocketClient {
     public function connect(): bool {
         $this->socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
         if ($this->socket === false) {
-            echo "socket_create() failed: reason: " . getLastError() . "\n";
             return false;
         }
-        if (socket_connect($this->socket, $this->address, $this->port) === false) {
-            echo "socket_connect() failed.\nReason: " . socket_strerror(socket_last_error($this->socket)) . "\n";
+        if (@socket_connect($this->socket, $this->address, $this->port) === false) {
             return false;
         }
         return true;

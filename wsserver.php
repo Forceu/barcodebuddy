@@ -135,7 +135,7 @@ function sendMessage(string $msg): void {
 /**
  * @return never
  */
-function showErrorAndDie(string $functionName) {
+function showErrorAndDie(string $functionName):void {
     echo $functionName . " failed. Reason: " . socket_strerror(socket_last_error()) . "\n";
     sleep(5);
     die();

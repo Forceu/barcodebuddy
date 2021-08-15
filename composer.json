@@ -4,6 +4,8 @@
     "nikic/php-parser": "4.12.0"
   },
   "require": {
-    "ext-redis": "*"
+    "ext-redis": "*",
+    "ext-sockets": "*",
+    "ext-curl": "*"
   }
 }

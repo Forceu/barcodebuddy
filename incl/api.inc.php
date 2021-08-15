@@ -553,7 +553,12 @@ class API {
      * @param bool $ignoreCache Cache will be ignored if true
      * @return GrocyProduct|null Product info or null if barcode is not associated with a product
      */
-    public static function getProductByBarcode(string $barcode, $ignoreCache = false): ?GrocyProduct {
+    public static function getProductByBarcode(string $barcode, bool $ignoreCache = false): ?GrocyProduct {
+        if (stringStartsWith($barcode, "GRCY:P:")) {
+            $id = str_replace("GRCY:P:", "", $barcode);
+            checkIfNumeric($id);
+            return self::getProductInfo(intval($id));
+        }
         $allBarcodes = self::getAllBarcodes($ignoreCache);
         if (!isset($allBarcodes[$barcode])) {
             return null;
@@ -592,7 +597,7 @@ class API {
         foreach ($curlResult as $item) {
             if (!isset($item["barcode"]) || !isset($item["product_id"]))
                 continue;
-            $barcode = strval($item["barcode"]);
+            $barcode                        = strval($item["barcode"]);
             $result[$barcode]["id"]         = $item["product_id"];
             $result[$barcode]["factor"]     = $item["amount"];
             $result[$barcode]["barcode_id"] = $item["id"];

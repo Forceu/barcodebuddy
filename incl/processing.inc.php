@@ -75,6 +75,7 @@ function processNewBarcode(string $barcodeInput, ?string $bestBeforeInDays = nul
         $log = new LogOutput("Set quantity to $quantity for barcode $lastBarcode", EVENT_TYPE_MODE_CHANGE);
         return $log->setVerbose()->createLog();
     }
+
     if (trim($barcode) == "") {
         $log = new LogOutput("Invalid barcode found", EVENT_TYPE_ERROR);
         return $log->setVerbose()->setWebsocketResultCode(WS_RESULT_PRODUCT_UNKNOWN)->createLog();
@@ -98,6 +99,7 @@ function processNewBarcode(string $barcodeInput, ?string $bestBeforeInDays = nul
         return processKnownBarcode($productInfoFromBarcode, $sanitizedBarcode, true, $lockGenerator, $bestBeforeInDays, $price);
     }
 }
+
 
 function createLogModeChange(int $state): string {
     $text = "Set state to ";
@@ -163,13 +165,17 @@ const WS_RESULT_ERROR             = 'E';
 
 /**
  * Execute a chore when chore barcode was submitted
- * @param string $barcode
+ * @param string $barcode Barcode
  * @return mixed
  * @throws DbConnectionDuringEstablishException
  */
 function processChoreBarcode(string $barcode) {
-    $id = ChoreManager::getChoreBarcode(sanitizeString($barcode))['choreId'];
-    checkIfNumeric($id);
+    if (ChoreManager::isGrocyCode($barcode))
+        $id = ChoreManager::getIdFromGrocyCode($barcode);
+    else
+        $id = ChoreManager::getChoreBarcode(sanitizeString($barcode))['choreId'];
+
+    $id = checkIfNumeric($id);
     API::executeChore($id);
     return sanitizeString(API::getChoreInfo($id)["name"]);
 }
@@ -518,11 +524,13 @@ function sanitizeString(?string $input, bool $strongFilter = false) {
 /**
  * Terminates script if non numeric
  * @param string $input
+ * @return int Returns value as int if valid
  */
-function checkIfNumeric(string $input) {
-    if (!is_numeric($input)) {
+function checkIfNumeric(string $input): int {
+    if (!is_numeric($input) && $input != "") {
         die("Illegal input! " . sanitizeString($input) . " needs to be a number");
     }
+    return intval($input);
 }
 
 /**

@@ -2,6 +2,9 @@
 
 
 class ChoreManager {
+
+    const GROCY_CODE_CHORE = "GRCY:C:";
+
     /**
      * Gets an array of locally stored chore barcodes
      * @return Chore[]
@@ -50,7 +53,25 @@ class ChoreManager {
      * @throws DbConnectionDuringEstablishException
      */
     public static function isChoreBarcode(string $barcode): bool {
-        return (self::getChoreBarcode($barcode) != null);
+        return (self::isGrocyCode($barcode) || self::getChoreBarcode($barcode) != null);
+    }
+
+    /**
+     * Checks if a barcode is a GrocyCode
+     * @param string $barcode
+     * @return bool
+     */
+    public static function isGrocyCode(string $barcode): bool {
+        return stringStartsWith($barcode, ChoreManager::GROCY_CODE_CHORE);
+    }
+
+    /**
+     * Returns the ID from a grocyCode
+     * @param string $barcode
+     * @return string ID from barcode, NOT checked for validity!
+     */
+    public static function getIdFromGrocyCode(string $barcode): string {
+        return str_replace(ChoreManager::GROCY_CODE_CHORE, "", $barcode);
     }
 
 

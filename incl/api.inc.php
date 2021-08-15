@@ -335,7 +335,7 @@ class API {
      */
     public static function purchaseProduct(int $id, int $amount, string $bestbefore = null, string $price = null, LockGenerator &$fileLock = null, string $defaultBestBefore = null): bool {
         $data = array(
-            'amount'           => $amount,
+            'amount' => $amount,
             'transaction_type' => 'purchase'
         );
 
@@ -380,7 +380,7 @@ class API {
      */
     public static function removeFromShoppinglist(int $productid, int $amount): void {
         $data = json_encode(array(
-            'product_id'     => $productid,
+            'product_id' => $productid,
             'product_amount' => $amount
         ));
         $url  = API_SHOPPINGLIST . "remove-product";
@@ -404,7 +404,7 @@ class API {
      */
     public static function addToShoppinglist(int $productid, int $amount): void {
         $data = json_encode(array(
-            'product_id'     => $productid,
+            'product_id' => $productid,
             'product_amount' => $amount
         ));
         $url  = API_SHOPPINGLIST . "add-product";
@@ -432,9 +432,9 @@ class API {
             return;
 
         $data = json_encode(array(
-            'amount'           => $amount,
+            'amount' => $amount,
             'transaction_type' => 'consume',
-            'spoiled'          => $spoiled
+            'spoiled' => $spoiled
         ));
 
         $url = API_STOCK . "/" . $id . "/consume";
@@ -460,7 +460,7 @@ class API {
 
         $data = json_encode(array(
             "product_id" => $id,
-            "barcode"    => $barcode
+            "barcode" => $barcode
         ));
 
         $curl = new CurlGenerator(API_O_BARCODES, METHOD_POST, $data);
@@ -557,8 +557,7 @@ class API {
         if ($info == null)
             return 0;
         $days = $info->defaultBestBeforeDays;
-        checkIfNumeric($days);
-        return $days;
+        return checkIfNumeric($days);
     }
 
 
@@ -691,7 +690,7 @@ class API {
         $url  = API_CHORE_EXECUTE . $choreId . "/execute";
         $data = json_encode(array(
             'tracked_time' => "",
-            'done_by'      => ""
+            'done_by' => ""
         ));
 
 

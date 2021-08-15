@@ -66,7 +66,7 @@ function processNewBarcode(string $barcodeInput, ?string $bestBeforeInDays = nul
     }
     if (stringStartsWith($barcode, $config["BARCODE_Q"])) {
         $quantity = str_replace($config["BARCODE_Q"], "", $barcode);
-        checkIfNumeric($quantity);
+        $quantity = checkIfNumeric($quantity);
         if ($config["LAST_PRODUCT"] != null) {
             $lastBarcode = $config["LAST_BARCODE"] . " (" . $config["LAST_PRODUCT"] . ")";
         } else {
@@ -285,9 +285,9 @@ function changeWeightTareItem(string $barcode, int $newWeight): bool {
  *
  * @param string $modeParameter
  *
+ * @return void
  * @throws DbConnectionDuringEstablishException
  *
- * @return void
  */
 function processModeChangeGetParameter(string $modeParameter): void {
     $db = DatabaseConnection::getInstance();
@@ -319,9 +319,9 @@ function processModeChangeGetParameter(string $modeParameter): void {
  *
  * @param string $barcode
  *
+ * @return void
  * @throws DbConnectionDuringEstablishException
  *
- * @return void
  */
 function processRefreshedBarcode(string $barcode): void {
     RedisConnection::expireAllProductInfo();
@@ -518,9 +518,9 @@ function printSelections(string $selected, ?array $productinfo): string {
  * Sanitizes a string for database input
  * @param string|null $input
  * @param bool $strongFilter
- * @return mixed|null
+ * @return string|null
  */
-function sanitizeString(?string $input, bool $strongFilter = false) {
+function sanitizeString(?string $input, bool $strongFilter = false): ?string {
     if ($input == null)
         return null;
     if ($strongFilter) {
@@ -582,9 +582,9 @@ function cleanNameForTagLookup(string $input): array {
  *
  * @param int $amount
  *
+ * @return void
  * @throws DbConnectionDuringEstablishException
  *
- * @return void
  */
 function changeQuantityAfterScan(int $amount): void {
     $config = BBConfig::getInstance();
@@ -645,7 +645,7 @@ function sortTags(Tag $a, Tag $b): int {
  * @param $b
  * @return int
  */
-function sortChores($a, $b): int {
+function sortChores(array $a, array $b): int {
     return strcmp($a['name'], $b['name']);
 }
 
@@ -705,13 +705,13 @@ function strrtrim(string $message, string $strip): string {
 }
 
 /**
- * @return false|string
+ * @return string
  */
-function generateRandomString($length = 30) {
+function generateRandomString(int $length = 30): string {
     return substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', intval(ceil($length / strlen($x))))), 1, $length);
 }
 
-function getApiUrl($removeAfter): string {
+function getApiUrl(string $removeAfter): string {
     $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
 
     $url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -721,7 +721,7 @@ function getApiUrl($removeAfter): string {
 /**
  * @return never
  */
-function showErrorNotWritable($error = "DB Error") {
+function showErrorNotWritable(string $error = "DB Error") {
     die($error . ": Database file cannot be created, as folder or database file is not writable. Please check your permissions.<br>
              Have a look at this link to find out how to do this:
              <a href='https://github.com/olab/Open-Labyrinth/wiki/How-do-I-make-files-and-folders-writable-for-the-web-server%3F'>" . "How do I make files and folders writable for the web server?</a>");
@@ -772,7 +772,7 @@ class LogOutput {
         return $this;
     }
 
-    public function addStockToText($amount): LogOutput {
+    public function addStockToText(int $amount): LogOutput {
         if (!BBConfig::getInstance()["SHOW_STOCK_ON_SCAN"])
             return $this;
         //Do not have "." at the beginning if last character was "!"

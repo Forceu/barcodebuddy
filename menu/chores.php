@@ -50,7 +50,7 @@ $webUi->addFooter();
 $webUi->printHtml();
 
 
-function getHtmlChoreTable() {
+function getHtmlChoreTable(): string {
     $chores = getAllChores();
     $html   = new UiEditor();
     if (sizeof($chores) == 0) {

@@ -44,7 +44,7 @@ function loadConfigPhp(): void {
     require_once $configPath;
 }
 
-function createConfigPhp($configPath): void {
+function createConfigPhp(string $configPath): void {
     require_once __DIR__ . "/processing.inc.php";
     if (!is_writable(dirname($configPath))) {
         showErrorNotWritable("FS Error DATA_PATH_NOT_WRITABLE");
@@ -135,7 +135,12 @@ class GlobalConfig {
         }
     }
 
-    static private function convertCorrectType(string $input, $originalVar) {
+    /**
+     * @param string $input
+     * @param object $originalVar
+     * @return array|bool|string
+     */
+    static private function convertCorrectType(string $input, object $originalVar) {
         if (!is_array($originalVar)) {
             $variableType = gettype($originalVar);
             $result       = self::convertPossibleBoolean($input);
@@ -146,7 +151,11 @@ class GlobalConfig {
 
     }
 
-    //PHP converts String "false" to true...
+    /**
+     * PHP converts String "false" to true...
+     * @param string $input
+     * @return bool|string
+     */
     static private function convertPossibleBoolean(string $input) {
         if ($input === "true")
             return true;
@@ -155,7 +164,7 @@ class GlobalConfig {
         return $input;
     }
 
-    static private function convertToArray($input): array {
+    static private function convertToArray(string $input): array {
         $result          = array();
         $passedArguments = explode(";", $input);
         foreach ($passedArguments as $argument) {
@@ -266,7 +275,7 @@ class GlobalConfig {
         return $ip;
     }
 
-    private function ipInSubnet(string $ip, $subnet): bool {
+    private function ipInSubnet(string $ip, string $subnet): bool {
         $subnetComponents = explode("/", $subnet);
         $subnetAddress    = $subnetComponents[0];
 
@@ -317,12 +326,11 @@ class GlobalConfig {
     /**
      * IPv6 address to list of bits
      *
-     * @param $inet
-     * @param false|string $inet
+     * @param string $inet
      *
      * @return string
      */
-    private function inet_to_bits($inet): string {
+    private function inet_to_bits(string $inet): string {
         $unpacked = unpack('A16', $inet);
         $unpacked = str_split($unpacked[1]);
         $binaryip = '';

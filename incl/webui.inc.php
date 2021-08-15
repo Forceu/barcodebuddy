@@ -82,7 +82,7 @@ class WebUiGenerator {
     private $htmlOutput = "";
     private $menu = MENU_GENERIC;
 
-    public function __construct($menu) {
+    public function __construct(int $menu) {
         $this->menu = $menu;
     }
 
@@ -526,7 +526,7 @@ class WebUiGenerator {
 class TableGenerator {
     private $htmlOutput = "";
 
-    function __construct($tableHeadItems) {
+    function __construct(array $tableHeadItems) {
         $this->htmlOutput = '<table class="mdl-data-table mdl-js-data-table mdl-cell">
                  <thead>
                     <tr>';

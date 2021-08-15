@@ -32,7 +32,7 @@ function connectToSocket(): bool {
 function outputSocketError(): void {
     $errorcode = socket_last_error();
     $errormsg  = socket_strerror($errorcode);
-    sendData('{"action":"error","data":"E' . $errorcode . ' ' . $errormsg . '"}', "100000000");
+    sendData('{"action":"error","data":"E' . $errorcode . ' ' . $errormsg . '"}', 100000000);
 }
 
 function sendStillAlive(): void {
@@ -53,7 +53,7 @@ function readData(): void {
     $client->close();
 }
 
-function sendData($data, $retryMs = 10): void {
+function sendData(string $data, int $retryMs = 10): void {
     echo "retry: {$retryMs}\n";
     echo "data: {$data}\n\n";
     flush();

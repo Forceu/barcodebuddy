@@ -48,9 +48,9 @@ class QuantityManager {
      * @param SQLite3|null $db A DB reference can be passed. Only use for upgrading DB to new version!
      * @param string $barcode
      *
+     * @return void
      * @throws DbConnectionDuringEstablishException
      *
-     * @return void
      */
     public static function syncBarcodeToGrocy(string $barcode, SQLite3 $db = null): void {
         $storedAmount = self::getStoredQuantityForBarcode($barcode, true, $db);
@@ -88,16 +88,14 @@ class QuantityManager {
     /**
      * Adds a default quantity for a barcode or updates the product
      *
-     * @param $barcode
-     * @param $amount
-     * @param $product
-     *
-     * @throws DbConnectionDuringEstablishException
+     * @param string $barcode
+     * @param int $amount
+     * @param string|null $product
      *
      * @return void
+     * @throws DbConnectionDuringEstablishException
      */
-    public static function addUpdateEntry(string $barcode, int $amount, $product = null): void {
-        checkIfNumeric($amount);
+    public static function addUpdateEntry(string $barcode, int $amount, string $product = null): void {
         $db = DatabaseConnection::getInstance()->getDatabaseReference();
         if ($product == null) {
             $db->exec("REPLACE INTO Quantities(barcode, quantity) VALUES ('$barcode', $amount)");
@@ -110,15 +108,13 @@ class QuantityManager {
     /**
      * Deletes Quantity barcode
      *
-     * @param $id
+     * @param int $id
      * @param SQLite3|null $db A DB reference can be passed. Only use for upgrading DB to new version!
      *
-     * @throws DbConnectionDuringEstablishException
-     *
      * @return void
+     * @throws DbConnectionDuringEstablishException
      */
-    public static function delete($id, SQLite3 $db = null): void {
-        checkIfNumeric($id);
+    public static function delete(int $id, SQLite3 $db = null): void {
         if ($db == null)
             $db = DatabaseConnection::getInstance()->getDatabaseReference();
         $db->exec("DELETE FROM Quantities WHERE id='$id'");
@@ -133,7 +129,7 @@ class Quantity {
     public $product;
 
 
-    public function __construct($dbRow) {
+    public function __construct(array $dbRow) {
         if (!$this->isValidRow($dbRow)) {
             throw new RuntimeException("Invalid row supplied to create Quantity Object");
         }
@@ -143,7 +139,7 @@ class Quantity {
         $this->product  = $dbRow['product'];
     }
 
-    private function isValidRow($dbRow): bool {
+    private function isValidRow(array $dbRow): bool {
         return (array_key_exists('id', $dbRow) &&
             array_key_exists('barcode', $dbRow) &&
             array_key_exists('quantity', $dbRow) &&

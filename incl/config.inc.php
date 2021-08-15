@@ -15,7 +15,7 @@ class BBConfig implements ArrayAccess, Iterator, Countable {
      *
      * @param $db DatabaseConnection
      */
-    private function __construct($db) {
+    private function __construct(DatabaseConnection $db) {
         global $CONFIG;
 
         $res = $db->getRawConfig();

@@ -21,7 +21,7 @@ class ProviderDebug extends LookupProvider {
 
     const RETURN_STRING = "This is a test result";
 
-    function __construct($apiKey = null) {
+    function __construct(string $apiKey = null) {
         parent::__construct($apiKey);
         $this->providerName      = "Debug Lookup";
         $this->providerConfigKey = "USE_DEBUG_LOOKUP";

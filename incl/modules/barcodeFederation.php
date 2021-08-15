@@ -32,7 +32,7 @@ class BarcodeFederation {
             return;
         if (time() < $config["BBUDDY_SERVER_NEXTSYNC"])
             return;
-        DatabaseConnection::getInstance()->updateConfig("BBUDDY_SERVER_NEXTSYNC", time() + rand(self::SECONDS_24_HOURS, self::SECONDS_24_HOURS * 2));
+        DatabaseConnection::getInstance()->updateConfig("BBUDDY_SERVER_NEXTSYNC", strval(time() + rand(self::SECONDS_24_HOURS, self::SECONDS_24_HOURS * 2)));
         self::syncBarcodes();
     }
 

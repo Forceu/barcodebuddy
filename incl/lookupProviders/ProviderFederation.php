@@ -20,7 +20,7 @@ require_once __DIR__ . "/../api.inc.php";
 class ProviderFederation extends LookupProvider {
 
 
-    function __construct($apiKey = null) {
+    function __construct(string $apiKey = null) {
         parent::__construct($apiKey);
         $this->providerName       = "Barcode Buddy Cloud";
         $this->providerConfigKey  = "LOOKUP_USE_BBUDDY_SERVER";

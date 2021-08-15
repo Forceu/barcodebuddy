@@ -71,9 +71,9 @@ class CurlGenerator {
      */
     function __construct(string $url, string $method = METHOD_GET,
                          string $jasonData = null, array $loginOverride = null,
-                         bool $noApiCall = false, array $ignoredResultCodes = null,
-                         array $formData = null, string $userAgent = null,
-                         array $headers = null) {
+                         bool   $noApiCall = false, array $ignoredResultCodes = null,
+                         array  $formData = null, string $userAgent = null,
+                         array  $headers = null) {
         global $CONFIG;
 
         $config = BBConfig::getInstance();
@@ -180,9 +180,9 @@ class CurlGenerator {
 
 
     /**
-     * @param $curlResult
      * @param bool|string $curlResult
      *
+     * @return void
      * @throws InternalServerErrorException
      * @throws InvalidParameterException
      * @throws InvalidSSLException
@@ -190,10 +190,8 @@ class CurlGenerator {
      * @throws LimitExceededException
      * @throws NotFoundException
      * @throws UnauthorizedException
-     *
-     * @return void
      */
-    private function checkForErrorsAndThrow($curlResult) {
+    private function checkForErrorsAndThrow($curlResult): void {
         $curlError    = curl_errno($this->ch);
         $responseCode = curl_getinfo($this->ch, CURLINFO_RESPONSE_CODE);
 

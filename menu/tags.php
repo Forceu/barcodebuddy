@@ -45,7 +45,7 @@ $webUi->addFooter();
 $webUi->printHtml();
 
 
-function getHtmlTagTable($isActive) {
+function getHtmlTagTable(bool $isActive):string {
     $allTags = getAllTags();
 
     if ($isActive) {

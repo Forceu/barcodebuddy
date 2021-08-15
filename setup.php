@@ -73,6 +73,11 @@ $webUi->addFooter();
 $webUi->printHtml();
 
 
+/**
+ * @param String | true $result
+ * @return string
+ * @throws DbConnectionDuringEstablishException
+ */
 function getHtmlSetupTable($result): string {
     $config = BBConfig::getInstance();
     $html   = new UiEditor();
@@ -128,7 +133,7 @@ function getHtmlSetupExtMissing(): string {
     return $html->getHtml();
 }
 
-function formatExtentioncolor($name, $installed, $req): string {
+function formatExtentioncolor(string $name, bool $installed, bool $req): string {
     if ($installed) {
         return 'Installed: <span style="color:green">' . $name . '</span><br>';
     } else {

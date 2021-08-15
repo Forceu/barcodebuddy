@@ -76,46 +76,46 @@ class DatabaseConnection {
 
     /* 1 is used for true and 0 for false, as PHP interprets the String "false" as Boolean "true" */
     const DEFAULT_VALUES = array(
-        "BARCODE_C"                     => "BBUDDY-C",
-        "BARCODE_CS"                    => "BBUDDY-CS",
-        "BARCODE_CA"                    => "BBUDDY-CA",
-        "BARCODE_P"                     => "BBUDDY-P",
-        "BARCODE_O"                     => "BBUDDY-O",
-        "BARCODE_GS"                    => "BBUDDY-I",
-        "BARCODE_Q"                     => "BBUDDY-Q-",
-        "BARCODE_AS"                    => "BBUDDY-AS",
-        "REVERT_TIME"                   => "10",
-        "REVERT_SINGLE"                 => "1",
-        "MORE_VERBOSE"                  => "1",
-        "GROCY_API_URL"                 => null,
-        "GROCY_API_KEY"                 => null,
-        "LAST_BARCODE"                  => null,
-        "LAST_PRODUCT"                  => null,
-        "WS_FULLSCREEN"                 => "0",
-        "SHOPPINGLIST_REMOVE"           => "1",
-        "USE_GENERIC_NAME"              => "1",
-        "CONSUME_SAVED_QUANTITY"        => "0",
-        "USE_GROCY_QU_FACTOR"           => "0",
-        "SHOW_STOCK_ON_SCAN"            => "0",
-        "LOOKUP_USE_OFF"                => "1",
-        "LOOKUP_USE_UPC"                => "1",
-        "LOOKUP_USE_JUMBO"              => "0",
-        "LOOKUP_USE_AH"                 => "0",
-        "LOOKUP_USE_PLUS"               => "0",
-        "LOOKUP_USE_UPC_DATABASE"       => "0",
+        "BARCODE_C" => "BBUDDY-C",
+        "BARCODE_CS" => "BBUDDY-CS",
+        "BARCODE_CA" => "BBUDDY-CA",
+        "BARCODE_P" => "BBUDDY-P",
+        "BARCODE_O" => "BBUDDY-O",
+        "BARCODE_GS" => "BBUDDY-I",
+        "BARCODE_Q" => "BBUDDY-Q-",
+        "BARCODE_AS" => "BBUDDY-AS",
+        "REVERT_TIME" => "10",
+        "REVERT_SINGLE" => "1",
+        "MORE_VERBOSE" => "1",
+        "GROCY_API_URL" => null,
+        "GROCY_API_KEY" => null,
+        "LAST_BARCODE" => null,
+        "LAST_PRODUCT" => null,
+        "WS_FULLSCREEN" => "0",
+        "SHOPPINGLIST_REMOVE" => "1",
+        "USE_GENERIC_NAME" => "1",
+        "CONSUME_SAVED_QUANTITY" => "0",
+        "USE_GROCY_QU_FACTOR" => "0",
+        "SHOW_STOCK_ON_SCAN" => "0",
+        "LOOKUP_USE_OFF" => "1",
+        "LOOKUP_USE_UPC" => "1",
+        "LOOKUP_USE_JUMBO" => "0",
+        "LOOKUP_USE_AH" => "0",
+        "LOOKUP_USE_PLUS" => "0",
+        "LOOKUP_USE_UPC_DATABASE" => "0",
         "LOOKUP_USE_OPEN_GTIN_DATABASE" => "0",
-        "LOOKUP_USE_BBUDDY_SERVER"      => "0",
-        "LOOKUP_UPC_DATABASE_KEY"       => null,
-        "LOOKUP_OPENGTIN_KEY"           => null,
-        "USE_REDIS"                     => DEFAULT_USE_REDIS,
-        "REDIS_IP"                      => "127.0.0.1",
-        "REDIS_PORT"                    => "6379",
-        "REDIS_PW"                      => "",
-        "BBUDDY_SERVER_UUID"            => null,
-        "BBUDDY_SERVER_ENABLED"         => "0",
-        "BBUDDY_SERVER_POPUPSHOWN"      => "0",
-        "BBUDDY_SERVER_NEXTSYNC"        => "0",
-        "LOOKUP_ORDER"                  => LOOKUP_ID_OPENFOODFACTS . "," .
+        "LOOKUP_USE_BBUDDY_SERVER" => "0",
+        "LOOKUP_UPC_DATABASE_KEY" => null,
+        "LOOKUP_OPENGTIN_KEY" => null,
+        "USE_REDIS" => DEFAULT_USE_REDIS,
+        "REDIS_IP" => "127.0.0.1",
+        "REDIS_PORT" => "6379",
+        "REDIS_PW" => "",
+        "BBUDDY_SERVER_UUID" => null,
+        "BBUDDY_SERVER_ENABLED" => "0",
+        "BBUDDY_SERVER_POPUPSHOWN" => "0",
+        "BBUDDY_SERVER_NEXTSYNC" => "0",
+        "LOOKUP_ORDER" => LOOKUP_ID_OPENFOODFACTS . "," .
             LOOKUP_ID_UPCDB . "," .
             LOOKUP_ID_UPCDATABASE . "," .
             LOOKUP_ID_ALBERTHEIJN . "," .
@@ -166,9 +166,9 @@ class DatabaseConnection {
     /**
      * Initiate database and create global variable for config
      *
+     * @return void
      * @throws DbConnectionDuringEstablishException
      *
-     * @return void
      */
     private function initDb(): void {
         global $CONFIG;
@@ -356,20 +356,19 @@ class DatabaseConnection {
     /**
      * Sets the possible match for a barcode that has a tag in its name
      *
-     * @param $barcode
-     * @param $productId
+     * @param string $barcode
+     * @param int $productId
      *
      * @return void
      */
-    public function updateSavedBarcodeMatch(string $barcode, $productId): void {
-        checkIfNumeric($productId);
+    public function updateSavedBarcodeMatch(string $barcode, int $productId): void {
         $this->db->exec("UPDATE Barcodes SET possibleMatch='$productId' WHERE barcode='$barcode'");
     }
 
 
     /**
      * Returns true if an unknown barcode is already in the list
-     * @param $barcode
+     * @param string $barcode
      * @return bool
      */
     public function isUnknownBarcodeAlreadyStored(string $barcode): bool {
@@ -380,8 +379,8 @@ class DatabaseConnection {
     /**
      * Increases quantity of a saved barcode (not to confuse with default quantity)
      *
-     * @param $barcode
-     * @param $amount
+     * @param string $barcode
+     * @param int $amount
      *
      * @return void
      */
@@ -393,8 +392,8 @@ class DatabaseConnection {
     /**
      * Sets quantity of a saved barcode (not to confuse with default quantity)
      *
-     * @param $barcode
-     * @param $amount
+     * @param string $barcode
+     * @param int $amount
      *
      * @return void
      */
@@ -410,8 +409,6 @@ class DatabaseConnection {
      * @param string|null $bestBeforeInDays
      * @param string|null $price
      * @param array|null $productname
-     * @param int $match
-     *
      * @return void
      */
     public function insertUnrecognizedBarcode(string $barcode, int $amount = 1, string $bestBeforeInDays = null, string $price = null, ?array $productname = null): void {
@@ -433,6 +430,7 @@ class DatabaseConnection {
     }
 
     /**
+     * @param string $barcode
      * @param null|string $bestBeforeInDays
      * @param null|string $price
      */
@@ -466,7 +464,7 @@ class DatabaseConnection {
         return $apikeys;
     }
 
-    public function isValidApiKey($apiKey): bool {
+    public function isValidApiKey(string $apiKey): bool {
         foreach ($this->getStoredApiKeys() as $key) {
             if ($apiKey === $key["key"]) {
                 $this->db->exec("UPDATE ApiKeys SET lastused=datetime('now','localtime') WHERE id=" . $key["id"]);
@@ -479,9 +477,9 @@ class DatabaseConnection {
 
     /**
      * Generates API key
-     * @return false|string
+     * @return string
      */
-    public function generateApiKey() {
+    public function generateApiKey(): string {
         $key = generateRandomString();
         $this->db->exec("INSERT INTO ApiKeys(key, lastused) VALUES('" . $key . "', 'Never');");
         return $key;
@@ -491,11 +489,11 @@ class DatabaseConnection {
     /**
      * Deletes API key
      *
-     * @param $id
+     * @param string $id
      *
      * @return void
      */
-    public function deleteApiKey($id): void {
+    public function deleteApiKey(string $id): void {
         checkIfNumeric($id);
         $this->db->exec("DELETE FROM ApiKeys WHERE id='$id'");
     }
@@ -537,12 +535,13 @@ class DatabaseConnection {
     /**
      * Save a log
      *
-     * @param $log
+     * @param string $log
      * @param bool $isVerbose
      * @param bool $isError
      * @param bool $isDebug
      *
      * @return void
+     * @throws DbConnectionDuringEstablishException
      */
     public function saveLog(string $log, bool $isVerbose = false, bool $isError = false, bool $isDebug = false): void {
         if ($isVerbose == false || BBConfig::getInstance()["MORE_VERBOSE"] == true) {
@@ -572,11 +571,11 @@ class DatabaseConnection {
     /**
      * Delete all saved barcodes
      *
-     * @param $section
+     * @param string $section
      *
      * @return void
      */
-    public function deleteAll($section): void {
+    public function deleteAll(string $section): void {
         switch ($section) {
             case SECTION_KNOWN_BARCODES:
                 $this->db->exec("DELETE FROM Barcodes WHERE name IS NOT 'N/A'");
@@ -596,17 +595,19 @@ class DatabaseConnection {
 
 
     /**
-     * @return mixed
+     * @return false|SQLite3Result
      */
     function getRawConfig() {
         return $this->db->query("SELECT * FROM BBConfig");
     }
 
     //Sets the config key with new value
+
     /**
-     * @param int|null|string $value
+     * @param string $key
+     * @param string|null $value
      */
-    public function updateConfig(string $key, $value): void {
+    public function updateConfig(string $key, ?string $value): void {
         if (in_array($key, self::DB_INT_VALUES)) {
             checkIfNumeric($value);
         }

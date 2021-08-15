@@ -28,9 +28,9 @@ class ChoreManager {
      * @param int $choreId
      * @param string $choreBarcode
      *
+     * @return void
      * @throws DbConnectionDuringEstablishException
      *
-     * @return void
      */
     public static function updateBarcode(int $choreId, string $choreBarcode): void {
         checkIfNumeric($choreId);
@@ -44,9 +44,9 @@ class ChoreManager {
      *
      * @param int $id
      *
+     * @return void
      * @throws DbConnectionDuringEstablishException
      *
-     * @return void
      */
     public static function deleteBarcode(int $id): void {
         checkIfNumeric($id);
@@ -108,7 +108,7 @@ class Chore {
     public $barcode;
 
 
-    public function __construct($dbRow) {
+    public function __construct(array $dbRow) {
         if (!$this->isValidRow($dbRow)) {
             throw new RuntimeException("Invalid row supplied to create Chore Object");
         }
@@ -118,7 +118,7 @@ class Chore {
     }
 
 
-    private function isValidRow($dbRow): bool {
+    private function isValidRow(array $dbRow): bool {
         return (array_key_exists('id', $dbRow) &&
             array_key_exists('choreId', $dbRow) &&
             array_key_exists('barcode', $dbRow));

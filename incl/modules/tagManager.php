@@ -26,11 +26,11 @@ class TagManager {
      * @param $tagName
      * @param $itemid
      *
+     * @return void
      * @throws DbConnectionDuringEstablishException
      *
-     * @return void
      */
-    public static function add($tagName, $itemid): void {
+    public static function add(string $tagName, int $itemid): void {
         $db = DatabaseConnection::getInstance()->getDatabaseReference();
         $db->exec("INSERT INTO Tags(tag, itemId) VALUES('$tagName', $itemid);");
     }
@@ -38,7 +38,7 @@ class TagManager {
     /**
      * Returns true if $name is not saved as a tag yet
      *
-     * @param $name
+     * @param string $name
      * @return bool
      * @throws DbConnectionDuringEstablishException
      */
@@ -71,9 +71,9 @@ class TagManager {
      *
      * @param int $id
      *
+     * @return void
      * @throws DbConnectionDuringEstablishException
      *
-     * @return void
      */
     public static function delete(int $id): void {
         $db = DatabaseConnection::getInstance()->getDatabaseReference();
@@ -110,7 +110,7 @@ class Tag {
     public $itemId;
     public $item;
 
-    public function __construct($dbRow) {
+    public function __construct(array $dbRow) {
         if (!$this->isValidRow($dbRow)) {
             throw new RuntimeException("Invalid row supplied to create Tag Object");
         }
@@ -120,7 +120,7 @@ class Tag {
         $this->item   = "";
     }
 
-    public function setName($name): void {
+    public function setName(string $name): void {
         $this->item = $name;
     }
 
@@ -134,7 +134,7 @@ class Tag {
         return strcmp(strtoupper($this->name), strtoupper($otherTag->name));
     }
 
-    private function isValidRow($dbRow): bool {
+    private function isValidRow(array $dbRow): bool {
         return (array_key_exists('id', $dbRow) &&
             array_key_exists('tag', $dbRow) &&
             array_key_exists('itemId', $dbRow));

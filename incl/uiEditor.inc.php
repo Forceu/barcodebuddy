@@ -25,7 +25,7 @@ class ElementBuilder {
     protected $spaced = false;
     protected $scripts = array();
 
-    function __construct($name, $label, $value, $editorUi) {
+    function __construct(string $name, string $label, ?string $value, UiEditor $editorUi) {
         $this->name     = $name;
         $this->label    = $label;
         $this->value    = $value;
@@ -45,6 +45,10 @@ class ElementBuilder {
         return $this;
     }
 
+    /**
+     * @param bool $asHtml
+     * @return string|UiEditor
+     */
     function generate(bool $asHtml = false) {
         $result = $this->generateInternal() . $this->generateScript();
         if ($asHtml) {
@@ -65,10 +69,7 @@ class ElementBuilder {
         return $result;
     }
 
-    /**
-     * @return never
-     */
-    protected function generateInternal() {
+    protected function generateInternal(): string {
         throw new Exception('generate needs to be overridden!');
     }
 }
@@ -103,7 +104,7 @@ class ButtonBuilder extends ElementBuilder {
     /**
      * @return static
      */
-    function setRaised($isRaised = true): self {
+    function setRaised(bool $isRaised = true): self {
         $this->isRaised = $isRaised;
         return $this;
     }
@@ -111,7 +112,7 @@ class ButtonBuilder extends ElementBuilder {
     /**
      * @return static
      */
-    function setHidden($isHidden = true): self {
+    function setHidden(bool $isHidden = true): self {
         $this->isHidden = $isHidden;
         return $this;
     }
@@ -119,7 +120,7 @@ class ButtonBuilder extends ElementBuilder {
     /**
      * @return static
      */
-    function setIsColoured($isColoured = true): self {
+    function setIsColoured(bool $isColoured = true): self {
         $this->isColoured = $isColoured;
         return $this;
     }
@@ -127,18 +128,18 @@ class ButtonBuilder extends ElementBuilder {
     /**
      * @return static
      */
-    function setIsAccent($isAccent = true): self {
+    function setIsAccent(bool $isAccent = true): self {
         $this->isColoured = true;
         $this->isAccent   = $isAccent;
         return $this;
     }
 
     /**
+     * @param string|true $isDisabled
      * @return static
      *
-     * @param string|true $isDisabled
      */
-    function setDisabled($isDisabled = true): self {
+    function setDisabled(bool $isDisabled = true): self {
         $this->isDisabled = $isDisabled;
         return $this;
     }
@@ -146,7 +147,7 @@ class ButtonBuilder extends ElementBuilder {
     /**
      * @return static
      */
-    function setAdditionalClasses($additionalClasses): self {
+    function setAdditionalClasses(string $additionalClasses): self {
         $this->additionalClasses = $additionalClasses;
         return $this;
     }
@@ -154,7 +155,7 @@ class ButtonBuilder extends ElementBuilder {
     /**
      * @return static
      */
-    function setSubmit($isSubmit = true): self {
+    function setSubmit(bool $isSubmit = true): self {
         $this->isSubmit = $isSubmit;
         return $this;
     }
@@ -162,12 +163,12 @@ class ButtonBuilder extends ElementBuilder {
     /**
      * @return static
      */
-    function setValue($value): self {
+    function setValue(string $value): self {
         $this->value = $value;
         return $this;
     }
 
-    protected function generateInternal() {
+    protected function generateInternal(): string {
         return $this->editorUi->addButton($this->name,
             $this->label,
             $this->onClick,
@@ -192,7 +193,7 @@ class CheckBoxBuilder extends ElementBuilder {
     /**
      * @return static
      */
-    function disabled($disabled): self {
+    function disabled(bool $disabled): self {
         $this->isDisabled = $disabled;
         return $this;
     }
@@ -200,7 +201,7 @@ class CheckBoxBuilder extends ElementBuilder {
     /**
      * @return static
      */
-    function useSpaces($useSpaces): self {
+    function useSpaces(bool $useSpaces): self {
         $this->useSpaces = $useSpaces;
         return $this;
     }
@@ -214,7 +215,10 @@ class CheckBoxBuilder extends ElementBuilder {
         return $this->addScript($changeScript);
     }
 
-    protected function generateInternal() {
+    /**
+     * @return string
+     */
+    protected function generateInternal(): string {
         return $this->editorUi->addCheckBoxInternal(
             $this->name,
             $this->label,
@@ -256,9 +260,9 @@ class EditFieldBuilder extends ElementBuilder {
     }
 
     /**
+     * @param string $type
      * @return static
      *
-     * @param string $type
      */
     function type(string $type): self {
         // Max length does not work with "number"
@@ -294,11 +298,11 @@ class EditFieldBuilder extends ElementBuilder {
     }
 
     /**
+     * @param bool $required
      * @return static
      *
-     * @param false|null|string $required
      */
-    function required($required): self {
+    function required(bool $required): self {
         $this->required = $required;
         return $this;
     }
@@ -306,7 +310,7 @@ class EditFieldBuilder extends ElementBuilder {
     /**
      * @return static
      */
-    function setDefault($array): self {
+    function setDefault(array $array): self {
         if (isset($array[$this->name])) {
             $this->value = $array[$this->name];
         }
@@ -314,9 +318,9 @@ class EditFieldBuilder extends ElementBuilder {
     }
 
     /**
+     * @param array $minmax
      * @return static
      *
-     * @param (mixed|null)[] $minmax
      */
     function minmax(array $minmax): self {
         $this->minmax = $minmax;
@@ -326,7 +330,7 @@ class EditFieldBuilder extends ElementBuilder {
     /**
      * @return static
      */
-    function maxlength($maxlength): self {
+    function maxlength(int $maxlength): self {
         $this->maxlength = $maxlength;
         if ($this->type == "number") {
             // Max length does not work with "number"
@@ -336,9 +340,9 @@ class EditFieldBuilder extends ElementBuilder {
     }
 
     /**
+     * @param string $width
      * @return static
      *
-     * @param string $width
      */
     function setWidth(string $width): self {
         $this->width = $width;
@@ -346,9 +350,9 @@ class EditFieldBuilder extends ElementBuilder {
     }
 
     /**
+     * @param int $minlength
      * @return static
      *
-     * @param int $minlength
      */
     function minlength(int $minlength): self {
         $this->minlength = $minlength;
@@ -362,7 +366,7 @@ class EditFieldBuilder extends ElementBuilder {
     /**
      * @return static
      */
-    function capitalize($capitalize = true): self {
+    function capitalize(bool $capitalize = true): self {
         $this->capitalize = $capitalize;
         return $this;
     }
@@ -376,9 +380,9 @@ class EditFieldBuilder extends ElementBuilder {
     }
 
     /**
+     * @param string $onfocusout
      * @return static
      *
-     * @param string $onfocusout
      */
     function onfocusout(string $onfocusout): self {
         $this->onfocusout = $onfocusout;
@@ -394,9 +398,9 @@ class EditFieldBuilder extends ElementBuilder {
     }
 
     /**
+     * @param string $onKeyPress
      * @return static
      *
-     * @param string $onKeyPress
      */
     function onKeyPress(string $onKeyPress): self {
         $this->onKeyPress = $onKeyPress;
@@ -404,16 +408,19 @@ class EditFieldBuilder extends ElementBuilder {
     }
 
     /**
+     * @param false $floatingLabel
      * @return static
      *
-     * @param false $floatingLabel
      */
     function setFloatingLabel(bool $floatingLabel = false): self {
         $this->floatingLabel = $floatingLabel;
         return $this;
     }
 
-    protected function generateInternal() {
+    /**
+     * @return string
+     */
+    protected function generateInternal(): string {
         return $this->editorUi->addEditFieldInternal(
             $this->name, $this->label, $this->value, $this->pattern,
             $this->type, $this->disabled, $this->autocompleteEntries,
@@ -435,7 +442,7 @@ class AutoComplete {
     private $runAjax = false;
 
 
-    function __construct($id, $items, $linkedItems = null, $runAjax = false) {
+    function __construct(string $id, ?array $items, ?array $linkedItems = null, bool $runAjax = false) {
         $this->formId = $id;
         $this->items  = $items;
         if ($linkedItems != null) {
@@ -469,7 +476,7 @@ class UiEditor {
     private $hasTimeInput = false;
 
 
-    function __construct($createForm = true, $onSubmit = null, $formname = null) {
+    function __construct(bool $createForm = true, string $onSubmit = null, string $formname = null) {
         global $CONFIG;
         $onSubmitHtml = "";
         if ($onSubmit != null) {
@@ -507,7 +514,7 @@ class UiEditor {
     /**
      * @return static|string
      */
-    function addCheckBoxInternal($name, $label, $isChecked, $isDisabled = false, $useSpaces = true, $onChanged = "", $asHtml = false) {
+    function addCheckBoxInternal(string $name, string $label, bool $isChecked, bool $isDisabled = false, bool $useSpaces = true, string $onChanged = "", bool $asHtml = false) {
         $disabledHtml = "";
         $checkedHtml  = "";
         if ($isDisabled)
@@ -622,10 +629,10 @@ class UiEditor {
     }
 
     /**
-     * @return static|string
-     *
      * @param string $name
      * @param null|string $value
+     * @return static|string
+     *
      */
     function addHiddenField(string $name, ?string $value, $asHtml = false) {
         $html = '<input type="hidden" id="' . $name . '" value="' . $value . '" name="' . $name . '"/>';
@@ -676,9 +683,9 @@ class UiEditor {
     }
 
     /**
+     * @param null|string $isChecked
      * @return static|string
      *
-     * @param null|string $isChecked
      */
     function addCheckbox(string $name, string $label, ?string $isChecked, bool $isDisabled = false, bool $useSpaces = true, bool $asHtml = false) {
         $checkedHtml = "";
@@ -762,17 +769,22 @@ class UiEditor {
 
     /**
      * @param string $name
-     * @param null|string $onClick
-     * @param false $isRaised
-     * @param false $isHidden
-     * @param false $asHtml
-     * @param false $isColoured
-     * @param false $isDisabled
-     * @param null|string $additionalClasses
      * @param string $label
+     * @param null|string $onClick
+     * @param bool $isRaised
+     * @param bool $isHidden
+     * @param bool $asHtml
+     * @param bool $isColoured
+     * @param bool $isDisabled
+     * @param null|string $additionalClasses
+     * @param null $id
+     * @param bool $isSubmit
+     * @param null $value
+     * @param bool $isAccent
+     * @return string
      */
     function addButton(string $name, string $label, ?string $onClick = null, bool $isRaised = false, bool $isHidden = false, bool $asHtml = false, bool $isColoured = false,
-                       bool $isDisabled = false, ?string $additionalClasses = null, $id = null, $isSubmit = false, $value = null, $isAccent = false): string {
+                       bool   $isDisabled = false, ?string $additionalClasses = null, $id = null, bool $isSubmit = false, $value = null, bool $isAccent = false): string {
 
         if ($id == null)
             $id = $name;
@@ -878,11 +890,13 @@ class UiEditor {
     }
 
     /**
+     * @param string $htmlHeader
+     * @param string $htmlBody
+     * @param string $data
+     * @param bool $asHtml
      * @return null|string
-     *
-     * @param static|string $htmlHeader
      */
-    function addListItem($htmlHeader, string $htmlBody, string $data = "", bool $asHtml = false) {
+    function addListItem(string $htmlHeader, string $htmlBody, string $data = "", bool $asHtml = false): ?string {
         //Add spaces if there is a checkbox
         if (strpos($htmlHeader, "mdl-checkbox") !== false) {
             $htmlBody = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $htmlBody;
@@ -913,7 +927,7 @@ class UiEditor {
         return '<div style="max-width: ' . $maxSize . 'em; min-width: ' . $minSize . 'em; overflow-wrap: break-word; white-space: normal; overflow: auto;">' . $text . '</div>';
     }
 
-    function getHtml() {
+    function getHtml(): string {
         if ($this->createForm) {
             $result = $this->htmlOutput . '</form></div>';
         } else {

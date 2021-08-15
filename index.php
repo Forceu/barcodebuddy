@@ -106,9 +106,9 @@ if (sizeof($barcodes['known']) > 0 || sizeof($barcodes['unknown']) > 0 || sizeof
 //Only pass refreshed cards to AJAX
 if (isset($_GET["ajaxrefresh"])) {
     $returnArray = array("f1" => getHtmlMainMenuTableKnown($barcodes),
-                         "f2" => getHtmlMainMenuTableUnknown($barcodes),
-                         "f3" => getHtmlLogTextArea(),
-                         "f4" => getHtmlMainMenuReqActions($barcodes));
+        "f2" => getHtmlMainMenuTableUnknown($barcodes),
+        "f3" => getHtmlLogTextArea(),
+        "f4" => getHtmlMainMenuReqActions($barcodes));
     echo json_encode($returnArray, JSON_HEX_QUOT);
     die();
 }
@@ -220,18 +220,19 @@ function processButtons(): void {
         }
         checkIfNumeric($id);
         $gidSelected = $_POST["select_" . $id];
+        $gidSelected = checkIfNumeric($gidSelected);
         if ($gidSelected != 0) {
             $row = $db->getBarcodeById($id);
             if ($row !== false) {
                 $barcode = sanitizeString($row["barcode"], true);
                 $amount  = $row["amount"];
-                checkIfNumeric($amount);
+                $amount  = checkIfNumeric($amount);
                 if (isset($_POST["tags"])) {
                     foreach ($_POST["tags"][$id] as $tag) {
                         TagManager::add(sanitizeString($tag), $gidSelected);
                     }
                 }
-                $product = API::getProductInfo(sanitizeString($gidSelected));
+                $product = API::getProductInfo($gidSelected);
                 API::addBarcode($gidSelected, $barcode);
                 $log = new LogOutput("Associated barcode $barcode with " . $product->name, EVENT_TYPE_ASSOCIATE_PRODUCT);
                 $log->setVerbose()->dontSendWebsocket()->createLog();

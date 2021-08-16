@@ -53,7 +53,7 @@ If you are using a reverse proxy, please make sure to disable caching, see [docu
 
 ## License
 
-This project is licensed under the GNU GPL3 - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the AGPL3 - see the [LICENSE.md](LICENSE.md) file for details
 
 
 ## Donations

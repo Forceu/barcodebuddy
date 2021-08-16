@@ -32,7 +32,7 @@ function connectToSocket(): bool {
 function outputSocketError(): void {
     $errorcode = socket_last_error();
     $errormsg  = socket_strerror($errorcode);
-    sendData('{"action":"error","data":"E' . $errorcode . ' ' . $errormsg . '"}', 100000000);
+    sendData('{"action":"error","data":"EError ' . $errorcode . ': ' . $errormsg . '"}', 100000000);
 }
 
 function sendStillAlive(): void {
@@ -45,10 +45,16 @@ function readData(): void {
     $timeStart = microtime(true);
     while (microtime(true) - $timeStart < MAX_EXECUTION_TIME_S) {
         $data = $client->readData();
-        if ($data !== false)
+        if ($data !== false && $data != "")
             sendData($data);
-        else
+        else {
+            if (socket_last_error() != 0) {
+                outputSocketError();
+                die();
+            }
             sendStillAlive();
+        }
+
     }
     $client->close();
 }

@@ -73,12 +73,12 @@ while (true) {
     //manage multiple connections
     $changed = $clients;
     //returns the socket resources in $changed array
-    socket_select($changed, $null, $null, 0, 10);
+    socket_select($changed, $null, $null, $null, 0);
 
     //check for new clients
     if (in_array($socket, $changed)) {
-        $socket_new = socket_accept($socket); //accept new socket
-        $clients[]  = $socket_new; //add socket to client array
+        $socket_new   = socket_accept($socket); //accept new socket
+        $clients[]    = $socket_new; //add socket to client array
         $found_socket = array_search($socket, $changed);
         unset($changed[$found_socket]);
     }
@@ -86,35 +86,33 @@ while (true) {
     //loop through all connected clients
     foreach ($changed as $changed_socket) {
         $buf = @socket_read($changed_socket, 1024);
-        if ($buf === false) { // check disconnected client
+        if ($buf === false || $buf === "") { // check disconnected client
             // remove client for $clients array
             $found_socket = array_search($changed_socket, $clients);
             unset($clients[$found_socket]);
         } else {
             // A message was received
-            if (strlen($buf) > 1) {
-                $command = $buf[0];
-                $data    = substr($buf, 1);
-                switch ($command) {
-                    // Get mode
-                    case '0':
-                        sendMode();
-                        break;
-                    // Set mode
-                    case '1':
-                        if (in_array($data, $allowedModes)) {
-                            $currentBBMode = $data;
-                        }
-                        sendMode();
-                        break;
-                    // Echo
-                    case '2':
-                        sendMessage('{"action":"echo","data":"' . $data . '"}');
-                        break;
-                    // Invalid command
-                    default:
-                        echo "Unknown command " . $buf;
-                }
+            $command = $buf[0];
+            $data    = substr($buf, 1);
+            switch ($command) {
+                // Get mode
+                case '0':
+                    sendMode();
+                    break;
+                // Set mode
+                case '1':
+                    if (in_array($data, $allowedModes)) {
+                        $currentBBMode = $data;
+                    }
+                    sendMode();
+                    break;
+                // Echo
+                case '2':
+                    sendMessage('{"action":"echo","data":"' . $data . '"}');
+                    break;
+                // Invalid command
+                default:
+                    echo "Unknown command " . $buf;
             }
         }
     }
@@ -135,7 +133,7 @@ function sendMessage(string $msg): void {
 /**
  * @return never
  */
-function showErrorAndDie(string $functionName):void {
+function showErrorAndDie(string $functionName): void {
     echo $functionName . " failed. Reason: " . socket_strerror(socket_last_error()) . "\n";
     sleep(5);
     die();

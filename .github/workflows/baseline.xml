@@ -323,11 +323,6 @@
       <code>$value == null</code>
     </RedundantConditionGivenDocblockType>
   </file>
-  <file src="../../incl/websocket/client_internal.php">
-    <UndefinedFunction occurrences="1">
-      <code>getLastError()</code>
-    </UndefinedFunction>
-  </file>
   <file src="../../incl/webui.inc.php">
     <RedundantCondition occurrences="1">
       <code>is_array($links)</code>
@@ -436,5 +431,10 @@
       <code>$eventType</code>
       <code>$log</code>
     </MissingParamType>
+  </file>
+  <file src="../../wsserver.php">
+    <NullArgument occurrences="1">
+      <code>$null</code>
+    </NullArgument>
   </file>
 </files>

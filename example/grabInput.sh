@@ -142,7 +142,7 @@ evtest --grab "$deviceToUse" | while read line; do
       enteredText+="$key"
     else
       echo "[ScannerConnection] Received: $enteredText"
-      if [[ "$enteredText" -eq "$SPECIAL_BARCODE" ]]; then
+      if [[ "$enteredText" == "$SPECIAL_BARCODE" ]]; then
         specialAction
       else
         if [[ $USE_CURL == false ]]; then

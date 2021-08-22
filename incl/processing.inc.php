@@ -705,6 +705,7 @@ function strrtrim(string $message, string $strip): string {
 }
 
 /**
+ * @param int $length
  * @return string
  */
 function generateRandomString(int $length = 30): string {

@@ -335,7 +335,7 @@ class API {
      */
     public static function purchaseProduct(int $id, int $amount, string $bestbefore = null, string $price = null, LockGenerator &$fileLock = null, string $defaultBestBefore = null): bool {
         $data = array(
-            'amount' => $amount,
+            'amount'           => $amount,
             'transaction_type' => 'purchase'
         );
 
@@ -380,7 +380,7 @@ class API {
      */
     public static function removeFromShoppinglist(int $productid, int $amount): void {
         $data = json_encode(array(
-            'product_id' => $productid,
+            'product_id'     => $productid,
             'product_amount' => $amount
         ));
         $url  = API_SHOPPINGLIST . "remove-product";
@@ -404,7 +404,7 @@ class API {
      */
     public static function addToShoppinglist(int $productid, int $amount): void {
         $data = json_encode(array(
-            'product_id' => $productid,
+            'product_id'     => $productid,
             'product_amount' => $amount
         ));
         $url  = API_SHOPPINGLIST . "add-product";
@@ -432,9 +432,9 @@ class API {
             return;
 
         $data = json_encode(array(
-            'amount' => $amount,
+            'amount'           => $amount,
             'transaction_type' => 'consume',
-            'spoiled' => $spoiled
+            'spoiled'          => $spoiled
         ));
 
         $url = API_STOCK . "/" . $id . "/consume";
@@ -460,7 +460,7 @@ class API {
 
         $data = json_encode(array(
             "product_id" => $id,
-            "barcode" => $barcode
+            "barcode"    => $barcode
         ));
 
         $curl = new CurlGenerator(API_O_BARCODES, METHOD_POST, $data);
@@ -568,10 +568,12 @@ class API {
      * @return GrocyProduct|null Product info or null if barcode is not associated with a product
      */
     public static function getProductByBarcode(string $barcode, bool $ignoreCache = false): ?GrocyProduct {
+        $grocyCode = self::getProductIdFromGrocyCode($barcode);
+        if ($grocyCode != null)
+            return self::getProductInfo($grocyCode);
         if (stringStartsWith($barcode, "GRCY:P:")) {
             $id = str_replace("GRCY:P:", "", $barcode);
-            $id = checkIfNumeric($id);
-            return self::getProductInfo($id);
+            return self::getProductInfo(checkIfNumeric($id));
         }
         $allBarcodes = self::getAllBarcodes($ignoreCache);
         if (!isset($allBarcodes[$barcode])) {
@@ -579,6 +581,21 @@ class API {
         } else {
             return self::getProductInfo($allBarcodes[$barcode]["id"]);
         }
+    }
+
+    private static function getProductIdFromGrocyCode(string $barcode): ?int {
+        if (!stringStartsWith($barcode, "GRCY:P:"))
+            return null;
+        // regular grocycode
+        if (preg_match("/^GRCY:P:\d+$/", $barcode)) {
+            return checkIfNumeric(str_replace("GRCY:P:", "", $barcode));
+        }
+        // grocycode related to specific stock entry
+        if (preg_match("/^GRCY:P:\d+:.+$/", $barcode)) {
+            $idArray = explode(":", $barcode);
+            return checkIfNumeric($idArray[2]);
+        }
+        return null;
     }
 
 
@@ -690,7 +707,7 @@ class API {
         $url  = API_CHORE_EXECUTE . $choreId . "/execute";
         $data = json_encode(array(
             'tracked_time' => "",
-            'done_by' => ""
+            'done_by'      => ""
         ));
 
 

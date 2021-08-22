@@ -32,6 +32,9 @@ function connectToSocket(): bool {
 function outputSocketError(): void {
     $errorcode = socket_last_error();
     $errormsg  = socket_strerror($errorcode);
+    if ($errorcode == 111) {
+        $errormsg = "Connection refused. Please make sure that the socket server is running.";
+    }
     sendData('{"action":"error","data":"EError ' . $errorcode . ': ' . $errormsg . '"}', 100000000);
 }
 
@@ -49,7 +52,8 @@ function readData(): void {
             sendData($data);
         else {
             if (socket_last_error() != 0) {
-                outputSocketError();
+                if (socket_last_error() != 11)
+                    outputSocketError();
                 die();
             }
             sendStillAlive();

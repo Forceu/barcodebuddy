@@ -146,9 +146,8 @@ $webUi->printHtml();
 function displayFederationPopupHtml(WebUiGenerator &$webUi): void {
     $config = BBConfig::getInstance();
     if (!$config["BBUDDY_SERVER_ENABLED"] && !$config["BBUDDY_SERVER_POPUPSHOWN"]) {
-        $webUi->addConfirmDialog("We are proud to introduce Barcode Buddy Federation, which enables you to lookup " .
-            "barcodes that other users have already associated with a Grocy product before. The lookup is very fast " .
-            "(around 100ms, depending on your location) and should be quite accurate.<br>It requires no signup, but " .
+        $webUi->addConfirmDialog("Do you want to enable Barcode Buddy Federation? This enables you to lookup " .
+            "barcodes that other users have already associated with a Grocy product before. It requires no signup, but " .
             "is limited to 200 requests per day.<br><br><span style='font-size: smaller'><i>By using this method, you agree that all your Grocy product " .
             "names that are associated with barcodes, the barcodes itself, your IP address and an unique ID will be " .
             "sent and stored at a remote Barcode Buddy server located in Germany. No other data is sent or stored and " .
@@ -156,7 +155,7 @@ function displayFederationPopupHtml(WebUiGenerator &$webUi): void {
             "<a href='https://github.com/Forceu/barcodebuddy-federation/'>on Github</a> and can be selfhosted as well.</i>" .
             "</span><br><br><b>Would you like to enable Barcode Buddy Federation?</b>",
             "if (result) { location.href='./index.php?fed=1'; } else { location.href='./index.php?fed=0';}",
-            "Introducing Barcode Buddy Federation", "Use Federation", "Cancel", "large");
+            "Enable Barcode Buddy Federation", "Use Federation", "Cancel", "large");
     }
 }
 

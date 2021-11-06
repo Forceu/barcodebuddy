@@ -50,11 +50,14 @@ function getHtmlFederation(): string {
     $config = BBConfig::getInstance();
     $html   = new UiEditor();
     $html->addHtml("Barcode Buddy Federation enables you to lookup barcodes that other users have already associated with a Grocy product before.
-                          The lookup is very fast (around 100ms, depending on your location) and should be quite accurate.
-                          <br>It requires no signup, but is limited to 200 requests per day.<br><br>
-                          <span style='font-size: smaller'><i>By using this method, you agree that all your Grocy product names that are associated with barcodes, the barcodes itself, your IP address and an
+                          <br>It requires no signup, but is limited to 200 requests per day.");
+    if (!$config["BBUDDY_SERVER_ENABLED"]) {
+        $html->addLineBreak(2);
+        $html->addHtml("<span style='font-size: smaller'><i>By using this method, you agree that all your Grocy product names that are associated with barcodes, the barcodes itself, your IP address and an
                           unique ID will be sent and stored at a remote Barcode Buddy server located in Germany. No other data is sent or stored and no data will be used
                           for commercial purposes. The sourcecode for the server application is available <a href='https://github.com/Forceu/barcodebuddy-federation/'>on Github</a> and can be selfhosted as well.</i></span>");
+    }
+
     $html->addLineBreak(3);
     if ($config["BBUDDY_SERVER_ENABLED"]) {
         $html->buildButton("federation_disable", "Disable Federation")

@@ -537,13 +537,13 @@ function sanitizeString(?string $input, bool $strongFilter = false): ?string {
 /**
  * Terminates script if non numeric
  * @param string $input
- * @return int Returns value as int if valid
+ * @return float Returns value as float if valid
  */
-function checkIfNumeric(string $input): int {
+function checkIfNumeric(string $input): float {
     if (!is_numeric($input) && $input != "") {
         die("Illegal input! " . sanitizeString($input) . " needs to be a number");
     }
-    return intval($input);
+    return floatval($input);
 }
 
 /**

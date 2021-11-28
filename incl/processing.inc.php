@@ -259,7 +259,7 @@ function changeWeightTareItem(string $barcode, int $newWeight): bool {
     if ($product == null)
         return false;
 
-    if ((intval($product->stockAmount) + $product->tareWeight) == $newWeight) {
+    if ((floatval($product->stockAmount) + $product->tareWeight) == $newWeight) {
         $log = new LogOutput("Weight unchanged for: " . $product->name, EVENT_TYPE_ACTION_REQUIRED);
         $log->setVerbose()->dontSendWebsocket()->createLog();
         return true;

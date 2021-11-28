@@ -75,7 +75,7 @@ class QuantityManager {
         $config = BBConfig::getInstance();
         if ($isConsume && !$config["CONSUME_SAVED_QUANTITY"])
             return 1;
-        $amountSavedInProduct = intval($productInfo->quFactor);
+        $amountSavedInProduct = floatval($productInfo->quFactor);
         $barcodes             = API::getAllBarcodes();
         if (isset($barcodes[$barcode]) && $barcodes[$barcode]["factor"] != null)
             return $barcodes[$barcode]["factor"];

@@ -410,7 +410,7 @@ function processKnownBarcode(GrocyProduct $productInfo, string $barcode, bool $w
             if ($productInfo->stockAmount > 0) {
                 $log    = new LogOutput("Consuming " . $amountToSpoil . " spoiled " . $productInfo->unit . " of " . $productInfo->name, EVENT_TYPE_ADD_KNOWN_BARCODE, $barcode);
                 $output = $log
-                    ->addStockToText($productInfo->stockAmount - 1)
+                    ->addStockToText($productInfo->stockAmount - $amountToSpoil)
                     ->setWebsocketResultCode(WS_RESULT_PRODUCT_FOUND)
                     ->addProductFoundText()
                     ->createLog();
@@ -483,7 +483,7 @@ function processKnownBarcode(GrocyProduct $productInfo, string $barcode, bool $w
             $amount    = QuantityManager::getQuantityForBarcode($barcode, false, $productInfo);
             $fileLock->removeLock();
             $output = (new LogOutput("Added to shopping list: " . $amount . " " . $productInfo->unit . " of " . $productInfo->name, EVENT_TYPE_ADD_KNOWN_BARCODE))->createLog();
-            API::addToShoppinglist($productInfo->id, $amount);
+            API::addToShoppinglist($productInfo->id, 1);
             return $output;
         default:
             throw new Exception("Unknown state");
@@ -584,13 +584,13 @@ function cleanNameForTagLookup(string $input): array {
 /**
  * If a quantity barcode was scanned, add the quantity and process further
  *
- * @param int $amount
+ * @param float $amount
  *
  * @return void
  * @throws DbConnectionDuringEstablishException
  *
  */
-function changeQuantityAfterScan(int $amount): void {
+function changeQuantityAfterScan(float $amount): void {
     $config = BBConfig::getInstance();
 
     $db      = DatabaseConnection::getInstance();
@@ -777,7 +777,7 @@ class LogOutput {
         return $this;
     }
 
-    public function addStockToText(int $amount): LogOutput {
+    public function addStockToText(float $amount): LogOutput {
         if (!BBConfig::getInstance()["SHOW_STOCK_ON_SCAN"])
             return $this;
         //Do not have "." at the beginning if last character was "!"

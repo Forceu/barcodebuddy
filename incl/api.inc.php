@@ -207,13 +207,14 @@ class API {
      * Open product with $id
      *
      * @param int productId
+     * @param float amount
      *
      * @return void
      */
-    public static function openProduct(int $id): void {
+    public static function openProduct(int $id, float $amount): void {
 
         $data = json_encode(array(
-            'amount' => "1"
+            'amount' => $amount
         ));
         $url  = API_STOCK . "/" . $id . "/open";
 
@@ -325,7 +326,7 @@ class API {
      *  Adds a Grocy product.
      *
      * @param int $id
-     * @param int $amount
+     * @param float $amount
      * @param string|null $bestbefore
      * @param string|null $price
      * @param LockGenerator|null $fileLock
@@ -333,7 +334,7 @@ class API {
      * @return bool if default best before date not set
      * @throws Exception
      */
-    public static function purchaseProduct(int $id, int $amount, string $bestbefore = null, string $price = null, LockGenerator &$fileLock = null, string $defaultBestBefore = null): bool {
+    public static function purchaseProduct(int $id, float $amount, string $bestbefore = null, string $price = null, LockGenerator &$fileLock = null, string $defaultBestBefore = null): bool {
         $data = array(
             'amount'           => $amount,
             'transaction_type' => 'purchase'
@@ -374,11 +375,11 @@ class API {
      * Removes an item from the default shoppinglist
      *
      * @param int $productid
-     * @param int $amount
+     * @param float $amount
      *
      * @return void
      */
-    public static function removeFromShoppinglist(int $productid, int $amount): void {
+    public static function removeFromShoppinglist(int $productid, float $amount): void {
         $data = json_encode(array(
             'product_id'     => $productid,
             'product_amount' => $amount
@@ -398,11 +399,11 @@ class API {
      * Adds an item to the default shoppinglist
      *
      * @param int $productid
-     * @param int $amount
+     * @param float $amount
      *
      * @return void
      */
-    public static function addToShoppinglist(int $productid, int $amount): void {
+    public static function addToShoppinglist(int $productid, float $amount): void {
         $data = json_encode(array(
             'product_id'     => $productid,
             'product_amount' => $amount
@@ -422,12 +423,12 @@ class API {
      * Consumes a product
      *
      * @param int id
-     * @param int amount
+     * @param float amount
      * @param boolean set true if product was spoiled. Default: false
      *
      * @return void
      */
-    public static function consumeProduct(int $id, int $amount, bool $spoiled = false) {
+    public static function consumeProduct(int $id, float $amount, bool $spoiled = false) {
         if ($amount <= 0)
             return;
 
@@ -477,12 +478,12 @@ class API {
      * Adds quantity information from grocy barcode
      *
      * @param string $barcode Barcode to modify
-     * @param int $quantity
+     * @param float $quantity
      * @param bool $ignoreCache
      *
      * @return void
      */
-    public static function addBarcodeQuantity(string $barcode, int $quantity, bool $ignoreCache = false) {
+    public static function addBarcodeQuantity(string $barcode, float $quantity, bool $ignoreCache = false) {
 
         $data = json_encode(array(
             "amount" => $quantity,

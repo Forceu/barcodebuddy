@@ -28,7 +28,7 @@ class QuantityManager {
      * @return int quantity or 1 if not found
      * @throws DbConnectionDuringEstablishException
      */
-    public static function getStoredQuantityForBarcode(string $barcode, bool $deleteAfterCompletion = false, SQLite3 $db = null): int {
+    public static function getStoredQuantityForBarcode(string $barcode, bool $deleteAfterCompletion = false, SQLite3 $db = null): float {
         if ($db == null)
             $db = DatabaseConnection::getInstance()->getDatabaseReference();
         $res = $db->query("SELECT * FROM Quantities WHERE barcode='$barcode'");
@@ -71,7 +71,7 @@ class QuantityManager {
      * @return int
      * @throws DbConnectionDuringEstablishException
      */
-    public static function getQuantityForBarcode(string $barcode, bool $isConsume, GrocyProduct $productInfo): int {
+    public static function getQuantityForBarcode(string $barcode, bool $isConsume, GrocyProduct $productInfo): float {
         $config = BBConfig::getInstance();
         if ($isConsume && !$config["CONSUME_SAVED_QUANTITY"])
             return 1;

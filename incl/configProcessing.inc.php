@@ -137,7 +137,7 @@ class GlobalConfig {
 
     /**
      * @param string $input
-     * @param $originalVar
+     * @psalm-suppress MissingParamType
      * @return array|bool|string
      */
     static private function convertCorrectType(string $input, $originalVar) {

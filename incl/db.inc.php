@@ -384,7 +384,7 @@ class DatabaseConnection {
      *
      * @return void
      */
-    public function addQuantityToUnknownBarcode(string $barcode, int $amount): void {
+    public function addQuantityToUnknownBarcode(string $barcode, float $amount): void {
         $this->db->exec("UPDATE Barcodes SET amount = amount + $amount WHERE barcode = '$barcode'");
 
     }
@@ -393,7 +393,7 @@ class DatabaseConnection {
      * Sets quantity of a saved barcode (not to confuse with default quantity)
      *
      * @param string $barcode
-     * @param int $amount
+     * @param float $amount
      *
      * @return void
      */
@@ -405,13 +405,13 @@ class DatabaseConnection {
      * Add an unknown barcode
      *
      * @param string $barcode
-     * @param int $amount
+     * @param float $amount
      * @param string|null $bestBeforeInDays
      * @param string|null $price
      * @param array|null $productname
      * @return void
      */
-    public function insertUnrecognizedBarcode(string $barcode, int $amount = 1, string $bestBeforeInDays = null, string $price = null, ?array $productname = null): void {
+    public function insertUnrecognizedBarcode(string $barcode, float $amount = 1, string $bestBeforeInDays = null, string $price = null, ?array $productname = null): void {
         if ($bestBeforeInDays == null)
             $bestBeforeInDays = "NULL";
 

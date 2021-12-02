@@ -380,7 +380,7 @@ class DatabaseConnection {
      * Increases quantity of a saved barcode (not to confuse with default quantity)
      *
      * @param string $barcode
-     * @param int $amount
+     * @param float $amount
      *
      * @return void
      */
@@ -397,7 +397,7 @@ class DatabaseConnection {
      *
      * @return void
      */
-    public function setQuantityToUnknownBarcode(string $barcode, int $amount): void {
+    public function setQuantityToUnknownBarcode(string $barcode, float $amount): void {
         $this->db->exec("UPDATE Barcodes SET amount = $amount WHERE barcode = '$barcode'");
     }
 

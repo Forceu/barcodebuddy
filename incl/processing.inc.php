@@ -66,7 +66,7 @@ function processNewBarcode(string $barcodeInput, ?string $bestBeforeInDays = nul
     }
     if (stringStartsWith($barcode, $config["BARCODE_Q"])) {
         $quantity = str_replace($config["BARCODE_Q"], "", $barcode);
-        $quantity = checkIfNumeric($quantity);
+        $quantity = checkIfFloat($quantity);
         if ($config["LAST_PRODUCT"] != null) {
             $lastBarcode = $config["LAST_BARCODE"] . " (" . $config["LAST_PRODUCT"] . ")";
         } else {
@@ -537,9 +537,21 @@ function sanitizeString(?string $input, bool $strongFilter = false): ?string {
 /**
  * Terminates script if non numeric
  * @param string $input
+ * @return int Returns value as int if valid
+ */
+function checkIfNumeric(string $input): int {
+    if (!is_numeric($input) && $input != "") {
+        die("Illegal input! " . sanitizeString($input) . " needs to be a number");
+    }
+    return intval($input);
+}
+
+/**
+ * Terminates script if non numeric
+ * @param string $input
  * @return float Returns value as float if valid
  */
-function checkIfNumeric(string $input): float {
+function checkIfFloat(string $input): float {
     if (!is_numeric($input) && $input != "") {
         die("Illegal input! " . sanitizeString($input) . " needs to be a number");
     }

@@ -225,7 +225,7 @@ function processButtons(): void {
             if ($row !== false) {
                 $barcode = sanitizeString($row["barcode"], true);
                 $amount  = $row["amount"];
-                $amount  = checkIfNumeric($amount);
+                $amount  = checkIfFloat($amount);
                 if (isset($_POST["tags"])) {
                     foreach ($_POST["tags"][$id] as $tag) {
                         TagManager::add(sanitizeString($tag), $gidSelected);

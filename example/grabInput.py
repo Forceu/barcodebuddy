@@ -72,6 +72,7 @@ CODE_MAP_CHAR = {
     'KEY_Z': "Z",
     'KEY_DOT': ".",
     'KEY_MINUS': "-",
+    'KEY_SEMICOLON': ":",
     'KEY_KPMINUS': "-"
 
 }

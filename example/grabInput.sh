@@ -84,6 +84,7 @@ declare -A CODE_MAP_CHAR=( ["(KEY_0)"]="0" \
     ["(KEY_MINUS)"]="-" \
     ["(KEY_KPMINUS)"]="-" \
     ["(KEY_SLASH)"]="-" \
+    ["(KEY_SEMICOLON)"]=":" \
     ["(KEY_ENTER)"]="KEY_ENTER" \
     ["(KEY_KPENTER)"]="KEY_ENTER" )
 

@@ -346,16 +346,15 @@ function processKnownBarcode(GrocyProduct $productInfo, string $barcode, bool $w
     $config = BBConfig::getInstance();
     $db     = DatabaseConnection::getInstance();
 
-    if ($productInfo->isTare) {
+    $state = $db->getTransactionState();
+
+    if ($productInfo->isTare && $state != STATE_GETSTOCK) {
         if (!$db->isUnknownBarcodeAlreadyStored($barcode))
             $db->insertActionRequiredBarcode($barcode, $bestBeforeInDays, $price);
         $fileLock->removeLock();
         $log = new LogOutput("Action required: Enter weight for " . $productInfo->name, EVENT_TYPE_ACTION_REQUIRED, $barcode);
         return $log->setWebsocketResultCode(WS_RESULT_PRODUCT_FOUND)->createLog();
     }
-
-
-    $state = $db->getTransactionState();
 
     switch ($state) {
         case STATE_CONSUME:

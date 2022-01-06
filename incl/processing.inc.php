@@ -471,7 +471,7 @@ function processKnownBarcode(GrocyProduct $productInfo, string $barcode, bool $w
             if ($productInfo->stockAmount > 0) {
                 $locationInfo = API::getProductLocations($productInfo->id);
                 foreach ($locationInfo as $location) {
-                    $log = $log . "\nLocation " . $location["location_name"] . ": " . $location["amount"] . " " . $productInfo->unit;
+                    $log = $log . '\nLocation ' . $location["location_name"] . ": " . $location["amount"] . " " . $productInfo->unit;
                 }
             }
             return (new LogOutput($log, EVENT_TYPE_ADD_KNOWN_BARCODE))->createLog();
@@ -822,8 +822,8 @@ class LogOutput {
             $this->websocketText = str_replace("</span>", "", $this->websocketText);
             $this->websocketText = preg_replace("/<span .*?>+/", "- WARNING: ", $this->websocketText);
         }
-
-        DatabaseConnection::getInstance()->saveLog($this->logText, $this->isVerbose, $this->isError);
+        $logText = str_replace('\n', " ", $this->logText);
+        DatabaseConnection::getInstance()->saveLog($logText, $this->isVerbose, $this->isError);
         if ($this->sendWebsocketMessage) {
             SocketConnection::sendWebsocketMessage($this->websocketResultCode, $this->websocketText);
         }

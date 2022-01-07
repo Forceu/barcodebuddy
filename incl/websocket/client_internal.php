@@ -57,7 +57,7 @@ class SocketClient {
      * @return false|string
      */
     public function readData() {
-        socket_set_option($this->socket, SOL_SOCKET, SO_RCVTIMEO, array("sec" => 60, "usec" => 0));
+        socket_set_option($this->socket, SOL_SOCKET, SO_RCVTIMEO, array("sec" => 3600, "usec" => 0));
         return socket_read($this->socket, 2048);
     }
 

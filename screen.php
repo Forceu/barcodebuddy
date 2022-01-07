@@ -360,18 +360,21 @@ $CONFIG->checkIfAuthenticated(true);
 
         var currentScanId = 0;
         var connectFailCounter = 0;
+        var lastFail = 0;
 
         source.addEventListener("error", function (event) {
             switch (event.target.readyState) {
                 case EventSource.CONNECTING:
                     document.getElementById('grocy-sse').textContent = 'Reconnecting...';
-                    // console.log('Reconnecting...');
-                    connectFailCounter++
+                    if (Date.now() - lastFail < 30000) { 
+                    	connectFailCounter++;
+                    }
                     if (connectFailCounter === 100) {
                         source.close();
                         document.getElementById('grocy-sse').textContent = 'Unavailable';
                         document.getElementById('scan-result').textContent = 'Unable to connect to Barcode Buddy';
                     }
+                    lastFail = Date.now()
                     break;
                 case EventSource.CLOSED:
                     console.log('Connection failed (CLOSED)');

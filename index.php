@@ -225,6 +225,7 @@ function processButtons(): void {
             if ($row !== false) {
                 $barcode = sanitizeString($row["barcode"], true);
                 $amount  = $row["amount"];
+                $name    = $row["name"];
                 $amount  = checkIfFloat($amount);
                 if (isset($_POST["tags"])) {
                     foreach ($_POST["tags"][$id] as $tag) {
@@ -232,7 +233,10 @@ function processButtons(): void {
                     }
                 }
                 $product = API::getProductInfo($gidSelected);
-                API::addBarcode($gidSelected, $barcode);
+                if (BBConfig::getInstance()["SAVE_BARCODE_NAME"] == "1")
+                    API::addBarcode($gidSelected, $barcode, $name);
+                else
+                    API::addBarcode($gidSelected, $barcode, null);
                 $log = new LogOutput("Associated barcode $barcode with " . $product->name, EVENT_TYPE_ASSOCIATE_PRODUCT);
                 $log->setVerbose()->dontSendWebsocket()->createLog();
                 $db->deleteBarcode($id);

@@ -92,6 +92,7 @@ class DatabaseConnection {
         "LAST_BARCODE" => null,
         "LAST_PRODUCT" => null,
         "WS_FULLSCREEN" => "0",
+        "SAVE_BARCODE_NAME" => "1",
         "SHOPPINGLIST_REMOVE" => "1",
         "USE_GENERIC_NAME" => "1",
         "CONSUME_SAVED_QUANTITY" => "0",

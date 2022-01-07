@@ -454,14 +454,19 @@ class API {
      *
      * @param int product id
      * @param string  barcode to be set
+     * @param string|null note for barcode
      *
      * @return void
      */
-    public static function addBarcode(int $id, string $barcode): void {
+    public static function addBarcode(int $id, string $barcode, ?string $note): void {
+
+        if ($note == "" || $note == "N/A")
+            $note = null;
 
         $data = json_encode(array(
             "product_id" => $id,
-            "barcode" => $barcode
+            "barcode" => $barcode,
+            "note" => $note
         ));
 
         $curl = new CurlGenerator(API_O_BARCODES, METHOD_POST, $data);

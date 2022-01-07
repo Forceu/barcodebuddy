@@ -25,10 +25,10 @@ class QuantityManager {
      * @param string $barcode
      * @param bool $deleteAfterCompletion Deletes the entry after before returning the amount
      * @param SQLite3|null $db A DB reference can be passed. Only use for upgrading DB to new version!
-     * @return int quantity or 1 if not found
+     * @return float quantity or 1 if not found
      * @throws DbConnectionDuringEstablishException
      */
-    public static function getStoredQuantityForBarcode(string $barcode, bool $deleteAfterCompletion = false, SQLite3 $db = null): int {
+    public static function getStoredQuantityForBarcode(string $barcode, bool $deleteAfterCompletion = false, SQLite3 $db = null): float {
         if ($db == null)
             $db = DatabaseConnection::getInstance()->getDatabaseReference();
         $res = $db->query("SELECT * FROM Quantities WHERE barcode='$barcode'");
@@ -68,14 +68,14 @@ class QuantityManager {
      * @param $barcode string
      * @param $isConsume bool
      * @param $productInfo GrocyProduct
-     * @return int
+     * @return float
      * @throws DbConnectionDuringEstablishException
      */
-    public static function getQuantityForBarcode(string $barcode, bool $isConsume, GrocyProduct $productInfo): int {
+    public static function getQuantityForBarcode(string $barcode, bool $isConsume, GrocyProduct $productInfo): float {
         $config = BBConfig::getInstance();
         if ($isConsume && !$config["CONSUME_SAVED_QUANTITY"])
             return 1;
-        $amountSavedInProduct = intval($productInfo->quFactor);
+        $amountSavedInProduct = floatval($productInfo->quFactor);
         $barcodes             = API::getAllBarcodes();
         if (isset($barcodes[$barcode]) && $barcodes[$barcode]["factor"] != null)
             return $barcodes[$barcode]["factor"];
@@ -89,13 +89,13 @@ class QuantityManager {
      * Adds a default quantity for a barcode or updates the product
      *
      * @param string $barcode
-     * @param int $amount
+     * @param float $amount
      * @param string|null $product
      *
      * @return void
      * @throws DbConnectionDuringEstablishException
      */
-    public static function addUpdateEntry(string $barcode, int $amount, string $product = null): void {
+    public static function addUpdateEntry(string $barcode, float $amount, string $product = null): void {
         $db = DatabaseConnection::getInstance()->getDatabaseReference();
         if ($product == null) {
             $db->exec("REPLACE INTO Quantities(barcode, quantity) VALUES ('$barcode', $amount)");

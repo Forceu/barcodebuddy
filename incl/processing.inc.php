@@ -66,7 +66,7 @@ function processNewBarcode(string $barcodeInput, ?string $bestBeforeInDays = nul
     }
     if (stringStartsWith($barcode, $config["BARCODE_Q"])) {
         $quantity = str_replace($config["BARCODE_Q"], "", $barcode);
-        $quantity = checkIfNumeric($quantity);
+        $quantity = checkIfFloat($quantity);
         if ($config["LAST_PRODUCT"] != null) {
             $lastBarcode = $config["LAST_BARCODE"] . " (" . $config["LAST_PRODUCT"] . ")";
         } else {
@@ -259,7 +259,7 @@ function changeWeightTareItem(string $barcode, int $newWeight): bool {
     if ($product == null)
         return false;
 
-    if ((intval($product->stockAmount) + $product->tareWeight) == $newWeight) {
+    if ((floatval($product->stockAmount) + $product->tareWeight) == $newWeight) {
         $log = new LogOutput("Weight unchanged for: " . $product->name, EVENT_TYPE_ACTION_REQUIRED);
         $log->setVerbose()->dontSendWebsocket()->createLog();
         return true;
@@ -404,14 +404,16 @@ function processKnownBarcode(GrocyProduct $productInfo, string $barcode, bool $w
             $fileLock->removeLock();
             return $output;
         case STATE_CONSUME_SPOILED:
+            $amountToSpoil = QuantityManager::getQuantityForBarcode($barcode, true, $productInfo);
+
             if ($productInfo->stockAmount > 0) {
-                $log    = new LogOutput("Consuming 1 spoiled " . $productInfo->unit . " of " . $productInfo->name, EVENT_TYPE_ADD_KNOWN_BARCODE, $barcode);
+                $log    = new LogOutput("Consuming " . $amountToSpoil . " spoiled " . $productInfo->unit . " of " . $productInfo->name, EVENT_TYPE_ADD_KNOWN_BARCODE, $barcode);
                 $output = $log
-                    ->addStockToText($productInfo->stockAmount - 1)
+                    ->addStockToText($productInfo->stockAmount - $amountToSpoil)
                     ->setWebsocketResultCode(WS_RESULT_PRODUCT_FOUND)
                     ->addProductFoundText()
                     ->createLog();
-                API::consumeProduct($productInfo->id, 1, true);
+                API::consumeProduct($productInfo->id, $amountToSpoil, true);
             } else {
                 $log    = new LogOutput("Product found . None in stock, not consuming: " . $productInfo->name, EVENT_TYPE_ADD_KNOWN_BARCODE, $barcode);
                 $output = $log
@@ -444,14 +446,15 @@ function processKnownBarcode(GrocyProduct $productInfo, string $barcode, bool $w
             //no $fileLock->removeLock() needed, as it is done in API::purchaseProduct
             return $output;
         case STATE_OPEN:
+            $amount    = QuantityManager::getQuantityForBarcode($barcode, false, $productInfo);
             if ($productInfo->stockAmount > 0) {
-                $log    = new LogOutput("Opening 1 " . $productInfo->unit . " of " . $productInfo->name, EVENT_TYPE_ADD_KNOWN_BARCODE, $barcode);
+                $log    = new LogOutput("Opening " . $amount . " " . $productInfo->unit . " of " . $productInfo->name, EVENT_TYPE_ADD_KNOWN_BARCODE, $barcode);
                 $output = $log
                     ->addStockToText($productInfo->stockAmount)
                     ->setWebsocketResultCode(WS_RESULT_PRODUCT_FOUND)
                     ->addProductFoundText()
                     ->createLog();
-                API::openProduct($productInfo->id);
+                API::openProduct($productInfo->id, $amount);
             } else {
                 $log    = new LogOutput("Product found . None in stock, not opening: " . $productInfo->name, EVENT_TYPE_ADD_KNOWN_BARCODE, $barcode);
                 $output = $log
@@ -476,8 +479,9 @@ function processKnownBarcode(GrocyProduct $productInfo, string $barcode, bool $w
             }
             return (new LogOutput($log, EVENT_TYPE_ADD_KNOWN_BARCODE))->createLog();
         case STATE_ADD_SL:
+            $amount    = QuantityManager::getQuantityForBarcode($barcode, false, $productInfo);
             $fileLock->removeLock();
-            $output = (new LogOutput("Added to shopping list: 1 " . $productInfo->unit . " of " . $productInfo->name, EVENT_TYPE_ADD_KNOWN_BARCODE))->createLog();
+            $output = (new LogOutput("Added to shopping list: " . $amount . " " . $productInfo->unit . " of " . $productInfo->name, EVENT_TYPE_ADD_KNOWN_BARCODE))->createLog();
             API::addToShoppinglist($productInfo->id, 1);
             return $output;
         default:
@@ -542,6 +546,18 @@ function checkIfNumeric(string $input): int {
 }
 
 /**
+ * Terminates script if non numeric
+ * @param string $input
+ * @return float Returns value as float if valid
+ */
+function checkIfFloat(string $input): float {
+    if (!is_numeric($input) && $input != "") {
+        die("Illegal input! " . sanitizeString($input) . " needs to be a number");
+    }
+    return floatval($input);
+}
+
+/**
  * Generate checkboxes for web ui
  * @param string $productName
  * @param int $id
@@ -579,13 +595,13 @@ function cleanNameForTagLookup(string $input): array {
 /**
  * If a quantity barcode was scanned, add the quantity and process further
  *
- * @param int $amount
+ * @param float $amount
  *
  * @return void
  * @throws DbConnectionDuringEstablishException
  *
  */
-function changeQuantityAfterScan(int $amount): void {
+function changeQuantityAfterScan(float $amount): void {
     $config = BBConfig::getInstance();
 
     $db      = DatabaseConnection::getInstance();
@@ -772,7 +788,7 @@ class LogOutput {
         return $this;
     }
 
-    public function addStockToText(int $amount): LogOutput {
+    public function addStockToText(float $amount): LogOutput {
         if (!BBConfig::getInstance()["SHOW_STOCK_ON_SCAN"])
             return $this;
         //Do not have "." at the beginning if last character was "!"

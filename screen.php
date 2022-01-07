@@ -366,10 +366,10 @@ $CONFIG->checkIfAuthenticated(true);
             switch (event.target.readyState) {
                 case EventSource.CONNECTING:
                     document.getElementById('grocy-sse').textContent = 'Reconnecting...';
-                    if (Date.now() - lastFail < 30000) { 
+                    if (Date.now() - lastFail < 10000) {
                     	connectFailCounter++;
                     }
-                    if (connectFailCounter === 100) {
+                    if (connectFailCounter === 10) {
                         source.close();
                         document.getElementById('grocy-sse').textContent = 'Unavailable';
                         document.getElementById('scan-result').textContent = 'Unable to connect to Barcode Buddy';

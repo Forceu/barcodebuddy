@@ -45,6 +45,7 @@ $CONFIG->checkIfAuthenticated(true);
     <meta name="msapplication-navbutton-color" content="#ccc">
     <meta name="msapplication-TileColor" content="#ccc">
     <meta name="apple-mobile-web-app-status-bar-style" content="#ccc">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#ccc">
 
 

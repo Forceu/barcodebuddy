@@ -233,6 +233,8 @@ function processButtons(): void {
                     }
                 }
                 $product = API::getProductInfo($gidSelected);
+                if ($barcode == null)
+                	die('Internal error: $barcode is null');
                 if (BBConfig::getInstance()["SAVE_BARCODE_NAME"] == "1")
                     API::addBarcode($gidSelected, $barcode, $name);
                 else

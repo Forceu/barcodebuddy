@@ -153,11 +153,17 @@ class BBuddyApi {
         }));
 
         $this->addRoute(new ApiRoute("/state/setmode", function () {
+            $state = null;
+            if(isset($_GET["state"]))
+                $state = isset($_GET["state"]);                      
+            if(isset($_POST["state"]))
+                $state = isset($_POST["state"]);            
+
             //Also check if value is a valid range (STATE_CONSUME the lowest and STATE_CONSUME_ALL the highest value)
-            if (!isset($_POST["state"]) || !is_numeric($_POST["state"]) || $_POST["state"] < STATE_CONSUME || $_POST["state"] > STATE_CONSUME_ALL)
+            if (!$state || !is_numeric($state) || $state < STATE_CONSUME || state > STATE_CONSUME_ALL)
                 return self::createResultArray(null, "Invalid state provided", 400);
             else {
-                DatabaseConnection::getInstance()->setTransactionState(intval($_POST["state"]));
+                DatabaseConnection::getInstance()->setTransactionState(intval($state));
                 return self::createResultArray();
             }
         }));

@@ -20,7 +20,7 @@ require_once __DIR__ . "/../api.inc.php";
 class ProviderAlbertHeijn extends LookupProvider {
 
 
-    const USER_AGENT = "android/6.29.3 Model/phone Android/7.0-API24";
+    const USER_AGENT = "Appie/8.8.2 Model/phone Android/7.0-API24";
 
     function __construct(string $apiKey = null) {
         parent::__construct($apiKey);
@@ -41,8 +41,8 @@ class ProviderAlbertHeijn extends LookupProvider {
         if ($authkey == null)
             return null;
 
-        $headers = array('Host' => 'ms.ah.nl', 'Authorization' => 'Bearer ' . $authkey);
-        $url     = "https://ms.ah.nl/mobile-services/product/search/v1/gtin/" . $barcode;
+        $headers = array('Host' => 'api.ah.nl', 'Authorization' => 'Bearer ' . $authkey);
+        $url     = "https://api.ah.nl/mobile-services/product/search/v1/gtin/" . $barcode;
         $result  = $this->execute($url, METHOD_GET, null, self::USER_AGENT, $headers);
         if (isset($result["title"]))
             return self::createReturnArray(sanitizeString($result["title"]));
@@ -51,9 +51,13 @@ class ProviderAlbertHeijn extends LookupProvider {
     }
 
     private function getAuthToken(): ?string {
-        $headers         = array('Host' => 'ms.ah.nl');
-        $url             = "https://ms.ah.nl/create-anonymous-member-token";
-        $authkeyResponse = $this->execute($url, METHOD_POST, array("client" => "appie-anonymous"), self::USER_AGENT, $headers);
+        $headers         = array('Host' => 'api.ah.nl',
+                                'x-application' => 'AHWEBSHOP',
+                                'x-dynatrace' => 'MT_3_4_772337796_1_fae7f753-3422-4a18-83c1-b8e8d21caace_0_1589_109');
+        $json            = '{"clientId": "appie"}';
+        $url             = "https://api.ah.nl/mobile-auth/v1/auth/token/anonymous";
+        $authkeyResponse = $this->execute($url, METHOD_POST, null, self::USER_AGENT, $headers, true, $json);
+    
         if (!isset($authkeyResponse["access_token"]))
             return null;
         return sanitizeString($authkeyResponse["access_token"]);

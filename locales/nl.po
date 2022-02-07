@@ -2,113 +2,115 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2022-02-07 22:19+0000\n"
+"Last-Translator: PiAir <pierre@gosoftonline.com>\n"
+"Language-Team: Dutch <https://hosted.weblate.org/projects/barcode-buddy/"
+"strings/nl/>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.2\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.11-dev\n"
 "X-Poedit-Basepath: locale\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: nb_NO\n"
 
 msgid "Unknown barcode looked up, found name: %s"
-msgstr ""
+msgstr "Onbekende streepjescode opgezocht, naam gevonden: %s"
 
 msgid "Unknown product already scanned. Increasing quantity."
-msgstr ""
+msgstr "Onbekend product reeds gescand. Hoeveelheid verhoogd."
 
 msgid "Unknown barcode could not be looked up"
-msgstr ""
+msgstr "Onbekende streepjescode kon niet worden opgezocht"
 
 msgid "Product found. None in stock, not consuming: %s"
-msgstr ""
+msgstr "Product gevonden. Geen in voorraad, niets geconsumeerd: %s"
 
 msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
-msgstr ""
+msgstr "Product gevonden. Verbruikt %d %s van %s [%d]. Op voorraad: %d"
 
 msgid "Product found. Opening %d %s of %s"
-msgstr ""
+msgstr "Product gevonden. %d %s van %s geopend"
 
 msgid "Set state to Open"
-msgstr ""
+msgstr "Zet status op Open"
 
 msgid "Set state to Consume"
-msgstr ""
+msgstr "Zet status op Verbruiken"
 
 msgid "Set state to Purchase"
-msgstr ""
+msgstr "Zet status op Kopen"
 
 msgid "Adding %d %s of %s"
-msgstr ""
+msgstr "Toevoegen van %d %s van %s"
 
 msgid "Associated barcode %d with %s"
-msgstr ""
+msgstr "Streepjescode %d aan %s gekoppeld"
 
 msgid "Product found. Adding %d %s of %s"
-msgstr ""
+msgstr "Product gevonden. Toevoegen van %d %s van %s"
 
 msgid "None in stock, not consuming: %s"
-msgstr ""
+msgstr "Niet op voorraad, niets geconsumeerd: %s"
 
 msgid "Reverting back to Consume"
-msgstr ""
+msgstr "Terugkeren naar Verbruiken"
 
 msgid "Product found. Consuming %d %s of %s"
-msgstr ""
+msgstr "Product gevonden. Verbruikt %d %s van %s"
 
 msgid "New Barcodes"
-msgstr ""
+msgstr "Nieuwe streepjescodes"
 
 msgid "Unknown Barcodes"
-msgstr ""
+msgstr "Onbekende streepjescodes"
 
 msgid "No unknown barcodes yet."
-msgstr ""
+msgstr "Nog geen onbekende streepjescodes."
 
 msgid "No known barcodes yet."
-msgstr ""
+msgstr "Nog geen bekende streepjescodes."
 
 msgid "No processed items yet."
-msgstr ""
+msgstr "Nog geen verwerkte items."
 
 msgid "Delete all"
-msgstr ""
+msgstr "Alles verwijderen"
 
 msgid "Processed Barcodes"
-msgstr ""
+msgstr "Verwerkte streepjescodes"
 
 msgid "Barcode"
-msgstr ""
+msgstr "Streepjescode"
 
 msgid "Look up"
-msgstr ""
+msgstr "Opzoeken"
 
 msgid "Quantity"
-msgstr ""
+msgstr "Hoeveelheid"
 
 msgid "Product"
-msgstr ""
+msgstr "Product"
 
 msgid "Action"
-msgstr ""
+msgstr "Actie"
 
 msgid "Create"
-msgstr ""
+msgstr "Creëren"
 
 msgid "Remove"
-msgstr ""
+msgstr "Verwijder"
 
 msgid "Clear log"
-msgstr ""
+msgstr "Logboek wissen"
 
 msgid "Create Product"
-msgstr ""
+msgstr "Creëer product"
 
 msgid "Add"
-msgstr ""
+msgstr "Toevoegen"
 
 msgid "Consume"
-msgstr ""
+msgstr "Consumeer"

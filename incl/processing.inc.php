@@ -801,6 +801,8 @@ class LogOutput {
             $this->websocketText = preg_replace("/<span .*?>+/", "- WARNING: ", $this->websocketText);
         }
 
+        $this->logText = $this->translate($this->logText);
+
         DatabaseConnection::getInstance()->saveLog($this->logText, $this->isVerbose, $this->isError);
         if ($this->sendWebsocketMessage) {
             sendWebsocketMessage($this->websocketText, $this->websocketResultCode);

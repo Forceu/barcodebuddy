@@ -2,113 +2,115 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2022-02-08 15:17+0000\n"
+"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
+"Language-Team: French <https://hosted.weblate.org/projects/barcode-buddy/"
+"strings/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.2\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 4.11-dev\n"
 "X-Poedit-Basepath: locale\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: nb_NO\n"
 
 msgid "Unknown barcode looked up, found name: %s"
-msgstr ""
+msgstr "Recherche d'un code-barres inconnu, nom trouvé : %s"
 
 msgid "Unknown product already scanned. Increasing quantity."
-msgstr ""
+msgstr "Produit inconnu déjà scanné. Augmentation de la quantité."
 
 msgid "Unknown barcode could not be looked up"
-msgstr ""
+msgstr "Le code-barres inconnu n'a pas pu être recherché"
 
 msgid "Product found. None in stock, not consuming: %s"
-msgstr ""
+msgstr "Produit trouvé. Aucun en stock, pas de consommation : %s"
 
 msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
-msgstr ""
+msgstr "Produit trouvé. Consommation de %d %s sur %s [%d]. En stock : %d"
 
 msgid "Product found. Opening %d %s of %s"
-msgstr ""
+msgstr "Produit trouvé. Ouverture de %d %s sur %s"
 
 msgid "Set state to Open"
-msgstr ""
+msgstr "Définir l'état sur Ouvrir"
 
 msgid "Set state to Consume"
-msgstr ""
+msgstr "Définir l'état sur Consommer"
 
 msgid "Set state to Purchase"
-msgstr ""
+msgstr "Définir l'état sur Acheter"
 
 msgid "Adding %d %s of %s"
-msgstr ""
+msgstr "Ajout de %d %s sur %s"
 
 msgid "Associated barcode %d with %s"
-msgstr ""
+msgstr "Code-barres %d associé à %s"
 
 msgid "Product found. Adding %d %s of %s"
-msgstr ""
+msgstr "Produit trouvé. Ajout de %d %s sur %s"
 
 msgid "None in stock, not consuming: %s"
-msgstr ""
+msgstr "Aucun en stock, ne pas consommer : %s"
 
 msgid "Reverting back to Consume"
-msgstr ""
+msgstr "Revenir à Consommer"
 
 msgid "Product found. Consuming %d %s of %s"
-msgstr ""
+msgstr "Produit trouvé. Consommation de %d %s sur %s"
 
 msgid "New Barcodes"
-msgstr ""
+msgstr "Nouveaux codes-barres"
 
 msgid "Unknown Barcodes"
-msgstr ""
+msgstr "Codes-barres inconnus"
 
 msgid "No unknown barcodes yet."
-msgstr ""
+msgstr "Pas encore de codes-barres inconnus."
 
 msgid "No known barcodes yet."
-msgstr ""
+msgstr "Aucun code-barres connu pour le moment."
 
 msgid "No processed items yet."
-msgstr ""
+msgstr "Aucun élément traité pour le moment."
 
 msgid "Delete all"
-msgstr ""
+msgstr "Tout supprimer"
 
 msgid "Processed Barcodes"
-msgstr ""
+msgstr "Codes-barres traités"
 
 msgid "Barcode"
-msgstr ""
+msgstr "Code-barres"
 
 msgid "Look up"
-msgstr ""
+msgstr "Rechercher"
 
 msgid "Quantity"
-msgstr ""
+msgstr "Quantité"
 
 msgid "Product"
-msgstr ""
+msgstr "Produit"
 
 msgid "Action"
-msgstr ""
+msgstr "Action"
 
 msgid "Create"
-msgstr ""
+msgstr "Créer"
 
 msgid "Remove"
-msgstr ""
+msgstr "Retirer"
 
 msgid "Clear log"
-msgstr ""
+msgstr "Effacer le journal"
 
 msgid "Create Product"
-msgstr ""
+msgstr "Créer un produit"
 
 msgid "Add"
-msgstr ""
+msgstr "Ajouter"
 
 msgid "Consume"
-msgstr ""
+msgstr "Consommer"

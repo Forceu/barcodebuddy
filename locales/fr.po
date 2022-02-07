@@ -1,0 +1,114 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.2\n"
+"X-Poedit-Basepath: locale\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: nb_NO\n"
+
+msgid "Unknown barcode looked up, found name: %s"
+msgstr ""
+
+msgid "Unknown product already scanned. Increasing quantity."
+msgstr ""
+
+msgid "Unknown barcode could not be looked up"
+msgstr ""
+
+msgid "Product found. None in stock, not consuming: %s"
+msgstr ""
+
+msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
+msgstr ""
+
+msgid "Product found. Opening %d %s of %s"
+msgstr ""
+
+msgid "Set state to Open"
+msgstr ""
+
+msgid "Set state to Consume"
+msgstr ""
+
+msgid "Set state to Purchase"
+msgstr ""
+
+msgid "Adding %d %s of %s"
+msgstr ""
+
+msgid "Associated barcode %d with %s"
+msgstr ""
+
+msgid "Product found. Adding %d %s of %s"
+msgstr ""
+
+msgid "None in stock, not consuming: %s"
+msgstr ""
+
+msgid "Reverting back to Consume"
+msgstr ""
+
+msgid "Product found. Consuming %d %s of %s"
+msgstr ""
+
+msgid "New Barcodes"
+msgstr ""
+
+msgid "Unknown Barcodes"
+msgstr ""
+
+msgid "No unknown barcodes yet."
+msgstr ""
+
+msgid "No known barcodes yet."
+msgstr ""
+
+msgid "No processed items yet."
+msgstr ""
+
+msgid "Delete all"
+msgstr ""
+
+msgid "Processed Barcodes"
+msgstr ""
+
+msgid "Barcode"
+msgstr ""
+
+msgid "Look up"
+msgstr ""
+
+msgid "Quantity"
+msgstr ""
+
+msgid "Product"
+msgstr ""
+
+msgid "Action"
+msgstr ""
+
+msgid "Create"
+msgstr ""
+
+msgid "Remove"
+msgstr ""
+
+msgid "Clear log"
+msgstr ""
+
+msgid "Create Product"
+msgstr ""
+
+msgid "Add"
+msgstr ""
+
+msgid "Consume"
+msgstr ""

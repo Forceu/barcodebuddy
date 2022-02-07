@@ -22,10 +22,10 @@ foreach(array_diff(scandir(__DIR__ . "/../locale", 1), ['..', '.']) as $lang) {
     $available_languages[substr(strtolower($lang), 0, 2)] = $lang;
 }
 
-$lang = strtolower(substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2));
+$lang = strtolower(substr($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? 'en-US', 0, 2));
 $locale = $available_languages[$lang] ?? 'en';
 
 putenv("LC_ALL=$locale");
 setlocale(LC_ALL, $locale);
-bindtextdomain("messages", "./locale");
+bindtextdomain("messages", __DIR__ . "/../locale");
 textdomain("messages");

@@ -22,20 +22,20 @@ msgstr ""
 msgid "Unknown barcode looked up, found name: %s"
 msgstr "Hittil ukjent strekkode, fant: %s"
 
+msgid "Unknown barcode could not be looked up."
+msgstr "Fant ikke informasjon om ukjent strekkode."
+
 msgid "Unknown product already scanned. Increasing quantity."
 msgstr "Ukjent strekkode allerede skannet. Øker antall."
-
-msgid "Unknown barcode could not be looked up"
-msgstr "Fant ikke informasjon om ukjent strekkode"
 
 msgid "Product found. None in stock, not consuming: %s"
 msgstr "Fant produktet. Ingen på lager, fjerner derfor ikke: %s"
 
-msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
-msgstr "Fant produktet. Fjerner %d %s%s [%d]. På lager: %d"
+msgid "Product found. Consuming %s %s of %s"
+msgstr "Fant produktet. Fjerner %s %s %s."
 
-msgid "Product found. Opening %d %s of %s"
-msgstr "Fant produktet. Åpner %d %s av %s"
+msgid "Product found. Opening %s %s of %s"
+msgstr "Fant produktet. Åpner %s %s av %s"
 
 msgid "Set state to Open"
 msgstr "Setter modus til Åpnes"
@@ -46,23 +46,20 @@ msgstr "Setter modus til Forbruk"
 msgid "Set state to Purchase"
 msgstr "Setter modus til Kjøp"
 
-msgid "Adding %d %s of %s"
-msgstr "Legger til %d %s %s"
+msgid "Adding %s %s of %s"
+msgstr "Legger til %s %s %s"
 
-msgid "Associated barcode %d with %s"
-msgstr "Tilknyttet strekkode %d med %s"
+msgid "Associated barcode %s with %s"
+msgstr "Tilknyttet strekkode %s med %s"
 
-msgid "Product found. Adding %d %s of %s"
-msgstr "Fant produktet. Legger til %d %s %s"
+msgid "Product found. Adding %s %s of %s"
+msgstr "Fant produktet. Legger til %s %s %s"
 
 msgid "None in stock, not consuming: %s"
 msgstr "Fant produktet. Ingen på lager, fjerner derfor ikke: %s"
 
 msgid "Reverting back to Consume"
 msgstr "Angir tilstand til Forbruk"
-
-msgid "Product found. Consuming %d %s of %s"
-msgstr "Produktet funnet. Forbruker %d %s %s"
 
 msgid "New Barcodes"
 msgstr "Nye strekkoder"

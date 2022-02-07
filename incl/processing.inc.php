@@ -720,7 +720,7 @@ class LogOutput {
      * @param bool $isError
      */
     function __construct(string $logText, int $eventType, string $barcode = null, bool $isError = false) {
-        $this->logText       = $logText;
+        $this->logText       = $this->translate($logText);
         $this->eventType     = $eventType;
         $this->websocketText = $logText;
         $this->barcode       = $barcode;
@@ -763,7 +763,7 @@ class LogOutput {
 
 
     public function addProductFoundText(): LogOutput {
-        $this->logText = "Product found. " . $this->logText;
+        $this->logText = $this->translate("Product found.") . ' ' . $this->logText;
         return $this;
     }
 
@@ -800,8 +800,6 @@ class LogOutput {
             $this->websocketText = str_replace("</span>", "", $this->websocketText);
             $this->websocketText = preg_replace("/<span .*?>+/", "- WARNING: ", $this->websocketText);
         }
-
-        $this->logText = $this->translate($this->logText);
 
         DatabaseConnection::getInstance()->saveLog($this->logText, $this->isVerbose, $this->isError);
         if ($this->sendWebsocketMessage) {

@@ -2,113 +2,115 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2022-02-08 12:54+0000\n"
+"Last-Translator: Marc Ole Bulling <Marc-Ole@gmx.de>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/barcode-buddy/"
+"strings/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.2\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.11-dev\n"
 "X-Poedit-Basepath: locale\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: nb_NO\n"
 
 msgid "Unknown barcode looked up, found name: %s"
-msgstr ""
+msgstr "Unbekannter Barcode, Name gefunden: %s"
 
 msgid "Unknown product already scanned. Increasing quantity."
-msgstr ""
+msgstr "Unbekannter Barcode bereits gescannt. Anzahl wurde erhöht."
 
 msgid "Unknown barcode could not be looked up"
-msgstr ""
+msgstr "Unbekannter Barcode konnte nicht gefunden werden"
 
 msgid "Product found. None in stock, not consuming: %s"
-msgstr ""
+msgstr "Produkt gefunden. Nicht vorrätig: %s"
 
 msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
-msgstr ""
+msgstr "Produkt gefunden. Entferne: %d %s von %s [%d]. Bestand: %d"
 
 msgid "Product found. Opening %d %s of %s"
-msgstr ""
+msgstr "Produkt gefunden. Öffne %d %s von %s"
 
 msgid "Set state to Open"
-msgstr ""
+msgstr "Modus Öffnen gesetzt"
 
 msgid "Set state to Consume"
-msgstr ""
+msgstr "Modus Konsumieren gesetzt"
 
 msgid "Set state to Purchase"
-msgstr ""
+msgstr "Modus Hinzufügen gesetzt"
 
 msgid "Adding %d %s of %s"
-msgstr ""
+msgstr "Hinzufügen von %d %s %s"
 
 msgid "Associated barcode %d with %s"
-msgstr ""
+msgstr "Barcode %d wurde mit %s verknüpft"
 
 msgid "Product found. Adding %d %s of %s"
-msgstr ""
+msgstr "Produkt gefunden. Füge %d %s von %s hinzu"
 
 msgid "None in stock, not consuming: %s"
-msgstr ""
+msgstr "Nicht im Bestand: %s"
 
 msgid "Reverting back to Consume"
-msgstr ""
+msgstr "Setze Modus zurück auf Konsumieren"
 
 msgid "Product found. Consuming %d %s of %s"
-msgstr ""
+msgstr "Produkt gefunden. Entferne %d %s von %s"
 
 msgid "New Barcodes"
-msgstr ""
+msgstr "Neuer Barcode"
 
 msgid "Unknown Barcodes"
-msgstr ""
+msgstr "Unbekannter Barcode"
 
 msgid "No unknown barcodes yet."
-msgstr ""
+msgstr "Keine unbekannten Barcodes bisher."
 
 msgid "No known barcodes yet."
-msgstr ""
+msgstr "Keine bekannten Barcodes bisher."
 
 msgid "No processed items yet."
-msgstr ""
+msgstr "Keine verarbeiteten Einträge bisher."
 
 msgid "Delete all"
-msgstr ""
+msgstr "Alles entfernen"
 
 msgid "Processed Barcodes"
-msgstr ""
+msgstr "Verarbeitete Barcodes"
 
 msgid "Barcode"
-msgstr ""
+msgstr "Barcode"
 
 msgid "Look up"
-msgstr ""
+msgstr "Suchen"
 
 msgid "Quantity"
-msgstr ""
+msgstr "Anzahl"
 
 msgid "Product"
-msgstr ""
+msgstr "Produkt"
 
 msgid "Action"
-msgstr ""
+msgstr "Aktion"
 
 msgid "Create"
-msgstr ""
+msgstr "Erstellen"
 
 msgid "Remove"
-msgstr ""
+msgstr "Entfernen"
 
 msgid "Clear log"
-msgstr ""
+msgstr "Log löschen"
 
 msgid "Create Product"
-msgstr ""
+msgstr "Produkt erstellen"
 
 msgid "Add"
-msgstr ""
+msgstr "Hinzufügen"
 
 msgid "Consume"
-msgstr ""
+msgstr "Konsumieren"

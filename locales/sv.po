@@ -2,113 +2,148 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2022-02-08 15:17+0000\n"
+"Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
+"Language-Team: Swedish <https://hosted.weblate.org/projects/barcode-buddy/"
+"strings/sv/>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.2\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.11-dev\n"
 "X-Poedit-Basepath: locale\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: nb_NO\n"
 
+#, fuzzy
 msgid "Unknown barcode looked up, found name: %s"
-msgstr ""
+msgstr "Utförde uppslag av okänt streckkod. Fann namnet: %s"
 
+#, fuzzy
 msgid "Unknown product already scanned. Increasing quantity."
-msgstr ""
+msgstr "Okänd produkt redan skannad. Ökar kvantiteten."
 
+#, fuzzy
 msgid "Unknown barcode could not be looked up"
-msgstr ""
+msgstr "Okänt streckkod hittades inte ved uppslag."
 
+#, fuzzy
 msgid "Product found. None in stock, not consuming: %s"
-msgstr ""
+msgstr "Fann produkten. Inte på lager. Konsumerar inte: %s"
 
+#, fuzzy
 msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
-msgstr ""
+msgstr "Fann produkten. Konsumerar %d %s av %s [%d]. På lager: %d"
 
+#, fuzzy
 msgid "Product found. Opening %d %s of %s"
-msgstr ""
+msgstr "Fann produkten. Öppnar %d %s av %så"
 
+#, fuzzy
 msgid "Set state to Open"
-msgstr ""
+msgstr "Sett tillstånd till «öppen»"
 
+#, fuzzy
 msgid "Set state to Consume"
-msgstr ""
+msgstr "Sett tillstånd till «konsumera»"
 
+#, fuzzy
 msgid "Set state to Purchase"
-msgstr ""
+msgstr "Sett tillstånd till «köpa»"
 
+#, fuzzy
 msgid "Adding %d %s of %s"
-msgstr ""
+msgstr "Tillägger %d %s av %s"
 
+#, fuzzy
 msgid "Associated barcode %d with %s"
-msgstr ""
+msgstr "Tillknycklade streckkoden «%d» med %s"
 
+#, fuzzy
 msgid "Product found. Adding %d %s of %s"
-msgstr ""
+msgstr "Fann produkten. Tillägger %d %s av %s"
 
+#, fuzzy
 msgid "None in stock, not consuming: %s"
-msgstr ""
+msgstr "Inte på lager. Konsumerar inte: %s"
 
+#, fuzzy
 msgid "Reverting back to Consume"
-msgstr ""
+msgstr "Reveterar till «konsumera»"
 
+#, fuzzy
 msgid "Product found. Consuming %d %s of %s"
-msgstr ""
+msgstr "Fann produkten. Konsumerar %d %s av %s"
 
+#, fuzzy
 msgid "New Barcodes"
-msgstr ""
+msgstr "Nya streckkoder"
 
+#, fuzzy
 msgid "Unknown Barcodes"
-msgstr ""
+msgstr "Okända streckkoder"
 
+#, fuzzy
 msgid "No unknown barcodes yet."
-msgstr ""
+msgstr "Inga okända streckkoder ännu."
 
+#, fuzzy
 msgid "No known barcodes yet."
-msgstr ""
+msgstr "Inga kända streckkoder ännu."
 
+#, fuzzy
 msgid "No processed items yet."
-msgstr ""
+msgstr "Inga behandlade streckkoder ännu."
 
+#, fuzzy
 msgid "Delete all"
-msgstr ""
+msgstr "Radera alt"
 
+#, fuzzy
 msgid "Processed Barcodes"
-msgstr ""
+msgstr "Behandlade streckkoder"
 
+#, fuzzy
 msgid "Barcode"
-msgstr ""
+msgstr "Streckkod"
 
+#, fuzzy
 msgid "Look up"
-msgstr ""
+msgstr "Uppslag"
 
+#, fuzzy
 msgid "Quantity"
-msgstr ""
+msgstr "Kvantitet"
 
+#, fuzzy
 msgid "Product"
-msgstr ""
+msgstr "Produkt"
 
+#, fuzzy
 msgid "Action"
-msgstr ""
+msgstr "Handling"
 
+#, fuzzy
 msgid "Create"
-msgstr ""
+msgstr "Upprätt"
 
+#, fuzzy
 msgid "Remove"
-msgstr ""
+msgstr "Radera"
 
+#, fuzzy
 msgid "Clear log"
-msgstr ""
+msgstr "Tömma loggførande"
 
+#, fuzzy
 msgid "Create Product"
-msgstr ""
+msgstr "Skapa produkt"
 
+#, fuzzy
 msgid "Add"
-msgstr ""
+msgstr "Legg till"
 
+#, fuzzy
 msgid "Consume"
-msgstr ""
+msgstr "Konsumera"

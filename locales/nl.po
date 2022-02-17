@@ -1,0 +1,116 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2022-02-07 22:19+0000\n"
+"Last-Translator: PiAir <pierre@gosoftonline.com>\n"
+"Language-Team: Dutch <https://hosted.weblate.org/projects/barcode-buddy/"
+"strings/nl/>\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.11-dev\n"
+"X-Poedit-Basepath: locale\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: nb_NO\n"
+
+msgid "Unknown barcode looked up, found name: %s"
+msgstr "Onbekende streepjescode opgezocht, naam gevonden: %s"
+
+msgid "Unknown product already scanned. Increasing quantity."
+msgstr "Onbekend product reeds gescand. Hoeveelheid verhoogd."
+
+msgid "Unknown barcode could not be looked up"
+msgstr "Onbekende streepjescode kon niet worden opgezocht"
+
+msgid "Product found. None in stock, not consuming: %s"
+msgstr "Product gevonden. Geen in voorraad, niets geconsumeerd: %s"
+
+msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
+msgstr "Product gevonden. Verbruikt %d %s van %s [%d]. Op voorraad: %d"
+
+msgid "Product found. Opening %d %s of %s"
+msgstr "Product gevonden. %d %s van %s geopend"
+
+msgid "Set state to Open"
+msgstr "Zet status op Open"
+
+msgid "Set state to Consume"
+msgstr "Zet status op Verbruiken"
+
+msgid "Set state to Purchase"
+msgstr "Zet status op Kopen"
+
+msgid "Adding %d %s of %s"
+msgstr "Toevoegen van %d %s van %s"
+
+msgid "Associated barcode %d with %s"
+msgstr "Streepjescode %d aan %s gekoppeld"
+
+msgid "Product found. Adding %d %s of %s"
+msgstr "Product gevonden. Toevoegen van %d %s van %s"
+
+msgid "None in stock, not consuming: %s"
+msgstr "Niet op voorraad, niets geconsumeerd: %s"
+
+msgid "Reverting back to Consume"
+msgstr "Terugkeren naar Verbruiken"
+
+msgid "Product found. Consuming %d %s of %s"
+msgstr "Product gevonden. Verbruikt %d %s van %s"
+
+msgid "New Barcodes"
+msgstr "Nieuwe streepjescodes"
+
+msgid "Unknown Barcodes"
+msgstr "Onbekende streepjescodes"
+
+msgid "No unknown barcodes yet."
+msgstr "Nog geen onbekende streepjescodes."
+
+msgid "No known barcodes yet."
+msgstr "Nog geen bekende streepjescodes."
+
+msgid "No processed items yet."
+msgstr "Nog geen verwerkte items."
+
+msgid "Delete all"
+msgstr "Alles verwijderen"
+
+msgid "Processed Barcodes"
+msgstr "Verwerkte streepjescodes"
+
+msgid "Barcode"
+msgstr "Streepjescode"
+
+msgid "Look up"
+msgstr "Opzoeken"
+
+msgid "Quantity"
+msgstr "Hoeveelheid"
+
+msgid "Product"
+msgstr "Product"
+
+msgid "Action"
+msgstr "Actie"
+
+msgid "Create"
+msgstr "Creëren"
+
+msgid "Remove"
+msgstr "Verwijder"
+
+msgid "Clear log"
+msgstr "Logboek wissen"
+
+msgid "Create Product"
+msgstr "Creëer product"
+
+msgid "Add"
+msgstr "Toevoegen"
+
+msgid "Consume"
+msgstr "Consumeer"

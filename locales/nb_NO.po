@@ -1,0 +1,116 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2022-02-12 07:54+0000\n"
+"Last-Translator: Ole-Kenneth <ok@rait.no>\n"
+"Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/"
+"barcode-buddy/strings/nb_NO/>\n"
+"Language: nb_NO\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.11-dev\n"
+"X-Poedit-Basepath: locale\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: nb_NO\n"
+
+msgid "Unknown barcode looked up, found name: %s"
+msgstr "Ukjent strekkode. Fant navnet «%s»"
+
+msgid "Unknown product already scanned. Increasing quantity."
+msgstr "Ukjent produkt allerede skannet. Øker mengde."
+
+msgid "Unknown barcode could not be looked up"
+msgstr "Finner ikke resultat for ukjent strekkode"
+
+msgid "Product found. None in stock, not consuming: %s"
+msgstr "Fant produktet. Ingen på lager, konsumerer ikke: %s"
+
+msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
+msgstr "Fant produktet. Konsumerer %d %s av %s [%d]. På lager: %d"
+
+msgid "Product found. Opening %d %s of %s"
+msgstr "Fant produktet. Åpner %d %s av %s"
+
+msgid "Set state to Open"
+msgstr "Sett tilstand til «åpen»"
+
+msgid "Set state to Consume"
+msgstr "Sett tilstand til «Konsumer»"
+
+msgid "Set state to Purchase"
+msgstr "Sett tilstand til «Kjøp»"
+
+msgid "Adding %d %s of %s"
+msgstr "Legger til %d %s av %s"
+
+msgid "Associated barcode %d with %s"
+msgstr "Tilknyttet strekkoden «%d» til %s"
+
+msgid "Product found. Adding %d %s of %s"
+msgstr "Fant produktet. Legger til %d %s av %s"
+
+msgid "None in stock, not consuming: %s"
+msgstr "Ingenting på lager. Konsumerer ikke: %s"
+
+msgid "Reverting back to Consume"
+msgstr "Går tilbake til «Konsumer»"
+
+msgid "Product found. Consuming %d %s of %s"
+msgstr "Fant produktet. Konsumerer %d %s av %s"
+
+msgid "New Barcodes"
+msgstr "Nye strekkoder"
+
+msgid "Unknown Barcodes"
+msgstr "Ukjente strekkoder"
+
+msgid "No unknown barcodes yet."
+msgstr "Ingen ukjente strekkoder enda."
+
+msgid "No known barcodes yet."
+msgstr "Ingen kjente strekkoder enda."
+
+msgid "No processed items yet."
+msgstr "Ingen behandlede elementer enda."
+
+msgid "Delete all"
+msgstr "Slett alt"
+
+msgid "Processed Barcodes"
+msgstr "Behandlede strekkoder"
+
+msgid "Barcode"
+msgstr "Strekkode"
+
+msgid "Look up"
+msgstr "Oppslag"
+
+msgid "Quantity"
+msgstr "Mengde"
+
+msgid "Product"
+msgstr "Produkt"
+
+msgid "Action"
+msgstr "Handling"
+
+msgid "Create"
+msgstr "Opprett"
+
+msgid "Remove"
+msgstr "Fjern"
+
+msgid "Clear log"
+msgstr "Tøm logg"
+
+msgid "Create Product"
+msgstr "Opprett produkt"
+
+msgid "Add"
+msgstr "Legg til"
+
+msgid "Consume"
+msgstr "Konsumer"

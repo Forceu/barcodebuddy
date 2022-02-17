@@ -1,0 +1,117 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2022-02-07 22:19+0000\n"
+"Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
+"Language-Team: Hebrew <https://hosted.weblate.org/projects/barcode-buddy/"
+"strings/he/>\n"
+"Language: he\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
+"n % 10 == 0) ? 2 : 3));\n"
+"X-Generator: Weblate 4.11-dev\n"
+"X-Poedit-Basepath: locale\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: nb_NO\n"
+
+msgid "Unknown barcode looked up, found name: %s"
+msgstr "הברקוד שחיפשת אינו ידוע, נמצא השם: %s"
+
+msgid "Unknown product already scanned. Increasing quantity."
+msgstr "המוצר הלא ידוע כבר נסרק. הכמות גדלה."
+
+msgid "Unknown barcode could not be looked up"
+msgstr "לא ניתן לחפש ברקוד בלתי ידוע"
+
+msgid "Product found. None in stock, not consuming: %s"
+msgstr "המוצר נמצא. חסר במלאי, לא נצרך: %s"
+
+msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
+msgstr "המוצר נמצא. נצרכים %d %s מתוך %s [%d]. במלאי: %d"
+
+msgid "Product found. Opening %d %s of %s"
+msgstr "המוצר נמצא. נפתחו %d %s של %s"
+
+msgid "Set state to Open"
+msgstr "הגדרת המצב לפתוח"
+
+msgid "Set state to Consume"
+msgstr "הגדרת המצב לצריכה"
+
+msgid "Set state to Purchase"
+msgstr "הגדרת המצב לרכישה"
+
+msgid "Adding %d %s of %s"
+msgstr "נוספים %d %s של %s"
+
+msgid "Associated barcode %d with %s"
+msgstr "הברקוד %d שויך אל %s"
+
+msgid "Product found. Adding %d %s of %s"
+msgstr "המוצר נמצא. נוספים %d %s של %s"
+
+msgid "None in stock, not consuming: %s"
+msgstr "אין במלאי, לא נצרך: %s"
+
+msgid "Reverting back to Consume"
+msgstr "מוחזר לצריכה"
+
+msgid "Product found. Consuming %d %s of %s"
+msgstr "המוצר נמצא. נצרכים %d %s של %s"
+
+msgid "New Barcodes"
+msgstr "ברקודים חדשים"
+
+msgid "Unknown Barcodes"
+msgstr "ברקודים לא ידועים"
+
+msgid "No unknown barcodes yet."
+msgstr "אין ברקודים בלתי ידועים עדיין."
+
+msgid "No known barcodes yet."
+msgstr "אין ברקודים ידועים עדיין."
+
+msgid "No processed items yet."
+msgstr "אין פריטים שעובדו עדיין."
+
+msgid "Delete all"
+msgstr "למחוק הכול"
+
+msgid "Processed Barcodes"
+msgstr "ברקודים שעברו עיבוד"
+
+msgid "Barcode"
+msgstr "ברקוד"
+
+msgid "Look up"
+msgstr "חיפוש"
+
+msgid "Quantity"
+msgstr "כמות"
+
+msgid "Product"
+msgstr "מוצר"
+
+msgid "Action"
+msgstr "פעולה"
+
+msgid "Create"
+msgstr "יצירה"
+
+msgid "Remove"
+msgstr "הסרה"
+
+msgid "Clear log"
+msgstr "מחיקת יומן"
+
+msgid "Create Product"
+msgstr "יצירת מוצר"
+
+msgid "Add"
+msgstr "הוספה"
+
+msgid "Consume"
+msgstr "צריכה"

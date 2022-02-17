@@ -1,0 +1,116 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2022-02-08 15:17+0000\n"
+"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
+"Language-Team: French <https://hosted.weblate.org/projects/barcode-buddy/"
+"strings/fr/>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 4.11-dev\n"
+"X-Poedit-Basepath: locale\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: nb_NO\n"
+
+msgid "Unknown barcode looked up, found name: %s"
+msgstr "Recherche d'un code-barres inconnu, nom trouvé : %s"
+
+msgid "Unknown product already scanned. Increasing quantity."
+msgstr "Produit inconnu déjà scanné. Augmentation de la quantité."
+
+msgid "Unknown barcode could not be looked up"
+msgstr "Le code-barres inconnu n'a pas pu être recherché"
+
+msgid "Product found. None in stock, not consuming: %s"
+msgstr "Produit trouvé. Aucun en stock, pas de consommation : %s"
+
+msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
+msgstr "Produit trouvé. Consommation de %d %s sur %s [%d]. En stock : %d"
+
+msgid "Product found. Opening %d %s of %s"
+msgstr "Produit trouvé. Ouverture de %d %s sur %s"
+
+msgid "Set state to Open"
+msgstr "Définir l'état sur Ouvrir"
+
+msgid "Set state to Consume"
+msgstr "Définir l'état sur Consommer"
+
+msgid "Set state to Purchase"
+msgstr "Définir l'état sur Acheter"
+
+msgid "Adding %d %s of %s"
+msgstr "Ajout de %d %s sur %s"
+
+msgid "Associated barcode %d with %s"
+msgstr "Code-barres %d associé à %s"
+
+msgid "Product found. Adding %d %s of %s"
+msgstr "Produit trouvé. Ajout de %d %s sur %s"
+
+msgid "None in stock, not consuming: %s"
+msgstr "Aucun en stock, ne pas consommer : %s"
+
+msgid "Reverting back to Consume"
+msgstr "Revenir à Consommer"
+
+msgid "Product found. Consuming %d %s of %s"
+msgstr "Produit trouvé. Consommation de %d %s sur %s"
+
+msgid "New Barcodes"
+msgstr "Nouveaux codes-barres"
+
+msgid "Unknown Barcodes"
+msgstr "Codes-barres inconnus"
+
+msgid "No unknown barcodes yet."
+msgstr "Pas encore de codes-barres inconnus."
+
+msgid "No known barcodes yet."
+msgstr "Aucun code-barres connu pour le moment."
+
+msgid "No processed items yet."
+msgstr "Aucun élément traité pour le moment."
+
+msgid "Delete all"
+msgstr "Tout supprimer"
+
+msgid "Processed Barcodes"
+msgstr "Codes-barres traités"
+
+msgid "Barcode"
+msgstr "Code-barres"
+
+msgid "Look up"
+msgstr "Rechercher"
+
+msgid "Quantity"
+msgstr "Quantité"
+
+msgid "Product"
+msgstr "Produit"
+
+msgid "Action"
+msgstr "Action"
+
+msgid "Create"
+msgstr "Créer"
+
+msgid "Remove"
+msgstr "Retirer"
+
+msgid "Clear log"
+msgstr "Effacer le journal"
+
+msgid "Create Product"
+msgstr "Créer un produit"
+
+msgid "Add"
+msgstr "Ajouter"
+
+msgid "Consume"
+msgstr "Consommer"

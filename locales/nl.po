@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-02-22 06:49+0000\n"
+"PO-Revision-Date: 2022-02-23 06:54+0000\n"
 "Last-Translator: PiAir <pierre@gosoftonline.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/barcode-buddy/"
 "strings/nl/>\n"
@@ -25,28 +25,20 @@ msgstr "Onbekend product reeds gescand. Hoeveelheid verhoogd."
 msgid "Unknown barcode could not be looked up"
 msgstr "Onbekende streepjescode kon niet worden opgezocht"
 
-#, fuzzy
-#| msgid "Product"
 msgid "Product found. "
-msgstr "Product"
+msgstr "Product gevonden. "
 
 msgid "None in stock, not consuming: %s"
 msgstr "Niet op voorraad, niets geconsumeerd: %s"
 
-#, fuzzy
-#| msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
 msgid "Consuming %d %s of %s [%d]. In Stock: %d"
-msgstr "Product gevonden. Verbruikt %d %s van %s [%d]. Op voorraad: %d"
+msgstr "Verbruikt %d %s van %s [%d]. Op voorraad: %d"
 
-#, fuzzy
-#| msgid "Adding %d %s of %s"
 msgid "Opening %d %s of %s"
-msgstr "Toevoegen van %d %s van %s"
+msgstr "Openen van %d %s van %s"
 
-#, fuzzy
-#| msgid "Set state to Open"
 msgid "Set state to "
-msgstr "Zet status op Open"
+msgstr "Zet status op "
 
 msgid "Adding %d %s of %s"
 msgstr "Toevoegen van %d %s van %s"
@@ -118,24 +110,22 @@ msgid "Consume"
 msgstr "Consumeer"
 
 msgid "Consume (spoiled)"
-msgstr "Consume (spoiled)"
+msgstr "Consumeer (verspild)"
 
-#, fuzzy
-#| msgid "Consume"
 msgid "Consume (all)"
-msgstr "Consumeer"
+msgstr "Consumeer (alles)"
 
 msgid "Purchase"
-msgstr "Purchase"
+msgstr "Koop"
 
 msgid "Open"
 msgstr "Open"
 
 msgid "Inventory"
-msgstr "Inventory"
+msgstr "Voorraad"
 
 msgid "Add to shoppinglist"
-msgstr "Add to shoppinglist"
+msgstr "Toevoegen aan boodschappenlijst"
 
 #~ msgid "Product found. None in stock, not consuming: %s"
 #~ msgstr "Product gevonden. Geen op voorraad, niets geconsumeerd: %s"

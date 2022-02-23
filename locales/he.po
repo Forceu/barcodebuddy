@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-02-07 22:19+0000\n"
+"PO-Revision-Date: 2022-02-24 07:58+0000\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew <https://hosted.weblate.org/projects/barcode-buddy/"
 "strings/he/>\n"
@@ -26,28 +26,20 @@ msgstr "המוצר הלא ידוע כבר נסרק. הכמות גדלה."
 msgid "Unknown barcode could not be looked up"
 msgstr "לא ניתן לחפש ברקוד בלתי ידוע"
 
-#, fuzzy
-#| msgid "Product"
 msgid "Product found. "
-msgstr "מוצר"
+msgstr "מוצר נמצא. "
 
 msgid "None in stock, not consuming: %s"
 msgstr "אין במלאי, לא נצרך: %s"
 
-#, fuzzy
-#| msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
 msgid "Consuming %d %s of %s [%d]. In Stock: %d"
-msgstr "המוצר נמצא. נצרכים %d %s מתוך %s [%d]. במלאי: %d"
+msgstr "נצרכים %d %s מתוך %s [%d]. במלאי: %d"
 
-#, fuzzy
-#| msgid "Adding %d %s of %s"
 msgid "Opening %d %s of %s"
-msgstr "נוספים %d %s של %s"
+msgstr "נפתחים %d %s של %s"
 
-#, fuzzy
-#| msgid "Set state to Open"
 msgid "Set state to "
-msgstr "הגדרת המצב לפתוח"
+msgstr "הגדרת המצב לכדי "
 
 msgid "Adding %d %s of %s"
 msgstr "נוספים %d %s של %s"
@@ -119,24 +111,22 @@ msgid "Consume"
 msgstr "צריכה"
 
 msgid "Consume (spoiled)"
-msgstr "Consume (spoiled)"
+msgstr "צריכה (התקלקל)"
 
-#, fuzzy
-#| msgid "Consume"
 msgid "Consume (all)"
-msgstr "צריכה"
+msgstr "צריכה (הכול)"
 
 msgid "Purchase"
-msgstr "Purchase"
+msgstr "רכישה"
 
 msgid "Open"
 msgstr "Open"
 
 msgid "Inventory"
-msgstr "Inventory"
+msgstr "מאגר"
 
 msgid "Add to shoppinglist"
-msgstr "Add to shoppinglist"
+msgstr "הוספה לרשימת הקניות"
 
 #~ msgid "Product found. None in stock, not consuming: %s"
 #~ msgstr "המוצר נמצא. חסר במלאי, לא נצרך: %s"

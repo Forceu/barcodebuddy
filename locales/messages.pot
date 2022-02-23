@@ -22,23 +22,20 @@ msgstr "Unknown product already scanned. Increasing quantity."
 msgid "Unknown barcode could not be looked up"
 msgstr "Unknown barcode could not be looked up"
 
-msgid "Product found. None in stock, not consuming: %s"
-msgstr "Product found. None in stock, not consuming: %s"
+msgid "Product found. "
+msgstr "Product found. "
 
-msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
-msgstr "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
+msgid "None in stock, not consuming: %s"
+msgstr "None in stock, not consuming: %s"
 
-msgid "Product found. Opening %d %s of %s"
-msgstr "Product found. Opening %d %s of %s"
+msgid "Consuming %d %s of %s [%d]. In Stock: %d"
+msgstr "Consuming %d %s of %s [%d]. In Stock: %d"
 
-msgid "Set state to Open"
-msgstr "Set state to Open"
+msgid "Opening %d %s of %s"
+msgstr "Opening %d %s of %s"
 
-msgid "Set state to Consume"
-msgstr "Set state to Consume"
-
-msgid "Set state to Purchase"
-msgstr "Set state to Purchase"
+msgid "Set state to "
+msgstr "Set state to "
 
 msgid "Adding %d %s of %s"
 msgstr "Adding %d %s of %s"
@@ -48,9 +45,6 @@ msgstr "Associated barcode %d with %s"
 
 msgid "Product found. Adding %d %s of %s"
 msgstr "Product found. Adding %d %s of %s"
-
-msgid "None in stock, not consuming: %s"
-msgstr "None in stock, not consuming: %s"
 
 msgid "Reverting back to Consume"
 msgstr "Reverting back to Consume"
@@ -111,3 +105,22 @@ msgstr "Add"
 
 msgid "Consume"
 msgstr "Consume"
+
+msgid "Consume (spoiled)"
+msgstr "Consume (spoiled)"
+
+msgid "Consume (all)"
+msgstr "Consume (all)"
+
+msgid "Purchase"
+msgstr "Purchase"
+
+msgid "Open"
+msgstr "Open"
+
+msgid "Inventory"
+msgstr "Inventory"
+
+msgid "Add to shoppinglist"
+msgstr "Add to shoppinglist"
+

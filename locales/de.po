@@ -25,23 +25,28 @@ msgstr "Unbekannter Barcode bereits gescannt. Anzahl wurde erhöht."
 msgid "Unknown barcode could not be looked up"
 msgstr "Unbekannter Barcode konnte nicht gefunden werden"
 
-msgid "Product found. None in stock, not consuming: %s"
-msgstr "Produkt gefunden. Nicht vorrätig: %s"
+#, fuzzy
+#| msgid "Product"
+msgid "Product found. "
+msgstr "Produkt"
 
-msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
+msgid "None in stock, not consuming: %s"
+msgstr "Nicht im Bestand: %s"
+
+#, fuzzy
+#| msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
+msgid "Consuming %d %s of %s [%d]. In Stock: %d"
 msgstr "Produkt gefunden. Entferne: %d %s von %s [%d]. Bestand: %d"
 
-msgid "Product found. Opening %d %s of %s"
-msgstr "Produkt gefunden. Öffne %d %s von %s"
+#, fuzzy
+#| msgid "Adding %d %s of %s"
+msgid "Opening %d %s of %s"
+msgstr "Hinzufügen von %d %s %s"
 
-msgid "Set state to Open"
+#, fuzzy
+#| msgid "Set state to Open"
+msgid "Set state to "
 msgstr "Modus Öffnen gesetzt"
-
-msgid "Set state to Consume"
-msgstr "Modus Konsumieren gesetzt"
-
-msgid "Set state to Purchase"
-msgstr "Modus Hinzufügen gesetzt"
 
 msgid "Adding %d %s of %s"
 msgstr "Hinzufügen von %d %s %s"
@@ -51,9 +56,6 @@ msgstr "Barcode %d wurde mit %s verknüpft"
 
 msgid "Product found. Adding %d %s of %s"
 msgstr "Produkt gefunden. Füge %d %s von %s hinzu"
-
-msgid "None in stock, not consuming: %s"
-msgstr "Nicht im Bestand: %s"
 
 msgid "Reverting back to Consume"
 msgstr "Setze Modus zurück auf Konsumieren"
@@ -114,3 +116,35 @@ msgstr "Hinzufügen"
 
 msgid "Consume"
 msgstr "Konsumieren"
+
+msgid "Consume (spoiled)"
+msgstr "Consume (spoiled)"
+
+#, fuzzy
+#| msgid "Consume"
+msgid "Consume (all)"
+msgstr "Konsumieren"
+
+msgid "Purchase"
+msgstr "Purchase"
+
+msgid "Open"
+msgstr "Open"
+
+msgid "Inventory"
+msgstr "Inventory"
+
+msgid "Add to shoppinglist"
+msgstr "Add to shoppinglist"
+
+#~ msgid "Product found. None in stock, not consuming: %s"
+#~ msgstr "Produkt gefunden. Nicht vorrätig: %s"
+
+#~ msgid "Product found. Opening %d %s of %s"
+#~ msgstr "Produkt gefunden. Öffne %d %s von %s"
+
+#~ msgid "Set state to Consume"
+#~ msgstr "Modus Konsumieren gesetzt"
+
+#~ msgid "Set state to Purchase"
+#~ msgstr "Modus Hinzufügen gesetzt"

@@ -29,28 +29,24 @@ msgid "Unknown barcode could not be looked up"
 msgstr "Okänt streckkod hittades inte ved uppslag."
 
 #, fuzzy
-msgid "Product found. None in stock, not consuming: %s"
-msgstr "Fann produkten. Inte på lager. Konsumerar inte: %s"
+msgid "Product found. "
+msgstr "Produkt"
 
 #, fuzzy
-msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
+msgid "None in stock, not consuming: %s"
+msgstr "Inte på lager. Konsumerar inte: %s"
+
+#, fuzzy
+msgid "Consuming %d %s of %s [%d]. In Stock: %d"
 msgstr "Fann produkten. Konsumerar %d %s av %s [%d]. På lager: %d"
 
 #, fuzzy
-msgid "Product found. Opening %d %s of %s"
-msgstr "Fann produkten. Öppnar %d %s av %så"
+msgid "Opening %d %s of %s"
+msgstr "Tillägger %d %s av %s"
 
 #, fuzzy
-msgid "Set state to Open"
+msgid "Set state to "
 msgstr "Sett tillstånd till «öppen»"
-
-#, fuzzy
-msgid "Set state to Consume"
-msgstr "Sett tillstånd till «konsumera»"
-
-#, fuzzy
-msgid "Set state to Purchase"
-msgstr "Sett tillstånd till «köpa»"
 
 #, fuzzy
 msgid "Adding %d %s of %s"
@@ -63,10 +59,6 @@ msgstr "Tillknycklade streckkoden «%d» med %s"
 #, fuzzy
 msgid "Product found. Adding %d %s of %s"
 msgstr "Fann produkten. Tillägger %d %s av %s"
-
-#, fuzzy
-msgid "None in stock, not consuming: %s"
-msgstr "Inte på lager. Konsumerar inte: %s"
 
 #, fuzzy
 msgid "Reverting back to Consume"
@@ -147,3 +139,38 @@ msgstr "Legg till"
 #, fuzzy
 msgid "Consume"
 msgstr "Konsumera"
+
+msgid "Consume (spoiled)"
+msgstr "Consume (spoiled)"
+
+#, fuzzy
+msgid "Consume (all)"
+msgstr "Konsumera"
+
+msgid "Purchase"
+msgstr "Purchase"
+
+msgid "Open"
+msgstr "Open"
+
+msgid "Inventory"
+msgstr "Inventory"
+
+msgid "Add to shoppinglist"
+msgstr "Add to shoppinglist"
+
+#, fuzzy
+#~ msgid "Product found. None in stock, not consuming: %s"
+#~ msgstr "Fann produkten. Inte på lager. Konsumerar inte: %s"
+
+#, fuzzy
+#~ msgid "Product found. Opening %d %s of %s"
+#~ msgstr "Fann produkten. Öppnar %d %s av %så"
+
+#, fuzzy
+#~ msgid "Set state to Consume"
+#~ msgstr "Sett tillstånd till «konsumera»"
+
+#, fuzzy
+#~ msgid "Set state to Purchase"
+#~ msgstr "Sett tillstånd till «köpa»"

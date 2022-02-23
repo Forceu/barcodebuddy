@@ -26,23 +26,28 @@ msgstr "המוצר הלא ידוע כבר נסרק. הכמות גדלה."
 msgid "Unknown barcode could not be looked up"
 msgstr "לא ניתן לחפש ברקוד בלתי ידוע"
 
-msgid "Product found. None in stock, not consuming: %s"
-msgstr "המוצר נמצא. חסר במלאי, לא נצרך: %s"
+#, fuzzy
+#| msgid "Product"
+msgid "Product found. "
+msgstr "מוצר"
 
-msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
+msgid "None in stock, not consuming: %s"
+msgstr "אין במלאי, לא נצרך: %s"
+
+#, fuzzy
+#| msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
+msgid "Consuming %d %s of %s [%d]. In Stock: %d"
 msgstr "המוצר נמצא. נצרכים %d %s מתוך %s [%d]. במלאי: %d"
 
-msgid "Product found. Opening %d %s of %s"
-msgstr "המוצר נמצא. נפתחו %d %s של %s"
+#, fuzzy
+#| msgid "Adding %d %s of %s"
+msgid "Opening %d %s of %s"
+msgstr "נוספים %d %s של %s"
 
-msgid "Set state to Open"
+#, fuzzy
+#| msgid "Set state to Open"
+msgid "Set state to "
 msgstr "הגדרת המצב לפתוח"
-
-msgid "Set state to Consume"
-msgstr "הגדרת המצב לצריכה"
-
-msgid "Set state to Purchase"
-msgstr "הגדרת המצב לרכישה"
 
 msgid "Adding %d %s of %s"
 msgstr "נוספים %d %s של %s"
@@ -52,9 +57,6 @@ msgstr "הברקוד %d שויך אל %s"
 
 msgid "Product found. Adding %d %s of %s"
 msgstr "המוצר נמצא. נוספים %d %s של %s"
-
-msgid "None in stock, not consuming: %s"
-msgstr "אין במלאי, לא נצרך: %s"
 
 msgid "Reverting back to Consume"
 msgstr "מוחזר לצריכה"
@@ -115,3 +117,35 @@ msgstr "הוספה"
 
 msgid "Consume"
 msgstr "צריכה"
+
+msgid "Consume (spoiled)"
+msgstr "Consume (spoiled)"
+
+#, fuzzy
+#| msgid "Consume"
+msgid "Consume (all)"
+msgstr "צריכה"
+
+msgid "Purchase"
+msgstr "Purchase"
+
+msgid "Open"
+msgstr "Open"
+
+msgid "Inventory"
+msgstr "Inventory"
+
+msgid "Add to shoppinglist"
+msgstr "Add to shoppinglist"
+
+#~ msgid "Product found. None in stock, not consuming: %s"
+#~ msgstr "המוצר נמצא. חסר במלאי, לא נצרך: %s"
+
+#~ msgid "Product found. Opening %d %s of %s"
+#~ msgstr "המוצר נמצא. נפתחו %d %s של %s"
+
+#~ msgid "Set state to Consume"
+#~ msgstr "הגדרת המצב לצריכה"
+
+#~ msgid "Set state to Purchase"
+#~ msgstr "הגדרת המצב לרכישה"

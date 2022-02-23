@@ -25,23 +25,28 @@ msgstr "Produit inconnu déjà scanné. Augmentation de la quantité."
 msgid "Unknown barcode could not be looked up"
 msgstr "Le code-barres inconnu n'a pas pu être recherché"
 
-msgid "Product found. None in stock, not consuming: %s"
-msgstr "Produit trouvé. Aucun en stock, pas de consommation : %s"
+#, fuzzy
+#| msgid "Product"
+msgid "Product found. "
+msgstr "Produit"
 
-msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
+msgid "None in stock, not consuming: %s"
+msgstr "Aucun en stock, ne pas consommer : %s"
+
+#, fuzzy
+#| msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
+msgid "Consuming %d %s of %s [%d]. In Stock: %d"
 msgstr "Produit trouvé. Consommation de %d %s sur %s [%d]. En stock : %d"
 
-msgid "Product found. Opening %d %s of %s"
-msgstr "Produit trouvé. Ouverture de %d %s sur %s"
+#, fuzzy
+#| msgid "Adding %d %s of %s"
+msgid "Opening %d %s of %s"
+msgstr "Ajout de %d %s sur %s"
 
-msgid "Set state to Open"
+#, fuzzy
+#| msgid "Set state to Open"
+msgid "Set state to "
 msgstr "Définir l'état sur Ouvrir"
-
-msgid "Set state to Consume"
-msgstr "Définir l'état sur Consommer"
-
-msgid "Set state to Purchase"
-msgstr "Définir l'état sur Acheter"
 
 msgid "Adding %d %s of %s"
 msgstr "Ajout de %d %s sur %s"
@@ -51,9 +56,6 @@ msgstr "Code-barres %d associé à %s"
 
 msgid "Product found. Adding %d %s of %s"
 msgstr "Produit trouvé. Ajout de %d %s sur %s"
-
-msgid "None in stock, not consuming: %s"
-msgstr "Aucun en stock, ne pas consommer : %s"
 
 msgid "Reverting back to Consume"
 msgstr "Revenir à Consommer"
@@ -114,3 +116,35 @@ msgstr "Ajouter"
 
 msgid "Consume"
 msgstr "Consommer"
+
+msgid "Consume (spoiled)"
+msgstr "Consume (spoiled)"
+
+#, fuzzy
+#| msgid "Consume"
+msgid "Consume (all)"
+msgstr "Consommer"
+
+msgid "Purchase"
+msgstr "Purchase"
+
+msgid "Open"
+msgstr "Open"
+
+msgid "Inventory"
+msgstr "Inventory"
+
+msgid "Add to shoppinglist"
+msgstr "Add to shoppinglist"
+
+#~ msgid "Product found. None in stock, not consuming: %s"
+#~ msgstr "Produit trouvé. Aucun en stock, pas de consommation : %s"
+
+#~ msgid "Product found. Opening %d %s of %s"
+#~ msgstr "Produit trouvé. Ouverture de %d %s sur %s"
+
+#~ msgid "Set state to Consume"
+#~ msgstr "Définir l'état sur Consommer"
+
+#~ msgid "Set state to Purchase"
+#~ msgstr "Définir l'état sur Acheter"

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-02-08 15:17+0000\n"
+"PO-Revision-Date: 2022-02-27 17:58+0000\n"
 "Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/barcode-buddy/"
 "strings/it/>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.11-dev\n"
+"X-Generator: Weblate 4.11.1-dev\n"
 "X-Poedit-Basepath: locale\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: nb_NO\n"
@@ -25,28 +25,20 @@ msgstr "Prodotto sconosciuto già scansionato. Quantità in aumento."
 msgid "Unknown barcode could not be looked up"
 msgstr "Non è stato possibile cercare il codice a barre sconosciuto"
 
-#, fuzzy
-#| msgid "Product"
 msgid "Product found. "
-msgstr "Prodotto"
+msgstr "Prodotto trovato. "
 
 msgid "None in stock, not consuming: %s"
 msgstr "Nessuno in magazzino, non si consuma: %s"
 
-#, fuzzy
-#| msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
 msgid "Consuming %d %s of %s [%d]. In Stock: %d"
-msgstr "Prodotto trovato. Consumando %d %s di %s [%d]. In magazzino: %d"
+msgstr "Consumando %d %s di %s [%d]. In magazzino: %d"
 
-#, fuzzy
-#| msgid "Adding %d %s of %s"
 msgid "Opening %d %s of %s"
-msgstr "Aggiungendo %d %s di %s"
+msgstr "Apertura %d %s di %s"
 
-#, fuzzy
-#| msgid "Set state to Open"
 msgid "Set state to "
-msgstr "Imposta lo stato su Aprire"
+msgstr "Imposta lo stato su "
 
 msgid "Adding %d %s of %s"
 msgstr "Aggiungendo %d %s di %s"
@@ -118,24 +110,22 @@ msgid "Consume"
 msgstr "Consuma"
 
 msgid "Consume (spoiled)"
-msgstr "Consume (spoiled)"
+msgstr "Consuma (scaduto)"
 
-#, fuzzy
-#| msgid "Consume"
 msgid "Consume (all)"
-msgstr "Consuma"
+msgstr "Consuma (tutto)"
 
 msgid "Purchase"
-msgstr "Purchase"
+msgstr "Compra"
 
 msgid "Open"
 msgstr "Open"
 
 msgid "Inventory"
-msgstr "Inventory"
+msgstr "Inventario"
 
 msgid "Add to shoppinglist"
-msgstr "Add to shoppinglist"
+msgstr "Aggiungi alla lista della spesa"
 
 #~ msgid "Product found. None in stock, not consuming: %s"
 #~ msgstr "Prodotto trovato. Nessuno in magazzino, non si consuma: %s"

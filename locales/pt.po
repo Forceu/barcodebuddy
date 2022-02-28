@@ -2,125 +2,127 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2022-03-01 15:57+0000\n"
+"Last-Translator: Fábio Santos Valonga <fabiosv.etep@gmail.com>\n"
+"Language-Team: Portuguese <https://hosted.weblate.org/projects/barcode-buddy/"
+"strings/pt/>\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.2\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 4.11.1-dev\n"
 "X-Poedit-Basepath: locale\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: nb_NO\n"
 
 msgid "Unknown barcode looked up, found name: %s"
-msgstr ""
+msgstr "Código de barras desconhecido: %s"
 
 msgid "Unknown product already scanned. Increasing quantity."
-msgstr ""
+msgstr "Esse produto ja foi escaneado. Aumentando quantidade."
 
 msgid "Unknown barcode could not be looked up"
-msgstr ""
+msgstr "Não foi possivel encontrar esse código de barras"
 
 msgid "Product found. "
-msgstr ""
+msgstr "Produto encontrado. "
 
 msgid "None in stock, not consuming: %s"
-msgstr ""
+msgstr "Não encontrado no estoque, não será consumido: %s"
 
 msgid "Consuming %d %s of %s [%d]. In Stock: %d"
-msgstr ""
+msgstr "Consumindo %d %s de %s [%d]. Ainda no estoque: %d"
 
 msgid "Opening %d %s of %s"
-msgstr ""
+msgstr "Abrindo %d %s de %s"
 
 msgid "Set state to "
-msgstr ""
+msgstr "Alterar estado para "
 
 msgid "Adding %d %s of %s"
-msgstr ""
+msgstr "Adicionando %d %s de %s"
 
 msgid "Associated barcode %d with %s"
-msgstr ""
+msgstr "Código de barras %d associado com %s"
 
 msgid "Product found. Adding %d %s of %s"
-msgstr ""
+msgstr "Produto encontrado. Adicionando %d %s de %s"
 
 msgid "Reverting back to Consume"
-msgstr ""
+msgstr "Estornando item para sessão Consumir"
 
 msgid "Product found. Consuming %d %s of %s"
-msgstr ""
+msgstr "Produto encontrado. Consumindo %d %s de %s"
 
 msgid "New Barcodes"
-msgstr ""
+msgstr "Novo Código de Barras"
 
 msgid "Unknown Barcodes"
-msgstr ""
+msgstr "Código de Barras desconhecido"
 
 msgid "No unknown barcodes yet."
-msgstr ""
+msgstr "Nenhum código de barras desconhecido ainda."
 
 msgid "No known barcodes yet."
-msgstr ""
+msgstr "Nenhum código de barras conhecido ainda."
 
 msgid "No processed items yet."
-msgstr ""
+msgstr "Nenhum item processado ainda."
 
 msgid "Delete all"
-msgstr ""
+msgstr "Deletar todos"
 
 msgid "Processed Barcodes"
-msgstr ""
+msgstr "Código de barras processados"
 
 msgid "Barcode"
-msgstr ""
+msgstr "Código de Barras"
 
 msgid "Look up"
-msgstr ""
+msgstr "Procurar"
 
 msgid "Quantity"
-msgstr ""
+msgstr "Quantidade"
 
 msgid "Product"
-msgstr ""
+msgstr "Produto"
 
 msgid "Action"
-msgstr ""
+msgstr "Ação"
 
 msgid "Create"
-msgstr ""
+msgstr "Criar"
 
 msgid "Remove"
-msgstr ""
+msgstr "Remover"
 
 msgid "Clear log"
-msgstr ""
+msgstr "Limpar log"
 
 msgid "Create Product"
-msgstr ""
+msgstr "Criar Produto"
 
 msgid "Add"
-msgstr ""
+msgstr "Adicionar"
 
 msgid "Consume"
-msgstr ""
+msgstr "Consumir"
 
 msgid "Consume (spoiled)"
-msgstr ""
+msgstr "Consumir (estragado)"
 
 msgid "Consume (all)"
-msgstr ""
+msgstr "Consumir (todos)"
 
 msgid "Purchase"
-msgstr ""
+msgstr "Comprar"
 
 msgid "Open"
-msgstr ""
+msgstr "Abrir"
 
 msgid "Inventory"
-msgstr ""
+msgstr "Inventário"
 
 msgid "Add to shoppinglist"
-msgstr ""
+msgstr "Adicionar na lista de compras"

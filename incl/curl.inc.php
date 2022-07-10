@@ -156,8 +156,12 @@ class CurlGenerator {
         curl_close($this->ch);
 
         $jsonDecoded = json_decode($curlResult, true);
-        if ($decode && isset($jsonDecoded->response->status) && $jsonDecoded->response->status == 'ERROR')
+        if ($decode && isset($jsonDecoded->response->status) && $jsonDecoded->response->status == 'ERROR') {
+            if (DISPLAY_DEBUG) {
+                DatabaseConnection::getInstance()->saveLog($curlResult);
+            }
             throw new InvalidJsonResponseException($jsonDecoded->response->errormessage);
+        }
 
         if (isset($jsonDecoded["error_message"])) {
             $isIgnoredError = false;
@@ -165,8 +169,12 @@ class CurlGenerator {
                 if (preg_match($ignoredError, $jsonDecoded["error_message"]))
                     $isIgnoredError = true;
             }
-            if (!$isIgnoredError)
+            if (!$isIgnoredError) {
+                if (DISPLAY_DEBUG) {
+                    DatabaseConnection::getInstance()->saveLog($curlResult);
+                }
                 throw new InvalidJsonResponseException($jsonDecoded["error_message"]);
+            }
         }
         if (DISPLAY_DEBUG) {
             $totalTimeMs = round((microtime(true) - $startTime) * 1000);

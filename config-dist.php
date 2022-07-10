@@ -78,6 +78,10 @@ const SEARCH_ENGINE               = "https://google.com/search?q=";
 const BASEURL                      = "/";
 
 
+// Default language to use for product lookups. Currently, only OpenFoodFacts supports this.
+const DEFAULT_LOOKUP_LANGUAGE                      = "en";
+
+
 //If you need to manually override a config value, you can do so with this array.
 //Any overridden value cannot be changed through the UI anymore!
 const OVERRIDDEN_USER_CONFIG       = array(

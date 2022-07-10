@@ -19,6 +19,8 @@ require_once __DIR__ . "/../api.inc.php";
 
 class ProviderOpenFoodFacts extends LookupProvider {
 
+    private $result;
+
     function __construct(string $apiKey = null) {
         parent::__construct($apiKey);
         $this->providerName      = "OpenFoodFacts";
@@ -34,20 +36,36 @@ class ProviderOpenFoodFacts extends LookupProvider {
         if (!$this->isProviderEnabled())
             return null;
 
+        global $CONFIG;
+
+
         $url    = "https://world.openfoodfacts.org/api/v0/product/" . $barcode . ".json";
         $result = $this->execute($url);
         if (!isset($result["status"]) || $result["status"] !== 1)
             return null;
 
-        $genericName = null;
-        $productName = null;
-        if (isset($result["product"]["generic_name"]) && $result["product"]["generic_name"] != "") {
-            $genericName = sanitizeString($result["product"]["generic_name"]);
-        }
-        if (isset($result["product"]["product_name"]) && $result["product"]["product_name"] != "") {
-            $productName = sanitizeString($result["product"]["product_name"]);
-        }
+        $this->result = $result;
 
-        return self::createReturnArray($this->returnNameOrGenericName($productName, $genericName));
+        return self::createReturnArray($this->returnNameOrGenericName($this->getProductName($CONFIG->DEFAULT_LOOKUP_LANGUAGE), $this->getGenericName($CONFIG->DEFAULT_LOOKUP_LANGUAGE)));
+    }
+
+    private function getGenericName(string $defaultLanguage): ?string {
+        if (isset($this->result["product"]["generic_name_" . $defaultLanguage]) && $this->result["product"]["generic_name_" . $defaultLanguage] != "") {
+            return sanitizeString($this->result["product"]["generic_name_" . $defaultLanguage]);
+        }
+        if (isset($this->result["product"]["generic_name"]) && $this->result["product"]["generic_name"] != "") {
+            return sanitizeString($this->result["product"]["generic_name"]);
+        }
+        return null;
+    }
+
+    private function getProductName(string $defaultLanguage): ?string {
+        if (isset($this->result["product"]["product_name_" . $defaultLanguage]) && $this->result["product"]["product_name_" . $defaultLanguage] != "") {
+            return sanitizeString($this->result["product"]["product_name_" . $defaultLanguage]);
+        }
+        if (isset($this->result["product"]["product_name"]) && $this->result["product"]["product_name"] != "") {
+            return sanitizeString($this->result["product"]["product_name"]);
+        }
+        return null;
     }
 }

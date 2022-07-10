@@ -31,7 +31,7 @@ const RESULT_ALL_INSTALLED = 0;
 const RESULT_OPT_MISSING   = 1;
 const RESULT_REQ_MISSING   = 2;
 
-const REQ_EXTENSIONS      = array("curl", "date", "sqlite3", "json", "sockets", "redis");
+const REQ_EXTENSIONS      = array("curl", "date", "sqlite3", "json", "sockets", "redis", "mbstring", "gettext");
 const OPTIONAL_EXTENSIONS = array();
 
 

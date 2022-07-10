@@ -76,7 +76,8 @@ function checkForMissingConstants(): void {
         "AUTHENTICATION_BYPASS_NETS"   => array(),
         "TRUSTED_PROXIES"              => array(),
         "SEARCH_ENGINE"                => "https://google.com/search?q=",
-        "BASEURL"                      => "/"
+        "BASEURL"                      => "/",
+        "DEFAULT_LOOKUP_LANGUAGE"      => "en"
     );
     foreach ($defaultValues as $key => $value) {
         if (!defined($key))
@@ -105,6 +106,7 @@ class GlobalConfig {
     public $TRUSTED_PROXIES = TRUSTED_PROXIES;
     public $SEARCH_ENGINE = SEARCH_ENGINE;
     public $BASEURL = BASEURL;
+    public $DEFAULT_LOOKUP_LANGUAGE = DEFAULT_LOOKUP_LANGUAGE;
 
     function __construct() {
         $this->loadConfig();

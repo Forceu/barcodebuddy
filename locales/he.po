@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-02-07 22:19+0000\n"
+"PO-Revision-Date: 2022-02-24 07:58+0000\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew <https://hosted.weblate.org/projects/barcode-buddy/"
 "strings/he/>\n"
@@ -26,23 +26,20 @@ msgstr "המוצר הלא ידוע כבר נסרק. הכמות גדלה."
 msgid "Unknown barcode could not be looked up"
 msgstr "לא ניתן לחפש ברקוד בלתי ידוע"
 
-msgid "Product found. None in stock, not consuming: %s"
-msgstr "המוצר נמצא. חסר במלאי, לא נצרך: %s"
+msgid "Product found. "
+msgstr "מוצר נמצא. "
 
-msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
-msgstr "המוצר נמצא. נצרכים %d %s מתוך %s [%d]. במלאי: %d"
+msgid "None in stock, not consuming: %s"
+msgstr "אין במלאי, לא נצרך: %s"
 
-msgid "Product found. Opening %d %s of %s"
-msgstr "המוצר נמצא. נפתחו %d %s של %s"
+msgid "Consuming %d %s of %s [%d]. In Stock: %d"
+msgstr "נצרכים %d %s מתוך %s [%d]. במלאי: %d"
 
-msgid "Set state to Open"
-msgstr "הגדרת המצב לפתוח"
+msgid "Opening %d %s of %s"
+msgstr "נפתחים %d %s של %s"
 
-msgid "Set state to Consume"
-msgstr "הגדרת המצב לצריכה"
-
-msgid "Set state to Purchase"
-msgstr "הגדרת המצב לרכישה"
+msgid "Set state to "
+msgstr "הגדרת המצב לכדי "
 
 msgid "Adding %d %s of %s"
 msgstr "נוספים %d %s של %s"
@@ -52,9 +49,6 @@ msgstr "הברקוד %d שויך אל %s"
 
 msgid "Product found. Adding %d %s of %s"
 msgstr "המוצר נמצא. נוספים %d %s של %s"
-
-msgid "None in stock, not consuming: %s"
-msgstr "אין במלאי, לא נצרך: %s"
 
 msgid "Reverting back to Consume"
 msgstr "מוחזר לצריכה"
@@ -115,3 +109,33 @@ msgstr "הוספה"
 
 msgid "Consume"
 msgstr "צריכה"
+
+msgid "Consume (spoiled)"
+msgstr "צריכה (התקלקל)"
+
+msgid "Consume (all)"
+msgstr "צריכה (הכול)"
+
+msgid "Purchase"
+msgstr "רכישה"
+
+msgid "Open"
+msgstr "Open"
+
+msgid "Inventory"
+msgstr "מאגר"
+
+msgid "Add to shoppinglist"
+msgstr "הוספה לרשימת הקניות"
+
+#~ msgid "Product found. None in stock, not consuming: %s"
+#~ msgstr "המוצר נמצא. חסר במלאי, לא נצרך: %s"
+
+#~ msgid "Product found. Opening %d %s of %s"
+#~ msgstr "המוצר נמצא. נפתחו %d %s של %s"
+
+#~ msgid "Set state to Consume"
+#~ msgstr "הגדרת המצב לצריכה"
+
+#~ msgid "Set state to Purchase"
+#~ msgstr "הגדרת המצב לרכישה"

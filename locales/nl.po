@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-02-22 06:49+0000\n"
+"PO-Revision-Date: 2022-02-23 06:54+0000\n"
 "Last-Translator: PiAir <pierre@gosoftonline.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/barcode-buddy/"
 "strings/nl/>\n"
@@ -25,23 +25,20 @@ msgstr "Onbekend product reeds gescand. Hoeveelheid verhoogd."
 msgid "Unknown barcode could not be looked up"
 msgstr "Onbekende streepjescode kon niet worden opgezocht"
 
-msgid "Product found. None in stock, not consuming: %s"
-msgstr "Product gevonden. Geen op voorraad, niets geconsumeerd: %s"
+msgid "Product found. "
+msgstr "Product gevonden. "
 
-msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
-msgstr "Product gevonden. Verbruikt %d %s van %s [%d]. Op voorraad: %d"
+msgid "None in stock, not consuming: %s"
+msgstr "Niet op voorraad, niets geconsumeerd: %s"
 
-msgid "Product found. Opening %d %s of %s"
-msgstr "Product gevonden. %d %s van %s geopend"
+msgid "Consuming %d %s of %s [%d]. In Stock: %d"
+msgstr "Verbruikt %d %s van %s [%d]. Op voorraad: %d"
 
-msgid "Set state to Open"
-msgstr "Zet status op Open"
+msgid "Opening %d %s of %s"
+msgstr "Openen van %d %s van %s"
 
-msgid "Set state to Consume"
-msgstr "Zet status op Verbruiken"
-
-msgid "Set state to Purchase"
-msgstr "Zet status op Kopen"
+msgid "Set state to "
+msgstr "Zet status op "
 
 msgid "Adding %d %s of %s"
 msgstr "Toevoegen van %d %s van %s"
@@ -51,9 +48,6 @@ msgstr "Streepjescode %d aan %s gekoppeld"
 
 msgid "Product found. Adding %d %s of %s"
 msgstr "Product gevonden. Toevoegen van %d %s van %s"
-
-msgid "None in stock, not consuming: %s"
-msgstr "Niet op voorraad, niets geconsumeerd: %s"
 
 msgid "Reverting back to Consume"
 msgstr "Terugkeren naar Verbruiken"
@@ -114,3 +108,33 @@ msgstr "Toevoegen"
 
 msgid "Consume"
 msgstr "Consumeer"
+
+msgid "Consume (spoiled)"
+msgstr "Consumeer (verspild)"
+
+msgid "Consume (all)"
+msgstr "Consumeer (alles)"
+
+msgid "Purchase"
+msgstr "Koop"
+
+msgid "Open"
+msgstr "Open"
+
+msgid "Inventory"
+msgstr "Voorraad"
+
+msgid "Add to shoppinglist"
+msgstr "Toevoegen aan boodschappenlijst"
+
+#~ msgid "Product found. None in stock, not consuming: %s"
+#~ msgstr "Product gevonden. Geen op voorraad, niets geconsumeerd: %s"
+
+#~ msgid "Product found. Opening %d %s of %s"
+#~ msgstr "Product gevonden. %d %s van %s geopend"
+
+#~ msgid "Set state to Consume"
+#~ msgstr "Zet status op Verbruiken"
+
+#~ msgid "Set state to Purchase"
+#~ msgstr "Zet status op Kopen"

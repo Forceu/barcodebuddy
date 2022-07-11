@@ -4,8 +4,8 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2022-02-12 07:54+0000\n"
 "Last-Translator: Ole-Kenneth <ok@rait.no>\n"
-"Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/"
-"barcode-buddy/strings/nb_NO/>\n"
+"Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/barcode-"
+"buddy/strings/nb_NO/>\n"
 "Language: nb_NO\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -25,23 +25,28 @@ msgstr "Ukjent produkt allerede skannet. Øker mengde."
 msgid "Unknown barcode could not be looked up"
 msgstr "Finner ikke resultat for ukjent strekkode"
 
-msgid "Product found. None in stock, not consuming: %s"
-msgstr "Fant produktet. Ingen på lager, konsumerer ikke: %s"
+#, fuzzy
+#| msgid "Product"
+msgid "Product found. "
+msgstr "Produkt"
 
-msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
+msgid "None in stock, not consuming: %s"
+msgstr "Ingenting på lager. Konsumerer ikke: %s"
+
+#, fuzzy
+#| msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
+msgid "Consuming %d %s of %s [%d]. In Stock: %d"
 msgstr "Fant produktet. Konsumerer %d %s av %s [%d]. På lager: %d"
 
-msgid "Product found. Opening %d %s of %s"
-msgstr "Fant produktet. Åpner %d %s av %s"
+#, fuzzy
+#| msgid "Adding %d %s of %s"
+msgid "Opening %d %s of %s"
+msgstr "Legger til %d %s av %s"
 
-msgid "Set state to Open"
+#, fuzzy
+#| msgid "Set state to Open"
+msgid "Set state to "
 msgstr "Sett tilstand til «åpen»"
-
-msgid "Set state to Consume"
-msgstr "Sett tilstand til «Konsumer»"
-
-msgid "Set state to Purchase"
-msgstr "Sett tilstand til «Kjøp»"
 
 msgid "Adding %d %s of %s"
 msgstr "Legger til %d %s av %s"
@@ -51,9 +56,6 @@ msgstr "Tilknyttet strekkoden «%d» til %s"
 
 msgid "Product found. Adding %d %s of %s"
 msgstr "Fant produktet. Legger til %d %s av %s"
-
-msgid "None in stock, not consuming: %s"
-msgstr "Ingenting på lager. Konsumerer ikke: %s"
 
 msgid "Reverting back to Consume"
 msgstr "Går tilbake til «Konsumer»"
@@ -114,3 +116,35 @@ msgstr "Legg til"
 
 msgid "Consume"
 msgstr "Konsumer"
+
+msgid "Consume (spoiled)"
+msgstr "Consume (spoiled)"
+
+#, fuzzy
+#| msgid "Consume"
+msgid "Consume (all)"
+msgstr "Konsumer"
+
+msgid "Purchase"
+msgstr "Purchase"
+
+msgid "Open"
+msgstr "Open"
+
+msgid "Inventory"
+msgstr "Inventory"
+
+msgid "Add to shoppinglist"
+msgstr "Add to shoppinglist"
+
+#~ msgid "Product found. None in stock, not consuming: %s"
+#~ msgstr "Fant produktet. Ingen på lager, konsumerer ikke: %s"
+
+#~ msgid "Product found. Opening %d %s of %s"
+#~ msgstr "Fant produktet. Åpner %d %s av %s"
+
+#~ msgid "Set state to Consume"
+#~ msgstr "Sett tilstand til «Konsumer»"
+
+#~ msgid "Set state to Purchase"
+#~ msgstr "Sett tilstand til «Kjøp»"

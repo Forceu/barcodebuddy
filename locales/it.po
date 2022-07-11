@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-02-08 15:17+0000\n"
+"PO-Revision-Date: 2022-02-27 17:58+0000\n"
 "Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/barcode-buddy/"
 "strings/it/>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.11-dev\n"
+"X-Generator: Weblate 4.11.1-dev\n"
 "X-Poedit-Basepath: locale\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: nb_NO\n"
@@ -25,23 +25,20 @@ msgstr "Prodotto sconosciuto già scansionato. Quantità in aumento."
 msgid "Unknown barcode could not be looked up"
 msgstr "Non è stato possibile cercare il codice a barre sconosciuto"
 
-msgid "Product found. None in stock, not consuming: %s"
-msgstr "Prodotto trovato. Nessuno in magazzino, non si consuma: %s"
+msgid "Product found. "
+msgstr "Prodotto trovato. "
 
-msgid "Product found. Consuming %d %s of %s [%d]. In Stock: %d"
-msgstr "Prodotto trovato. Consumando %d %s di %s [%d]. In magazzino: %d"
+msgid "None in stock, not consuming: %s"
+msgstr "Nessuno in magazzino, non si consuma: %s"
 
-msgid "Product found. Opening %d %s of %s"
-msgstr "Prodotto trovato. Apertura di %d %s di %s"
+msgid "Consuming %d %s of %s [%d]. In Stock: %d"
+msgstr "Consumando %d %s di %s [%d]. In magazzino: %d"
 
-msgid "Set state to Open"
-msgstr "Imposta lo stato su Aprire"
+msgid "Opening %d %s of %s"
+msgstr "Apertura %d %s di %s"
 
-msgid "Set state to Consume"
-msgstr "Imposta lo stato su Consumare"
-
-msgid "Set state to Purchase"
-msgstr "Imposta lo stato su Acquistare"
+msgid "Set state to "
+msgstr "Imposta lo stato su "
 
 msgid "Adding %d %s of %s"
 msgstr "Aggiungendo %d %s di %s"
@@ -51,9 +48,6 @@ msgstr "Codice a barre associato %d con %s"
 
 msgid "Product found. Adding %d %s of %s"
 msgstr "Prodotto trovato. Aggiunta di %d %s di %s"
-
-msgid "None in stock, not consuming: %s"
-msgstr "Nessuno in magazzino, non si consuma: %s"
 
 msgid "Reverting back to Consume"
 msgstr "Torna indietro a Consumire"
@@ -114,3 +108,33 @@ msgstr "Aggiungi"
 
 msgid "Consume"
 msgstr "Consuma"
+
+msgid "Consume (spoiled)"
+msgstr "Consuma (scaduto)"
+
+msgid "Consume (all)"
+msgstr "Consuma (tutto)"
+
+msgid "Purchase"
+msgstr "Compra"
+
+msgid "Open"
+msgstr "Open"
+
+msgid "Inventory"
+msgstr "Inventario"
+
+msgid "Add to shoppinglist"
+msgstr "Aggiungi alla lista della spesa"
+
+#~ msgid "Product found. None in stock, not consuming: %s"
+#~ msgstr "Prodotto trovato. Nessuno in magazzino, non si consuma: %s"
+
+#~ msgid "Product found. Opening %d %s of %s"
+#~ msgstr "Prodotto trovato. Apertura di %d %s di %s"
+
+#~ msgid "Set state to Consume"
+#~ msgstr "Imposta lo stato su Consumare"
+
+#~ msgid "Set state to Purchase"
+#~ msgstr "Imposta lo stato su Acquistare"

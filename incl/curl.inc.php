@@ -119,7 +119,7 @@ class CurlGenerator {
         curl_setopt($this->ch, CURLOPT_HTTPHEADER, $headerArray);
         curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, $this->method);
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, 0);
+        curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, 5);
         if ($userAgent == null)
             curl_setopt($this->ch, CURLOPT_USERAGENT, 'BarcodeBuddy v' . BB_VERSION_READABLE);
         else

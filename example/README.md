@@ -8,6 +8,7 @@ This folder mostly contains the following files:
 * Screenshots used for the project page
 * Nginx configuration file for your webserver
 * Scripts for grabbing input of physical barcode scanners
+* Systemd service files to run grabInput and the websocket server
 
 ## Barcode Scanner Scripts
 
@@ -34,3 +35,6 @@ Uses udev rules. If you have a barcode scanner that disconnects (eg. Bluetooth),
 ### grabInput_variant2.py
 
 A Python script that sends the output to a server instead through PHP. This scripts configuration can be found in the file config.yaml
+
+## Systemd support
+To run grabInput.sh and the websocket server, copy the two systemd service scripts to /etc/systemd/system. Then edit them and adjust the path entries to fit your system. Afterwards run systemctl daemon-reload and then enable and start both of them using `systemctl enable --now bbuddy-grabInput.service` and `systemctl enable --now bbuddy-websocket.service`.

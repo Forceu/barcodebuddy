@@ -1,0 +1,12 @@
+[Unit]
+Description=Grab barcode scans for barcode buddy
+
+[Service]
+Type=simple
+# Put correct path to your grabInput.sh and your event file here
+ExecStart=/usr/local/bin/grabInput.sh /dev/input/event6
+StandardOutput=null
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

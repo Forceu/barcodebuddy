@@ -1,0 +1,13 @@
+[Unit]
+Description=Run websocket server for barcodebuddy screen feature
+
+[Service]
+Type=simple
+# Put correct path to your wsserver.php file
+ExecStart=/usr/bin/php /srv/barcodebuddy/wsserver.php
+StandardOutput=null
+Restart=on-failure
+User=www-data
+
+[Install]
+WantedBy=multi-user.target

@@ -315,7 +315,11 @@ class DatabaseConnection {
             $item['tare']             = $row['requireWeight'];
             $item['bestBeforeInDays'] = $row['bestBeforeInDays'];
             $item['price']            = $row['price'];
-            $item['bbServerAltNames'] = json_decode($row['bbServerAltNames']);
+            if ($row['bbServerAltNames'] == null) {
+                $item['bbServerAltNames'] = null;
+            } else {
+                $item['bbServerAltNames'] = json_decode($row['bbServerAltNames']);
+            }
 
             if ($item['tare'] == "1") {
                 array_push($barcodes["tare"], $item);

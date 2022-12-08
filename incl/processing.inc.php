@@ -528,9 +528,9 @@ function sanitizeString(?string $input, bool $strongFilter = false): ?string {
     if ($input == null)
         return null;
     if ($strongFilter) {
-        return filter_var($input, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+        return filter_var($input, FILTER_SANITIZE_SPECIAL_CHARS, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
     } else {
-        return filter_var($input, FILTER_SANITIZE_STRING);
+        return filter_var($input, FILTER_SANITIZE_SPECIAL_CHARS);
     }
 }
 

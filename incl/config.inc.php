@@ -6,7 +6,7 @@ class BBConfig implements ArrayAccess, Iterator, Countable {
     /**
      * @var null|BBConfig
      */
-    private static $_BBConfigInstance = null;
+    private static ?BBConfig $_BBConfigInstance = null;
 
     private $container = array();
 
@@ -34,7 +34,7 @@ class BBConfig implements ArrayAccess, Iterator, Countable {
         else
             $this->container["GROCY_BASE_URL"] = strrtrim($this->container["GROCY_API_URL"], "api/");
 
-        if (substr($this->container["GROCY_BASE_URL"], -1) != "/") {
+        if (!str_ends_with($this->container["GROCY_BASE_URL"], "/")) {
             $this->container["GROCY_BASE_URL"] .= "/";
         }
     }
@@ -43,7 +43,7 @@ class BBConfig implements ArrayAccess, Iterator, Countable {
      * Get an instance of DatabaseConnection
      * If an existing instance is available, it will be used.
      * If not available, and no instance is being created, a new connection will be established.
-     * Otherwise (such as during an ongoing upgrade in this php instance) an error will be thrown
+     * Otherwise, (such as during an ongoing upgrade in this php instance) an error will be thrown
      *
      * @param DatabaseConnection|null $db
      *
@@ -85,15 +85,6 @@ class BBConfig implements ArrayAccess, Iterator, Countable {
         }
     }
 
-    /**
-     * Check if a given key exists in the config
-     *
-     * @param string $offset
-     * @return bool
-     */
-    public function offsetExists($offset): bool {
-        return isset($this->container[$offset]);
-    }
 
     /**
      * Delete a given key from the DB-stored config
@@ -106,6 +97,18 @@ class BBConfig implements ArrayAccess, Iterator, Countable {
         unset($this->container[$offset]);
     }
 
+
+    /**
+     * Check if a given key exists in the config
+     *
+     * @param string $offset
+     * @return bool
+     */
+    public function offsetExists($offset): bool {
+        return isset($this->container[$offset]);
+    }
+
+
     /**
      * Get the value for a given key from the DB-stored config
      * @param string $offset
@@ -113,21 +116,24 @@ class BBConfig implements ArrayAccess, Iterator, Countable {
      * @return string|null
      */
     public function offsetGet($offset): ?string {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+        return $this->container[$offset] ?? null;
     }
 
     public function rewind(): void {
         reset($this->container);
     }
 
+    #[ReturnTypeWillChange]
     public function current() {
         return current($this->container);
     }
 
+    #[ReturnTypeWillChange]
     public function key() {
         return key($this->container);
     }
 
+    #[ReturnTypeWillChange]
     public function next() {
         return next($this->container);
     }

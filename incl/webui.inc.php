@@ -105,10 +105,14 @@ class WebUiGenerator {
      * @param string $title
      * @param string $html
      * @param MenuItemLink|null $links
+     * @param string|null $id
      */
-    public function addCard(string $title, string $html, ?MenuItemLink $links = null): void {
+    public function addCard(string $title, string $html, ?MenuItemLink $links = null, ?string $id = null): void {
+        if ($id == null) {
+            $id = random_int(0, 9999999);
+        }
         $this->addHtml('
-        <section class="section--center mdl-grid--no-spacing mdl-grid mdl-shadow--2dp">
+        <section id="'.$id.'" class="section--center mdl-grid--no-spacing mdl-grid mdl-shadow--2dp">
             <div class="mdl-card mdl-cell  mdl-cell--12-col">
               <div class="mdl-card__supporting-text" style="overflow-x: auto; ">
                 <h4>' . $title . '</h4><br>

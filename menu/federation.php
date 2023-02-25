@@ -33,15 +33,12 @@ if (isset($_POST["federation_disable"])) {
     die();
 }
 
-
 $webUi = new WebUiGenerator(MENU_GENERIC);
 $webUi->addHeader();
-$isOnline = BarcodeFederation::isReachable();
-if ($isOnline) {
-    $webUi->addCard('Barcode Buddy Federation <span style="color:forestgreen">available</span>', getHtmlFederation());
-    $webUi->addCard('Info', getHtmlFederationInfo());
-} else
-    $webUi->addCard('Barcode Buddy Federation <span style="color:darkred">offline</span>', getHtmlFederation());
+
+$loadingSpinner =  (new UiEditor())->addLoadingSpinner("loading",true);
+    $webUi->addCard('Barcode Buddy Federation <span id="statusTop">'.$loadingSpinner.'</span>', getHtmlFederation());
+    $webUi->addCard('Info ', getHtmlFederationInfo());
 $webUi->addFooter();
 $webUi->printHtml();
 
@@ -71,18 +68,50 @@ function getHtmlFederation(): string {
             ->setSubmit()
             ->generate();
     }
+    $html->addHtml("<script>
+            ".BarcodeFederation::getJsPing("isOnline")."
+            ".BarcodeFederation::getJsAmount("gotAmount")."
+            
+            function isOnline(online) {
+                let status = document.getElementById('statusTop');
+                if (online) {
+                    status.innerHTML='<span style=\"color:forestgreen\">available</span>';
+                } else {
+                    status.innerHTML='<span style=\"color:darkred\">offline</span>';
+                }
+            }
+            
+            
+            function gotAmount(result, responsetime) {
+                let status = document.getElementById('infoStatus');
+                let responseTime = document.getElementById('infoResponse');
+                let amount = document.getElementById('infoAmount');
+                if (result === false) {
+                    status.style=\"color:darkred\";
+                    status.innerHTML=\"offline\";
+                } else {
+                    status.style=\"color:forestgreen\";
+                    status.innerHTML=\"online\";
+                    responseTime.innerHTML=responsetime+\" ms\";
+                    amount.innerHTML=result+\" (updated every 6 hours)\";
+                }
+            }
+                
+                
+            
+            window.addEventListener(\"load\", function(){
+                isFederationOnline();
+                getFedereationAmount();
+            });
+                </script>");
     return $html->getHtml();
 }
 
 
 function getHtmlFederationInfo(): string {
-    $startTime    = microtime(true);
-    $amountStored = BarcodeFederation::getCountStoredBarcodes();
-    $endTime      = microtime(true);
-    $responseTime = round(($endTime - $startTime) * 1000);
     $html         = new UiEditor();
-    $html->addHtml("<b>Status:</b> <span style=\"color:forestgreen\">online</span> <br>
-                         <b>Response Time: </b> " . $responseTime . "ms <br>
-                         <b>Barcodes stored:</b> " . $amountStored . " (updated every 6 hours)");
+    $html->addHtml("<b>Status:</b> <span id='infoStatus'>Loading...</span><br>
+                         <b>Response Time: </b><span id='infoResponse'></span><br>
+                         <b>Barcodes stored:</b> <span id='infoAmount'></span>");
     return $html->getHtml();
 }

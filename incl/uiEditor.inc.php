@@ -644,6 +644,21 @@ class UiEditor {
         return $this;
     }
 
+    /**
+     * @param string $id
+     * @param $asHtml
+     * @return string|$this
+     */
+    function addLoadingSpinner(string $id, $asHtml = false): string|static {
+        $html = '<div  id="' . $id . '" class="mdl-spinner mdl-js-spinner is-active"></div>';
+        if ($asHtml) {
+            return $html;
+        }
+
+        $this->addHtml($html);
+        return $this;
+    }
+
     function addSelectBox($name, $label, $valueLabels, $values = null, $preselected = null): void {
         if ($values == null) {
             $values = $valueLabels;

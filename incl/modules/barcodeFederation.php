@@ -138,13 +138,75 @@ class BarcodeFederation {
         }
     }
 
+    /**
+     * Returns a JS function to ping the server
+     * @param string $resultFunction JS function name function(bool) that will be called once ping is complete
+     * @return string
+     */
+    public static function getJsPing(string $resultFunction): string {
+        $url = self::HOST . "/ping";
+        return 'function isFederationOnline() {
+        let xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4) {
+                let online = (xmlhttp.status == 200 && xmlhttp.responseText == "pong");
+                '.$resultFunction.'(online);
+            }
+        }
+        xmlhttp.open("GET", "'.$url.'", false);
+        try {
+            xmlhttp.send();
+        } catch (e){
+            console.log(e);
+            '.$resultFunction.'(false);
+        }
+    }';
+    }
+
+
+    /**
+     * Returns a JS function to receive the amount of stored barcodes
+     * @param string $resultFunction JS function name function(int | bool, int) that will be called once amount is received
+     * @return string
+     */
+    public static function getJsAmount(string $resultFunction): string {
+        $url = self::HOST . "/amount";
+        return 'function getFedereationAmount() {
+        let xmlhttp = new XMLHttpRequest();
+        const before = new Date();
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4) {
+                 const now = new Date();
+                if (xmlhttp.status  != 200) {
+                    '.$resultFunction.'(false, 0);
+                    return;
+                }
+                let response = parseInt(xmlhttp.responseText);
+                if (isNaN(response)) {
+                    '.$resultFunction.'(false, 0);
+                    console.log("nö");
+                    return;
+                }
+                '.$resultFunction.'(response, (now - before));
+            }
+        }
+        xmlhttp.open("GET", "'.$url.'", false);
+        try {
+            xmlhttp.send();
+        } catch (e){
+            console.log(e);
+            '.$resultFunction.'(false, 0);
+        }
+    }';
+    }
+
 
     /**
      * Gets the amount of stored barcodes
      * @return string
      */
     public static function getCountStoredBarcodes(): string {
-        $url = self::HOST . "/amount";
+        $url = self::HOST . '/amount';
         try {
             $curl   = new CurlGenerator($url, METHOD_GET, null, null, true);
             $result = $curl->execute();

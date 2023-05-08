@@ -37,7 +37,7 @@ if (checkExtensionsInstalled()["result"] != RESULT_ALL_INSTALLED) {
 $address = '127.0.0.1';
 $port    = $CONFIG->PORT_WEBSOCKET_SERVER;
 
-echo "[info] Starting socket server on $address:$port\n";
+echo "Starting socket server on $address:$port\n";
 
 set_time_limit(0);
 ob_implicit_flush();

@@ -22,31 +22,10 @@ jobs:
 
     - uses: actions/checkout@v2
 
-    - name: build x64
+    - name: build multiarch
       run: |
         curl -u ":$TOKEN" \
         -X POST \
         -H "Accept: application/vnd.github.v3+json" \
-        https://api.github.com/repos/forceu/barcodebuddy-docker/actions/workflows/docker-publish-x64-release.yml/dispatches \
-        -d '{"ref": "master", "inputs": {"version": "${{ steps.latestversion.outputs.tag }}"}}'
-    - name: build arm32
-      run: |
-        curl -u ":$TOKEN" \
-        -X POST \
-        -H "Accept: application/vnd.github.v3+json" \
-        https://api.github.com/repos/forceu/barcodebuddy-docker/actions/workflows/docker-publish-arm32-release.yml/dispatches \
-        -d '{"ref": "master", "inputs": {"version": "${{ steps.latestversion.outputs.tag }}"}}'
-    - name: build arm64
-      run: |
-        curl -u ":$TOKEN" \
-        -X POST \
-        -H "Accept: application/vnd.github.v3+json" \
-        https://api.github.com/repos/forceu/barcodebuddy-docker/actions/workflows/docker-publish-arm64-release.yml/dispatches \
-        -d '{"ref": "master", "inputs": {"version": "${{ steps.latestversion.outputs.tag }}"}}'
-    - name: build i386
-      run: |
-        curl -u ":$TOKEN" \
-        -X POST \
-        -H "Accept: application/vnd.github.v3+json" \
-        https://api.github.com/repos/forceu/barcodebuddy-docker/actions/workflows/docker-publish-i386-release.yml/dispatches \
+        https://api.github.com/repos/forceu/barcodebuddy-docker/actions/workflows/docker-publish-release.yml/dispatches \
         -d '{"ref": "master", "inputs": {"version": "${{ steps.latestversion.outputs.tag }}"}}'

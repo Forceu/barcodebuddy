@@ -9,7 +9,7 @@
 ### Available for:
 
 - Bare Metal
-- [Docker](https://github.com/Forceu/barcodebuddy-docker)
+- [Docker](https://github.com/Forceu/barcodebuddy-docker) $\textcolor{red}{\textsf{Attention}}$ *Image name has changed!* 
 - [Android](https://play.google.com/store/apps/details?id=de.bulling.barcodebuddyscanner)
 - [Kubernetes](https://git.sr.ht/~johnhamelink/k8s-barcodebuddy) *(Community support only)*
 - [Home Assistant](https://github.com/Forceu/barcodebuddy-homeassistant) *(Community support only)*

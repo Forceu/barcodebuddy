@@ -106,9 +106,9 @@ if (sizeof($barcodes['known']) > 0 || sizeof($barcodes['unknown']) > 0 || sizeof
 //Only pass refreshed cards to AJAX
 if (isset($_GET["ajaxrefresh"])) {
     $returnArray = array("f1" => getHtmlMainMenuTableKnown($barcodes),
-        "f2" => getHtmlMainMenuTableUnknown($barcodes),
-        "f3" => getHtmlLogTextArea(),
-        "f4" => getHtmlMainMenuReqActions($barcodes));
+                         "f2" => getHtmlMainMenuTableUnknown($barcodes),
+                         "f3" => getHtmlLogTextArea(),
+                         "f4" => getHtmlMainMenuReqActions($barcodes));
     echo json_encode($returnArray, JSON_HEX_QUOT);
     die();
 }
@@ -195,7 +195,8 @@ function processButtons(): void {
 
     if (isset($_POST["button_add_manual"])) {
         if (isset($_POST["newbarcodes"]) && strlen(trim($_POST["newbarcodes"])) > 0) {
-            $barcodes = explode("\n", trim($_POST['newbarcodes']));
+            $barcodes = str_replace("\r", '', trim($_POST["newbarcodes"]));
+            $barcodes = explode("\n", $barcodes);
             foreach ($barcodes as $barcode) {
                 $trimmedBarcode = trim(sanitizeString($barcode));
                 if (strlen($trimmedBarcode) > 0) {
@@ -234,7 +235,7 @@ function processButtons(): void {
                 }
                 $product = API::getProductInfo($gidSelected);
                 if ($barcode == null)
-                	die('Internal error: $barcode is null');
+                    die('Internal error: $barcode is null');
                 if (BBConfig::getInstance()["SAVE_BARCODE_NAME"] == "1")
                     API::addBarcode($gidSelected, $barcode, $name);
                 else

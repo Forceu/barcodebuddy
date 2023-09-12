@@ -35,7 +35,7 @@ const API_CHORE_EXECUTE    = 'chores/';
 const API_SYTEM_INFO       = 'system/info';
 const API_SYTEM_TIME       = 'system/time';
 
-const MIN_GROCY_VERSION = "3.0.1";
+const MIN_GROCY_VERSION = "4.0.3";
 
 const LOGIN_URL     = "loginurl";
 const LOGIN_API_KEY = "loginkey";
@@ -63,7 +63,7 @@ class GrocyProduct {
         $result->name                  = sanitizeString($infoArray["product"]["name"]);
         $result->isTare                = ($infoArray["product"]["enable_tare_weight_handling"] == "1");
         $result->tareWeight            = sanitizeString($infoArray["product"]["tare_weight"]);
-        $result->quFactor              = sanitizeString($infoArray["product"]["qu_factor_purchase_to_stock"]);
+        $result->quFactor              = sanitizeString($infoArray["product"]["qu_conversion_factor_purchase_to_stock"]);
         $result->defaultBestBeforeDays = $infoArray["product"]["default_best_before_days"];
         $result->creationDate          = $infoArray["product"]["row_created_timestamp"];
         $result->unit                  = sanitizeString($infoArray["quantity_unit_stock"]["name"]);
@@ -83,7 +83,7 @@ class GrocyProduct {
         $result->name                  = sanitizeString($infoArray["name"]);
         $result->isTare                = ($infoArray["enable_tare_weight_handling"] == "1");
         $result->tareWeight            = sanitizeString($infoArray["tare_weight"]);
-        $result->quFactor              = sanitizeString($infoArray["qu_factor_purchase_to_stock"]);
+        $result->quFactor              = 1; //FIXME qu_conversion_factor_purchase_to_stock was removed, might break QU conversion
         $result->defaultBestBeforeDays = $infoArray["default_best_before_days"];
         $result->creationDate          = $infoArray["row_created_timestamp"];
         return $result;

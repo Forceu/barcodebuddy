@@ -37,7 +37,7 @@ class ProviderJumbo extends LookupProvider {
 
         $userAgent = "Mozilla/5.0 (Linux; Android 11; SM-N976N Build/RP1A.200720.012; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/80.0.3987.163 Whale/1.0.0.0 Crosswalk/25.80.14.24 Mobile Safari/537.36 NAVER(inapp; search; 598; 11.0.6)";
 
-        $url    = "https://mobileapi.jumbo.com/v14/search?q=" . $barcode;
+        $url    = "https://mobileapi.jumbo.com/v17/search?q=" . $barcode;
         $result = $this->execute($url, "GET", null, $userAgent);
         if (!isset($result["products"]) || !isset($result["products"]["data"]) || !isset($result["products"]["total"]) || $result["products"]["total"] == "O")
             return null;

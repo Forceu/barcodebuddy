@@ -729,6 +729,10 @@ function generateRandomString(int $length = 30): string {
 }
 
 function getApiUrl(string $removeAfter): string {
+    $baseurl = BBConfig::getInstance()["BASEURL"];
+    if ($baseurl && preg_match('/^https?:\/\//',$baseurl)) {
+        return preg_replace("/\/+$/", '', $baseurl) . "/api/";
+    }
     $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
 
     $url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];

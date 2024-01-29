@@ -185,6 +185,7 @@ class DatabaseConnection {
         $this->db->exec("CREATE TABLE IF NOT EXISTS ChoreBarcodes(id INTEGER PRIMARY KEY, choreId INTEGER UNIQUE, barcode TEXT NOT NULL )");
         $this->db->exec("CREATE TABLE IF NOT EXISTS Quantities(id INTEGER PRIMARY KEY, barcode TEXT NOT NULL UNIQUE, quantity INTEGER NOT NULL, product TEXT)");
         $this->db->exec("CREATE TABLE IF NOT EXISTS ApiKeys(id INTEGER PRIMARY KEY, key TEXT NOT NULL UNIQUE, lastused INTEGER NOT NULL)");
+        $this->db->exec("CREATE TABLE IF NOT EXISTS LookupProviderData(providerType INTEGER PRIMARY KEY, data TEXT NOT NULL)");
         $this->insertDefaultValues();
         $previousVersion = intval(BBConfig::getInstance($this)["version"]);
         if ($previousVersion < BB_VERSION) {
@@ -370,6 +371,34 @@ class DatabaseConnection {
         $this->db->exec("UPDATE Barcodes SET possibleMatch='$productId' WHERE barcode='$barcode'");
     }
 
+    /**
+     * Saves additional data for a specific LookupProvider. Creates new entry if not existing, otherwise updates existing entry.
+     *
+     * @param int $providerType
+     * @param string $data serialized JSON data
+     *
+     * @return void
+     */
+    public function upsertLookupProviderData(int $providerType, string $data): void {
+        $this->db->exec("INSERT INTO LookupProviderData(providerType, data) VALUES($providerType, '$data') ON CONFLICT(providerType) DO UPDATE SET data='$data'");
+    }
+
+    /**
+     * Gets additional data for a specific LookupProvider
+     *
+     * @param int $providerType
+     *
+     * @return string|null
+     */
+    public function getLookupProviderData(int $providerType): ?string {
+        $res = $this->db->query("SELECT * FROM LookupProviderData WHERE providerType=$providerType");
+
+        if ($row = $res->fetchArray()) {
+            return $row["data"];
+        } 
+        
+        return null;
+    }
 
     /**
      * Returns true if an unknown barcode is already in the list

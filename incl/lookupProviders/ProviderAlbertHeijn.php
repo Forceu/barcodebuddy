@@ -70,7 +70,7 @@ class ProviderAlbertHeijn extends LookupProvider {
             return sanitizeString($newAuthToken["access_token"]);
         }
 
-        return sanitizeString($jsonData["access_token"]);
+        return sanitizeString($data["access_token"]);
     }
 
     private function updateAuthToken(array $authToken): void {

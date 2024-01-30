@@ -25,6 +25,18 @@ require_once __DIR__ . "/ProviderPlusSupermarkt.php";
 require_once __DIR__ . "/ProviderOpengtindb.php";
 require_once __DIR__ . "/ProviderFederation.php";
 
+abstract class LookupProviderType
+{
+    const OpenFoodFacts = 0;
+    const UpcDb = 1;
+    const UpcDatabase = 2;
+    const AlbertHeijn = 3;
+    const Jumbo = 4;
+    const OpenGtinDb = 5;
+    const Federation = 6;
+    const Plus = 7;
+}
+
 class LookupProvider {
 
     protected $useGenericName;

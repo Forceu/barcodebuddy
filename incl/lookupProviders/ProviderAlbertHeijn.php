@@ -18,15 +18,16 @@
 require_once __DIR__ . "/../api.inc.php";
 
 class ProviderAlbertHeijn extends LookupProvider {
+    const USER_AGENT = "Appie/8.22.3";
 
-
-    const USER_AGENT = "Appie/8.8.2 Model/phone Android/7.0-API24";
+    protected $db;
 
     function __construct(string $apiKey = null) {
         parent::__construct($apiKey);
         $this->providerName       = "Albert Heijn";
         $this->providerConfigKey  = "LOOKUP_USE_AH";
         $this->ignoredResultCodes = array("404");
+        $this->db                 = DatabaseConnection::getInstance();
     }
 
     /**
@@ -37,11 +38,14 @@ class ProviderAlbertHeijn extends LookupProvider {
     public function lookupBarcode(string $barcode): ?array {
         if (!$this->isProviderEnabled())
             return null;
+        if (strlen($barcode) >= 20)
+	        return null;
+        
         $authkey = $this->getAuthToken();
         if ($authkey == null)
             return null;
 
-        $headers = array('Host' => 'api.ah.nl', 'Authorization' => 'Bearer ' . $authkey);
+        $headers = array('X-Application' => 'AHWEBSHOP', 'Authorization' => 'Bearer ' . $authkey);
         $url     = "https://api.ah.nl/mobile-services/product/search/v1/gtin/" . $barcode;
         $result  = $this->execute($url, METHOD_GET, null, self::USER_AGENT, $headers);
         if (isset($result["title"]))
@@ -51,15 +55,60 @@ class ProviderAlbertHeijn extends LookupProvider {
     }
 
     private function getAuthToken(): ?string {
-        $headers         = array('Host' => 'api.ah.nl',
-                                'x-application' => 'AHWEBSHOP',
-                                'x-dynatrace' => 'MT_3_4_772337796_1_fae7f753-3422-4a18-83c1-b8e8d21caace_0_1589_109');
+        $jsonData = $this->db->getLookupProviderData(LookupProviderType::AlbertHeijn);
+
+        if ($jsonData == null) {
+            $newAuthToken = $this->newAuthToken();
+            $this->updateAuthToken($newAuthToken);
+
+            return sanitizeString($newAuthToken["access_token"]);
+        }
+
+        $data = json_decode($jsonData, true);
+
+        if ($data["expires"] < time()) {
+            $newAuthToken = $this->refreshToken($data["refresh_token"]);
+            $this->updateAuthToken($newAuthToken);
+
+            return sanitizeString($newAuthToken["access_token"]);
+        }
+
+        return sanitizeString($data["access_token"]);
+    }
+
+    private function updateAuthToken(array $authToken): void {
+        $data = array("access_token" => $authToken["access_token"], "refresh_token" => $authToken["refresh_token"], "expires" => time() + $authToken["expires_in"]);
+        $jsonData = json_encode($data);
+        
+        $this->db->upsertLookupProviderData(LookupProviderType::AlbertHeijn, $jsonData);
+    }
+
+    private function newAuthToken(): ?array {
         $json            = '{"clientId": "appie"}';
         $url             = "https://api.ah.nl/mobile-auth/v1/auth/token/anonymous";
-        $authkeyResponse = $this->execute($url, METHOD_POST, null, self::USER_AGENT, $headers, true, $json);
+        $authkeyResponse = $this->execute($url, METHOD_POST, null, self::USER_AGENT, null, true, $json);
     
         if (!isset($authkeyResponse["access_token"]))
             return null;
-        return sanitizeString($authkeyResponse["access_token"]);
+
+        return $authkeyResponse;
+    }
+
+    private function refreshToken(string $refreshToken): ?array {
+        $json            = '{"clientId": "appie", "refreshToken": "' . $refreshToken . '"}';
+        $url             = "https://api.ah.nl/mobile-auth/v1/auth/token/refresh";
+        $authkeyResponse = null;
+        
+        try {
+            $authkeyResponse = $this->execute($url, METHOD_POST, null, self::USER_AGENT, null, true, $json);
+        }
+        catch(Exception $e) {
+            $authkeyResponse = $this->newAuthToken();
+        }
+    
+        if (!isset($authkeyResponse["access_token"]))
+            return null;
+
+        return $authkeyResponse;
     }
 }

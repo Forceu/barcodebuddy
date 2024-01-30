@@ -38,6 +38,9 @@ class ProviderAlbertHeijn extends LookupProvider {
     public function lookupBarcode(string $barcode): ?array {
         if (!$this->isProviderEnabled())
             return null;
+        if (strlen($barcode) >= 20)
+	        return null;
+        
         $authkey = $this->getAuthToken();
         if ($authkey == null)
             return null;

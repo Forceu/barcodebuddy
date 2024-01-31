@@ -97,17 +97,15 @@ class ProviderAlbertHeijn extends LookupProvider {
     private function refreshToken(string $refreshToken): ?array {
         $json            = '{"clientId": "appie", "refreshToken": "' . $refreshToken . '"}';
         $url             = "https://api.ah.nl/mobile-auth/v1/auth/token/refresh";
-        $authkeyResponse = null;
-        
-        try {
-            $authkeyResponse = $this->execute($url, METHOD_POST, null, self::USER_AGENT, null, true, $json);
-        }
-        catch(Exception $e) {
+        $authkeyResponse = $this->execute($url, METHOD_POST, null, self::USER_AGENT, null, true, $json);
+
+        if ($authkeyResponse == null) {
             $authkeyResponse = $this->newAuthToken();
         }
-    
-        if (!isset($authkeyResponse["access_token"]))
+
+        if (!isset($authkeyResponse["access_token"])) {
             return null;
+        }
 
         return $authkeyResponse;
     }

@@ -52,6 +52,7 @@ const LOOKUP_ID_JUMBO         = "5";
 const LOOKUP_ID_OPENGTINDB    = "6";
 const LOOKUP_ID_FEDERATION    = "7";
 const LOOKUP_ID_PLUS          = "8";
+const LOOKUP_ID_DISCOGS       = "9";
 
 /**
  * Dockerfile changes this to "1", so that the default is true
@@ -105,9 +106,11 @@ class DatabaseConnection {
         "LOOKUP_USE_PLUS" => "0",
         "LOOKUP_USE_UPC_DATABASE" => "0",
         "LOOKUP_USE_OPEN_GTIN_DATABASE" => "0",
+        "LOOKUP_USE_DISCOGS" => "0",
         "LOOKUP_USE_BBUDDY_SERVER" => "0",
         "LOOKUP_UPC_DATABASE_KEY" => null,
         "LOOKUP_OPENGTIN_KEY" => null,
+        "LOOKUP_DISCOGS_TOKEN" => null,
         "USE_REDIS" => DEFAULT_USE_REDIS,
         "REDIS_IP" => "127.0.0.1",
         "REDIS_PORT" => "6379",
@@ -123,6 +126,7 @@ class DatabaseConnection {
             LOOKUP_ID_PLUS . "," .
             LOOKUP_ID_JUMBO . "," .
             LOOKUP_ID_OPENGTINDB . "," .
+            LOOKUP_ID_DISCOGS . "," .
             LOOKUP_ID_FEDERATION);
 
 

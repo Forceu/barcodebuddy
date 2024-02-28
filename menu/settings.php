@@ -172,7 +172,18 @@ function getHtmlSettingsBarcodeLookup(): string {
         ->disabled(!$config["LOOKUP_USE_OPEN_GTIN_DATABASE"])
         ->generate(true)
     );
-
+    
+    $html->addLineBreak();
+    $html->addHtml((new EditFieldBuilder(
+        'LOOKUP_DISCOGS_TOKEN',
+        'discogs.com Access Token',
+        $config["LOOKUP_DISCOGS_TOKEN"],
+        $html))
+        ->required($config["LOOKUP_USE_DISCOGS"])
+        ->pattern('[A-Za-z0-9]{32}')
+        ->disabled(!$config["LOOKUP_USE_DISCOGS"])
+        ->generate(true)
+    );
     $html->addHiddenField("LOOKUP_ORDER", $config["LOOKUP_ORDER"]);
 
     $html->addScript("var elements = document.getElementById('providers');
@@ -228,6 +239,17 @@ function getProviderListItems(UiEditor $html): array {
         "handleOpenGtinChange(this)",
         generateApiKeyChangeScript("handleOpenGtinChange", "LOOKUP_OPENGTIN_KEY"))
         ->generate(true), "Uses OpenGtinDb.org", LOOKUP_ID_OPENGTINDB, true);
+    
+    $result["id" . LOOKUP_ID_DISCOGS]   = $html->addListItem((new CheckBoxBuilder(
+        "LOOKUP_USE_DISCOGS",
+        "Discogs Database",
+        $config["LOOKUP_USE_DISCOGS"],
+        $html)
+    )->onCheckChanged(
+        "handleDiscogsChange(this)",
+        generateApiKeyChangeScript("handleDiscogsChange", "LOOKUP_DISCOGS_TOKEN"))
+        ->generate(true), "Uses Discogs.com", LOOKUP_ID_DISCOGS, true);
+    
     $bbServerSubtitle                    = "Uses " . BarcodeFederation::HOST_READABLE;
     if (!$config["BBUDDY_SERVER_ENABLED"])
         $bbServerSubtitle = "Enable Federation for this feature";

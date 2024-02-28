@@ -31,6 +31,7 @@ class BarcodeLookup {
         LOOKUP_ID_PLUS          => "ProviderPlusSupermarkt",
         LOOKUP_ID_JUMBO         => "ProviderJumbo",
         LOOKUP_ID_OPENGTINDB    => "ProviderOpengtindb",
+        LOOKUP_ID_DISCOGS       => "ProviderDiscogs",
         LOOKUP_ID_FEDERATION    => "ProviderFederation"
     );
 

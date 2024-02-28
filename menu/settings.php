@@ -180,7 +180,7 @@ function getHtmlSettingsBarcodeLookup(): string {
         $config["LOOKUP_DISCOGS_TOKEN"],
         $html))
         ->required($config["LOOKUP_USE_DISCOGS"])
-        ->pattern('[A-Za-z0-9]{32}')
+        ->pattern('[A-Za-z0-9]{40}')
         ->disabled(!$config["LOOKUP_USE_DISCOGS"])
         ->generate(true)
     );

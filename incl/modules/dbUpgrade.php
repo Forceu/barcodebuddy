@@ -3,7 +3,7 @@
 /**
  * Barcode Buddy for Grocy
  *
- * PHP version 7
+ * PHP version 8
  *
  * LICENSE: This source file is subject to version 3.0 of the GNU General
  * Public License v3.0 that is attached to this project.
@@ -141,6 +141,12 @@ class DbUpgrade {
         }
         if ($previousVersion < 1804) {
             $this->databaseConnection->setTransactionState(0);
+        }
+        if ($previousVersion < 1818) {
+            $config = BBConfig::getInstance();
+            if ($config["LOOKUP_ORDER"] != DatabaseConnection::DEFAULT_VALUES["LOOKUP_ORDER"]) {
+                $this->databaseConnection->updateConfig("LOOKUP_ORDER", $config["LOOKUP_ORDER"] . ",9");
+            }
         }
         RedisConnection::updateCache();
     }

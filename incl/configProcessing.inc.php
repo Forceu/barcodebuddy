@@ -2,7 +2,7 @@
 /**
  * Barcode Buddy for Grocy
  *
- * PHP version 7
+ * PHP version 8
  *
  * LICENSE: This source file is subject to version 3.0 of the GNU General
  * Public License v3.0 that is attached to this project.
@@ -17,8 +17,8 @@
  */
 
 
-const BB_VERSION          = "1817";
-const BB_VERSION_READABLE = "1.8.1.7";
+const BB_VERSION          = "1818";
+const BB_VERSION_READABLE = "1.8.1.8";
 
 const CONFIG_PATH = __DIR__ . '/../data/config.php';
 const AUTHDB_PATH = __DIR__ . '/../data/users.db';

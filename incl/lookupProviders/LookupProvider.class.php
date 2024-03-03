@@ -23,6 +23,7 @@ require_once __DIR__ . "/ProviderDebug.php";
 require_once __DIR__ . "/ProviderAlbertHeijn.php";
 require_once __DIR__ . "/ProviderPlusSupermarkt.php";
 require_once __DIR__ . "/ProviderOpengtindb.php";
+require_once __DIR__ . "/ProviderDiscogs.php";
 require_once __DIR__ . "/ProviderFederation.php";
 
 abstract class LookupProviderType
@@ -35,6 +36,7 @@ abstract class LookupProviderType
     const OpenGtinDb = 5;
     const Federation = 6;
     const Plus = 7;
+    const Discogs = 8;
 }
 
 class LookupProvider {

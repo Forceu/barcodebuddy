@@ -68,9 +68,11 @@ class BarcodeFederation {
         $items = array();
 
         foreach ($barcodes as $barcode) {
-            $name = $products[$barcode["id"]]->name;
-            if (strlen($name) > 1 && strlen($barcode["barcode"]) > 4)
-                array_push($items, new ServerBarcode($barcode, $name));
+            if (!($barcode instanceof GrocyProductBarcode))
+                continue;
+            $name = $products[$barcode->productId]->name;
+            if (strlen($name) > 1 && strlen($barcode->barcode) > 4)
+                array_push($items, new ServerBarcode($barcode->barcode, $name));
         }
         $json = json_encode(array("ServerBarcodes" => $items));
         try {
@@ -253,16 +255,16 @@ class BarcodeFederation {
 }
 
 class ServerBarcode {
-    public $name;
-    public $barcode;
+    public string $name;
+    public string $barcode;
 
     /**
      * BarcodeServerItem constructor.
      * @param array $barcode
      * @param string $name
      */
-    public function __construct(array $barcode, string $name) {
+    public function __construct(string $barcode, string $name) {
         $this->name    = $name;
-        $this->barcode = $barcode["barcode"];
+        $this->barcode = $barcode;
     }
 }

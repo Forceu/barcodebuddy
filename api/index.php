@@ -122,22 +122,22 @@ class BBuddyApi {
                 $barcode = $_GET["text"];
             if (isset($_GET["add"]))
                 $barcode = $_GET["add"];
-            if (isset($_POST["barcode"]))
-                $barcode = $_POST["barcode"];
+            if (isset($_REQUEST["barcode"]))
+                $barcode = $_REQUEST["barcode"];
             if ($barcode == "")
                 return self::createResultArray(null, "No barcode supplied", 400);
             else {
                 $bestBefore = null;
                 $price      = null;
-                if (isset($_POST["bestBeforeInDays"]) && $_POST["bestBeforeInDays"] != null) {
-                    if (is_numeric($_POST["bestBeforeInDays"]))
-                        $bestBefore = $_POST["bestBeforeInDays"];
+                if (isset($_REQUEST["bestBeforeInDays"]) && $_REQUEST["bestBeforeInDays"] != null) {
+                    if (is_numeric($_REQUEST["bestBeforeInDays"]))
+                        $bestBefore = $_REQUEST["bestBeforeInDays"];
                     else
                         return self::createResultArray(null, "Invalid parameter bestBeforeInDays: needs to be type int", 400);
                 }
-                if (isset($_POST["price"]) && $_POST["price"] != null) {
-                    if (is_numeric($_POST["price"]))
-                        $price = $_POST["price"];
+                if (isset($_REQUEST["price"]) && $_REQUEST["price"] != null) {
+                    if (is_numeric($_REQUEST["price"]))
+                        $price = $_REQUEST["price"];
                     else
                         return self::createResultArray(null, "Invalid parameter price: needs to be type float", 400);
                 }
@@ -154,11 +154,9 @@ class BBuddyApi {
 
         $this->addRoute(new ApiRoute("/state/setmode", function () {
             $state = null;
-            if (isset($_GET["state"]))
-                $state = $_GET["state"];
-            else if (isset($_POST["state"]))
-                $state = $_POST["state"];            
-
+            if (isset($_REQUEST["state"]))
+                $state = $_REQUEST["state"];
+            
             //Also check if value is a valid range (STATE_CONSUME the lowest and STATE_CONSUME_ALL the highest value)
             if (!is_numeric($state) || $state < STATE_CONSUME || $state > STATE_CONSUME_ALL)
                 return self::createResultArray(null, "Invalid state provided", 400);

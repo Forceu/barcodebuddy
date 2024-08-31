@@ -25,6 +25,7 @@ require_once __DIR__ . "/curl.inc.php";
 
 const API_O_BARCODES       = 'objects/product_barcodes';
 const API_O_PRODUCTS       = 'objects/products';
+const API_O_QU_CONV_R      = 'objects/quantity_unit_conversions_resolved';
 const API_STOCK_PRODUCTS   = 'stock/products';
 const API_ALL_PRODUCTS     = 'stock';
 const API_SHOPPINGLIST     = 'stock/shoppinglist/';
@@ -44,52 +45,303 @@ const DISPLAY_DEBUG = false;
 
 
 class GrocyProduct {
-    public $id;
-    public $name;
-    public $barcodes = null;
-    public $unit = null;
-    public $stockAmount = "0";
-    public $isTare;
-    public $tareWeight;
-    public $quFactor;
-    public $defaultBestBeforeDays;
-    public $creationDate;
+    public int $id;
+    public string $name;
+    public ?array $barcodes = null;
+    public float $stockAmount = 0;
+    public bool $isTare = false;
+    public string $tareWeight;
+    public GrocyQuantityUnit $unit;
+    public GrocyQuantityUnit $purchaseUnit;
+    public GrocyQuantityUnit $consumeUnit;
+    public ?GrocyQuantityUnit $priceUnit = null;
+    public ?float $purchaseUnitFactor = null;
+    public ?float $priceUnitFactor = null;
+    public string $defaultBestBeforeDays;
+    public string $creationDate;
+    protected ?array $productInfo = null;
+    protected ?array $stockInfo = null;
 
     public static function parseProductInfoStock(array $infoArray): GrocyProduct {
-        checkIfNumeric($infoArray["product"]["id"]);
-
-        $result                        = new GrocyProduct();
-        $result->id                    = $infoArray["product"]["id"];
-        $result->name                  = sanitizeString($infoArray["product"]["name"]);
-        $result->isTare                = ($infoArray["product"]["enable_tare_weight_handling"] == "1");
-        $result->tareWeight            = sanitizeString($infoArray["product"]["tare_weight"]);
-        $result->defaultBestBeforeDays = $infoArray["product"]["default_best_before_days"];
-        $result->creationDate          = $infoArray["product"]["row_created_timestamp"];
-        $result->unit                  = sanitizeString($infoArray["quantity_unit_stock"]["name"]);
-        $result->barcodes              = $infoArray["product_barcodes"];
-
-        if (isset($infoArray["product"]["qu_conversion_factor_purchase_to_stock"]))
-            $result->quFactor = sanitizeString($infoArray["product"]["qu_conversion_factor_purchase_to_stock"]);
-        else
-            $result->quFactor = 1;
-
-        if (sanitizeString($infoArray["stock_amount"]) != null)
-            $result->stockAmount = sanitizeString($infoArray["stock_amount"]);
+        $result = new GrocyProduct();
+        $result->parseFromInfo($infoArray["product"]);
+        $result->parseFromStock($infoArray);
         return $result;
     }
 
+    public function parseFromStock(array $infoArray): void {
+        $this->stockInfo   = $infoArray;
+        $this->stockAmount = checkIfNumeric($infoArray["stock_amount"]);
+        $this->barcodes    = GrocyProductBarcode::parseProductBarcodes($infoArray["product_barcodes"]);
 
-    public static function parseProductInfoObjects(array $infoArray): GrocyProduct {
-        checkIfNumeric($infoArray["id"]);
+        if (isset($infoArray["quantity_unit_stock"]))
+            $this->unit = GrocyQuantityUnit::parseQuantityUnit($infoArray["quantity_unit_stock"]);
 
-        $result                        = new GrocyProduct();
-        $result->id                    = $infoArray["id"];
-        $result->name                  = sanitizeString($infoArray["name"]);
-        $result->isTare                = ($infoArray["enable_tare_weight_handling"] == "1");
-        $result->tareWeight            = sanitizeString($infoArray["tare_weight"]);
-        $result->quFactor              = 1; //FIXME qu_conversion_factor_purchase_to_stock was removed, might break QU conversion
-        $result->defaultBestBeforeDays = $infoArray["default_best_before_days"];
-        $result->creationDate          = $infoArray["row_created_timestamp"];
+        if (isset($infoArray["default_quantity_unit_purchase"]))
+            $this->purchaseUnit = GrocyQuantityUnit::parseQuantityUnit($infoArray["default_quantity_unit_purchase"]);
+
+        if (isset($infoArray["default_quantity_unit_consume"]))
+            $this->consumeUnit = GrocyQuantityUnit::parseQuantityUnit($infoArray["default_quantity_unit_consume"]);
+
+        if (isset($infoArray["quantity_unit_price"]))
+            $this->priceUnit = GrocyQuantityUnit::parseQuantityUnit($infoArray["quantity_unit_price"]);
+
+        if (isset($infoArray["qu_conversion_factor_purchase_to_stock"]))
+            $this->purchaseUnitFactor = checkIfFloat($infoArray["qu_conversion_factor_purchase_to_stock"]);
+
+        if (isset($infoArray["qu_conversion_factor_price_to_stock"]))
+            $this->priceUnitFactor = checkIfFloat($infoArray["qu_conversion_factor_price_to_stock"]);
+    }
+
+    public static function parseProductInfo(array $infoArray): GrocyProduct {
+        $result = new GrocyProduct();
+        $result->parseFromInfo($infoArray);
+        return $result;
+    }
+
+    public function parseFromInfo(array $infoArray): void {
+        $this->productInfo           = $infoArray;
+        $this->id                    = checkIfNumeric($infoArray["id"]);
+        $this->name                  = sanitizeString($infoArray["name"]);
+        $this->isTare                = ($infoArray["enable_tare_weight_handling"] == "1");
+        $this->tareWeight            = sanitizeString($infoArray["tare_weight"]);
+        $this->defaultBestBeforeDays = $infoArray["default_best_before_days"];
+        $this->creationDate          = $infoArray["row_created_timestamp"];
+
+        $this->unit = new GrocyQuantityUnit($infoArray["qu_id_stock"]);
+        $this->purchaseUnit = new GrocyQuantityUnit($infoArray["qu_id_purchase"]);
+        $this->consumeUnit = new GrocyQuantityUnit($infoArray["qu_id_consume"]);
+        $this->priceUnit = new GrocyQuantityUnit($infoArray["qu_id_price"]);
+
+        if (isset($infoArray["qu_conversion_factor_purchase_to_stock"]))
+            $this->purchaseUnitFactor = checkIfFloat($infoArray["qu_conversion_factor_purchase_to_stock"]);
+
+        if (isset($infoArray["qu_conversion_factor_price_to_stock"]))
+            $this->priceUnitFactor = checkIfFloat($infoArray["qu_conversion_factor_price_to_stock"]);
+    }
+
+    public function updateStock(bool $ignoreCache = false): bool {
+        $productInfo = getProductInfo($this->id);
+        if ($productInfo == null)
+            return false;
+
+        if ($ignoreCache || $this->productInfo == null)
+            $this->parseFromInfo($productInfo->productInfo);
+        $this->parseFromStock($productInfo->stockInfo);
+
+        return true;
+    }
+
+    public function updateBarcodes(bool $ignoreCache = false): bool {
+        $allBarcodes = getAllBarcodes($ignoreCache);
+        $this->barcodes = array();
+        foreach ($allBarcodes as $barcodeInfo) {
+            if (!($barcodeInfo instanceof GrocyProductBarcode) || $barcodeInfo->productId != $this->id)
+                continue;
+            $this->barcodes[$barcodeInfo->barcode] = $barcodeInfo;
+        }
+        $foundBarcodes = sizeof($this->barcodes) > 0;
+        if ($ignoreCache && !$foundBarcodes)
+            return $this->updateStock();
+
+        return $foundBarcodes;
+    }
+
+    public function getBarcodeInfo(string $barcode): ?GrocyProductBarcode {
+        $hasBarcodes = $this->barcodes != null && sizeof($this->barcodes) > 0;
+        if (!$hasBarcodes) {
+            if (!$this->updateBarcodes($this->barcodes != null))
+                return null;
+        }
+      return $this->barcodes[$barcode] ?? null;
+    }
+
+    public function getQuantityUnitByBarcode(?GrocyProductBarcode $barcode, bool $isConsume = false): GrocyQuantityUnit {
+        if ($barcode != null)
+            return new GrocyQuantityUnit($barcode->quId);
+
+        $qu = $isConsume ? $this->consumeUnit : $this->purchaseUnit;
+        return $qu ?? $this->unit;
+    }
+
+    public function getAmountByBarcode(string $barcode, bool $isConsume = false, ?GrocyQuantityUnit $qu = null, ?float $quantity = null): ?float {
+        $barcodeInfo = $this->getBarcodeInfo($barcode);
+        $qu = $qu ?? $this->getQuantityUnitByBarcode($barcodeInfo, $isConsume);
+        $quantity = $quantity ?? $barcodeInfo->amount;
+        $quc = $this->getQuantityConversionFrom($qu->id);
+        if ($quc == null)
+            return null;
+        return $quc->factor * $quantity;
+    }
+
+    public function getQuantityConversionFrom(int $quId): ?GrocyQuantityConversion {
+        $factor = null;
+        if ($quId == $this->unit->id)
+            $factor = 1;
+        else if ($quId == $this->purchaseUnit->id)
+            $factor = $this->purchaseUnitFactor;
+        else if ($quId == $this->priceUnit->id)
+            $factor = $this->priceUnitFactor;
+
+        if ($factor != null) {
+            $quc = new GrocyQuantityConversion();
+            $quc->productId = $this->id;
+            $quc->fromQuId  = $quId;
+            $quc->toQuId    = $this->unit->id;
+            $quc->factor    = $factor;
+            return $quc;
+        }
+
+        return API::getQuantityConversion($this->id, $quId, $this->unit->id);
+    }
+
+    public static function parseQuantityConversion(array $convArray): GrocyProduct {
+        $result            = new GrocyQuantityConversion();
+        $result->id        = checkIfNumeric($convArray["id"]);
+        $result->productId = checkIfNumeric($convArray["product_id"]);
+        $result->fromQuId  = checkIfNumeric($convArray["from_qu_id"]);
+        $result->toQuId    = checkIfNumeric($convArray["to_qu_id"]);
+        $result->factor    = checkIfFloat($convArray["factor"]);
+
+        return $result;
+    }
+
+    public function getQuantityConversionByBarcode(string $barcode, bool $isConsume = false): ?GrocyQuantityConversion {
+        $qu = $this->getQuantityUnitByBarcode($isConsume);
+        return $this->getQuantityConversionFrom($qu->id);
+    }
+}
+
+class GrocyBarcode {
+    public int $id;
+    public string $barcode;
+    public ?string $note = null;
+    protected ?array $barcodeInfo = null;
+
+    public function __construct(string|int $id = -1) {
+        $this->id = checkIfNumeric($id);
+    }
+
+    public static function parseBarcode(array $barcodeArray): GrocyBarcode {
+        $result = new GrocyBarcode($barcodeArray["id"]);
+        $result->parseFromBarcode($barcodeArray);
+        return $result;
+    }
+
+    public static function parseAnyBarcode(array $barcodeArray): GrocyBarcode {
+        if (isset($barcodeArray["product_id"]) && isset($barcodeArray["amount"]))
+            return GrocyProductBarcode::parseProductBarcode($barcodeArray);
+        else
+            return GrocyBarcode::parseBarcode($barcodeArray);
+    }
+
+    public function parseFromBarcode(array $barcodeArray): void {
+        $this->barcodeInfo = $barcodeArray;
+        $this->id          = checkIfNumeric($barcodeArray["id"]);
+        $this->barcode     = sanitizeString($barcodeArray["barcode"]);
+        $this->note        = sanitizeString($barcodeArray["note"]);
+    }
+
+    public static function parseBarcodes(array $barcodes): array {
+        $result = array();
+        foreach ($barcodes as $barcodeArray) {
+            $barcodeInfo = GrocyBarcode::parseBarcode($barcodeArray);
+            $result[$barcodeInfo->barcode] = $barcodeInfo;
+        }
+        return $result;
+    }
+
+    public static function parseAnyBarcodes(array $barcodes): array {
+        $result = array();
+        foreach ($barcodes as $barcodeArray) {
+            $barcodeInfo = GrocyBarcode::parseAnyBarcode($barcodeArray);
+            $result[$barcodeInfo->barcode] = $barcodeInfo;
+        }
+        return $result;
+    }
+}
+
+class GrocyProductBarcode extends GrocyBarcode {
+    public int $productId;
+    public int $quId;
+    public float $amount;
+    public ?int $shoppingLocationId = null;
+    public ?float $lastPrice = null;
+
+    public function __construct(string|int $id = -1) {
+        parent::__construct($id);
+    }
+
+    public static function parseProductBarcode(array $barcodeArray): GrocyProductBarcode {
+        $result = new GrocyProductBarcode($barcodeArray["id"]);
+        $result->parseFromProductBarcode($barcodeArray);
+        return $result;
+    }
+
+    public function parseFromProductBarcode(array $barcodeArray): void {
+        $this->parseFromBarcode($barcodeArray);
+        $this->productId = checkIfNumeric($barcodeArray["product_id"]);
+        $this->quId      = checkIfNumeric($barcodeArray["qu_id"]);
+        $this->amount    = checkIfFloat($barcodeArray["amount"]);
+
+        if (isset($barcodeArray["shopping_location_id"]))
+            $this->shoppingLocationId = checkIfNumeric($barcodeArray["shopping_location_id"]);
+        if (isset($barcodeArray["last_price"]))
+            $this->lastPrice = checkIfFloat($barcodeArray["last_price"]);
+    }
+
+    public static function parseProductBarcodes(array $barcodes): array {
+        $result = array();
+        foreach ($barcodes as $barcodeArray) {
+            $barcodeInfo = GrocyProductBarcode::parseProductBarcode($barcodeArray);
+            $result[$barcodeInfo->barcode] = $barcodeInfo;
+        }
+        return $result;
+    }
+}
+
+class GrocyQuantityUnit {
+    public int $id;
+    public string $name;
+    public ?string $description;
+    public ?string $namePlural;
+    public ?array $pluralForms;
+    public bool $isActive;
+
+    public function __construct(string|int $id) {
+        $this->id = checkIfNumeric($id);
+    }
+
+    public static function parseQuantityUnit(array $convArray): GrocyQuantityUnit {
+        $result              = new GrocyQuantityUnit($convArray["id"]);
+        $result->name        = sanitizeString($convArray["name"]);
+        $result->namePlural  = sanitizeString($convArray["name_plural"] ?? null);
+        $result->description = sanitizeString($convArray["description"]);
+        $result->pluralForms = $convArray["plural_forms"];
+        $result->isActive    = ($convArray["active"] == 1);
+
+        return $result;
+    }
+}
+
+class GrocyQuantityConversion {
+    public int $id;
+    public int $productId;
+    public int $fromQuId;
+    public int $toQuId;
+    public float $factor;
+
+    public function __construct(string|int $id = -1) {
+        $this->id = checkIfNumeric($id);
+    }
+
+    public static function parseQuantityConversion(array $convArray): GrocyQuantityConversion {
+        $result            = new GrocyQuantityConversion($convArray["id"]);
+        $result->productId = checkIfNumeric($convArray["product_id"]);
+        $result->fromQuId  = checkIfNumeric($convArray["from_qu_id"]);
+        $result->toQuId    = checkIfNumeric($convArray["to_qu_id"]);
+        $result->factor    = checkIfFloat($convArray["factor"]);
+
         return $result;
     }
 }
@@ -127,7 +379,7 @@ class API {
         if ($result != null) {
             $products = array();
             foreach ($result as $product) {
-                $grocyProduct                = GrocyProduct::parseProductInfoObjects($product);
+                $grocyProduct                = GrocyProduct::parseProductInfo($product);
                 $products[$grocyProduct->id] = $grocyProduct;
             }
             if ($updateRedisCache) {
@@ -162,6 +414,26 @@ class API {
             }
         }
         return null;
+    }
+
+    public static function getQuantityConversion(int $productId, int $fromQuId, int $toQuId): ?GrocyQuantityConversion {
+        $url = API_O_QU_CONV_R . "?query[]=product_id=" . $productId
+            . "&query[]=from_qu_id=" . $fromQuId
+            . "&query[]=to_qu_id=" . $toQuId;
+        $result = null;  // Assure assignment in event curl throws exception.
+        $curl   = new CurlGenerator($url);
+        try {
+            $result = $curl->execute(true);
+        } catch (Exception $e) {
+            self::processError($e, "Could not lookup Grocy quantity conversion");
+            return null;
+        }
+        if ($result == null || sizeof($result) == 0) {
+            $log = new LogOutput("Failed to look up quantity conversion for product_id=$productId from qu=$fromQuId to qu=$toQuId", EVENT_TYPE_ERROR);
+            $log->setVerbose()->dontSendWebsocket()->createLog();
+            return null;
+        }
+        return GrocyQuantityConversion::parseQuantityConversion($result[0]);
     }
 
     /**
@@ -507,7 +779,7 @@ class API {
                 return;
             }
         }
-        $barcodeId = $barcodes[$barcode]["barcode_id"];
+        $barcodeId = $barcodes[$barcode]->id;
         $url       = API_O_BARCODES . "/" . $barcodeId;
 
         $curl = new CurlGenerator($url, METHOD_PUT, $data);
@@ -586,10 +858,11 @@ class API {
             return self::getProductInfo(checkIfNumeric($id));
         }
         $allBarcodes = self::getAllBarcodes($ignoreCache);
-        if (!isset($allBarcodes[$barcode])) {
+        if (!isset($allBarcodes[$barcode]) || !($allBarcodes[$barcode] instanceof GrocyProductBarcode)) {
             return null;
         } else {
-            return self::getProductInfo($allBarcodes[$barcode]["id"]);
+            $productId = $allBarcodes[$barcode]->productId;
+            return self::getProductInfo($productId);
         }
     }
 
@@ -619,7 +892,7 @@ class API {
             if (!$ignoreCache && RedisConnection::isCacheAvailable()) {
                 $cachedBarcodes = RedisConnection::getAllBarcodes();
                 if ($cachedBarcodes != null)
-                    return $cachedBarcodes;
+                    return GrocyBarcode::parseAnyBarcodes($cachedBarcodes);
                 else
                     $updateRedis = true;
             } else {
@@ -634,18 +907,9 @@ class API {
             self::processError($e, "Could not lookup Grocy barcodes");
             return null;
         }
-        $result = array();
-        foreach ($curlResult as $item) {
-            if (!isset($item["barcode"]) || !isset($item["product_id"]))
-                continue;
-            $barcode                        = strtoupper(strval($item["barcode"]));
-            $result[$barcode]["id"]         = $item["product_id"];
-            $result[$barcode]["factor"]     = $item["amount"];
-            $result[$barcode]["barcode_id"] = $item["id"];
-            $result[$barcode]["barcode"]    = $barcode;
-        }
+        $result = GrocyBarcode::parseAnyBarcodes($curlResult);
         if ($updateRedis)
-            RedisConnection::cacheAllBarcodes($result);
+            RedisConnection::cacheAllBarcodes($curlResult);
         return $result;
     }
 

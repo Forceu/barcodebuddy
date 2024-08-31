@@ -196,7 +196,7 @@ function processUnknownBarcode(string $barcode, bool $websocketEnabled, LockGene
     $db     = DatabaseConnection::getInstance();
     $amount = 1;
     if ($db->getTransactionState() == STATE_PURCHASE) {
-        $amount = QuantityManager::getStoredQuantityForBarcode($barcode);
+        $amount = QuantityManager::getStoredQuantityForBarcode($barcode) ?? 1;
     }
     if ($db->isUnknownBarcodeAlreadyStored($barcode)) {
         //Unknown barcode already in local database
@@ -362,9 +362,9 @@ function processKnownBarcode(GrocyProduct $productInfo, string $barcode, bool $w
             $amountToConsume = QuantityManager::getQuantityForBarcode($barcode, true, $productInfo);
 
             if ($productInfo->stockAmount > 0) {
-                if ($productInfo->stockAmount < $amountToConsume)
+                if ($amountToConsume && $productInfo->stockAmount < $amountToConsume)
                     $amountToConsume = $productInfo->stockAmount;
-                $log    = new LogOutput("Consuming " . $amountToConsume . " " . $productInfo->unit . " of " . $productInfo->name, EVENT_TYPE_CONSUME_PRODUCT, $barcode);
+                $log    = new LogOutput("Consuming " . $amountToConsume . " " . $productInfo->unit->name . " of " . $productInfo->name, EVENT_TYPE_CONSUME_PRODUCT, $barcode);
                 $output = $log
                     ->addStockToText($productInfo->stockAmount - $amountToConsume)
                     ->setWebsocketResultCode(WS_RESULT_PRODUCT_FOUND)
@@ -384,7 +384,7 @@ function processKnownBarcode(GrocyProduct $productInfo, string $barcode, bool $w
         case STATE_CONSUME_ALL:
             $amountToConsume = $productInfo->stockAmount;
             if ($productInfo->stockAmount > 0) {
-                $log    = new LogOutput("Consuming all" . $amountToConsume . " " . $productInfo->unit . " of " . $productInfo->name, EVENT_TYPE_CONSUME_ALL_PRODUCT, $barcode);
+                $log    = new LogOutput("Consuming all" . $amountToConsume . " " . $productInfo->unit->name . " of " . $productInfo->name, EVENT_TYPE_CONSUME_ALL_PRODUCT, $barcode);
                 $output = $log
                     ->setWebsocketResultCode(WS_RESULT_PRODUCT_FOUND)
                     ->addProductFoundText()
@@ -408,7 +408,7 @@ function processKnownBarcode(GrocyProduct $productInfo, string $barcode, bool $w
             $amountToSpoil = QuantityManager::getQuantityForBarcode($barcode, true, $productInfo);
 
             if ($productInfo->stockAmount > 0) {
-                $log    = new LogOutput("Consuming " . $amountToSpoil . " spoiled " . $productInfo->unit . " of " . $productInfo->name, EVENT_TYPE_CONSUME_S_PRODUCT, $barcode);
+                $log    = new LogOutput("Consuming " . $amountToSpoil . " spoiled " . $productInfo->unit->name . " of " . $productInfo->name, EVENT_TYPE_CONSUME_S_PRODUCT, $barcode);
                 $output = $log
                     ->addStockToText($productInfo->stockAmount - $amountToSpoil)
                     ->setWebsocketResultCode(WS_RESULT_PRODUCT_FOUND)
@@ -437,7 +437,7 @@ function processKnownBarcode(GrocyProduct $productInfo, string $barcode, bool $w
             } else {
                 $additionalLog = "";
             }
-            $log    = new LogOutput("Adding  $amount " . $productInfo->unit . " of " . $productInfo->name . $additionalLog, EVENT_TYPE_PURCHASE_PRODUCT, $barcode, $isWarning);
+            $log    = new LogOutput("Adding " . "$amount " . $productInfo->unit->name . " of " . $productInfo->name . $additionalLog, EVENT_TYPE_PURCHASE_PRODUCT, $barcode, $isWarning);
             $output = $log
                 ->addStockToText($productInfo->stockAmount + $amount)
                 ->setWebsocketResultCode(WS_RESULT_PRODUCT_FOUND)
@@ -449,7 +449,7 @@ function processKnownBarcode(GrocyProduct $productInfo, string $barcode, bool $w
         case STATE_OPEN:
             $amount    = QuantityManager::getQuantityForBarcode($barcode, false, $productInfo);
             if ($productInfo->stockAmount > 0) {
-                $log    = new LogOutput("Opening " . $amount . " " . $productInfo->unit . " of " . $productInfo->name, EVENT_TYPE_OPEN_PRODUCT, $barcode);
+                $log    = new LogOutput("Opening " . $amount . " " . $productInfo->unit->name . " of " . $productInfo->name, EVENT_TYPE_OPEN_PRODUCT, $barcode);
                 $output = $log
                     ->addStockToText($productInfo->stockAmount)
                     ->setWebsocketResultCode(WS_RESULT_PRODUCT_FOUND)
@@ -471,19 +471,19 @@ function processKnownBarcode(GrocyProduct $productInfo, string $barcode, bool $w
             return $output;
         case STATE_GETSTOCK:
             $fileLock->removeLock();
-            $log = "Currently in stock: " . $productInfo->stockAmount . " " . $productInfo->unit . " of " . $productInfo->name;
+            $log = "Currently in stock: " . $productInfo->stockAmount . " " . $productInfo->unit->name . " of " . $productInfo->name;
             if ($productInfo->stockAmount > 0) {
                 $locationInfo = API::getProductLocations($productInfo->id);
                 foreach ($locationInfo as $location) {
-                    $log = $log . '\nLocation ' . $location["location_name"] . ": " . $location["amount"] . " " . $productInfo->unit;
+                    $log = $log . '\nLocation ' . $location["location_name"] . ": " . $location["amount"] . " " . $productInfo->unit->name;
                 }
             }
             return (new LogOutput($log, EVENT_TYPE_GET_STOCK_PRODUCT))->createLog();
         case STATE_ADD_SL:
             $amount    = QuantityManager::getQuantityForBarcode($barcode, false, $productInfo);
             $fileLock->removeLock();
-			$log = "Added to shopping list: " . $amount . " " . $productInfo->unit . " of " . $productInfo->name;
-            API::addToShoppinglist($productInfo->id, 1);
+            $log = "Added to shopping list: " . $amount . " " . $productInfo->unit->name . " of " . $productInfo->name;
+            API::addToShoppinglist($productInfo->id, $amount);
             return (new LogOutput($log, EVENT_TYPE_ADD_TO_SHOPPINGLIST))->createLog();
         default:
             throw new Exception("Unknown state");
@@ -539,7 +539,7 @@ function sanitizeString(?string $input, bool $strongFilter = false): ?string {
  * @param string $input
  * @return int Returns value as int if valid
  */
-function checkIfNumeric(string $input): int {
+function checkIfNumeric(string|int $input): int {
     if (!is_numeric($input) && $input != "") {
         die("Illegal input! " . sanitizeString($input) . " needs to be a number");
     }

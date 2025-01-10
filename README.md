@@ -9,7 +9,7 @@
 ### Available for:
 
 - Bare Metal
-- Android Client ([Play Store](https://play.google.com/store/apps/details?id=de.bulling.barcodebuddyscanner) and [F-Droid](https://f-droid.org/en/packages/de.bulling.barcodebuddyscanner/))
+- [Android Client](https://github.com/Forceu/barcodebuddy-android) ([Play Store](https://play.google.com/store/apps/details?id=de.bulling.barcodebuddyscanner) and [F-Droid](https://f-droid.org/en/packages/de.bulling.barcodebuddyscanner/))
 - [Docker](https://github.com/Forceu/barcodebuddy-docker) $\textcolor{red}{\textsf{Attention}}$ *Image name has changed!* 
 - [Kubernetes](https://git.sr.ht/~johnhamelink/k8s-barcodebuddy) *(Community support only)*
 - [Home Assistant](https://github.com/Forceu/barcodebuddy-homeassistant) *(Community support only)*

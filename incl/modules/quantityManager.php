@@ -11,8 +11,8 @@ class QuantityManager {
         $storedBarcodes = API::getAllBarcodes();
         $products       = API::getAllProductsInfo();
         foreach ($storedBarcodes as $barcode) {
-            if ($barcode["factor"] != null) {
-                array_push($barcodes, new ApiQuantity($barcode, $products));
+            if ($barcode instanceof GrocyProductBarcode) {
+                array_push($barcodes, new ApiQuantity($barcode, $products[$barcode->productId]));
             }
         }
         return $barcodes;
@@ -28,7 +28,7 @@ class QuantityManager {
      * @return float quantity or 1 if not found
      * @throws DbConnectionDuringEstablishException
      */
-    public static function getStoredQuantityForBarcode(string $barcode, bool $deleteAfterCompletion = false, SQLite3 $db = null): float {
+    public static function getStoredQuantityForBarcode(string $barcode, bool $deleteAfterCompletion = false, SQLite3 $db = null): ?float {
         if ($db == null)
             $db = DatabaseConnection::getInstance()->getDatabaseReference();
         $res = $db->query("SELECT * FROM Quantities WHERE barcode='$barcode'");
@@ -38,7 +38,7 @@ class QuantityManager {
                 self::delete($entry->id, $db);
             return $entry->quantity;
         } else {
-            return 1;
+            return null;
         }
     }
 
@@ -54,7 +54,7 @@ class QuantityManager {
      */
     public static function syncBarcodeToGrocy(string $barcode, SQLite3 $db = null): void {
         $storedAmount = self::getStoredQuantityForBarcode($barcode, true, $db);
-        if ($storedAmount != 1) {
+        if ($storedAmount != null) {
             API::addBarcodeQuantity($barcode, $storedAmount);
             //Only store log if not currently upgrading db
             if ($db == null) {
@@ -73,15 +73,15 @@ class QuantityManager {
      */
     public static function getQuantityForBarcode(string $barcode, bool $isConsume, GrocyProduct $productInfo): float {
         $config = BBConfig::getInstance();
-        if ($isConsume && !$config["CONSUME_SAVED_QUANTITY"])
-            return 1;
-        $amountSavedInProduct = floatval($productInfo->quFactor);
-        $barcodes             = API::getAllBarcodes();
-        if (isset($barcodes[$barcode]) && $barcodes[$barcode]["factor"] != null)
-            return $barcodes[$barcode]["factor"];
-        if ($config["USE_GROCY_QU_FACTOR"] && $amountSavedInProduct > 1)
-            return $amountSavedInProduct;
-        return $amount = QuantityManager::getStoredQuantityForBarcode($barcode);
+        $quantity = ($isConsume && $config["CONSUME_SAVED_QUANTITY"]) ? QuantityManager::getStoredQuantityForBarcode($barcode) : null;
+        $qu = !$config["USE_GROCY_QU_FACTOR"] ? $productInfo->unit : null;
+        $amount = $productInfo->getAmountByBarcode($barcode, $isConsume, $qu, $quantity);
+        if ($amount == null) {
+            $log = new LogOutput("Failed to find amount for barcode $barcode of " . $productInfo->name, EVENT_TYPE_ERROR);
+            $log->setVerbose()->dontSendWebsocket()->createLog();
+            return $quantity ?? 1;
+        }
+        return $amount;
     }
 
 
@@ -150,21 +150,21 @@ class Quantity {
 
 class ApiQuantity {
 
-    public $id;
-    public $barcode;
-    public $quantity;
-    public $product;
+    public int $id;
+    public string $barcode;
+    public float $quantity;
+    public string $product;
 
     /**
      * ApiQuantity constructor.
-     * @param array $barcodeArrayItem
-     * @param GrocyProduct[] $productList
+     * @param GrocyProductBarcode $barcodeInfo
+     * @param GrocyProduct $productInfo
      */
-    public function __construct(array $barcodeArrayItem, array $productList) {
-        $this->id       = $barcodeArrayItem['barcode_id'];
-        $this->barcode  = $barcodeArrayItem['barcode'];
-        $this->quantity = $barcodeArrayItem['factor'];
-        $this->product  = $productList[$barcodeArrayItem['id']]->name;
+    public function __construct(GrocyProductBarcode $barcodeInfo, GrocyProduct $productInfo) {
+        $this->id       = $barcodeInfo->id;
+        $this->barcode  = $barcodeInfo->barcode;
+        $this->quantity = $barcodeInfo->amount;
+        $this->product  = $productInfo->name;
     }
 
 }

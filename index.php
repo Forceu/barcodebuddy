@@ -255,7 +255,7 @@ function processButtons(): void {
                             $amount = $product->stockAmount;
                         if ($amount > 0) {
                             API::consumeProduct($gidSelected, $amount);
-                            $log = new LogOutput("Consuming $amount " . $product->unit . " of " . $product->name, EVENT_TYPE_ADD_KNOWN_BARCODE);
+                            $log = new LogOutput("Consuming $amount " . $product->unit->name . " of " . $product->name, EVENT_TYPE_ADD_KNOWN_BARCODE);
                         } else {
                             $log = new LogOutput("None in stock, not consuming: " . $product->name, EVENT_TYPE_ADD_KNOWN_BARCODE);
                         }
@@ -265,7 +265,7 @@ function processButtons(): void {
                         if (!API::purchaseProduct($gidSelected, $amount, $row["bestBeforeInDays"], $row["price"])) {
                             $additionalLog = " [WARNING]: No default best before date set!";
                         }
-                        $log = new LogOutput("Adding $amount " . $product->unit . " of " . $product->name . $additionalLog, EVENT_TYPE_ADD_KNOWN_BARCODE);
+                        $log = new LogOutput("Adding $amount " . $product->unit->name . " of " . $product->name . $additionalLog, EVENT_TYPE_ADD_KNOWN_BARCODE);
                         $log->setVerbose()->dontSendWebsocket()->createLog();
                     }
                 }

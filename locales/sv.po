@@ -26,7 +26,7 @@ msgstr "Okänd produkt redan skannad. Ökar kvantiteten."
 
 #, fuzzy
 msgid "Unknown barcode could not be looked up"
-msgstr "Okänt streckkod hittades inte ved uppslag."
+msgstr "Okänt streckkod hittades inte vid uppslag."
 
 #, fuzzy
 msgid "Product found. "
@@ -38,7 +38,7 @@ msgstr "Inte på lager. Konsumerar inte: %s"
 
 #, fuzzy
 msgid "Consuming %d %s of %s [%d]. In Stock: %d"
-msgstr "Fann produkten. Konsumerar %d %s av %s [%d]. På lager: %d"
+msgstr "Produkten hittad. Konsumerar %d %s av %s [%d]. På lager: %d"
 
 #, fuzzy
 msgid "Opening %d %s of %s"
@@ -46,7 +46,7 @@ msgstr "Tillägger %d %s av %s"
 
 #, fuzzy
 msgid "Set state to "
-msgstr "Sett tillstånd till «öppen»"
+msgstr "Sätt tillstånd till «öppen»"
 
 #, fuzzy
 msgid "Adding %d %s of %s"
@@ -58,7 +58,7 @@ msgstr "Tillknycklade streckkoden «%d» med %s"
 
 #, fuzzy
 msgid "Product found. Adding %d %s of %s"
-msgstr "Fann produkten. Tillägger %d %s av %s"
+msgstr "Produkten hittad. Tillägger %d %s av %s"
 
 #, fuzzy
 msgid "Reverting back to Consume"
@@ -66,7 +66,7 @@ msgstr "Reveterar till «konsumera»"
 
 #, fuzzy
 msgid "Product found. Consuming %d %s of %s"
-msgstr "Fann produkten. Konsumerar %d %s av %s"
+msgstr "Produkten hittad. Konsumerar %d %s av %s"
 
 #, fuzzy
 msgid "New Barcodes"
@@ -90,7 +90,7 @@ msgstr "Inga behandlade streckkoder ännu."
 
 #, fuzzy
 msgid "Delete all"
-msgstr "Radera alt"
+msgstr "Radera allt"
 
 #, fuzzy
 msgid "Processed Barcodes"
@@ -118,15 +118,15 @@ msgstr "Handling"
 
 #, fuzzy
 msgid "Create"
-msgstr "Upprätt"
+msgstr "Skapa"
 
 #, fuzzy
 msgid "Remove"
-msgstr "Radera"
+msgstr "Ta bort"
 
 #, fuzzy
 msgid "Clear log"
-msgstr "Tömma loggførande"
+msgstr "Rensa loggen"
 
 #, fuzzy
 msgid "Create Product"
@@ -134,43 +134,43 @@ msgstr "Skapa produkt"
 
 #, fuzzy
 msgid "Add"
-msgstr "Legg till"
+msgstr "Lägg till"
 
 #, fuzzy
 msgid "Consume"
 msgstr "Konsumera"
 
 msgid "Consume (spoiled)"
-msgstr "Consume (spoiled)"
+msgstr "Konsumera (utgånget)"
 
 #, fuzzy
 msgid "Consume (all)"
-msgstr "Konsumera"
+msgstr "Konsumera (alla)"
 
 msgid "Purchase"
-msgstr "Purchase"
+msgstr "Köp"
 
 msgid "Open"
-msgstr "Open"
+msgstr "Öppna"
 
 msgid "Inventory"
-msgstr "Inventory"
+msgstr "Inventarie"
 
 msgid "Add to shoppinglist"
-msgstr "Add to shoppinglist"
+msgstr "Lägg till i shoppinglistan"
 
 #, fuzzy
 #~ msgid "Product found. None in stock, not consuming: %s"
-#~ msgstr "Fann produkten. Inte på lager. Konsumerar inte: %s"
+#~ msgstr "Produkten hittad. Inte på lager. Konsumerar inte: %s"
 
 #, fuzzy
 #~ msgid "Product found. Opening %d %s of %s"
-#~ msgstr "Fann produkten. Öppnar %d %s av %så"
+#~ msgstr "Produkten hittad. Öppnar %d %s av %så"
 
 #, fuzzy
 #~ msgid "Set state to Consume"
-#~ msgstr "Sett tillstånd till «konsumera»"
+#~ msgstr "Sätt tillstånd till «konsumera»"
 
 #, fuzzy
 #~ msgid "Set state to Purchase"
-#~ msgstr "Sett tillstånd till «köpa»"
+#~ msgstr "Sätt tillstånd till «köpa»"

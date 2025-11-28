@@ -21,10 +21,25 @@ class ProviderPlusSupermarkt extends LookupProvider {
 
     function __construct(string $apiKey = null) {
         parent::__construct($apiKey);
-        $this->providerName       = 'Plus Supermarkt';
-        $this->providerConfigKey  = 'LOOKUP_USE_PLUS';
         $this->ignoredResultCodes = array('404');
     }
+
+
+    public function getName(): string {
+        return "Plus Supermarkt";
+    }
+
+    public function getDescription(): string {
+        return "Uses Plus Supermarkt API";
+    }
+
+    public function getConfigKey(): string {
+        return "LOOKUP_USE_PLUS";
+    }
+
+
+
+
 
     /**
      * Looks up a barcode
@@ -32,7 +47,7 @@ class ProviderPlusSupermarkt extends LookupProvider {
      * @return array|null Name of product, null if none found
      */
     public function lookupBarcode(string $barcode): ?array {
-        if (!$this->isProviderEnabled()) {
+        if (!$this->isEnabled()) {
             return null;
         }
 

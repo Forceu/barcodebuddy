@@ -22,10 +22,28 @@ class ProviderFederation extends LookupProvider {
 
     function __construct(string $apiKey = null) {
         parent::__construct($apiKey);
-        $this->providerName       = "Barcode Buddy Cloud";
-        $this->providerConfigKey  = "LOOKUP_USE_BBUDDY_SERVER";
         $this->ignoredResultCodes = array(529);
     }
+
+
+    public function getName(): string {
+        return "Barcode Buddy Federation";
+    }
+
+    public function getDescription(): string {
+        $config = BBConfig::getInstance();
+        if (!$config["BBUDDY_SERVER_ENABLED"])
+            return "Enable Federation for this feature";
+        return "Uses " . BarcodeFederation::HOST_READABLE;
+    }
+
+    public function getConfigKey(): string {
+        return "LOOKUP_USE_BBUDDY_SERVER";
+    }
+
+
+
+
 
     /**
      * Looks up a barcode
@@ -33,7 +51,7 @@ class ProviderFederation extends LookupProvider {
      * @return array|null Name of product, null if none found
      */
     public function lookupBarcode(string $barcode): ?array {
-        if (!$this->isProviderEnabled())
+        if (!$this->isEnabled())
             return null;
 
         $url                = BarcodeFederation::HOST . "/get";

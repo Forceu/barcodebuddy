@@ -23,9 +23,23 @@ class ProviderOpenFoodFacts extends LookupProvider {
 
     function __construct(string $apiKey = null) {
         parent::__construct($apiKey);
-        $this->providerName      = "OpenFoodFacts";
-        $this->providerConfigKey = "LOOKUP_USE_OFF";
     }
+
+
+    public function getName(): string {
+        return "Open Food Facts";
+    }
+
+    public function getDescription(): string {
+        return "Uses OpenFoodFacts.org";
+    }
+
+    public function getConfigKey(): string {
+        return "LOOKUP_USE_OFF";
+    }
+
+
+
 
     /**
      * Looks up a barcode
@@ -33,7 +47,7 @@ class ProviderOpenFoodFacts extends LookupProvider {
      * @return array|null Name of product, null if none found
      */
     public function lookupBarcode(string $barcode): ?array {
-        if (!$this->isProviderEnabled())
+        if (!$this->isEnabled())
             return null;
 
         global $CONFIG;

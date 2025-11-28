@@ -15,17 +15,6 @@
  */
 
 
-require_once __DIR__ . "/ProviderOpenFoodFacts.php";
-require_once __DIR__ . "/ProviderUpcDb.php";
-require_once __DIR__ . "/ProviderJumbo.php";
-require_once __DIR__ . "/ProviderUpcDatabase.php";
-require_once __DIR__ . "/ProviderDebug.php";
-require_once __DIR__ . "/ProviderAlbertHeijn.php";
-require_once __DIR__ . "/ProviderPlusSupermarkt.php";
-require_once __DIR__ . "/ProviderOpengtindb.php";
-require_once __DIR__ . "/ProviderDiscogs.php";
-require_once __DIR__ . "/ProviderFederation.php";
-
 abstract class LookupProviderType
 {
     const OpenFoodFacts = 0;
@@ -39,26 +28,17 @@ abstract class LookupProviderType
     const Discogs = 8;
 }
 
-class LookupProvider {
+abstract class LookupProvider {
 
     protected $useGenericName;
     protected $apiKey;
-    protected $providerName;
     protected $ignoredResultCodes = null;
-    protected $providerConfigKey = null;
+    protected $id;
 
     function __construct(string $apiKey = null) {
-        $this->useGenericName = BBConfig::getInstance()["USE_GENERIC_NAME"];
-        $this->apiKey         = $apiKey;
-    }
-
-    /**
-     * @return bool
-     */
-    protected function isProviderEnabled(): bool {
-        if ($this->providerConfigKey == null)
-            throw new Exception('providerConfigKey needs to be overriden!');
-        return BBConfig::getInstance()[$this->providerConfigKey] == "1";
+        $this->apiKey = $apiKey;
+        $this->useGenericName = (BBConfig::getInstance()["USE_GENERIC_NAME"] == "1");
+        $this->ignoredResultCodes = array();
     }
 
     /**
@@ -69,6 +49,77 @@ class LookupProvider {
      */
     public function lookupBarcode(string $barcode): ?array {
         throw new Exception('lookupBarcode needs to be overriden!');
+    }
+
+    /**
+     * Sets the unique ID of the provider
+     * @param string $id
+     * @return void
+     */
+    public function setId(string $id): void {
+        $this->id = $id;
+    }
+
+    /**
+     * Returns the unique ID of the provider
+     * @return string
+     */
+    public function getId(): string {
+        return $this->id;
+    }
+
+    /**
+     * Returns the human readable name of the provider
+     * @return string
+     */
+    abstract public function getName(): string;
+
+    /**
+     * Returns the description shown below the provider name in settings
+     * @return string
+     */
+    abstract public function getDescription(): string;
+
+    /**
+     * Returns the configuration key for enabling/disabling the provider
+     * @return string
+     */
+    abstract public function getConfigKey(): string;
+
+    /**
+     * Generates the configuration UI for this provider (excluding enablement checkbox)
+     * Override this method if your provider needs custom configuration fields
+     * @param UiEditor $html
+     * @return string
+     */
+    public function getConfigHtml(UiEditor $html): string {
+        return "";
+    }
+
+    /**
+     * Returns true if the provider is enabled
+     * @return bool
+     */
+    public function isEnabled(): bool {
+        return BBConfig::getInstance()[$this->getConfigKey()] == "1";
+    }
+
+    /**
+     * Returns the ID of the main configuration field (e.g. API key) to be toggled
+     * @return string|null
+     */
+    public function getConfigFieldId(): ?string {
+        return null;
+    }
+
+    /**
+     * Saves the settings from the POST data
+     * Override this method if your provider needs custom save logic
+     * @param array $postData
+     * @return void
+     */
+    public function saveSettings(array $postData): void {
+        // Default implementation does nothing - generic saver handles standard fields
     }
 
     /**
@@ -120,31 +171,31 @@ class LookupProvider {
             $class = get_class($e);
             switch ($class) {
                 case 'InvalidServerResponseException':
-                    API::logError("Could not connect to " . $this->providerName . ".", false);
+                    API::logError("Could not connect to " . $this->getName() . ".", false);
                     return null;
                 case 'UnauthorizedException':
-                    API::logError("Could not connect to " . $this->providerName . " - unauthorized");
+                    API::logError("Could not connect to " . $this->getName() . " - unauthorized");
                     return null;
                 case 'InvalidJsonResponseException':
-                    API::logError("Error parsing " . $this->providerName . " response: " . $e->getMessage(), false);
+                    API::logError("Error parsing " . $this->getName() . " response: " . $e->getMessage(), false);
                     return null;
                 case 'InvalidSSLException':
-                    API::logError("Could not connect to " . $this->providerName . " - invalid SSL certificate");
+                    API::logError("Could not connect to " . $this->getName() . " - invalid SSL certificate");
                     return null;
                 case 'InvalidParameterException':
-                    API::logError("Internal error: Invalid parameter passed to " . $this->providerName . ".");
+                    API::logError("Internal error: Invalid parameter passed to " . $this->getName() . ".");
                     return null;
                 case 'NotFoundException':
-                    API::logError("Server " . $this->providerName . " reported path not found.");
+                    API::logError("Server " . $this->getName() . " reported path not found.");
                     return null;
                 case 'LimitExceededException':
-                    API::logError("Connection limits exceeded for " . $this->providerName . ".");
+                    API::logError("Connection limits exceeded for " . $this->getName() . ".");
                     return null;
                 case 'InternalServerErrorException':
-                    API::logError($this->providerName . " reported internal error.");
+                    API::logError($this->getName() . " reported internal error.");
                     return null;
                 default:
-                    API::logError("Unknown error with " . $this->providerName . ": " . $e->getMessage());
+                    API::logError("Unknown error with " . $this->getName() . ": " . $e->getMessage());
                     return null;
             }
         }

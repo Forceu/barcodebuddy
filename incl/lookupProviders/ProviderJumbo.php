@@ -21,10 +21,25 @@ class ProviderJumbo extends LookupProvider {
 
     function __construct(string $apiKey = null) {
         parent::__construct($apiKey);
-        $this->providerName       = "Jumbo Group";
-        $this->providerConfigKey  = "LOOKUP_USE_JUMBO";
         $this->ignoredResultCodes = array();
     }
+
+
+    public function getName(): string {
+        return "Jumbo";
+    }
+
+    public function getDescription(): string {
+        return "Uses Jumbo API";
+    }
+
+    public function getConfigKey(): string {
+        return "LOOKUP_USE_JUMBO";
+    }
+
+
+
+
 
     /**
      * Looks up a barcode
@@ -32,7 +47,7 @@ class ProviderJumbo extends LookupProvider {
      * @return array|null Name of product, null if none found
      */
     public function lookupBarcode(string $barcode): ?array {
-        if (!$this->isProviderEnabled())
+        if (!$this->isEnabled())
             return null;
 
         $userAgent = "Mozilla/5.0 (Linux; Android 11; SM-N976N Build/RP1A.200720.012; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/80.0.3987.163 Whale/1.0.0.0 Crosswalk/25.80.14.24 Mobile Safari/537.36 NAVER(inapp; search; 598; 11.0.6)";

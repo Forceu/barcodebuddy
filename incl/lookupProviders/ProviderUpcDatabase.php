@@ -22,10 +22,43 @@ class ProviderUpcDatabase extends LookupProvider {
 
     function __construct(string $apiKey = null) {
         parent::__construct($apiKey);
-        $this->providerName       = "UPC Database";
-        $this->providerConfigKey  = "LOOKUP_USE_UPC_DATABASE";
         $this->ignoredResultCodes = array();
     }
+
+
+    public function getName(): string {
+        return "UPC Database";
+    }
+
+    public function getDescription(): string {
+        return "Uses UPCDatabase.org";
+    }
+
+    public function getConfigKey(): string {
+        return "LOOKUP_USE_UPC_DATABASE";
+    }
+
+    public function getConfigFieldId(): ?string {
+        return 'LOOKUP_UPC_DATABASE_KEY';
+    }
+
+    public function getConfigHtml(UiEditor $html): string {
+        $config = BBConfig::getInstance();
+        /** @var string $output */
+        $output = (new EditFieldBuilder(
+            'LOOKUP_UPC_DATABASE_KEY',
+            'UPCDatabase.org API Key',
+            $config['LOOKUP_UPC_DATABASE_KEY'],
+            $html)
+        )->disabled(!$this->isEnabled())
+            ->required($this->isEnabled())
+            ->pattern('[A-Za-z0-9]{32}')
+            ->generate(true);
+
+        return $output;
+    }
+
+
 
     /**
      * Looks up a barcode
@@ -34,7 +67,7 @@ class ProviderUpcDatabase extends LookupProvider {
      */
     public function lookupBarcode(string $barcode): ?array {
         $upcdb_key = BBConfig::getInstance()['LOOKUP_UPC_DATABASE_KEY'];
-        if (!$this->isProviderEnabled() || !$upcdb_key)
+        if (!$this->isEnabled() || !$upcdb_key)
             return null;
 
         $paddedBarcode = str_pad($barcode, 13, "0", STR_PAD_LEFT);

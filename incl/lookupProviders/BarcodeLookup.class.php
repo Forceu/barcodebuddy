@@ -23,18 +23,6 @@ class BarcodeLookup {
 
     private const USE_DEBUG_PROVIDER = false;
 
-    private static $providers = array(
-        LOOKUP_ID_OPENFOODFACTS => "ProviderOpenFoodFacts",
-        LOOKUP_ID_UPCDB         => "ProviderUpcDb",
-        LOOKUP_ID_UPCDATABASE   => "ProviderUpcDatabase",
-        LOOKUP_ID_ALBERTHEIJN   => "ProviderAlbertHeijn",
-        LOOKUP_ID_PLUS          => "ProviderPlusSupermarkt",
-        LOOKUP_ID_JUMBO         => "ProviderJumbo",
-        LOOKUP_ID_OPENGTINDB    => "ProviderOpengtindb",
-        LOOKUP_ID_DISCOGS       => "ProviderDiscogs",
-        LOOKUP_ID_FEDERATION    => "ProviderFederation"
-    );
-
     /**
      * Look up a barcode using providers
      * @param string $barcode Input barcode
@@ -46,11 +34,52 @@ class BarcodeLookup {
         }
         $config       = BBConfig::getInstance();
         $orderAsArray = explode(",", $config["LOOKUP_ORDER"]);
+        $providers    = self::getProviders();
+
         foreach ($orderAsArray as $orderId) {
-            $result = (new self::$providers[$orderId]())->lookupBarcode($barcode);
-            if ($result != null)
-                return $result;
+            if (isset($providers[$orderId])) {
+                $result = $providers[$orderId]->lookupBarcode($barcode);
+                if ($result != null)
+                    return $result;
+            }
         }
         return null;
+    }
+
+    /**
+     * @return LookupProvider[]
+     */
+    public static function getProviders(): array {
+        $providers = [];
+        if (!defined('LOOKUP_PROVIDERS')) {
+            return [];
+        }
+
+        foreach (LOOKUP_PROVIDERS as $id => $providerConfig) {
+            $className = $providerConfig['class'];
+            $fileName  = $providerConfig['file'];
+            $filePath  = __DIR__ . "/" . $fileName;
+
+            if (file_exists($filePath)) {
+                require_once $filePath;
+                if (class_exists($className)) {
+                    $provider = new $className();
+                    if ($provider instanceof LookupProvider) {
+                        $provider->setId((string)$id);
+                        $providers[$id] = $provider;
+                    }
+                }
+            }
+        }
+        return $providers;
+    }
+
+    /**
+     * @param string $id
+     * @return LookupProvider|null
+     */
+    public static function getProvider(string $id): ?LookupProvider {
+        $providers = self::getProviders();
+        return $providers[$id] ?? null;
     }
 }

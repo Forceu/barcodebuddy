@@ -22,10 +22,43 @@ class ProviderOpengtindb extends LookupProvider {
 
     function __construct(string $apiKey = null) {
         parent::__construct($apiKey);
-        $this->providerName       = "Open EAN / GTIN Database";
-        $this->providerConfigKey  = "LOOKUP_USE_OPEN_GTIN_DATABASE";
         $this->ignoredResultCodes = array();
     }
+
+
+    public function getName(): string {
+        return "Open EAN / GTIN Database";
+    }
+
+    public function getDescription(): string {
+        return "Uses OpenGtinDb.org";
+    }
+
+    public function getConfigKey(): string {
+        return "LOOKUP_USE_OPEN_GTIN_DATABASE";
+    }
+
+    public function getConfigFieldId(): ?string {
+        return 'LOOKUP_OPENGTIN_KEY';
+    }
+
+    public function getConfigHtml(UiEditor $html): string {
+        $config = BBConfig::getInstance();
+        /** @var string $output */
+        $output = (new EditFieldBuilder(
+            'LOOKUP_OPENGTIN_KEY',
+            'OpenGtinDb.org API Key',
+            $config['LOOKUP_OPENGTIN_KEY'],
+            $html)
+        )->disabled(!$this->isEnabled())
+            ->required($this->isEnabled())
+            ->pattern('[^%]{3,}')
+            ->generate(true);
+
+        return $output;
+    }
+
+
 
     /**
      * Looks up a barcode
@@ -34,7 +67,7 @@ class ProviderOpengtindb extends LookupProvider {
      */
     public function lookupBarcode(string $barcode): ?array {
         $opoengtinKey = BBConfig::getInstance()['LOOKUP_OPENGTIN_KEY'];
-        if (!$this->isProviderEnabled() || !$opoengtinKey)
+        if (!$this->isEnabled() || !$opoengtinKey)
             return null;
 
         $paddedBarcode = str_pad($barcode, 13, "0", STR_PAD_LEFT);

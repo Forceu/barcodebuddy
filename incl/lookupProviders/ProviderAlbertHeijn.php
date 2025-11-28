@@ -24,11 +24,26 @@ class ProviderAlbertHeijn extends LookupProvider {
 
     function __construct(string $apiKey = null) {
         parent::__construct($apiKey);
-        $this->providerName       = "Albert Heijn";
-        $this->providerConfigKey  = "LOOKUP_USE_AH";
         $this->ignoredResultCodes = array("404");
         $this->db                 = DatabaseConnection::getInstance();
     }
+
+
+    public function getName(): string {
+        return "Albert Heijn";
+    }
+
+    public function getDescription(): string {
+        return "Uses Albert Heijn API";
+    }
+
+    public function getConfigKey(): string {
+        return "LOOKUP_USE_AH";
+    }
+
+
+
+
 
     /**
      * Looks up a barcode
@@ -36,7 +51,7 @@ class ProviderAlbertHeijn extends LookupProvider {
      * @return array|null Name of product, null if none found
      */
     public function lookupBarcode(string $barcode): ?array {
-        if (!$this->isProviderEnabled())
+        if (!$this->isEnabled())
             return null;
         if (strlen($barcode) >= 20)
 	        return null;

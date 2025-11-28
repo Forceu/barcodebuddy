@@ -71,6 +71,12 @@ function saveSettings(): void {
             }
         }
     }
+    
+    // Save provider settings
+    $providers = BarcodeLookup::getProviders();
+    foreach ($providers as $provider) {
+        $provider->saveSettings($_POST);
+    }
 }
 
 
@@ -142,48 +148,92 @@ function getHtmlSettingsBarcodeLookup(): string {
     $html->addHtml("Use Drag&amp;Drop for changing lookup order");
     $html->addHtml('<ul class="demo-list-item mdl-list" id="providers">');
 
-    $providerList = getProviderListItems($html);
-    $orderAsArray = explode(",", $config["LOOKUP_ORDER"]);
-    foreach ($orderAsArray as $orderId) {
-        $html->addHtml($providerList["id" . $orderId]);
+    $providers = BarcodeLookup::getProviders();
+    $providerList = [];
+
+    // Generic JS handler for toggling config fields
+    $html->addScript('
+        function toggleConfigField(checkbox, fieldId) {
+            var field = document.getElementById(fieldId);
+            if (!field) return;
+            
+            if (checkbox.checked) {
+                field.disabled = false;
+                field.parentElement.classList.remove("is-disabled");
+                field.required = true;
+            } else {
+                field.disabled = true;
+                field.parentElement.classList.add("is-disabled");
+                field.required = false;
+                // Clear validation error if present
+                field.parentElement.classList.remove("is-invalid");
+            }
+        }
+    ');
+
+    foreach ($providers as $provider) {
+        $configFieldId = $provider->getConfigFieldId();
+        
+        if ($configFieldId) {
+            // Use CheckBoxBuilder for providers with config to attach JS handler
+            $checkbox = (new CheckBoxBuilder(
+                $provider->getConfigKey(),
+                $provider->getName(),
+                (string)$provider->isEnabled(),
+                $html
+            ))->onCheckChanged("toggleConfigField(this, '$configFieldId')")
+              ->generate(true);
+        } else {
+            // Use simple addCheckbox for providers without config (matches original convention)
+            $checkbox = $html->addCheckbox(
+                $provider->getConfigKey(),
+                $provider->getName(),
+                (string)$provider->isEnabled(),
+                false,
+                false,
+                true
+            );
+        }
+
+        $configHtml = $provider->getConfigHtml($html);
+        $description = $provider->getDescription();
+
+        // Combine description and config HTML
+        $body = $description;
+        if (!empty($configHtml)) {
+            $body .= "<br/><br/>" . $configHtml;
+        }
+
+        // Manually construct list item to allow for auto height and proper vertical stacking
+        /** @var string $checkbox */
+        $providerList["id" . $provider->getId()] = "
+        <li data-id=\"" . $provider->getId() . "\" class=\"mdl-list__item\" style=\"height:auto; min-height: auto; padding: 16px; display: block;\" data-value=\"" . $provider->getId() . "\">
+            <div style=\"display: flex; align-items: center;\">
+                " . $checkbox . "
+            </div>
+            <div style=\"padding-left: 28px; margin-top: 4px; color: #757575;\">
+                " . $description . "
+                " . (!empty($configHtml) ? "<div style=\"margin-top: 12px;\">" . $configHtml . "</div>" : "") . "
+            </div>
+        </li>";
     }
 
+    $orderAsArray = explode(",", $config["LOOKUP_ORDER"]);
+    foreach ($orderAsArray as $orderId) {
+        if (isset($providerList["id" . $orderId])) {
+            $html->addHtml($providerList["id" . $orderId]);
+            unset($providerList["id" . $orderId]);
+        }
+    }
+
+    // Add any remaining providers that might not be in the order list yet
+    foreach ($providerList as $item) {
+        $html->addHtml($item);
+    }
 
     $html->addHtml('</ul>');
     $html->addLineBreak();
-    $html->addHtml((new EditFieldBuilder(
-        'LOOKUP_UPC_DATABASE_KEY',
-        'UPCDatabase.org API Key',
-        $config["LOOKUP_UPC_DATABASE_KEY"],
-        $html))
-        ->required($config["LOOKUP_USE_UPC_DATABASE"])
-        ->pattern('[A-Za-z0-9]{32}')
-        ->disabled(!$config["LOOKUP_USE_UPC_DATABASE"])
-        ->generate(true)
-    );
-    $html->addLineBreak();
-    $html->addHtml((new EditFieldBuilder(
-        'LOOKUP_OPENGTIN_KEY',
-        'OpenGtinDb.org API Key',
-        $config["LOOKUP_OPENGTIN_KEY"],
-        $html))
-        ->required($config["LOOKUP_USE_OPEN_GTIN_DATABASE"])
-        ->pattern('[^%]{3,}')
-        ->disabled(!$config["LOOKUP_USE_OPEN_GTIN_DATABASE"])
-        ->generate(true)
-    );
-
-    $html->addLineBreak();
-    $html->addHtml((new EditFieldBuilder(
-        'LOOKUP_DISCOGS_TOKEN',
-        'discogs.com Access Token',
-        $config["LOOKUP_DISCOGS_TOKEN"],
-        $html))
-        ->required($config["LOOKUP_USE_DISCOGS"])
-        ->pattern('[A-Za-z0-9]{40}')
-        ->disabled(!$config["LOOKUP_USE_DISCOGS"])
-        ->generate(true)
-    );
+    
     $html->addHiddenField("LOOKUP_ORDER", $config["LOOKUP_ORDER"]);
 
     $html->addScript("var elements = document.getElementById('providers');
@@ -194,67 +244,6 @@ function getHtmlSettingsBarcodeLookup(): string {
                                     },});");
 
     return $html->getHtml();
-}
-
-function generateApiKeyChangeScript(string $functionName, string $keyId): string {
-    return "function " . $functionName . "(element) {
-                apiEditField = document.getElementById('" . $keyId . "');
-                if (!apiEditField) {
-                    console.warn('Unable to find element " . $keyId . "');
-                } else {
-                    apiEditField.required = element.checked;
-                    if (element.checked) {
-                        apiEditField.parentNode.MaterialTextfield.enable();
-                    } else {
-                        apiEditField.parentNode.MaterialTextfield.disable();
-                    }
-                }
-            }";
-}
-
-function getProviderListItems(UiEditor $html): array {
-    $config                                 = BBConfig::getInstance();
-    $result                                 = array();
-    $result["id" . LOOKUP_ID_OPENFOODFACTS] = $html->addListItem($html->addCheckbox('LOOKUP_USE_OFF', 'Open Food Facts', $config["LOOKUP_USE_OFF"], false, false, true), "Uses OpenFoodFacts.org", LOOKUP_ID_OPENFOODFACTS, true);
-    $result["id" . LOOKUP_ID_UPCDB]         = $html->addListItem($html->addCheckbox('LOOKUP_USE_UPC', 'UPC Item DB', $config["LOOKUP_USE_UPC"], false, false, true), "Uses UPCitemDB.com", LOOKUP_ID_UPCDB, true);
-    $result["id" . LOOKUP_ID_ALBERTHEIJN]   = $html->addListItem($html->addCheckbox('LOOKUP_USE_AH', 'Albert Heijn', $config["LOOKUP_USE_AH"], false, false, true), "Uses AH.nl", LOOKUP_ID_ALBERTHEIJN, true);
-    $result["id" . LOOKUP_ID_PLUS]          = $html->addListItem($html->addCheckbox('LOOKUP_USE_PLUS', 'Plus Supermarkt', $config["LOOKUP_USE_PLUS"], false, false, true), "Uses PLUS.nl", LOOKUP_ID_PLUS, true);
-    $result["id" . LOOKUP_ID_JUMBO]         = $html->addListItem($html->addCheckbox('LOOKUP_USE_JUMBO', 'Jumbo', $config["LOOKUP_USE_JUMBO"], false, false, true), "Uses Jumbo.com (slow)", LOOKUP_ID_JUMBO, true);
-    $result["id" . LOOKUP_ID_UPCDATABASE]   = $html->addListItem((new CheckBoxBuilder(
-        "LOOKUP_USE_UPC_DATABASE",
-        "UPC Database",
-        $config["LOOKUP_USE_UPC_DATABASE"],
-        $html)
-    )->onCheckChanged(
-        "handleUPCDBChange(this)",
-        generateApiKeyChangeScript("handleUPCDBChange", "LOOKUP_UPC_DATABASE_KEY"))
-        ->generate(true), "Uses UPCDatabase.org", LOOKUP_ID_UPCDATABASE, true);
-
-    $result["id" . LOOKUP_ID_OPENGTINDB] = $html->addListItem((new CheckBoxBuilder(
-        "LOOKUP_USE_OPEN_GTIN_DATABASE",
-        "Open EAN / GTIN Database",
-        $config["LOOKUP_USE_OPEN_GTIN_DATABASE"],
-        $html)
-    )->onCheckChanged(
-        "handleOpenGtinChange(this)",
-        generateApiKeyChangeScript("handleOpenGtinChange", "LOOKUP_OPENGTIN_KEY"))
-        ->generate(true), "Uses OpenGtinDb.org", LOOKUP_ID_OPENGTINDB, true);
-
-    $result["id" . LOOKUP_ID_DISCOGS]   = $html->addListItem((new CheckBoxBuilder(
-        "LOOKUP_USE_DISCOGS",
-        "Discogs Database",
-        $config["LOOKUP_USE_DISCOGS"],
-        $html)
-    )->onCheckChanged(
-        "handleDiscogsChange(this)",
-        generateApiKeyChangeScript("handleDiscogsChange", "LOOKUP_DISCOGS_TOKEN"))
-        ->generate(true), "Uses Discogs.com", LOOKUP_ID_DISCOGS, true);
-
-    $bbServerSubtitle                    = "Uses " . BarcodeFederation::HOST_READABLE;
-    if (!$config["BBUDDY_SERVER_ENABLED"])
-        $bbServerSubtitle = "Enable Federation for this feature";
-    $result["id" . LOOKUP_ID_FEDERATION] = $html->addListItem($html->addCheckbox('LOOKUP_USE_BBUDDY_SERVER', 'Barcode Buddy Federation', $config["LOOKUP_USE_BBUDDY_SERVER"], !$config["BBUDDY_SERVER_ENABLED"], false, true), $bbServerSubtitle, LOOKUP_ID_FEDERATION, true);
-    return $result;
 }
 
 

@@ -356,7 +356,16 @@ class API {
             else
                 $daysBestBefore = self::getDefaultBestBeforeDays($id);
         }
-        $data['best_before_date'] = self::formatBestBeforeDays($daysBestBefore);
+        
+        // Check if $daysBestBefore is a date string (YYYY-MM-DD)
+        if (preg_match("/^\d{4}-\d{2}-\d{2}$/", (string)$daysBestBefore)) {
+             $data['best_before_date'] = $daysBestBefore;
+             // We set this to a non-zero value to indicate success later
+             $daysBestBefore = 1; 
+        } else {
+             $data['best_before_date'] = self::formatBestBeforeDays((int)$daysBestBefore);
+        }
+        
         $data_json                = json_encode($data);
         $url                      = API_STOCK . "/" . $id . "/add";
 

@@ -36,6 +36,22 @@ function processNewBarcode(string $barcodeInput, ?string $bestBeforeInDays = nul
     $config = BBConfig::getInstance();
 
     $barcode = strtoupper($barcodeInput);
+    
+    // Check for GS1 Datamatrix
+    // GS1 with AI 01 must be at least 16 chars (2 for AI + 14 for GTIN)
+    if (strpos($barcode, ']D2') === 0 || (strpos($barcode, '01') === 0 && strlen($barcode) >= 16)) {
+        // Try parsing as GS1
+        require_once __DIR__ . "/GS1Parser.php";
+        $parser = new GS1Parser($barcodeInput); // Use original input to preserve case/chars if needed
+        if ($parser->isValid()) {
+            $barcode = $parser->getGtin();
+            $expDate = $parser->getExpirationDate();
+            if ($expDate != null) {
+                $bestBeforeInDays = $expDate;
+            }
+        }
+    }
+    
     if ($barcode == $config["BARCODE_C"]) {
         $db->setTransactionState(STATE_CONSUME);
         return createLogModeChange(STATE_CONSUME);

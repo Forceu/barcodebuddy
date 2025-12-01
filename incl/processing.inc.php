@@ -39,7 +39,7 @@ function processNewBarcode(string $barcodeInput, ?string $bestBeforeInDays = nul
     
     // Check for GS1 Datamatrix
     // GS1 with AI 01 must be at least 16 chars (2 for AI + 14 for GTIN)
-    if (strpos($barcode, ']D2') === 0 || (strpos($barcode, '01') === 0 && strlen($barcode) >= 16)) {
+    if ($config["GS1_PARSING_ENABLED"] && (strpos($barcode, ']D2') === 0 || (strpos($barcode, '01') === 0 && strlen($barcode) >= 16))) {
         // Try parsing as GS1
         require_once __DIR__ . "/GS1Parser.php";
         $parser = new GS1Parser($barcodeInput); // Use original input to preserve case/chars if needed

@@ -107,6 +107,7 @@ class DatabaseConnection {
         "LOOKUP_USE_UPC_DATABASE" => "0",
         "LOOKUP_USE_OPEN_GTIN_DATABASE" => "0",
         "LOOKUP_USE_DISCOGS" => "0",
+        "GS1_PARSING_ENABLED" => "1",
         "LOOKUP_USE_BBUDDY_SERVER" => "0",
         "LOOKUP_UPC_DATABASE_KEY" => null,
         "LOOKUP_OPENGTIN_KEY" => null,

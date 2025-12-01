@@ -24,10 +24,43 @@ class ProviderDiscogs extends LookupProvider {
 
     function __construct(string $apiKey = null) {
         parent::__construct($apiKey);
-        $this->providerName       = "Discogs DB";
-        $this->providerConfigKey  = "LOOKUP_USE_DISCOGS";
         $this->ignoredResultCodes = array(400, 404);
     }
+
+
+    public function getName(): string {
+        return "Discogs Database";
+    }
+
+    public function getDescription(): string {
+        return "Uses Discogs.com";
+    }
+
+    public function getConfigKey(): string {
+        return "LOOKUP_USE_DISCOGS";
+    }
+
+    public function getConfigFieldId(): ?string {
+        return 'LOOKUP_DISCOGS_TOKEN';
+    }
+
+    public function getConfigHtml(UiEditor $html): string {
+        $config = BBConfig::getInstance();
+        /** @var string $output */
+        $output = (new EditFieldBuilder(
+            'LOOKUP_DISCOGS_TOKEN',
+            'discogs.com Access Token',
+            $config['LOOKUP_DISCOGS_TOKEN'],
+            $html)
+        )->disabled(!$this->isEnabled())
+            ->required($this->isEnabled())
+            ->pattern('[A-Za-z0-9]{40}')
+            ->generate(true);
+
+        return $output;
+    }
+
+
 
     /**
      * Looks up a barcode
@@ -37,7 +70,7 @@ class ProviderDiscogs extends LookupProvider {
     public function lookupBarcode(string $barcode): ?array {
                   
         $discogs_token = BBConfig::getInstance()['LOOKUP_DISCOGS_TOKEN'];
-        if (!$this->isProviderEnabled())
+        if (!$this->isEnabled())
             return null;
 
         $url    = "https://api.discogs.com/database/search?q=". $barcode . "&token=" . $discogs_token;

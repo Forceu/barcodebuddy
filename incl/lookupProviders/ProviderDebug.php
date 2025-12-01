@@ -23,9 +23,24 @@ class ProviderDebug extends LookupProvider {
 
     function __construct(string $apiKey = null) {
         parent::__construct($apiKey);
-        $this->providerName      = "Debug Lookup";
-        $this->providerConfigKey = "USE_DEBUG_LOOKUP";
     }
+
+
+    public function getName(): string {
+        return "Debug Provider";
+    }
+
+    public function getDescription(): string {
+        return "Debug lookup provider";
+    }
+
+    public function getConfigKey(): string {
+        return "USE_DEBUG_LOOKUP";
+    }
+
+
+
+
 
     public function lookupBarcode(string $barcode): ?array {
         return self::createReturnArray(self::RETURN_STRING);

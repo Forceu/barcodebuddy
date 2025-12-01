@@ -44,16 +44,6 @@ const SECTION_A_REQ_BARCODES   = "req_actions";
 const SECTION_LOGS             = "log";
 
 
-const LOOKUP_ID_OPENFOODFACTS = "1";
-const LOOKUP_ID_UPCDB         = "2";
-const LOOKUP_ID_UPCDATABASE   = "3";
-const LOOKUP_ID_ALBERTHEIJN   = "4";
-const LOOKUP_ID_JUMBO         = "5";
-const LOOKUP_ID_OPENGTINDB    = "6";
-const LOOKUP_ID_FEDERATION    = "7";
-const LOOKUP_ID_PLUS          = "8";
-const LOOKUP_ID_DISCOGS       = "9";
-
 /**
  * Dockerfile changes this to "1", so that the default is true
  * For non-docker this should be false ("0").
@@ -107,6 +97,8 @@ class DatabaseConnection {
         "LOOKUP_USE_UPC_DATABASE" => "0",
         "LOOKUP_USE_OPEN_GTIN_DATABASE" => "0",
         "LOOKUP_USE_DISCOGS" => "0",
+        "LOOKUP_USE_CUSTOM_WEBHOOKS" => "0",
+        "LOOKUP_CUSTOM_WEBHOOKS_URLS" => null,
         "LOOKUP_USE_BBUDDY_SERVER" => "0",
         "LOOKUP_UPC_DATABASE_KEY" => null,
         "LOOKUP_OPENGTIN_KEY" => null,
@@ -119,15 +111,8 @@ class DatabaseConnection {
         "BBUDDY_SERVER_ENABLED" => "0",
         "BBUDDY_SERVER_POPUPSHOWN" => "0",
         "BBUDDY_SERVER_NEXTSYNC" => "0",
-        "LOOKUP_ORDER" => LOOKUP_ID_OPENFOODFACTS . "," .
-            LOOKUP_ID_UPCDB . "," .
-            LOOKUP_ID_UPCDATABASE . "," .
-            LOOKUP_ID_ALBERTHEIJN . "," .
-            LOOKUP_ID_PLUS . "," .
-            LOOKUP_ID_JUMBO . "," .
-            LOOKUP_ID_OPENGTINDB . "," .
-            LOOKUP_ID_DISCOGS . "," .
-            LOOKUP_ID_FEDERATION);
+        "BBUDDY_SERVER_NEXTSYNC" => "0",
+        "LOOKUP_ORDER" => "1,2,3,4,8,5,6,9,7,10");
 
 
     const DB_INT_VALUES = array("REVERT_TIME");

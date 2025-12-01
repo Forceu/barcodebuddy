@@ -36,6 +36,7 @@ if (isset($_POST["federation_disable"])) {
 $webUi = new WebUiGenerator(MENU_GENERIC);
 $webUi->addHeader();
 
+/** @var string $loadingSpinner */
 $loadingSpinner =  (new UiEditor())->addLoadingSpinner("loading",true);
     $webUi->addCard('Barcode Buddy Federation <span id="statusTop">'.$loadingSpinner.'</span>', getHtmlFederation());
     $webUi->addCard('Info ', getHtmlFederationInfo());

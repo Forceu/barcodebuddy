@@ -110,8 +110,25 @@ const OVERRIDDEN_USER_CONFIG       = array(
                                          // "LOOKUP_USE_JUMBO"           => "0",
                                          // "LOOKUP_USE_PLUS"            => "0",
                                          // "LOOKUP_USE_UPC_DATABASE"    => "0",
-                                         // "LOOKUP_UPC_DATABASE_KEY"    => null
+                                         // "LOOKUP_UPC_DATABASE_KEY"    => null,
+                                         // "LOOKUP_USE_CUSTOM_WEBHOOKS" => "0",
+                                         // "LOOKUP_CUSTOM_WEBHOOKS_URLS"=> null
                                          );
+
+// List of available lookup providers
+// Format: "ID" => ["class" => "ClassName", "file" => "filename.php"]
+const LOOKUP_PROVIDERS = array(
+    "1" => ["class" => "ProviderOpenFoodFacts", "file" => "ProviderOpenFoodFacts.php"],
+    "2" => ["class" => "ProviderUpcDb", "file" => "ProviderUpcDb.php"],
+    "3" => ["class" => "ProviderUpcDatabase", "file" => "ProviderUpcDatabase.php"],
+    "4" => ["class" => "ProviderAlbertHeijn", "file" => "ProviderAlbertHeijn.php"],
+    "5" => ["class" => "ProviderJumbo", "file" => "ProviderJumbo.php"],
+    "6" => ["class" => "ProviderOpengtindb", "file" => "ProviderOpengtindb.php"],
+    "7" => ["class" => "ProviderFederation", "file" => "ProviderFederation.php"],
+    "8" => ["class" => "ProviderPlusSupermarkt", "file" => "ProviderPlusSupermarkt.php"],
+    "9" => ["class" => "ProviderDiscogs", "file" => "ProviderDiscogs.php"],
+    "10" => ["class" => "ProviderCustomWebhooks", "file" => "ProviderCustomWebhooks.php"]
+);
 
 
 // Currently not in use

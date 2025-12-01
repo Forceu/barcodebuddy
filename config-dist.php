@@ -110,7 +110,9 @@ const OVERRIDDEN_USER_CONFIG       = array(
                                          // "LOOKUP_USE_JUMBO"           => "0",
                                          // "LOOKUP_USE_PLUS"            => "0",
                                          // "LOOKUP_USE_UPC_DATABASE"    => "0",
-                                         // "LOOKUP_UPC_DATABASE_KEY"    => null
+                                         // "LOOKUP_UPC_DATABASE_KEY"    => null,
+                                         // "LOOKUP_USE_CUSTOM_WEBHOOKS" => "0",
+                                         // "LOOKUP_CUSTOM_WEBHOOKS_URLS"=> null
                                          );
 
 // List of available lookup providers
@@ -124,7 +126,8 @@ const LOOKUP_PROVIDERS = array(
     "6" => ["class" => "ProviderOpengtindb", "file" => "ProviderOpengtindb.php"],
     "7" => ["class" => "ProviderFederation", "file" => "ProviderFederation.php"],
     "8" => ["class" => "ProviderPlusSupermarkt", "file" => "ProviderPlusSupermarkt.php"],
-    "9" => ["class" => "ProviderDiscogs", "file" => "ProviderDiscogs.php"]
+    "9" => ["class" => "ProviderDiscogs", "file" => "ProviderDiscogs.php"],
+    "10" => ["class" => "ProviderCustomWebhooks", "file" => "ProviderCustomWebhooks.php"]
 );
 
 

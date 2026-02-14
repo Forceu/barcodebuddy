@@ -4,3 +4,4 @@ data/config.php
 data/users.db
 /vendor/
 .idea
+.phpunit.result.cache

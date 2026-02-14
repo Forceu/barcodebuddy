@@ -144,6 +144,9 @@ class GlobalConfig {
      */
     static private function convertCorrectType(string $input, $originalVar) {
         if (!is_array($originalVar)) {
+            if (is_null($originalVar)) {
+                return self::convertPossibleBoolean($input);
+            }
             $variableType = gettype($originalVar);
             $result       = self::convertPossibleBoolean($input);
             settype($result, $variableType);

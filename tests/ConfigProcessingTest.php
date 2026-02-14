@@ -1,5 +1,7 @@
 <?php
 
+// Point to config-dist.php because requiring configProcessing.inc.php
+// triggers global initialization (loadConfigPhp, checkForMissingConstants, etc.)
 $_SERVER['BBUDDY_CONFIG_PATH'] = __DIR__ . '/../config-dist.php';
 
 require_once __DIR__ . '/../incl/configProcessing.inc.php';

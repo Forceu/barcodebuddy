@@ -37,7 +37,6 @@ if ($CONFIG->REQUIRE_API_KEY)
     $api->checkIfAuthorized();
 $api->execute($requestedUrl);
 
-
 class BBuddyApi {
 
     private $routes = array();
@@ -115,7 +114,6 @@ class BBuddyApi {
     }
 
     private function initRoutes(): void {
-
         $this->addRoute(new ApiRoute("/action/scan", function () {
             $barcode = "";
             if (isset($_GET["text"]))
@@ -124,22 +122,24 @@ class BBuddyApi {
                 $barcode = $_GET["add"];
             if (isset($_POST["barcode"]))
                 $barcode = $_POST["barcode"];
-            if ($barcode == "")
+            if ($barcode == "") {
                 return self::createResultArray(null, "No barcode supplied", 400);
-            else {
+            } else {
                 $bestBefore = null;
                 $price      = null;
                 if (isset($_POST["bestBeforeInDays"]) && $_POST["bestBeforeInDays"] != null) {
-                    if (is_numeric($_POST["bestBeforeInDays"]))
+                    if (is_numeric($_POST["bestBeforeInDays"])) {
                         $bestBefore = $_POST["bestBeforeInDays"];
-                    else
+                    } else {
                         return self::createResultArray(null, "Invalid parameter bestBeforeInDays: needs to be type int", 400);
+                    }
                 }
                 if (isset($_POST["price"]) && $_POST["price"] != null) {
-                    if (is_numeric($_POST["price"]))
+                    if (is_numeric($_POST["price"])) {
                         $price = $_POST["price"];
-                    else
+                    } else {
                         return self::createResultArray(null, "Invalid parameter price: needs to be type float", 400);
+                    }
                 }
                 $result = processNewBarcode(sanitizeString($barcode), $bestBefore, $price);
                 return self::createResultArray(array("result" => sanitizeString($result)));
@@ -159,10 +159,10 @@ class BBuddyApi {
             else if (isset($_POST["state"]))
                 $state = $_POST["state"];            
 
-            //Also check if value is a valid range (STATE_CONSUME the lowest and STATE_CONSUME_ALL the highest value)
-            if (!is_numeric($state) || $state < STATE_CONSUME || $state > STATE_CONSUME_ALL)
+            //Also check if value is a valid range (STATE_CONSUME the lowest and STATE_TXFR the highest value)
+            if (!is_numeric($state) || $state < STATE_CONSUME || $state > STATE_TXFR) {
                 return self::createResultArray(null, "Invalid state provided", 400);
-            else {
+            } else {
                 DatabaseConnection::getInstance()->setTransactionState(intval($state));
                 return self::createResultArray();
             }
@@ -178,7 +178,8 @@ class BBuddyApi {
                 "BARCODE_GS" => $config["BARCODE_GS"],
                 "BARCODE_Q" => $config["BARCODE_Q"],
                 "BARCODE_AS" => $config["BARCODE_AS"],
-                "BARCODE_CA" => $config["BARCODE_CA"]
+                "BARCODE_CA" => $config["BARCODE_CA"],
+                "BARCODE_TXFR" => $config["BARCODE_TXFR"],
             ));
         }));
 

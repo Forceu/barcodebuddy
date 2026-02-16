@@ -24,7 +24,7 @@ $CONFIG->checkIfAuthenticated(true);
 
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 
 
@@ -75,7 +75,6 @@ $CONFIG->checkIfAuthenticated(true);
             background: #ccc;
             padding: 10px;
             box-sizing: border-box;
-            text-transform: lowercase;
             flex: 0 1 auto;
         }
 
@@ -85,7 +84,6 @@ $CONFIG->checkIfAuthenticated(true);
             padding: 10px;
             flex: 1 0 auto;
             box-sizing: border-box;
-            padding: 10px;
             text-align: center;
             align-content: center
         }
@@ -285,6 +283,7 @@ $CONFIG->checkIfAuthenticated(true);
         <a href="#" onclick="sendBarcode('<?php echo BBConfig::getInstance()["BARCODE_O"] ?>')">Open</a>
         <a href="#" onclick="sendBarcode('<?php echo BBConfig::getInstance()["BARCODE_GS"] ?>')">Inventory</a>
         <a href="#" onclick="sendBarcode('<?php echo BBConfig::getInstance()["BARCODE_AS"] ?>')">Add to shoppinglist</a>
+        <a href="#" onclick="sendTransfer()">Set Transfer Dest</a>
         <a href="#" onclick="sendQuantity()">Set quantity</a>
         <a href="#" onclick="sendBarcode('<?php echo BBConfig::getInstance()["BARCODE_CA"] ?>')">Consume All</a>
         <a href="#" onclick="sendBarcode('<?php echo BBConfig::getInstance()["BARCODE_CS"] ?>')">Consume (spoiled)</a>
@@ -311,6 +310,11 @@ $CONFIG->checkIfAuthenticated(true);
     function sendQuantity() {
         var q = prompt('Enter quantity', '1');
         sendBarcode('<?php echo BBConfig::getInstance()["BARCODE_Q"] ?>' + q);
+    }
+
+    function sendTransfer() {
+        var q = prompt('Enter location destination id');
+        sendBarcode('<?php echo BBConfig::getInstance()["BARCODE_TXFR"] ?>' + q);
     }
 
     var noSleep = new NoSleep();
@@ -385,7 +389,7 @@ $CONFIG->checkIfAuthenticated(true);
 
         async function resetScan(scanId) {
             await sleep(3000);
-            if (currentScanId == scanId) {
+            if (currentScanId === scanId) {
                 document.getElementById('content').style.backgroundColor = '#eee';
                 document.getElementById('scan-result').textContent = 'waiting for barcode...';
                 document.getElementById('event').textContent = '';
@@ -400,7 +404,9 @@ $CONFIG->checkIfAuthenticated(true);
             document.getElementById('content').style.backgroundColor = color;
             document.getElementById('event').textContent = message;
             document.getElementById('scan-result').textContent = text;
-            document.getElementById(sound).play();
+            if (sound !== undefined) {
+                document.getElementById(sound).play();
+            }
             document.getElementById('log-entries').innerText = '\r\n' + text + document.getElementById('log-entries').innerText;
             currentScanId++;
             resetScan(currentScanId);
@@ -432,7 +438,10 @@ $CONFIG->checkIfAuthenticated(true);
                     resultScan("#eaff8a", "Unknown Barcode", resultText, "beep_nosuccess");
                     break;
                 case '4':
-                    document.getElementById('mode').textContent = resultText;
+                    document.getElementById('mode').textContent = resultText.charAt(0).toUpperCase() + resultText.slice(1);
+                    break;
+                case '8':
+                    resultScan("#CC0605", "Invalid Transfer ID", resultText);
                     break;
                 case 'E':
                     document.getElementById('content').style.backgroundColor = '#CC0605';

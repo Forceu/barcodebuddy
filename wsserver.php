@@ -29,7 +29,6 @@ require_once __DIR__ . '/incl/configProcessing.inc.php';
 require_once __DIR__ . '/incl/websocketconnection.inc.php';
 require_once __DIR__ . '/incl/internalChecking.inc.php';
 
-
 if (checkExtensionsInstalled()["result"] != RESULT_ALL_INSTALLED) {
     die("Not all required extensions are installed. Please run setup.php for more information.");
 }
@@ -45,7 +44,7 @@ ob_implicit_flush();
 // current mode is stored
 $currentBBMode = "Consume";
 //Only these modes are allowed as input
-$allowedModes = array("Consume", "Consume (spoiled)", "Purchase", "Open", "Inventory", "Quantity", "Add to shoppinglist");
+$allowedModes = array("Consume", "Consume (spoiled)", "Purchase", "Open", "Inventory", "Quantity", "Add to shoppinglist", "Transfer");
 //null var
 $null = null;
 
@@ -120,11 +119,13 @@ while (true) {
 
 function sendMode(): void {
     global $currentBBMode;
+
     sendMessage('{"action":"getmode","data":"4' . $currentBBMode . '"}');
 }
 
 function sendMessage(string $msg): void {
     global $clients;
+
     foreach ($clients as $changed_socket) {
         @socket_write($changed_socket, $msg, strlen($msg));
     }

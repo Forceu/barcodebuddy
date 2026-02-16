@@ -4,3 +4,6 @@ data/config.php
 data/users.db
 /vendor/
 .idea
+/.devDocker/
+/.run/Dev Docker.run.xml
+/data/logs/

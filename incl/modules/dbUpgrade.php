@@ -16,6 +16,7 @@
 
 require_once __DIR__ . "/../db.inc.php";
 
+
 class DbUpgrade {
 
     const LEGACY_DATABASE_PATH = __DIR__ . '/../barcodebuddy.db';
@@ -148,6 +149,11 @@ class DbUpgrade {
                 $this->databaseConnection->updateConfig("LOOKUP_ORDER", $config["LOOKUP_ORDER"] . ",9");
             }
         }
+         if ($previousVersion < 1819) {
+             $config = BBConfig::getInstance();
+             $this->databaseConnection->updateConfig("BARCODE_TXFR", strtoupper($config["BARCODE_TXFR"]));
+             $this->db->exec("CREATE TABLE IF NOT EXISTS Transfer(id INTEGER PRIMARY KEY, dest_id INTEGER NULL, dest_name TEXT NULL)");
+         }
         RedisConnection::updateCache();
     }
 

@@ -37,6 +37,8 @@ const STATE_OPEN            = 3;
 const STATE_GETSTOCK        = 4;
 const STATE_ADD_SL          = 5;
 const STATE_CONSUME_ALL     = 6;
+const STATE_TXFR            = 7;
+
 
 const SECTION_KNOWN_BARCODES   = "known";
 const SECTION_UNKNOWN_BARCODES = "unknown";
@@ -62,12 +64,17 @@ const LOOKUP_ID_DISCOGS       = "9";
  */
 const DEFAULT_USE_REDIS = "0";
 
+
 /**
  * Thrown when a database connection is already being setup and a new connection is requested
  * This happens most likely when calling getInstance() during the database upgrade
  */
 class DbConnectionDuringEstablishException extends Exception {
+}
 
+class TransferDestination {
+    public ?int $id = null;
+    public ?string $name = null;
 }
 
 /**
@@ -85,6 +92,7 @@ class DatabaseConnection {
         "BARCODE_GS" => "BBUDDY-I",
         "BARCODE_Q" => "BBUDDY-Q-",
         "BARCODE_AS" => "BBUDDY-AS",
+        "BARCODE_TXFR" => "BBUDDY-TXFR-",
         "REVERT_TIME" => "10",
         "REVERT_SINGLE" => "1",
         "MORE_VERBOSE" => "1",
@@ -190,6 +198,7 @@ class DatabaseConnection {
         $this->db->exec("CREATE TABLE IF NOT EXISTS Quantities(id INTEGER PRIMARY KEY, barcode TEXT NOT NULL UNIQUE, quantity INTEGER NOT NULL, product TEXT)");
         $this->db->exec("CREATE TABLE IF NOT EXISTS ApiKeys(id INTEGER PRIMARY KEY, key TEXT NOT NULL UNIQUE, lastused INTEGER NOT NULL)");
         $this->db->exec("CREATE TABLE IF NOT EXISTS LookupProviderData(providerType INTEGER PRIMARY KEY, data TEXT NOT NULL)");
+        $this->db->exec("CREATE TABLE IF NOT EXISTS Transfer(id INTEGER PRIMARY KEY, dest_id INTEGER NULL, dest_name TEXT NULL)");
         $this->insertDefaultValues();
         $previousVersion = intval(BBConfig::getInstance($this)["version"]);
         if ($previousVersion < BB_VERSION) {
@@ -239,7 +248,7 @@ class DatabaseConnection {
             DbUpgrade::createDbDirectory();
             DbUpgrade::checkAndMoveIfOldDbLocation();
             if (!is_writable(dirname($CONFIG->DATABASE_PATH))) {
-                showErrorNotWritable("DB Error Not_Writable");
+                showErrorNotWritable("DB Error: Not_Writable");
             }
         }
     }
@@ -651,6 +660,37 @@ class DatabaseConnection {
         }
         $this->db->exec("UPDATE BBConfig SET value='" . $value . "' WHERE data='$key'");
         BBConfig::getInstance()[$key] = $value;
+    }
+
+    public function getTransferDestination(): TransferDestination
+    {
+        $res = $this->db->query("SELECT dest_id, dest_name FROM Transfer WHERE id=1");
+        if ($res !== false && ($row = $res->fetchArray(SQLITE3_ASSOC))) {
+            $dest = new TransferDestination();
+            $dest->id = $row['dest_id'] !== null ? (int) $row['dest_id'] : null;
+            $dest->name = $row['dest_name'] ?? null;
+
+            return $dest;
+        }
+
+        return new TransferDestination();
+    }
+
+
+    public function setTransferDestination(?int $destId, ?string $destName = null): void
+    {
+        if (null === $destName) {
+            $this->db->exec("INSERT INTO Transfer(id, dest_id, dest_name) VALUES(1, $destId, NULL) ON CONFLICT(id) DO UPDATE SET dest_id=$destId, dest_name=NULL");
+
+            return;
+        }
+
+        $this->db->exec("INSERT INTO Transfer(id, dest_id, dest_name) VALUES(1, $destId, '$destName') ON CONFLICT(id) DO UPDATE SET dest_id=$destId, dest_name='$destName'");
+    }
+
+    public function setTransferDestinationName(?string $destName): void
+    {
+        $this->db->exec("INSERT INTO Transfer(id, dest_name) VALUES(1, '$destName') ON CONFLICT(id) DO UPDATE SET dest_name='$destName'");
     }
 
     public function getDatabaseReference(): SQLite3 {

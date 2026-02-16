@@ -16,7 +16,6 @@
  * @since      File available since Release 1.6
  */
 
-
 class InvalidServerResponseException extends Exception {
 }
 
@@ -69,7 +68,7 @@ class CurlGenerator {
      * @param array|null $headers
      * @throws DbConnectionDuringEstablishException
      */
-    function __construct(string $url, string $method = METHOD_GET,
+    public function __construct(string $url, string $method = METHOD_GET,
                          string $jasonData = null, array $loginOverride = null,
                          bool   $noApiCall = false, array $ignoredResultCodes = null,
                          array  $formData = null, string $userAgent = null,
@@ -146,7 +145,7 @@ class CurlGenerator {
      * @throws NotFoundException
      * @throws UnauthorizedException
      */
-    function execute(bool $decode = false) {
+    public function execute(bool $decode = false) {
         if (DISPLAY_DEBUG) {
             $startTime = microtime(true);
             DatabaseConnection::getInstance()->saveLog("<i>Executing API call: " . $this->urlApi . "</i>", false, false, true);
@@ -180,10 +179,11 @@ class CurlGenerator {
             $totalTimeMs = round((microtime(true) - $startTime) * 1000);
             DatabaseConnection::getInstance()->saveLog("<i>Executing took " . $totalTimeMs . "ms</i>", false, false, true);
         }
-        if ($decode)
+        if ($decode) {
             return $jsonDecoded;
-        else
+        } else {
             return $curlResult;
+        }
     }
 
 

@@ -92,6 +92,7 @@ const OVERRIDDEN_USER_CONFIG       = array(
                                          //"BARCODE_GS"                  => "BBUDDY-I",
                                          //"BARCODE_Q"                   => "BBUDDY-Q-",
                                          //"BARCODE_AS"                  => "BBUDDY-AS",
+                                         //"BARCODE_TXFR"                => "BBUDDY-TXFR-",
                                          //"REVERT_TIME"                 => "10",
                                          //"REVERT_SINGLE"               => "1",
                                          //"MORE_VERBOSE"                => "1",

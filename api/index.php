@@ -21,6 +21,7 @@ require_once __DIR__ . "/../incl/configProcessing.inc.php";
 require_once __DIR__ . "/../incl/db.inc.php";
 require_once __DIR__ . "/../incl/processing.inc.php";
 require_once __DIR__ . "/../incl/config.inc.php";
+require_once __DIR__ . "/../incl/logging.inc.php";
 
 //removes Get parameters
 $requestedUrl = strtok($_SERVER["REQUEST_URI"], '?');
@@ -37,10 +38,11 @@ if ($CONFIG->REQUIRE_API_KEY)
     $api->checkIfAuthorized();
 $api->execute($requestedUrl);
 
-
 class BBuddyApi {
 
     private $routes = array();
+
+    private \Monolog\Logger $logger;
 
     /**
      * Checks if authorized
@@ -60,11 +62,13 @@ class BBuddyApi {
             $apiKey = $_GET["apikey"];
 
         if ($apiKey == "")
+            $procLog->error("Unauthorized API call. No API key provided.");
             self::sendUnauthorizedAndDie();
 
         if (DatabaseConnection::getInstance()->isValidApiKey($apiKey))
             return true;
         else
+            $procLog->error("Unauthorized API call. Invalid API key provided.");
             self::sendUnauthorizedAndDie();
         return false;
     }
@@ -77,11 +81,14 @@ class BBuddyApi {
     function execute(string $url): void {
         global $CONFIG;
 
+        $this->logger->debug("API call: " . $url, ['class' => __CLASS__, 'function' => __FUNCTION__]);
+
         //Turn off all error reporting, as it could cause problems with parsing json clientside
         if (!$CONFIG->IS_DEBUG)
             error_reporting(0);
 
         if (!isset($this->routes[$url])) {
+            $this->logger->warning("API call not found: " . $url);
             self::sendResult(self::createResultArray(null, "API call not found", 404), 404);
         } else {
             $this->routes[$url]->execute();
@@ -90,6 +97,8 @@ class BBuddyApi {
 
 
     function __construct() {
+        $this->logger = bb_logger('api');
+        $this->logger->info("Barcode Buddy Version " . BB_VERSION_READABLE);
         $this->initRoutes();
     }
 
@@ -115,32 +124,43 @@ class BBuddyApi {
     }
 
     private function initRoutes(): void {
-
         $this->addRoute(new ApiRoute("/action/scan", function () {
             $barcode = "";
-            if (isset($_GET["text"]))
+            if (isset($_GET["text"])) {
                 $barcode = $_GET["text"];
-            if (isset($_GET["add"]))
+            }
+
+            if (isset($_GET["add"])) {
                 $barcode = $_GET["add"];
-            if (isset($_POST["barcode"]))
+            }
+
+            if (isset($_POST["barcode"])) {
                 $barcode = $_POST["barcode"];
-            if ($barcode == "")
+            }
+
+            if ($barcode == "") {
+                $this->logger->warning("No barcode supplied");
                 return self::createResultArray(null, "No barcode supplied", 400);
-            else {
+            } else {
                 $bestBefore = null;
                 $price      = null;
                 if (isset($_POST["bestBeforeInDays"]) && $_POST["bestBeforeInDays"] != null) {
-                    if (is_numeric($_POST["bestBeforeInDays"]))
+                    if (is_numeric($_POST["bestBeforeInDays"])) {
                         $bestBefore = $_POST["bestBeforeInDays"];
-                    else
+                    } else {
+                        $this->logger->warning("Invalid parameter bestBeforeInDays: needs to be type int");
                         return self::createResultArray(null, "Invalid parameter bestBeforeInDays: needs to be type int", 400);
+                    }
                 }
                 if (isset($_POST["price"]) && $_POST["price"] != null) {
-                    if (is_numeric($_POST["price"]))
+                    if (is_numeric($_POST["price"])) {
                         $price = $_POST["price"];
-                    else
+                    } else {
+                        $this->logger->warning("Invalid parameter price: needs to be type float");
                         return self::createResultArray(null, "Invalid parameter price: needs to be type float", 400);
+                    }
                 }
+                $this->logger->debug(sprintf("Scanning barcode: %s with bestBefore: %d days, price: %.2f", $barcode, $bestBefore, $price), ['class' => __CLASS__, 'function' => __FUNCTION__]);
                 $result = processNewBarcode(sanitizeString($barcode), $bestBefore, $price);
                 return self::createResultArray(array("result" => sanitizeString($result)));
             }
@@ -159,10 +179,12 @@ class BBuddyApi {
             else if (isset($_POST["state"]))
                 $state = $_POST["state"];            
 
-            //Also check if value is a valid range (STATE_CONSUME the lowest and STATE_CONSUME_ALL the highest value)
-            if (!is_numeric($state) || $state < STATE_CONSUME || $state > STATE_CONSUME_ALL)
+            //Also check if value is a valid range (STATE_CONSUME the lowest and STATE_TXFR the highest value)
+            if (!is_numeric($state) || $state < STATE_CONSUME || $state > STATE_TXFR) {
+                $this->logger->warning("Invalid state provided");
                 return self::createResultArray(null, "Invalid state provided", 400);
-            else {
+            } else {
+                $this->logger->debug("Setting transaction mode to " . $state, ['class' => __CLASS__, 'function' => __FUNCTION__]);
                 DatabaseConnection::getInstance()->setTransactionState(intval($state));
                 return self::createResultArray();
             }
@@ -178,7 +200,8 @@ class BBuddyApi {
                 "BARCODE_GS" => $config["BARCODE_GS"],
                 "BARCODE_Q" => $config["BARCODE_Q"],
                 "BARCODE_AS" => $config["BARCODE_AS"],
-                "BARCODE_CA" => $config["BARCODE_CA"]
+                "BARCODE_CA" => $config["BARCODE_CA"],
+                "BARCODE_TXFR" => $config["BARCODE_TXFR"],
             ));
         }));
 

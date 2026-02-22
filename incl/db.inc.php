@@ -27,6 +27,7 @@ require_once __DIR__ . "/modules/choreManager.php";
 require_once __DIR__ . "/modules/quantityManager.php";
 require_once __DIR__ . "/modules/barcodeFederation.php";
 require_once __DIR__ . "/modules/dbUpgrade.php";
+require_once __DIR__ . "/logging.inc.php";
 
 
 //States to tell the script what to do with the barcodes that were scanned
@@ -37,6 +38,8 @@ const STATE_OPEN            = 3;
 const STATE_GETSTOCK        = 4;
 const STATE_ADD_SL          = 5;
 const STATE_CONSUME_ALL     = 6;
+const STATE_TXFR            = 7;
+
 
 const SECTION_KNOWN_BARCODES   = "known";
 const SECTION_UNKNOWN_BARCODES = "unknown";
@@ -62,12 +65,17 @@ const LOOKUP_ID_DISCOGS       = "9";
  */
 const DEFAULT_USE_REDIS = "0";
 
+
 /**
  * Thrown when a database connection is already being setup and a new connection is requested
  * This happens most likely when calling getInstance() during the database upgrade
  */
 class DbConnectionDuringEstablishException extends Exception {
+}
 
+class TransferDestination {
+    public ?int $id = null;
+    public ?string $name = null;
 }
 
 /**
@@ -85,6 +93,7 @@ class DatabaseConnection {
         "BARCODE_GS" => "BBUDDY-I",
         "BARCODE_Q" => "BBUDDY-Q-",
         "BARCODE_AS" => "BBUDDY-AS",
+        "BARCODE_TXFR" => "BBUDDY-TXFR-",
         "REVERT_TIME" => "10",
         "REVERT_SINGLE" => "1",
         "MORE_VERBOSE" => "1",
@@ -138,8 +147,10 @@ class DatabaseConnection {
     private $db;
     private static $_ConnectionInstance = null;
     private static $_StartingConnection = false;
+    private \Monolog\Logger $logger;
 
     private function __construct() {
+        $this->logger = bb_logger('db');
         $this->initDb();
     }
 
@@ -178,6 +189,8 @@ class DatabaseConnection {
     private function initDb(): void {
         global $CONFIG;
 
+        $this->logger->debug("Initializing database", ['class' => __CLASS__, 'function' => __FUNCTION__]);
+
         self::checkPermissions();
         $this->db = new SQLite3($CONFIG->DATABASE_PATH);
         $this->db->busyTimeout(5000);
@@ -190,6 +203,7 @@ class DatabaseConnection {
         $this->db->exec("CREATE TABLE IF NOT EXISTS Quantities(id INTEGER PRIMARY KEY, barcode TEXT NOT NULL UNIQUE, quantity INTEGER NOT NULL, product TEXT)");
         $this->db->exec("CREATE TABLE IF NOT EXISTS ApiKeys(id INTEGER PRIMARY KEY, key TEXT NOT NULL UNIQUE, lastused INTEGER NOT NULL)");
         $this->db->exec("CREATE TABLE IF NOT EXISTS LookupProviderData(providerType INTEGER PRIMARY KEY, data TEXT NOT NULL)");
+        $this->db->exec("CREATE TABLE IF NOT EXISTS Transfer(id INTEGER PRIMARY KEY, dest_id INTEGER NULL, dest_name TEXT NULL)");
         $this->insertDefaultValues();
         $previousVersion = intval(BBConfig::getInstance($this)["version"]);
         if ($previousVersion < BB_VERSION) {
@@ -233,13 +247,15 @@ class DatabaseConnection {
         global $CONFIG;
         if (file_exists($CONFIG->DATABASE_PATH)) {
             if (!is_writable($CONFIG->DATABASE_PATH)) {
+                $this->logger->error("DB Error: Existing DB not writable");
                 showErrorNotWritable("DB Error: DB_Not_Writable");
             }
         } else {
             DbUpgrade::createDbDirectory();
             DbUpgrade::checkAndMoveIfOldDbLocation();
             if (!is_writable(dirname($CONFIG->DATABASE_PATH))) {
-                showErrorNotWritable("DB Error Not_Writable");
+                $this->logger->error("DB Error: New/Moved DB not writable");
+                showErrorNotWritable("DB Error: Not_Writable");
             }
         }
     }
@@ -260,6 +276,7 @@ class DatabaseConnection {
             else
                 return $state;
         } else {
+            $this->logger->error("DB Error: No state found");
             die("DB Error");
         }
     }
@@ -563,6 +580,7 @@ class DatabaseConnection {
 
 
     public function saveError(string $errorMessage, bool $isFatal = true): void {
+        $this->logger->error($errorMessage, ['isFatal' => $isFatal]);
         $verboseError = '<span style="color: red;">' . sanitizeString($errorMessage) . '</span> Please check your URL and API key in the settings menu!';
         $this->saveLog($verboseError, false, true);
         if ($isFatal) {
@@ -582,6 +600,8 @@ class DatabaseConnection {
      * @throws DbConnectionDuringEstablishException
      */
     public function saveLog(string $log, bool $isVerbose = false, bool $isError = false, bool $isDebug = false): void {
+        $this->logger->debug($log, ['class' => __CLASS__, 'function' => __FUNCTION__]);
+
         if ($isVerbose == false || BBConfig::getInstance()["MORE_VERBOSE"] == true) {
             $date = date('Y-m-d H:i:s');
             if ($isError || $isDebug) {
@@ -651,6 +671,37 @@ class DatabaseConnection {
         }
         $this->db->exec("UPDATE BBConfig SET value='" . $value . "' WHERE data='$key'");
         BBConfig::getInstance()[$key] = $value;
+    }
+
+    public function getTransferDestination(): TransferDestination
+    {
+        $res = $this->db->query("SELECT dest_id, dest_name FROM Transfer WHERE id=1");
+        if ($res !== false && ($row = $res->fetchArray(SQLITE3_ASSOC))) {
+            $dest = new TransferDestination();
+            $dest->id = $row['dest_id'] !== null ? (int) $row['dest_id'] : null;
+            $dest->name = $row['dest_name'] ?? null;
+
+            return $dest;
+        }
+
+        return new TransferDestination();
+    }
+
+
+    public function setTransferDestination(?int $destId, ?string $destName = null): void
+    {
+        if (null === $destName) {
+            $this->db->exec("INSERT INTO Transfer(id, dest_id, dest_name) VALUES(1, $destId, NULL) ON CONFLICT(id) DO UPDATE SET dest_id=$destId, dest_name=NULL");
+
+            return;
+        }
+
+        $this->db->exec("INSERT INTO Transfer(id, dest_id, dest_name) VALUES(1, $destId, '$destName') ON CONFLICT(id) DO UPDATE SET dest_id=$destId, dest_name='$destName'");
+    }
+
+    public function setTransferDestinationName(?string $destName): void
+    {
+        $this->db->exec("INSERT INTO Transfer(id, dest_name) VALUES(1, '$destName') ON CONFLICT(id) DO UPDATE SET dest_name='$destName'");
     }
 
     public function getDatabaseReference(): SQLite3 {

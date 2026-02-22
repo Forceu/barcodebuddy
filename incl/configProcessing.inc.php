@@ -17,8 +17,8 @@
  */
 
 
-const BB_VERSION          = "1818";
-const BB_VERSION_READABLE = "1.8.1.8";
+const BB_VERSION          = "1820";
+const BB_VERSION_READABLE = "1.8.2.0";
 
 const CONFIG_PATH = __DIR__ . '/../data/config.php';
 const AUTHDB_PATH = __DIR__ . '/../data/users.db';
@@ -77,7 +77,9 @@ function checkForMissingConstants(): void {
         "TRUSTED_PROXIES"              => array(),
         "SEARCH_ENGINE"                => "https://google.com/search?q=",
         "BASEURL"                      => "/",
-        "DEFAULT_LOOKUP_LANGUAGE"      => "en"
+        "DEFAULT_LOOKUP_LANGUAGE"      => "en",
+        "LOG_LEVEL"                    => "info",
+        "LOG_COMBINED"                 => true,
     );
     foreach ($defaultValues as $key => $value) {
         if (!defined($key))
@@ -107,6 +109,9 @@ class GlobalConfig {
     public $SEARCH_ENGINE = SEARCH_ENGINE;
     public $BASEURL = BASEURL;
     public $DEFAULT_LOOKUP_LANGUAGE = DEFAULT_LOOKUP_LANGUAGE;
+    public $LOG_LEVEL = LOG_LEVEL;
+    public $LOG_COMBINED = LOG_COMBINED;
+
 
     function __construct() {
         $this->loadConfig();

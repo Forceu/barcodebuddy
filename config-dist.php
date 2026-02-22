@@ -49,6 +49,12 @@ const DISABLE_AUTHENTICATION       = false;
 //Enable debug output
 const IS_DEBUG                     = false;
 
+// Monolog log level (debug, info, notice, warning, error, critical, alert, emergency)
+const LOG_LEVEL                    = "info";
+
+// If true, all channels log into data/logs/bbuddy.log. If false, each channel logs into its own file.
+const LOG_COMBINED                 = true;
+
 //Enable to hide the Grocy link in the header
 const HIDE_LINK_GROCY              = false;
 
@@ -92,6 +98,7 @@ const OVERRIDDEN_USER_CONFIG       = array(
                                          //"BARCODE_GS"                  => "BBUDDY-I",
                                          //"BARCODE_Q"                   => "BBUDDY-Q-",
                                          //"BARCODE_AS"                  => "BBUDDY-AS",
+                                         //"BARCODE_TXFR"                => "BBUDDY-TXFR-",
                                          //"REVERT_TIME"                 => "10",
                                          //"REVERT_SINGLE"               => "1",
                                          //"MORE_VERBOSE"                => "1",

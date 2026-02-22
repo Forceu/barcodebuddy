@@ -140,24 +140,21 @@ class WebUiGenerator {
         $this->addHtml('</section>');
     }
 
+
     /**
-     * @param string|null $additionalHeader
+     * Sets the base header for the page without the navigation bar.
+     *
+     * @param string|null $additionalCss
+     * @param bool $enableDialogs
+     * @param bool $enableJquery
+     * @param string|null $additionalJs
      */
-    public function addHeader(string $additionalHeader = null, bool $enableDialogs = false): void {
+    public function addBaseHeader(string $additionalCss = null, bool $enableDialogs = false, bool $enableJquery = false, string $additionalJs = null): void {
         global $CONFIG;
 
-        if ($this->menu == MENU_SETTINGS || $this->menu === MENU_GENERIC) {
-            $folder = "../";
-        } else {
-            $folder = "./";
-        }
-        if ($this->menu == MENU_SETUP || $this->menu == MENU_ERROR) {
-            $indexfile = "setup.php";
-        } elseif ($this->menu == MENU_LOGIN) {
-            $indexfile = "login.php";
-        } else {
-            $indexfile = "index.php";
-        }
+        $folderAndIndex = $this->headerFolderAndIndex();
+        $folder = $folderAndIndex["folder"];
+
         $this->addHtml('<!doctype html>
     <html lang="en">
       <head>
@@ -199,26 +196,50 @@ class WebUiGenerator {
         </style>' . self::getIcons($folder) . '
         <link rel="stylesheet" href="' . $folder . 'incl/css/material.indigo-blue.min.css?v=' . BB_VERSION . '">
         <link rel="stylesheet" href="' . $folder . 'incl/css/main.css?v=' . BB_VERSION . '"> ');
-        if ($additionalHeader != null) {
-            $this->addHtml($additionalHeader);
+        if ($additionalCss != null) {
+            $this->addHtml($additionalCss);
         }
         if ($enableDialogs) {
-            $this->addHtml(' <link rel="stylesheet" href="' . $folder . 'incl/css/bootstrap.min.css?v=' . BB_VERSION . '">
-                                 <script src="' . $folder . 'incl/js/jquery-3.5.1.slim.min.js?v=' . BB_VERSION . '"></script>
-                                 <script src="' . $folder . 'incl/js/bootstrap.bundle.min.js?v=' . BB_VERSION . '"></script>
+            $this->addHtml(' <link rel="stylesheet" href="' . $folder . 'incl/css/bootstrap.min.css?v=' . BB_VERSION . '">');
+        }
+        if ($enableJquery || $enableDialogs) {
+            $this->addHtml('<script src="' . $folder . 'incl/js/jquery-3.5.1.slim.min.js?v=' . BB_VERSION . '"></script>');
+        }
+        if ($enableDialogs) {
+            $this->addHtml('<script src="' . $folder . 'incl/js/bootstrap.bundle.min.js?v=' . BB_VERSION . '"></script>
                                  <script src="' . $folder . 'incl/js/bootbox.min.js?v=' . BB_VERSION . '"></script>');
         }
+        if ($additionalJs != null) {
+            $this->addHtml($additionalJs);
+        }
+    }
+
+
+    /**
+     * Sets the full header for the page including the navigation bar.
+     *
+     * @param string|null $additionalCss
+     * @param bool $enableDialogs
+     * @param bool $enableJquery
+     * @param string|null $additionalJs
+     */
+    public function addHeader(string $additionalCss = null, bool $enableDialogs = false, bool $enableJquery = false, string $additionalJs = null): void {
+        global $CONFIG;
+
+        $this->addBaseHeader($additionalCss, $enableDialogs, $enableJquery, $additionalJs);
+        $folderAndIndex = $this->headerFolderAndIndex();
+        $folder = $folderAndIndex["folder"];
+        $indexFile = $folderAndIndex["indexFile"];
 
         $this->addHtml('</head>
 
      <body class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
      <script src="' . $folder . 'incl/js/scripts_top.js?v=' . BB_VERSION . '"></script>
-
-    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
       <header class="mdl-layout__header">
         <div class="mdl-layout__header-row">
           <!-- Title -->
-          <span class="mdl-layout-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style="color: white; text-decoration: none;" href="' . $folder . $indexfile . '">Barcode Buddy</a></span>
+          <span class="mdl-layout-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style="color: white; text-decoration: none;" href="' . $folder . $indexFile . '">Barcode Buddy</a></span>
           <!-- Add spacer, to align navigation to the right -->
           <div class="mdl-layout-spacer"></div>');
         if ($this->menu != MENU_SETUP && $this->menu != MENU_ERROR && $this->menu != MENU_LOGIN) {
@@ -253,6 +274,33 @@ class WebUiGenerator {
         $this->addHtml('<main class="mdl-layout__content" style="flex: 1 0 auto;">
       <div class="mdl-layout__tab-panel is-active" id="overview">');
     }
+
+
+    /**
+     * Returns the folder and index file to use for the header.
+     *
+     * @return array{folder: string, indexFile: string}
+     */
+    private function headerFolderAndIndex(): array
+    {
+        $rtn = [];
+
+        if ($this->menu == MENU_SETTINGS || $this->menu === MENU_GENERIC) {
+            $rtn["folder"] = "../";
+        } else {
+            $rtn["folder"] = "./";
+        }
+        if ($this->menu == MENU_SETUP || $this->menu == MENU_ERROR) {
+            $rtn["indexFile"] = "setup.php";
+        } elseif ($this->menu == MENU_LOGIN) {
+            $rtn["indexFile"] = "login.php";
+        } else {
+            $rtn["indexFile"] = "index.php";
+        }
+
+        return $rtn;
+    }
+
 
     public function addFooter(): void {
         global $CONFIG;

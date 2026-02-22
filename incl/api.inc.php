@@ -22,13 +22,16 @@ require_once __DIR__ . "/db.inc.php";
 require_once __DIR__ . "/config.inc.php";
 require_once __DIR__ . "/redis.inc.php";
 require_once __DIR__ . "/curl.inc.php";
+require_once __DIR__ . "/logging.inc.php";
 
 const API_O_BARCODES       = 'objects/product_barcodes';
 const API_O_PRODUCTS       = 'objects/products';
 const API_STOCK_PRODUCTS   = 'stock/products';
 const API_ALL_PRODUCTS     = 'stock';
 const API_SHOPPINGLIST     = 'stock/shoppinglist/';
+const API_OBJECTS          = 'objects';
 const API_CHORES           = 'objects/chores';
+const API_LOCATIONS        = 'objects/locations';
 const API_STOCK            = 'stock/products';
 const API_STOCK_BY_BARCODE = 'stock/products/by-barcode/';
 const API_CHORE_EXECUTE    = 'chores/';
@@ -42,18 +45,20 @@ const LOGIN_API_KEY = "loginkey";
 
 const DISPLAY_DEBUG = false;
 
+$logApi = bb_logger('api');
 
 class GrocyProduct {
-    public $id;
-    public $name;
-    public $barcodes = null;
-    public $unit = null;
-    public $stockAmount = "0";
-    public $isTare;
-    public $tareWeight;
-    public $quFactor;
+    public int $id;
+    public ?string $name;
+    public ?array $barcodes = null;
+    public ?string $unit = null;
+    public int $stockAmount = 0;
+    public bool $isTare = false;
+    public ?string $tareWeight;
+    public float $quFactor;
     public $defaultBestBeforeDays;
     public $creationDate;
+    public GrocyLocation $location;
 
     public static function parseProductInfoStock(array $infoArray): GrocyProduct {
         checkIfNumeric($infoArray["product"]["id"]);
@@ -69,12 +74,20 @@ class GrocyProduct {
         $result->barcodes              = $infoArray["product_barcodes"];
 
         if (isset($infoArray["product"]["qu_conversion_factor_purchase_to_stock"]))
-            $result->quFactor = sanitizeString($infoArray["product"]["qu_conversion_factor_purchase_to_stock"]);
+            $result->quFactor = floatval(sanitizeString($infoArray["product"]["qu_conversion_factor_purchase_to_stock"]));
         else
-            $result->quFactor = 1;
+            $result->quFactor = 1.0;
 
         if (sanitizeString($infoArray["stock_amount"]) != null)
-            $result->stockAmount = sanitizeString($infoArray["stock_amount"]);
+            $result->stockAmount = intval(sanitizeString($infoArray["stock_amount"]));
+
+        $result->location = new GrocyLocation();
+        if (isset($infoArray['location'])) {
+            $result->location = GrocyLocation::parseLocationObject($infoArray['location']);
+        } elseif (isset($infoArray['location_id'])) {
+            $result->location->id = $infoArray['location_id'];
+        }
+
         return $result;
     }
 
@@ -90,11 +103,91 @@ class GrocyProduct {
         $result->quFactor              = 1; //FIXME qu_conversion_factor_purchase_to_stock was removed, might break QU conversion
         $result->defaultBestBeforeDays = $infoArray["default_best_before_days"];
         $result->creationDate          = $infoArray["row_created_timestamp"];
+
+        $result->location = new GrocyLocation();
+        if (isset($infoArray['location'])) {
+            $result->location = GrocyLocation::parseLocationObject($infoArray['location']);
+        } elseif (isset($infoArray['location_id'])) {
+            $result->location->id = $infoArray['location_id'];
+        }
+
+        return $result;
+    }
+}
+
+class GrocyLocation {
+    public ?int $id = null;
+    public string $name = '';
+    public ?string $description = null;
+    public bool $isFreezer = false;
+
+    public function toString(): string
+    {
+        return empty($this->name) ? $this->id : $this->name;
+    }
+
+    public static function parseLocationObject(array $locationArray): GrocyLocation {
+        $result = new GrocyLocation();
+
+        // If Grocy returns no location (empty array), just return defaults
+        if (empty($locationArray)) {
+            return $result;
+        }
+
+        if (array_key_exists('id', $locationArray) && $locationArray['id'] !== null && $locationArray['id'] !== '') {
+            checkIfNumeric((string) $locationArray['id']);
+            $result->id = (int) $locationArray['id'];
+        }
+
+        if (array_key_exists('name', $locationArray) && $locationArray['name'] !== null) {
+            $result->name = sanitizeString((string) $locationArray['name']) ?? '';
+        }
+
+        if (array_key_exists('description', $locationArray) && $locationArray['description'] !== null) {
+            $result->description = sanitizeString((string) $locationArray['description']) ?? '';
+        }
+
+        if (array_key_exists('is_freezer', $locationArray)) {
+            $result->isFreezer = ((string) $locationArray['is_freezer'] === '1');
+        }
+
+        return $result;
+    }
+
+    public static function parseProductLocationObject(array $locationArray): GrocyLocation {
+        $result = new GrocyLocation();
+
+        // If Grocy returns no location (empty array), just return defaults
+        if (empty($locationArray)) {
+            return $result;
+        }
+
+        // Grocy may returns an array of locations
+        if (!array_key_exists('id', $locationArray) && isset($locationArray[0]) && is_array($locationArray[0])) {
+            $locationArray = $locationArray[0];
+        }
+
+        if (array_key_exists('location_id', $locationArray) && $locationArray['location_id'] !== null && $locationArray['location_id'] !== '') {
+            checkIfNumeric((string) $locationArray['location_id']);
+            $result->id = (int) $locationArray['location_id'];
+        }
+
+        if (array_key_exists('location_name', $locationArray) && $locationArray['location_name'] !== null) {
+            $result->name = sanitizeString((string) $locationArray['location_name']) ?? '';
+        }
+
+        if (array_key_exists('location_is_freezer', $locationArray)) {
+            $result->isFreezer = ((string) $locationArray['location_is_freezer'] === '1');
+        }
+
         return $result;
     }
 }
 
 class ApiInternalErrorException extends Exception {
+}
+
+class TransferException extends Exception {
 }
 
 class API {
@@ -670,6 +763,95 @@ class API {
     }
 
 
+    /** Gets the main location of a product and amount of stock of a product */
+    public static function getProductLocationMain(int $productId): GrocyLocation {
+
+        $url = API_STOCK . "/" . $productId . "/locations?include_sub_products=true&query%5B%5D=product_id%3D" . $productId;
+
+        $result = null;
+        $curl   = new CurlGenerator($url);
+        try {
+            $result = $curl->execute(true);
+        } catch (Exception $e) {
+            return new GrocyLocation();
+        }
+        return GrocyLocation::parseProductLocationObject($result);
+    }
+
+    /** Get location by location id */
+    public static function getLocation(int $locationId): GrocyLocation {
+
+        $url = API_LOCATIONS . "/" . $locationId;
+
+        $result = null;
+        $curl   = new CurlGenerator($url);
+        try {
+            $result = $curl->execute(true);
+        } catch (Exception $e) {
+            return new GrocyLocation();
+        }
+        return GrocyLocation::parseLocationObject($result);
+    }
+
+    /**
+     * Get all locations
+     *
+     * @return GrocyLocation[]
+     */
+    public static function getLocations(): array {
+
+        $url = API_OBJECTS . "/locations";
+
+        $rtn = [];
+        $result = null;
+        $curl   = new CurlGenerator($url);
+        try {
+            $result = $curl->execute(true);
+        } catch (Exception $e) {
+            return $rtn;
+        }
+
+        foreach ($result as $location) {
+            $rtn[] = GrocyLocation::parseLocationObject($location);
+        }
+        return $rtn;
+    }
+
+    /**
+     * Transfers a product from one location to another.
+     *
+     * @throws TransferException when the product could not be transferred
+     *
+     * @param int $productId
+     * @param int $sourceId
+     * @param int $destId
+     * @return void
+     */
+    public static function transferProduct(int $productId, int $sourceId, int $destId, int $amount = 1): void
+    {
+        if ($amount <= 0)
+            return;
+
+        $data = json_encode(array(
+            'amount'           => $amount,
+            'location_id_from' => $sourceId,
+            'location_id_to'   => $destId
+        ));
+
+        $url = API_STOCK . "/" . $productId . "/transfer";
+
+        $curl = new CurlGenerator($url, METHOD_POST, $data);
+        try {
+            $curl->execute();
+        } catch (Exception $e) {
+            if ($e instanceof InvalidJsonResponseException && (str_contains($e->getMessage(), "ould not transfer") || str_contains($e->getMessage(), "mount to be transferred cannot"))) {
+                throw new TransferException($e->getMessage());
+            }
+
+            self::processError($e, "Could not transfer product");
+        }
+    }
+
     /**
      * Getting info of a Grocy chore
      * @param int $choreId Chore ID.
@@ -765,6 +947,8 @@ class API {
             case 'ApiInternalErrorException':
                 self::logError("Could not process API call: " . $errorMessage);
                 break;
+            default:
+                self::logError("Unknown error: " . $errorMessage);
         }
     }
 

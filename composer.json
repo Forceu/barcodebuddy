@@ -6,6 +6,7 @@
   "require": {
     "ext-redis": "*",
     "ext-sockets": "*",
-    "ext-curl": "*"
+    "ext-curl": "*",
+    "monolog/monolog": "^2.9"
   }
 }

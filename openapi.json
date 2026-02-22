@@ -108,6 +108,9 @@
                         },
                         "BARCODE_CA": {
                           "type": "string"
+                        },
+                        "BARCODE_TXFR": {
+                          "type": "string"
                         }
                       }
                     },
@@ -133,7 +136,8 @@
                       "BARCODE_GS": "BBUDDY-I",
                       "BARCODE_Q": "BBUDDY-Q-",
                       "BARCODE_AS": "BBUDDY-AS",
-                      "BARCODE_CA": "BBUDDY-CA"
+                      "BARCODE_CA": "BBUDDY-CA",
+                      "BARCODE_TXFR": "BBUDDY-TXFR-"
                     },
                     "result": {
                       "result": "OK",
@@ -155,7 +159,7 @@
       }
     },
     "/state/getmode": {
-      "description": "STATE_CONSUME         = 0;\nSTATE_CONSUME_SPOILED = 1;\nSTATE_PURCHASE        = 2;\nSTATE_OPEN            = 3;\nSTATE_GETSTOCK        = 4;\nSTATE_ADD_SL          = 5;",
+      "description": "STATE_CONSUME         = 0;\nSTATE_CONSUME_SPOILED = 1;\nSTATE_PURCHASE        = 2;\nSTATE_OPEN            = 3;\nSTATE_GETSTOCK        = 4;\nSTATE_ADD_SL          = 5;\nSTATE_CONSUME_ALL          =6;\nSTATE_TXFR          =7;",
       "get": {
         "tags": [
           "state"
@@ -201,7 +205,7 @@
                 }
               }
             },
-            "description": "STATE_CONSUME = 0; \nSTATE_CONSUME_SPOILED = 1; \nSTATE_PURCHASE = 2; \nSTATE_OPEN = 3;\nSTATE_GETSTOCK = 4; \nSTATE_ADD_SL = 5; \nSTATE_CONSUME_ALL = 6;"
+            "description": "STATE_CONSUME = 0; \nSTATE_CONSUME_SPOILED = 1; \nSTATE_PURCHASE = 2; \nSTATE_OPEN = 3;\nSTATE_GETSTOCK = 4; \nSTATE_ADD_SL = 5; \nSTATE_CONSUME_ALL = 6; \nSTATE_TXFR = 7;"
           }
         },
         "security": [
@@ -221,7 +225,7 @@
                 "type": "object",
                 "properties": {
                   "state": {
-                    "description": "STATE_CONSUME = 0; \nSTATE_CONSUME_SPOILED = 1; \nSTATE_PURCHASE = 2; \nSTATE_OPEN = 3;\nSTATE_GETSTOCK = 4; \nSTATE_ADD_SL = 5; \nSTATE_CONSUME_ALL = 6;",
+                    "description": "STATE_CONSUME = 0; \nSTATE_CONSUME_SPOILED = 1; \nSTATE_PURCHASE = 2; \nSTATE_OPEN = 3;\nSTATE_GETSTOCK = 4; \nSTATE_ADD_SL = 5; \nSTATE_CONSUME_ALL = 6; \nSTATE_TXFR = 7;",
                     "type": "integer"
                   }
                 },

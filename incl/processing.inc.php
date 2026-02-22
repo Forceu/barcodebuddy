@@ -21,6 +21,9 @@ require_once __DIR__ . "/db.inc.php";
 require_once __DIR__ . "/config.inc.php";
 require_once __DIR__ . "/lookupProviders/BarcodeLookup.class.php";
 require_once __DIR__ . "/modules/choreManager.php";
+require_once __DIR__ . "/logging.inc.php";
+
+$procLog = bb_logger('processing');
 
 /**
  *
@@ -32,6 +35,10 @@ require_once __DIR__ . "/modules/choreManager.php";
  * @throws DbConnectionDuringEstablishException
  */
 function processNewBarcode(string $barcodeInput, ?string $bestBeforeInDays = null, ?string $price = null): string {
+    global $procLog;
+
+    $procLog->debug("Processing barcode: ".$barcodeInput, ['class' => __CLASS__, 'function' => __FUNCTION__, 'line' => __LINE__]);
+
     $db     = DatabaseConnection::getInstance();
     $config = BBConfig::getInstance();
 
@@ -64,6 +71,33 @@ function processNewBarcode(string $barcodeInput, ?string $bestBeforeInDays = nul
         $db->setTransactionState(STATE_ADD_SL);
         return createLogModeChange(STATE_ADD_SL);
     }
+    if (stringStartsWith($barcode, $config["BARCODE_TXFR"])) {
+        $destId = intval(str_replace($config["BARCODE_TXFR"], "", $barcode));
+        $procLog->debug("Scan set destination to ".$destId, ['class' => __CLASS__, 'function' => __FUNCTION__]);
+        $txfrDest = $db->getTransferDestination();
+        $procLog->debug("Current destination is ".$txfrDest->id, ['class' => __CLASS__, 'function' => __FUNCTION__]);
+
+        if ($txfrDest->id !== $destId) {
+            $location = API::getLocation($destId);
+            $procLog->debug("Api location = ".print_r($location, true), ['class' => __CLASS__, 'function' => __FUNCTION__]);
+            if (null !== $location->id) {
+                $txfrDest->id = $location->id;
+                $txfrDest->name = $location->name;
+                $db->setTransferDestination($destId, $location->name);
+            } else {
+                $procLog->warning("Invalid destination location: ".$destId);
+                $log = new LogOutput("Invalid destination location: ".$destId, EVENT_TYPE_ERROR, null, true);
+                return $log
+                    ->setVerbose()
+                    ->setWebsocketResultCode(WS_RESULT_TXFR_INVALID)
+                    ->createLog()
+                ;
+            }
+        }
+
+        $db->setTransactionState(STATE_TXFR);
+        return createLogModeChange(STATE_TXFR, " to " . $txfrDest->name);
+    }
     if (stringStartsWith($barcode, $config["BARCODE_Q"])) {
         $quantity = str_replace($config["BARCODE_Q"], "", $barcode);
         $quantity = checkIfFloat($quantity);
@@ -79,11 +113,13 @@ function processNewBarcode(string $barcodeInput, ?string $bestBeforeInDays = nul
 
     if (trim($barcode) == "") {
         $log = new LogOutput("Invalid barcode found", EVENT_TYPE_ERROR);
+        $procLog->warning("Invalid barcode found: ".$barcode);
         return $log->setVerbose()->setWebsocketResultCode(WS_RESULT_PRODUCT_UNKNOWN)->createLog();
     }
 
     if (ChoreManager::isChoreBarcode($barcode)) {
         $choreText = processChoreBarcode($barcode);
+        $procLog->debug("Executed chore: ".$choreText, ['class' => __CLASS__, 'function' => __FUNCTION__]);
         $log       = new LogOutput("Executed chore: " . $choreText, EVENT_TYPE_EXEC_CHORE);
         return $log->setVerbose()->createLog();
     }
@@ -102,7 +138,9 @@ function processNewBarcode(string $barcodeInput, ?string $bestBeforeInDays = nul
 }
 
 
-function createLogModeChange(int $state): string {
+function createLogModeChange(int $state, ?string $extra = null): string {
+    global $procLog;
+
     $text = "Set state to ";
     switch ($state) {
         case STATE_CONSUME:
@@ -126,9 +164,18 @@ function createLogModeChange(int $state): string {
         case STATE_CONSUME_ALL:
             $text .= "Consume all";
             break;
+        case STATE_TXFR:
+            $text .= "Transfer";
+            break;
         default:
+            $procLog->warning("Invalid state: ".$state);
             throw new Exception("Invalid state");
     }
+    if ($extra != null) {
+        $text .= $extra;
+    }
+
+    $procLog->debug($text, ['class' => __CLASS__, 'function' => __FUNCTION__]);
     $log = new LogOutput($text, EVENT_TYPE_MODE_CHANGE);
     return $log->setVerbose()->createLog();
 }
@@ -156,12 +203,14 @@ const EVENT_TYPE_ASSOCIATE_PRODUCT   = 16;
 const EVENT_TYPE_ACTION_REQUIRED     = 17;
 const EVENT_TYPE_CONSUME_ALL_PRODUCT = 18;
 const EVENT_TYPE_NO_STOCK            = 19;
+const EVENT_TYPE_TRANSFER_PRODUCT    = 20;
 
 
 const WS_RESULT_PRODUCT_FOUND     = 0;
 const WS_RESULT_PRODUCT_LOOKED_UP = 1;
 const WS_RESULT_PRODUCT_UNKNOWN   = 2;
 const WS_RESULT_MODE_CHANGE       = 4;
+const WS_RESULT_TXFR_INVALID      = 8;
 const WS_RESULT_ERROR             = 'E';
 
 
@@ -195,10 +244,20 @@ function processChoreBarcode(string $barcode) {
 function processUnknownBarcode(string $barcode, bool $websocketEnabled, LockGenerator &$fileLock, ?string $bestBeforeInDays, ?string $price): string {
     $db     = DatabaseConnection::getInstance();
     $amount = 1;
+
     if ($db->getTransactionState() == STATE_PURCHASE) {
         $amount = QuantityManager::getStoredQuantityForBarcode($barcode);
     }
-    if ($db->isUnknownBarcodeAlreadyStored($barcode)) {
+
+    if ($db->getTransactionState() == STATE_TXFR) {
+        $log = new LogOutput("Cannot transfer unknown barcode, ignoring.", EVENT_TYPE_TRANSFER_PRODUCT, $barcode);
+        $output = $log
+            ->insertBarcodeInWebsocketText()
+            ->setSendWebsocket($websocketEnabled)
+            ->setWebsocketResultCode(WS_RESULT_PRODUCT_UNKNOWN)
+            ->createLog();
+    }
+    elseif ($db->isUnknownBarcodeAlreadyStored($barcode)) {
         //Unknown barcode already in local database
         $db->addQuantityToUnknownBarcode($barcode, $amount);
         $log    = new LogOutput("Unknown product already scanned. Increasing quantity.", EVENT_TYPE_ADD_NEW_BARCODE, $barcode);
@@ -207,18 +266,19 @@ function processUnknownBarcode(string $barcode, bool $websocketEnabled, LockGene
             ->setSendWebsocket($websocketEnabled)
             ->setWebsocketResultCode(WS_RESULT_PRODUCT_LOOKED_UP)
             ->createLog();
-    } else {
-        $productname = null;
+    }
+    else {
+        $productName = null;
         if (is_numeric($barcode)) {
-            $productname = BarcodeLookup::lookup($barcode);
+            $productName = BarcodeLookup::lookup($barcode);
         }
-        if ($productname != null) {
-            $db->insertUnrecognizedBarcode($barcode, $amount, $bestBeforeInDays, $price, $productname);
-            $log    = new LogOutput("Unknown barcode looked up, found name: " . $productname["name"], EVENT_TYPE_ADD_NEW_BARCODE, $barcode);
+        if ($productName != null) {
+            $db->insertUnrecognizedBarcode($barcode, $amount, $bestBeforeInDays, $price, $productName);
+            $log    = new LogOutput("Unknown barcode looked up, found name: " . $productName["name"], EVENT_TYPE_ADD_NEW_BARCODE, $barcode);
             $output = $log
                 ->insertBarcodeInWebsocketText()
                 ->setSendWebsocket($websocketEnabled)
-                ->setCustomWebsocketText($productname["name"])
+                ->setCustomWebsocketText($productName["name"])
                 ->setWebsocketResultCode(WS_RESULT_PRODUCT_LOOKED_UP)
                 ->createLog();
         } else {
@@ -250,7 +310,8 @@ function stateToString(int $state): string {
         STATE_PURCHASE => "Purchase",
         STATE_OPEN => "Open",
         STATE_GETSTOCK => "Inventory",
-        STATE_ADD_SL => "Add to shoppinglist"
+        STATE_ADD_SL => "Add to shoppinglist",
+        STATE_TXFR => "Transfer",
     );
     return $allowedModes[$state];
 }
@@ -311,6 +372,9 @@ function processModeChangeGetParameter(string $modeParameter): void {
         case "shoppinglist":
             $db->setTransactionState(STATE_ADD_SL);
             break;
+        case "transfer":
+            $db->setTransactionState(STATE_TXFR);
+            break;
     }
 }
 
@@ -344,6 +408,8 @@ function processRefreshedBarcode(string $barcode): void {
  * @throws DbConnectionDuringEstablishException
  */
 function processKnownBarcode(GrocyProduct $productInfo, string $barcode, bool $websocketEnabled, LockGenerator &$fileLock, ?string $bestBeforeInDays, ?string $price): string {
+    global $procLog;
+
     $config = BBConfig::getInstance();
     $db     = DatabaseConnection::getInstance();
 
@@ -485,6 +551,48 @@ function processKnownBarcode(GrocyProduct $productInfo, string $barcode, bool $w
 			$log = "Added to shopping list: " . $amount . " " . $productInfo->unit . " of " . $productInfo->name;
             API::addToShoppinglist($productInfo->id, 1);
             return (new LogOutput($log, EVENT_TYPE_ADD_TO_SHOPPINGLIST))->createLog();
+        case STATE_TXFR:
+
+            // Get transfer destination and update if necessary
+            $transferDest = $db->getTransferDestination();
+            if (empty($transferDest->name)) {
+                $location = API::getLocation($transferDest->id);
+                if (null !== $location->id) {
+                    $transferDest->name = $location->name;
+                    $db->setTransferDestinationName($transferDest->name);
+                }
+            }
+
+            // Validate transfer destination
+            if ($transferDest->id == $productInfo->location->id) {
+                return (new LogOutput("Transfer destination is same as current location, skipping", EVENT_TYPE_TRANSFER_PRODUCT))
+                    ->setWebsocketResultCode(WS_RESULT_PRODUCT_UNKNOWN)
+                    ->createLog()
+                ;
+            }
+
+            // Transfer product
+            try {
+                API::transferProduct($productInfo->id, $productInfo->location->id, $transferDest->id);
+            } catch (\Throwable $e) {
+                $procLog->error("Transfer failed: " . $e->getMessage());
+                return (new LogOutput("Transfer failed: " . $e->getMessage(), EVENT_TYPE_TRANSFER_PRODUCT))
+                    ->setWebsocketResultCode(WS_RESULT_TXFR_INVALID)
+                    ->setVerbose()
+                    ->createLog();
+            }
+
+            $output = (new LogOutput(
+                "Transferred product: " . $productInfo->name . " from ".$productInfo->location->toString()." to ".$transferDest->name,
+                EVENT_TYPE_TRANSFER_PRODUCT
+            ))->setWebsocketResultCode(WS_RESULT_PRODUCT_FOUND)->createLog();
+
+            $fileLock->removeLock();
+            if ($config["REVERT_SINGLE"]) {
+                $db->saveLog("Reverting back to Consume", true);
+                $db->setTransactionState(STATE_CONSUME);
+            }
+            return $output;
         default:
             throw new Exception("Unknown state");
     }
@@ -493,16 +601,16 @@ function processKnownBarcode(GrocyProduct $productInfo, string $barcode, bool $w
 /**
  * Function for generating the <select> elements in the web ui
  * @param string $selected
- * @param array|null $productinfo array
+ * @param array|null $productInfo array
  * @return string
  */
-function printSelections(string $selected, ?array $productinfo): string {
+function printSelections(string $selected, ?array $productInfo): string {
     $optionscontent = " <option value = \"0\" >= None =</option>";
-    if (!isset($productinfo) || !sizeof($productinfo))
+    if (!isset($productInfo) || !sizeof($productInfo))
         return $optionscontent;
 
     $selections = array();
-    foreach ($productinfo as $product) {
+    foreach ($productInfo as $product) {
         $selections[$product->id] = $product->name;
     }
 
@@ -540,7 +648,9 @@ function sanitizeString(?string $input, bool $strongFilter = false): ?string {
  * @return int Returns value as int if valid
  */
 function checkIfNumeric(string $input): int {
+    global $procLog;
     if (!is_numeric($input) && $input != "") {
+        $procLog->error("Illegal input! " . sanitizeString($input) . " needs to be a number");
         die("Illegal input! " . sanitizeString($input) . " needs to be a number");
     }
     return intval($input);

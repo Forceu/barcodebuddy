@@ -36,7 +36,12 @@ if (isset($_POST["isSaved"])) {
 
 
 $webUi = new WebUiGenerator(MENU_SETTINGS);
-$webUi->addHeader();
+
+$webUi->addHeader(
+    null,
+    false,
+    true,
+    "<script src=\"../incl/js/scripts_settings.js\"></script>\n<script src=\"../incl/js/bootstrap.bundle.min.js\"></script>\n<script src=\"../incl/js/bootbox.min.js\"></script>", false);
 $webUi->addCard("General Settings", getHtmlSettingsGeneral());
 $webUi->addCard("Barcode Lookup Providers", getHtmlSettingsBarcodeLookup());
 $webUi->addCard("Grocy API", getHtmlSettingsGrocyApi());
@@ -89,15 +94,20 @@ function getHtmlSettingsGeneral(): string {
     $html->addDiv($html->buildEditField("BARCODE_GS", "Barcode: Inventory", $config["BARCODE_GS"])->generate(true), null, "flex-settings-child");
     $html->addDiv($html->buildEditField("BARCODE_Q", "Barcode: Quantity", $config["BARCODE_Q"])->generate(true), null, "flex-settings-child");
     $html->addDiv($html->buildEditField("BARCODE_AS", "Barcode: Add to shopping list", $config["BARCODE_AS"])->generate(true), null, "flex-settings-child");
+    $html->addDiv($html->buildEditField("BARCODE_TXFR", "Barcode: Transfer", $config["BARCODE_TXFR"])->generate(true), null, "flex-settings-child");
+    $html->addHtml('</div>');
+
+    $html->addLineBreak();
+    $html->addHtml('<div class="flex-settings">');
     $html->addDiv($html->buildEditField("REVERT_TIME", "Revert state to &quot;Consume&quot; after time passed in minutes", $config["REVERT_TIME"])
         ->pattern('-?[0-9]*(\.[0-9]+)?')
         ->onKeyPress('return (event.charCode == 8 || event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57')
         ->generate(true)
         , null, "flex-settings-child");
     $html->addHtml('</div>');
-    $html->addLineBreak();
 
-    $html->addCheckbox("REVERT_SINGLE", "Revert after single item scan in &quot;Open&quot; or &quot;Spoiled&quot; mode", $config["REVERT_SINGLE"], false, false);
+    $html->addLineBreak();
+    $html->addCheckbox("REVERT_SINGLE", "Revert after single item scan in &quot;Open&quot;, &quot;Spoiled&quot;, or &quot;Transfer&quot; mode", $config["REVERT_SINGLE"], false, false);
     $html->addCheckbox("SHOPPINGLIST_REMOVE", "Remove purchased items from shoppinglist", $config["SHOPPINGLIST_REMOVE"], false, false);
     $html->addCheckbox("CONSUME_SAVED_QUANTITY", "Consume amount of quantity saved for barcode", $config["CONSUME_SAVED_QUANTITY"], false, false);
     $html->addCheckbox("USE_GROCY_QU_FACTOR", "Use Grocys quantity conversion", $config["USE_GROCY_QU_FACTOR"], false, false);
@@ -106,6 +116,9 @@ function getHtmlSettingsGeneral(): string {
     $html->addCheckbox("SHOW_STOCK_ON_SCAN", "Show stock amount on scan", $config["SHOW_STOCK_ON_SCAN"], false, false);
     $html->addCheckbox("SAVE_BARCODE_NAME", "Save name from lookup to barcode", $config["SAVE_BARCODE_NAME"], false, false);
     $html->addCheckbox("MORE_VERBOSE", "More verbose logs", $config["MORE_VERBOSE"], false, false);
+    $html->addLineBreak(2);
+    $html->addButton("SHOW_TXFR_BARCODES", "Show transfer barcodes", "showTransferBarcodes()", true);
+    $html->addButton("SHOW_QTY_BARCODES", "Show quantity barcodes", "showQuantityBarcodes()", true);
     $html->addLineBreak(2);
     $html->addHtml('<small><i>Hint: You can find picture files of the default barcodes in the &quot;example&quot; folder or <a style="color: inherit;" href="https://github.com/Forceu/barcodebuddy/tree/master/example/defaultBarcodes">online</a></i></small>');
     $html->addHiddenField("isSaved", "1");
@@ -286,7 +299,7 @@ function checkRedisConnection(UiEditor &$html): void {
     } else {
         $html->addHtml('<span style="color:green">Redis cache is available.</span>');
         $html->addSpaces(4);
-        $html->addButton("updatecache", "Update Cache", "updateRedisCacheAndFederation(true)");
+        $html->addButton("updatecache", "Update Cache", "updateRedisCacheAndFederation(true)", true);
     }
 }
 

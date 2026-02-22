@@ -15,6 +15,9 @@
  */
 
 require_once __DIR__ . "/../db.inc.php";
+require_once __DIR__ . "/../logging.inc.php";
+
+$loggerDbUpgrade = bb_logger('db-upgrade');
 
 class DbUpgrade {
 
@@ -22,8 +25,12 @@ class DbUpgrade {
 
     private $db;
     private $databaseConnection;
+    private \Monolog\Logger $logger;
 
     public function __construct(DatabaseConnection $databaseConnection) {
+        global $loggerDbUpgrade;
+
+        $this->logger = $loggerDbUpgrade;
         $this->db                 = $databaseConnection->getDatabaseReference();
         $this->databaseConnection = $databaseConnection;
     }
@@ -35,12 +42,13 @@ class DbUpgrade {
      * @return void
      */
     public static function checkAndMoveIfOldDbLocation(): void {
-        global $CONFIG;
+        global $CONFIG, $loggerDbUpgrade;
         //If only old db exists, create directory and move file
         if (file_exists(self::LEGACY_DATABASE_PATH) && !file_exists($CONFIG->DATABASE_PATH)) {
             self::createDbDirectory();
             $couldMove = rename(self::LEGACY_DATABASE_PATH, $CONFIG->DATABASE_PATH);
             if (!$couldMove) {
+                $loggerDbUpgrade->error("Could not move database to new location");
                 showErrorNotWritable("DB Error Could_Not_Move");
             }
         }
@@ -48,11 +56,12 @@ class DbUpgrade {
 
 
     public static function createDbDirectory(): void {
-        global $CONFIG;
+        global $CONFIG, $loggerDbUpgrade;
         $dirName = dirname($CONFIG->DATABASE_PATH);
         if (!file_exists($dirName)) {
             $couldCreateDir = mkdir($dirName, 0700, true);
             if (!$couldCreateDir) {
+                $loggerDbUpgrade->error("Could not create database directory");
                 showErrorNotWritable("DB Error Could_Not_Create_Dir");
             }
         }
@@ -74,6 +83,7 @@ class DbUpgrade {
         $this->db->exec("UPDATE BBConfig SET value='" . BB_VERSION . "' WHERE data='version'");
         //Place for future update protocols
         if ($previousVersion < 1211) {
+            $this->logger->info("Upgrading database to version 1211");
             $config = BBConfig::getInstance();
             $this->databaseConnection->updateConfig("BARCODE_C", strtoupper($config["BARCODE_C"]));
             $this->databaseConnection->updateConfig("BARCODE_O", strtoupper($config["BARCODE_O"]));
@@ -84,27 +94,32 @@ class DbUpgrade {
             $this->isSupportedGrocyVersionOrDie();
         }
         if ($previousVersion < 1501) {
+            $this->logger->info("Upgrading database to version 1501");
             $this->db->exec("ALTER TABLE Barcodes ADD COLUMN requireWeight INTEGER");
         }
         if ($previousVersion < 1504) {
+            $this->logger->info("Upgrading database to version 1504");
             $this->db->exec("ALTER TABLE Barcodes ADD COLUMN bestBeforeInDays INTEGER");
             $this->db->exec("ALTER TABLE Barcodes ADD COLUMN price TEXT");
             $this->isSupportedGrocyVersionOrDie();
         }
         if ($previousVersion < 1511) {
             //Only sqlite 3.25+ supports renaming columns, therefore creating new table instead
+            $this->logger->info("Upgrading database to version 1511");
             $this->db->exec("ALTER TABLE Quantities RENAME TO Quantities_temp;");
             $this->db->exec("CREATE TABLE Quantities(id INTEGER PRIMARY KEY, barcode TEXT NOT NULL UNIQUE, quantity INTEGER NOT NULL, product TEXT)");
             $this->db->exec("INSERT INTO Quantities(id, barcode, quantity, product) SELECT id, barcode, quantitiy, product FROM Quantities_temp;");
             $this->db->exec("DROP TABLE Quantities_temp;");
         }
         if ($previousVersion < 1653) {
+            $this->logger->info("Upgrading database to version 1653");
             $config = BBConfig::getInstance();
             if ($config["LOOKUP_ORDER"] != DatabaseConnection::DEFAULT_VALUES["LOOKUP_ORDER"]) {
                 $this->databaseConnection->updateConfig("LOOKUP_ORDER", $config["LOOKUP_ORDER"] . ",6");
             }
         }
         if ($previousVersion < 1660) {
+            $this->logger->info("Upgrading database to version 1660");
             $quantities = $this->getQuantitiesForUpgrade();
             foreach ($quantities as $quantity) {
                 if ($quantity->product != null) {
@@ -120,6 +135,7 @@ class DbUpgrade {
             }
         }
         if ($previousVersion < 1800) {
+            $this->logger->info("Upgrading database to version 1800");
             $config = BBConfig::getInstance();
             if ($config["LOOKUP_ORDER"] != DatabaseConnection::DEFAULT_VALUES["LOOKUP_ORDER"]) {
                 $this->databaseConnection->updateConfig("LOOKUP_ORDER", $config["LOOKUP_ORDER"] . ",7");
@@ -129,25 +145,35 @@ class DbUpgrade {
         }
         if ($previousVersion < 1802) {
             //In v1800 the db was not initialised properly for new installations. This has to be done again
+            $this->logger->info("Upgrading database to version 1802");
             $columnInfo = $this->db->querySingle("SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Barcodes') WHERE name='bbServerAltNames'");
             if ($columnInfo == 0)
                 $this->db->exec("ALTER TABLE Barcodes ADD COLUMN bbServerAltNames TEXT");
         }
         if ($previousVersion < 1803) {
+            $this->logger->info("Upgrading database to version 1803");
             $config = BBConfig::getInstance();
             if ($config["LOOKUP_ORDER"] != DatabaseConnection::DEFAULT_VALUES["LOOKUP_ORDER"]) {
                 $this->databaseConnection->updateConfig("LOOKUP_ORDER", $config["LOOKUP_ORDER"] . ",8");
             }
         }
         if ($previousVersion < 1804) {
+            $this->logger->info("Upgrading database to version 1804");
             $this->databaseConnection->setTransactionState(0);
         }
         if ($previousVersion < 1818) {
+            $this->logger->info("Upgrading database to version 1818");
             $config = BBConfig::getInstance();
             if ($config["LOOKUP_ORDER"] != DatabaseConnection::DEFAULT_VALUES["LOOKUP_ORDER"]) {
                 $this->databaseConnection->updateConfig("LOOKUP_ORDER", $config["LOOKUP_ORDER"] . ",9");
             }
         }
+         if ($previousVersion < 1819) {
+             $this->logger->info("Upgrading database to version 1819");
+             $config = BBConfig::getInstance();
+             $this->databaseConnection->updateConfig("BARCODE_TXFR", strtoupper($config["BARCODE_TXFR"]));
+             $this->db->exec("CREATE TABLE IF NOT EXISTS Transfer(id INTEGER PRIMARY KEY, dest_id INTEGER NULL, dest_name TEXT NULL)");
+         }
         RedisConnection::updateCache();
     }
 
@@ -162,6 +188,8 @@ class DbUpgrade {
             $ERROR_MESSAGE = "Grocy " . MIN_GROCY_VERSION . " or newer required. You are running $version, please upgrade your Grocy instance.";
         }
         if ($ERROR_MESSAGE != null) {
+            $this->logger->error($ERROR_MESSAGE);
+
             $ERROR_MESSAGE .= " Click <a href=\"./setup.php\">here</a> to re-enter your credentials.";
             $this->databaseConnection->updateConfig("GROCY_API_KEY", null);
             include __DIR__ . "/../../error.php";

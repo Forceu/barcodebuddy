@@ -329,6 +329,9 @@ function processRefreshedBarcode(string $barcode): void {
     $productInfo = API::getLastCreatedProduct(5);
     if ($productInfo != null) {
         DatabaseConnection::getInstance()->updateSavedBarcodeMatch($barcode, $productInfo->id);
+        API::addBarcode($productInfo->id, $barcode, null);
+        $log = new LogOutput("Associated barcode $barcode with " . $productInfo->name, EVENT_TYPE_ASSOCIATE_PRODUCT);
+        $log->setVerbose()->dontSendWebsocket()->createLog();
     }
 }
 

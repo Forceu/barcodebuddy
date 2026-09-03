@@ -125,7 +125,7 @@ function getHtmlSettingsGrocyApi(): string {
         ->setPlaceholder('e.g. https://your.grocy.com/api/')
         ->generate();
     $html->buildEditField('GROCY_API_KEY', 'Grocy API Key', $config["GROCY_API_KEY"])
-        ->pattern('[A-Za-z0-9]{50}')
+        ->pattern('[A-Za-z0-9]{48,50}')
         ->generate();
     $html->addLineBreak(2);
     $html->addHtml(checkGrocyConnection());

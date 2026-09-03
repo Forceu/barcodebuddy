@@ -97,7 +97,7 @@ function getHtmlSetupTable($result): string {
     if (isset($_POST["GROCY_API_KEY"]))
         $editValue = $_POST["GROCY_API_KEY"];
     $html->buildEditField('GROCY_API_KEY', 'Grocy API Key', $editValue)
-        ->pattern('[A-Za-z0-9]{50}')
+        ->pattern('[A-Za-z0-9]{48,50}')
         ->generate();
     if ($result !== true) {
         $html->addHtml('<br><span style="color: red; ">Unable to connect to API: ' . $result . '</span>');

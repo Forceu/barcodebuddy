@@ -43,7 +43,7 @@ function processNewBarcode(string $barcodeInput, ?string $bestBeforeInDays = nul
         || (strpos($barcodeInput, '(01)') === 0)
         || (strpos($barcodeInput, '01') === 0 && strpos($barcodeInput, chr(29)) !== false)
         || (strpos($barcodeInput, '01') === 0 && strlen($barcodeInput) >= 16)
-	) {
+	)) {
         // Try parsing as GS1
         require_once __DIR__ . "/GS1Parser.php";
         $parser = new GS1Parser($barcodeInput); 

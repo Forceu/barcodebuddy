@@ -28,7 +28,7 @@ interface Database {
 	 * @param array|null $bindValues (optional) the values to bind as replacements for the `?` characters in the query
 	 * @return array|null the rows and columns returned by the server or `null` if no results have been found
 	 */
-	public function select($query, array $bindValues = null);
+	public function select($query, ?array $bindValues = null);
 
 	/**
 	 * Selects from the database using the specified query and returns the value of the first column in the first row
@@ -41,7 +41,7 @@ interface Database {
 	 * @param array|null $bindValues (optional) the values to bind as replacements for the `?` characters in the query
 	 * @return mixed|null the value of the first column in the first row returned by the server or `null` if no results have been found
 	 */
-	public function selectValue($query, array $bindValues = null);
+	public function selectValue($query, ?array $bindValues = null);
 
 	/**
 	 * Selects from the database using the specified query and returns the first row
@@ -54,7 +54,7 @@ interface Database {
 	 * @param array|null $bindValues (optional) the values to bind as replacements for the `?` characters in the query
 	 * @return array|null the first row returned by the server or `null` if no results have been found
 	 */
-	public function selectRow($query, array $bindValues = null);
+	public function selectRow($query, ?array $bindValues = null);
 
 	/**
 	 * Selects from the database using the specified query and returns the first column
@@ -67,7 +67,7 @@ interface Database {
 	 * @param array|null $bindValues (optional) the values to bind as replacements for the `?` characters in the query
 	 * @return array|null the first column returned by the server or `null` if no results have been found
 	 */
-	public function selectColumn($query, array $bindValues = null);
+	public function selectColumn($query, ?array $bindValues = null);
 
 	/**
 	 * Inserts the given mapping between columns and values into the specified table
@@ -114,7 +114,7 @@ interface Database {
 	 * @throws IntegrityConstraintViolationException
 	 * @throws TransactionFailureException
 	 */
-	public function exec($statement, array $bindValues = null);
+	public function exec($statement, ?array $bindValues = null);
 
 	/**
 	 * Returns the ID of the last row that has been inserted or returns the last value from the specified sequence
@@ -180,7 +180,7 @@ interface Database {
 	 * @param Profiler|null $profiler the profiler instance or `null` to disable profiling again
 	 * @return static this instance for chaining
 	 */
-	public function setProfiler(Profiler $profiler = null);
+	public function setProfiler(?Profiler $profiler = null);
 
 	/**
 	 * Returns the name of the driver that is used for the current connection

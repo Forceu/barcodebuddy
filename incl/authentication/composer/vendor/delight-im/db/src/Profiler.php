@@ -21,7 +21,7 @@ interface Profiler {
 	 * @param array|null $boundValues (optional) the values that have been bound to the query or statement
 	 * @param int|null $discardMostRecentTraceEntries (optional) the number of trace entries that should be discarded (starting with the most recent ones)
 	 */
-	public function endMeasurement($sql, array $boundValues = null, $discardMostRecentTraceEntries = null);
+	public function endMeasurement($sql, ?array $boundValues = null, $discardMostRecentTraceEntries = null);
 
 	/**
 	 * Returns the number of measurements that this profiler has recorded

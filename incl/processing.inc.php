@@ -535,6 +535,36 @@ function sanitizeString(?string $input, bool $strongFilter = false): ?string {
 }
 
 /**
+ * Safely builds a JS function call for use inside an HTML on*="..." attribute
+ * (e.g. onclick="...").
+ *
+ * Simply concatenating values into a JS string literal inside an HTML attribute
+ * is not safe, even if the values were already run through htmlspecialchars() /
+ * sanitizeString(): the browser HTML-decodes the attribute value (turning
+ * "&#039;" back into "'", "&lt;" back into "<", etc.) *before* handing it to the
+ * JS engine as source code. That means an already HTML-escaped quote can still
+ * end up breaking out of the JS string literal once the browser decodes it,
+ * allowing arbitrary JS to run (e.g. a malicious product name such as
+ * "x'); alert(1); //" coming from an external barcode lookup provider).
+ *
+ * This function avoids that by JSON-encoding each argument (which safely
+ * escapes quotes/backslashes for a JS string literal) and then HTML-escaping
+ * the resulting call, so the two encoding layers can't interfere with each
+ * other.
+ *
+ * @param string $functionName
+ * @param array $args Arguments to pass to the JS function, will be JSON-encoded
+ * @return string Safe to insert directly inside a double-quoted HTML attribute
+ */
+function buildSafeOnClick(string $functionName, array $args): string {
+    $encodedArgs = array_map(function ($arg) {
+        return json_encode($arg);
+    }, $args);
+    $call = $functionName . '(' . implode(',', $encodedArgs) . ')';
+    return htmlspecialchars($call, ENT_QUOTES);
+}
+
+/**
  * Terminates script if non numeric
  * @param string $input
  * @return int Returns value as int if valid

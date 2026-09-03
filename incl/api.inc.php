@@ -338,7 +338,7 @@ class API {
      * @return bool if default best before date not set
      * @throws Exception
      */
-    public static function purchaseProduct(int $id, float $amount, string $bestbefore = null, string $price = null, LockGenerator &$fileLock = null, string $defaultBestBefore = null): bool {
+    public static function purchaseProduct(int $id, float $amount, ?string $bestbefore = null, ?string $price = null, ?LockGenerator &$fileLock = null, ?string $defaultBestBefore = null): bool {
         $data = array(
             'amount'           => $amount,
             'transaction_type' => 'purchase'

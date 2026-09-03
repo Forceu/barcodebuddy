@@ -28,7 +28,7 @@ final class SimpleMeasurement implements Measurement {
 	 * @param array|null $boundValues (optional) the values that have been bound to the query or statement
 	 * @param array|null $trace (optional) the trace that shows the path taken through the program until the operation was executed
 	 */
-	public function __construct($duration, $sql, array $boundValues = null, $trace = null) {
+	public function __construct($duration, $sql, ?array $boundValues = null, $trace = null) {
 		$this->duration = $duration;
 		$this->sql = $sql;
 		$this->boundValues = $boundValues;

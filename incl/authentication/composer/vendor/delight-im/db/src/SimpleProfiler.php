@@ -38,7 +38,7 @@ final class SimpleProfiler implements Profiler {
 		$this->currentMeasurementStartTime = microtime(true) * 1000;
 	}
 
-	public function endMeasurement($sql, array $boundValues = null, $discardMostRecentTraceEntries = null) {
+	public function endMeasurement($sql, ?array $boundValues = null, $discardMostRecentTraceEntries = null) {
 		if ($discardMostRecentTraceEntries === null) {
 			$discardMostRecentTraceEntries = 0;
 		}

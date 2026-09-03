@@ -392,7 +392,10 @@ function getHtmlMainMenuTableKnown(array $barcodes): string {
                     ->generate(true));
             $table->addCell(explodeWordsAndMakeCheckboxes($item['name'], $itemId));
             $table->addCell($html->buildButton("button_createproduct", "Create Product")
-                ->setOnClick('openNewTab(\'' . BBConfig::getInstance()["GROCY_BASE_URL"] . 'product/new?closeAfterCreation&flow=InplaceNewProductWithName&name=' . rawurlencode(htmlspecialchars_decode($item['name'], ENT_QUOTES)) . '\', \'' . $item['barcode'] . '\')')
+                ->setOnClick(buildSafeOnClick('openNewTab', [
+                    BBConfig::getInstance()["GROCY_BASE_URL"] . 'product/new?closeAfterCreation&flow=InplaceNewProductWithName&name=' . rawurlencode(html_entity_decode($item['name'], ENT_QUOTES, 'UTF-8')),
+                    $item['barcode']
+                ]))
                 ->generate(true));
             $table->addCell($html->buildButton("button_delete", "Remove")->setSubmit()->setValue($item['id'])->generate(true));
             $table->endRow();
@@ -403,12 +406,14 @@ function getHtmlMainMenuTableKnown(array $barcodes): string {
 }
 
 function getReportButton(array $item): string {
-    return '<button type="button" class="btn btn-outline-secondary btn-sm" onclick="showReportFederationName(\'' . $item['barcode'] . '\',\'' . $item['name'] . '\')"><span class="icon-flag"></span></button>';
+    $onclick = buildSafeOnClick('showReportFederationName', [$item['barcode'], $item['name']]);
+    return '<button type="button" class="btn btn-outline-secondary btn-sm" onclick="' . $onclick . '"><span class="icon-flag"></span></button>';
 }
 
 
 function getVoteButton(array $item): string {
-    return '<button type="button" class="btn btn-primary  btn-sm" onclick="showMultipleFederationNames(\'' . $item['barcode'] . '\',\'' . base64_encode(json_encode($item['bbServerAltNames'])) . '\')"><span class="icon-navigation-more"></span></button> ';
+    $onclick = buildSafeOnClick('showMultipleFederationNames', [$item['barcode'], base64_encode(json_encode($item['bbServerAltNames']))]);
+    return '<button type="button" class="btn btn-primary  btn-sm" onclick="' . $onclick . '"><span class="icon-navigation-more"></span></button> ';
 }
 
 
@@ -462,7 +467,10 @@ function getHtmlMainMenuTableUnknown(array $barcodes): string {
                     ->setId('button_consume_' . $item['id'])
                     ->generate(true));
             $table->addCell($html->buildButton("button_createproduct", "Create Product")
-                ->setOnClick('openNewTab(\'' . BBConfig::getInstance()["GROCY_BASE_URL"] . 'product/new?closeAfterCreation&prefillbarcode=' . $item['barcode'] . '\', \'' . $item['barcode'] . '\')')
+                ->setOnClick(buildSafeOnClick('openNewTab', [
+                    BBConfig::getInstance()["GROCY_BASE_URL"] . 'product/new?closeAfterCreation&prefillbarcode=' . $item['barcode'],
+                    $item['barcode']
+                ]))
                 ->generate(true));
             $table->addCell($html->buildButton("button_delete", "Remove")->setSubmit()->setValue($item['id'])->generate(true));
             $table->endRow();

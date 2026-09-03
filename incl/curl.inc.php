@@ -70,10 +70,10 @@ class CurlGenerator {
      * @throws DbConnectionDuringEstablishException
      */
     function __construct(string $url, string $method = METHOD_GET,
-                         string $jasonData = null, array $loginOverride = null,
-                         bool   $noApiCall = false, array $ignoredResultCodes = null,
-                         array  $formData = null, string $userAgent = null,
-                         array  $headers = null) {
+                         ?string $jasonData = null, ?array $loginOverride = null,
+                         bool   $noApiCall = false, ?array $ignoredResultCodes = null,
+                         ?array  $formData = null, ?string $userAgent = null,
+                         ?array  $headers = null) {
         global $CONFIG;
 
         $config = BBConfig::getInstance();

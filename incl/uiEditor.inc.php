@@ -476,7 +476,7 @@ class UiEditor {
     private $hasTimeInput = false;
 
 
-    function __construct(bool $createForm = true, string $onSubmit = null, string $formname = null) {
+    function __construct(bool $createForm = true, ?string $onSubmit = null, ?string $formname = null) {
         global $CONFIG;
         $onSubmitHtml = "";
         if ($onSubmit != null) {

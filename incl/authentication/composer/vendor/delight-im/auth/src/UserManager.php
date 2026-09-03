@@ -124,7 +124,7 @@ abstract class UserManager {
 	 * @see confirmEmail
 	 * @see confirmEmailAndSignIn
 	 */
-	protected function createUserInternal($requireUniqueUsername, $email, $password, $username = null, callable $callback = null) {
+	protected function createUserInternal($requireUniqueUsername, $email, $password, $username = null, ?callable $callback = null) {
 		\ignore_user_abort(true);
 
 		$email = self::validateEmailAddress($email);

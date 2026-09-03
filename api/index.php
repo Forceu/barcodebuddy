@@ -100,7 +100,7 @@ class BBuddyApi {
      * @param int $http_int
      * @return array (array|mixed)[]
      */
-    static function createResultArray(array $data = null, string $result = "OK", int $http_int = 200): array {
+    static function createResultArray(?array $data = null, string $result = "OK", int $http_int = 200): array {
         return array(
             "data" => $data,
             "result" => array(

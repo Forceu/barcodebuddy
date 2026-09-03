@@ -142,16 +142,23 @@ class GlobalConfig {
      * @psalm-suppress MissingParamType
      * @return array|bool|string
      */
-    static private function convertCorrectType(string $input, $originalVar) {
-        if (!is_array($originalVar)) {
-            $variableType = gettype($originalVar);
-            $result       = self::convertPossibleBoolean($input);
-            settype($result, $variableType);
-            return $result;
-        } else
-            return self::convertToArray($input);
-
-    }
+	static private function convertCorrectType(string $input, $originalVar) {
+	    if (!is_array($originalVar)) {
+		if (is_null($originalVar)) {
+		    return $input;
+		}
+		$variableType = gettype($originalVar);
+		$result       = self::convertPossibleBoolean($input);
+		
+		if ($variableType !== 'boolean') {
+		    settype($result, $variableType);
+		}
+		
+		return $result;
+	    } else {
+		return self::convertToArray($input);
+	    }
+	}
 
     /**
      * PHP converts String "false" to true...

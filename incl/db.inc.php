@@ -450,7 +450,8 @@ class DatabaseConnection {
      * @param array|null $productname
      * @return void
      */
-    public function insertUnrecognizedBarcode(string $barcode, float $amount = 1, string $bestBeforeInDays = null, string $price = null, ?array $productname = null): void {
+
+    public function insertUnrecognizedBarcode(string $barcode, float $amount = 1, ?string $bestBeforeInDays = null, ?string $price = null, ?array $productname = null): void {
         $bestBeforeInDays = ($bestBeforeInDays === null) ? "NULL" : "'" . trim($bestBeforeInDays, "'") . "'";
 
         if ($productname == null) {

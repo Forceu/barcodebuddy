@@ -148,7 +148,7 @@ evtest --grab "$deviceToUse" | while read line; do
         specialAction
       else
         if [[ $USE_CURL == false ]]; then
-            sudo -H -u $WWW_USER /usr/bin/screen -dm /usr/bin/php "$SCRIPT_LOCATION" $enteredText
+            sudo -H -u "$WWW_USER" /usr/bin/php "$SCRIPT_LOCATION" "$enteredText" >/dev/null 2>&1 &
         else
             curl "${SERVER_ADDRESS}action/scan?apikey=${API_KEY}&add=${enteredText}"
         fi

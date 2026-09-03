@@ -22,7 +22,7 @@ class ProviderAlbertHeijn extends LookupProvider {
 
     protected $db;
 
-    function __construct(string $apiKey = null) {
+    function __construct(?string $apiKey = null) {
         parent::__construct($apiKey);
         $this->providerName       = "Albert Heijn";
         $this->providerConfigKey  = "LOOKUP_USE_AH";

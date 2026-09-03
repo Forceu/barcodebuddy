@@ -595,11 +595,20 @@ class API {
             return self::getProductInfo(checkIfNumeric($id));
         }
         $allBarcodes = self::getAllBarcodes($ignoreCache);
-        if (!isset($allBarcodes[$barcode])) {
-            return null;
-        } else {
-            return self::getProductInfo($allBarcodes[$barcode]["id"]);
-        }
+  	// Look for the raw scanned barcode (e.g., full 14-digit GTIN)
+  	if (isset($allBarcodes[$barcode])) {
+ 	       return self::getProductInfo($allBarcodes[$barcode]["id"]);
+  	}
+
+        // Fallback check: If not found, strip leading '0' padding from GTIN-14 and retry (e.g., convert to EAN-13)
+    	if (strlen($barcode) === 14 && $barcode[0] === '0') {
+        	$unpaddedBarcode = substr($barcode, 1);
+        	if (isset($allBarcodes[$unpaddedBarcode])) {
+            	return self::getProductInfo($allBarcodes[$unpaddedBarcode]["id"]);
+        	}
+    	}
+
+    return null;
     }
 
     private static function getProductIdFromGrocyCode(string $barcode): ?int {

@@ -28,7 +28,7 @@ class QuantityManager {
      * @return float quantity or 1 if not found
      * @throws DbConnectionDuringEstablishException
      */
-    public static function getStoredQuantityForBarcode(string $barcode, bool $deleteAfterCompletion = false, SQLite3 $db = null): float {
+    public static function getStoredQuantityForBarcode(string $barcode, bool $deleteAfterCompletion = false, ?SQLite3 $db = null): float {
         if ($db == null)
             $db = DatabaseConnection::getInstance()->getDatabaseReference();
         $res = $db->query("SELECT * FROM Quantities WHERE barcode='$barcode'");
@@ -52,7 +52,7 @@ class QuantityManager {
      * @throws DbConnectionDuringEstablishException
      *
      */
-    public static function syncBarcodeToGrocy(string $barcode, SQLite3 $db = null): void {
+    public static function syncBarcodeToGrocy(string $barcode, ?SQLite3 $db = null): void {
         $storedAmount = self::getStoredQuantityForBarcode($barcode, true, $db);
         if ($storedAmount != 1) {
             API::addBarcodeQuantity($barcode, $storedAmount);
@@ -95,7 +95,7 @@ class QuantityManager {
      * @return void
      * @throws DbConnectionDuringEstablishException
      */
-    public static function addUpdateEntry(string $barcode, float $amount, string $product = null): void {
+    public static function addUpdateEntry(string $barcode, float $amount, ?string $product = null): void {
         $db = DatabaseConnection::getInstance()->getDatabaseReference();
         if ($product == null) {
             $db->exec("REPLACE INTO Quantities(barcode, quantity) VALUES ('$barcode', $amount)");
@@ -114,7 +114,7 @@ class QuantityManager {
      * @return void
      * @throws DbConnectionDuringEstablishException
      */
-    public static function delete(int $id, SQLite3 $db = null): void {
+    public static function delete(int $id, ?SQLite3 $db = null): void {
         if ($db == null)
             $db = DatabaseConnection::getInstance()->getDatabaseReference();
         $db->exec("DELETE FROM Quantities WHERE id='$id'");

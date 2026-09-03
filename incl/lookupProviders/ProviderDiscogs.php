@@ -22,7 +22,7 @@ require_once __DIR__ . "/../api.inc.php";
 class ProviderDiscogs extends LookupProvider {
 
 
-    function __construct(string $apiKey = null) {
+    function __construct(?string $apiKey = null) {
         parent::__construct($apiKey);
         $this->providerName       = "Discogs DB";
         $this->providerConfigKey  = "LOOKUP_USE_DISCOGS";

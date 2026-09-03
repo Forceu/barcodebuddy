@@ -762,7 +762,7 @@ class LogOutput {
      * @param string|null $barcode
      * @param bool $isError
      */
-    function __construct(string $logText, int $eventType, string $barcode = null, bool $isError = false) {
+    function __construct(string $logText, int $eventType, ?string $barcode = null, bool $isError = false) {
         $this->logText       = $logText;
         $this->eventType     = $eventType;
         $this->websocketText = $logText;

@@ -143,7 +143,7 @@ class WebUiGenerator {
     /**
      * @param string|null $additionalHeader
      */
-    public function addHeader(string $additionalHeader = null, bool $enableDialogs = false): void {
+    public function addHeader(?string $additionalHeader = null, bool $enableDialogs = false): void {
         global $CONFIG;
 
         if ($this->menu == MENU_SETTINGS || $this->menu === MENU_GENERIC) {
@@ -401,7 +401,7 @@ class WebUiGenerator {
     }
 
 
-    public function addAlert(string $text, string $title = null, string $callback = null, string $size = "medium"): void {
+    public function addAlert(string $text, ?string $title = null, ?string $callback = null, string $size = "medium"): void {
         $alert = 'bootbox.alert({
                 message: "' . $text . '",
                 size: "' . $size . '",';
@@ -414,7 +414,7 @@ class WebUiGenerator {
     }
 
 
-    public function addConfirmDialog(string $text, string $callback, string $title = null, string $buttonPositive = "Confirm",
+    public function addConfirmDialog(string $text, string $callback, ?string $title = null, string $buttonPositive = "Confirm",
                                      string $buttonNegative = "Cancel", string $size = "medium"): void {
         $alert = 'bootbox.confirm({
                 message: "' . $text . '",

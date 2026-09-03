@@ -206,9 +206,16 @@ class DatabaseConnection {
      */
     private function insertDefaultValues(): void {
         $this->db->exec("INSERT INTO TransactionState(id,currentState,since) SELECT 1, 0, datetime('now','localtime') WHERE NOT EXISTS(SELECT 1 FROM TransactionState WHERE id = 1)");
-        $this->db->exec("INSERT INTO BBConfig(id,data,value) SELECT 1, \"version\", \"" . BB_VERSION . "\" WHERE NOT EXISTS(SELECT 1 FROM BBConfig WHERE id = 1)");
+
+        $stmt = $this->db->prepare("INSERT INTO BBConfig(id,data,value) SELECT 1, 'version', :version WHERE NOT EXISTS(SELECT 1 FROM BBConfig WHERE id = 1)");
+        $stmt->bindValue(':version', BB_VERSION, SQLITE3_TEXT);
+        $stmt->execute();
+
+        $stmt = $this->db->prepare("INSERT INTO BBConfig(data,value) SELECT :key, :value WHERE NOT EXISTS(SELECT 1 FROM BBConfig WHERE data = :key)");
         foreach (self::DEFAULT_VALUES as $key => $value) {
-            $this->db->exec("INSERT INTO BBConfig(data,value) SELECT \"" . $key . "\", \"" . $value . "\" WHERE NOT EXISTS(SELECT 1 FROM BBConfig WHERE data = '$key')");
+            $stmt->bindValue(':key', $key, SQLITE3_TEXT);
+            $stmt->bindValue(':value', $value, SQLITE3_TEXT);
+            $stmt->execute();
         }
     }
 
@@ -297,7 +304,10 @@ class DatabaseConnection {
      */
     public function setTransactionState(int $state): void {
         /** @noinspection SqlWithoutWhere */
-        $this->db->exec("UPDATE TransactionState SET currentState=$state, since=" . $this->getTimestamp());
+        $stmt = $this->db->prepare("UPDATE TransactionState SET currentState=:state, since=:since");
+        $stmt->bindValue(':state', $state, SQLITE3_INTEGER);
+        $stmt->bindValue(':since', $this->getTimestamp(), SQLITE3_INTEGER);
+        $stmt->execute();
         SocketConnection::sendWebsocketStateChange($state);
     }
 
@@ -345,7 +355,9 @@ class DatabaseConnection {
      * @return int
      */
     public function getStoredBarcodeAmount(string $barcode): int {
-        $res = $this->db->query("SELECT * FROM Barcodes WHERE barcode='$barcode'");
+        $stmt = $this->db->prepare("SELECT * FROM Barcodes WHERE barcode=:barcode");
+        $stmt->bindValue(':barcode', $barcode, SQLITE3_TEXT);
+        $res = $stmt->execute();
         if ($row = $res->fetchArray()) {
             return $row['amount'];
         } else {
@@ -359,7 +371,9 @@ class DatabaseConnection {
      * @return array|false
      */
     public function getBarcodeById(string $id) {
-        $res = $this->db->query("SELECT * FROM Barcodes WHERE id='$id'");
+        $stmt = $this->db->prepare("SELECT * FROM Barcodes WHERE id=:id");
+        $stmt->bindValue(':id', $id, SQLITE3_TEXT);
+        $res = $stmt->execute();
         return $res->fetchArray();
     }
 
@@ -373,7 +387,10 @@ class DatabaseConnection {
      * @return void
      */
     public function updateSavedBarcodeMatch(string $barcode, int $productId): void {
-        $this->db->exec("UPDATE Barcodes SET possibleMatch='$productId' WHERE barcode='$barcode'");
+        $stmt = $this->db->prepare("UPDATE Barcodes SET possibleMatch=:productId WHERE barcode=:barcode");
+        $stmt->bindValue(':productId', $productId, SQLITE3_INTEGER);
+        $stmt->bindValue(':barcode', $barcode, SQLITE3_TEXT);
+        $stmt->execute();
     }
 
     /**
@@ -385,7 +402,10 @@ class DatabaseConnection {
      * @return void
      */
     public function upsertLookupProviderData(int $providerType, string $data): void {
-        $this->db->exec("INSERT INTO LookupProviderData(providerType, data) VALUES($providerType, '$data') ON CONFLICT(providerType) DO UPDATE SET data='$data'");
+        $stmt = $this->db->prepare("INSERT INTO LookupProviderData(providerType, data) VALUES(:providerType, :data) ON CONFLICT(providerType) DO UPDATE SET data=:data");
+        $stmt->bindValue(':providerType', $providerType, SQLITE3_INTEGER);
+        $stmt->bindValue(':data', $data, SQLITE3_TEXT);
+        $stmt->execute();
     }
 
     /**
@@ -396,7 +416,9 @@ class DatabaseConnection {
      * @return string|null
      */
     public function getLookupProviderData(int $providerType): ?string {
-        $res = $this->db->query("SELECT * FROM LookupProviderData WHERE providerType=$providerType");
+        $stmt = $this->db->prepare("SELECT * FROM LookupProviderData WHERE providerType=:providerType");
+        $stmt->bindValue(':providerType', $providerType, SQLITE3_INTEGER);
+        $res = $stmt->execute();
 
         if ($row = $res->fetchArray()) {
             return $row["data"];
@@ -411,7 +433,9 @@ class DatabaseConnection {
      * @return bool
      */
     public function isUnknownBarcodeAlreadyStored(string $barcode): bool {
-        $count = $this->db->querySingle("SELECT COUNT(*) as count FROM Barcodes WHERE barcode='$barcode'");
+        $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM Barcodes WHERE barcode=:barcode");
+        $stmt->bindValue(':barcode', $barcode, SQLITE3_TEXT);
+        $count = $stmt->execute()->fetchArray()['count'];
         return ($count != 0);
     }
 
@@ -424,7 +448,10 @@ class DatabaseConnection {
      * @return void
      */
     public function addQuantityToUnknownBarcode(string $barcode, float $amount): void {
-        $this->db->exec("UPDATE Barcodes SET amount = amount + $amount WHERE barcode = '$barcode'");
+        $stmt = $this->db->prepare("UPDATE Barcodes SET amount = amount + :amount WHERE barcode = :barcode");
+        $stmt->bindValue(':amount', $amount);
+        $stmt->bindValue(':barcode', $barcode, SQLITE3_TEXT);
+        $stmt->execute();
 
     }
 
@@ -437,7 +464,10 @@ class DatabaseConnection {
      * @return void
      */
     public function setQuantityToUnknownBarcode(string $barcode, float $amount): void {
-        $this->db->exec("UPDATE Barcodes SET amount = $amount WHERE barcode = '$barcode'");
+        $stmt = $this->db->prepare("UPDATE Barcodes SET amount = :amount WHERE barcode = :barcode");
+        $stmt->bindValue(':amount', $amount);
+        $stmt->bindValue(':barcode', $barcode, SQLITE3_TEXT);
+        $stmt->execute();
     }
 
     /**
@@ -452,20 +482,28 @@ class DatabaseConnection {
      */
 
     public function insertUnrecognizedBarcode(string $barcode, float $amount = 1, ?string $bestBeforeInDays = null, ?string $price = null, ?array $productname = null): void {
-        $bestBeforeInDays = ($bestBeforeInDays === null) ? "NULL" : "'" . trim($bestBeforeInDays, "'") . "'";
+        $bestBeforeInDays = ($bestBeforeInDays === null) ? null : trim($bestBeforeInDays, "'");
 
         if ($productname == null) {
             $name     = "N/A";
-            $altNames = "NULL";
+            $altNames = null;
             $match    = 0;
         } else {
             $name     = $productname["name"];
             $match    = TagManager::getProductIdByPossibleTag($name, $this->db);
-            $altNames = "'" . $productname["altNames"] . "'";
+            $altNames = $productname["altNames"];
         }
 
-        $this->db->exec("INSERT INTO Barcodes(barcode, name, amount, possibleMatch, requireWeight, bestBeforeInDays, price, bbServerAltNames)
-                             VALUES('$barcode', '$name', $amount, $match, 0, $bestBeforeInDays, '$price', $altNames)");
+        $stmt = $this->db->prepare("INSERT INTO Barcodes(barcode, name, amount, possibleMatch, requireWeight, bestBeforeInDays, price, bbServerAltNames)
+                             VALUES(:barcode, :name, :amount, :match, 0, :bestBeforeInDays, :price, :altNames)");
+        $stmt->bindValue(':barcode', $barcode, SQLITE3_TEXT);
+        $stmt->bindValue(':name', $name, SQLITE3_TEXT);
+        $stmt->bindValue(':amount', $amount);
+        $stmt->bindValue(':match', $match, SQLITE3_INTEGER);
+        $stmt->bindValue(':bestBeforeInDays', $bestBeforeInDays, $bestBeforeInDays === null ? SQLITE3_NULL : SQLITE3_TEXT);
+        $stmt->bindValue(':price', $price, $price === null ? SQLITE3_NULL : SQLITE3_TEXT);
+        $stmt->bindValue(':altNames', $altNames, $altNames === null ? SQLITE3_NULL : SQLITE3_TEXT);
+        $stmt->execute();
     }
 
     /**
@@ -474,15 +512,23 @@ class DatabaseConnection {
      * @param null|string $price
      */
     public function insertActionRequiredBarcode(string $barcode, ?string $bestBeforeInDays = null, ?string $price = null): void {
-        $bestBeforeInDays = ($bestBeforeInDays === null) ? "NULL" : "'" . trim($bestBeforeInDays, "'") . "'";
+        $bestBeforeInDays = ($bestBeforeInDays === null) ? null : trim($bestBeforeInDays, "'");
 
-        $this->db->exec("INSERT INTO Barcodes(barcode, name, amount, possibleMatch, requireWeight, bestBeforeInDays, price)
-                             VALUES('$barcode', 'N/A', 1, 0, 1, $bestBeforeInDays, '$price')");
+        $stmt = $this->db->prepare("INSERT INTO Barcodes(barcode, name, amount, possibleMatch, requireWeight, bestBeforeInDays, price)
+                             VALUES(:barcode, 'N/A', 1, 0, 1, :bestBeforeInDays, :price)");
+        $stmt->bindValue(':barcode', $barcode, SQLITE3_TEXT);
+        $stmt->bindValue(':bestBeforeInDays', $bestBeforeInDays, $bestBeforeInDays === null ? SQLITE3_NULL : SQLITE3_TEXT);
+        $stmt->bindValue(':price', $price, $price === null ? SQLITE3_NULL : SQLITE3_TEXT);
+        $stmt->execute();
     }
 
     public function updateUnrecognizedBarcodeName(string $barcode, string $name): void {
         $match = TagManager::getProductIdByPossibleTag($name, $this->db);
-        $this->db->exec("UPDATE Barcodes SET name='$name', possibleMatch=$match WHERE barcode='$barcode'");
+        $stmt  = $this->db->prepare("UPDATE Barcodes SET name=:name, possibleMatch=:match WHERE barcode=:barcode");
+        $stmt->bindValue(':name', $name, SQLITE3_TEXT);
+        $stmt->bindValue(':match', $match, SQLITE3_INTEGER);
+        $stmt->bindValue(':barcode', $barcode, SQLITE3_TEXT);
+        $stmt->execute();
     }
 
     /**
@@ -505,7 +551,9 @@ class DatabaseConnection {
     public function isValidApiKey(string $apiKey): bool {
         foreach ($this->getStoredApiKeys() as $key) {
             if ($apiKey === $key["key"]) {
-                $this->db->exec("UPDATE ApiKeys SET lastused=datetime('now','localtime') WHERE id=" . $key["id"]);
+                $stmt = $this->db->prepare("UPDATE ApiKeys SET lastused=datetime('now','localtime') WHERE id=:id");
+                $stmt->bindValue(':id', $key["id"], SQLITE3_INTEGER);
+                $stmt->execute();
                 return true;
             }
         }
@@ -518,8 +566,10 @@ class DatabaseConnection {
      * @return string
      */
     public function generateApiKey(): string {
-        $key = generateRandomString();
-        $this->db->exec("INSERT INTO ApiKeys(key, lastused) VALUES('" . $key . "', 'Never');");
+        $key  = generateRandomString();
+        $stmt = $this->db->prepare("INSERT INTO ApiKeys(key, lastused) VALUES(:key, 'Never')");
+        $stmt->bindValue(':key', $key, SQLITE3_TEXT);
+        $stmt->execute();
         return $key;
     }
 
@@ -533,7 +583,9 @@ class DatabaseConnection {
      */
     public function deleteApiKey(string $id): void {
         checkIfNumeric($id);
-        $this->db->exec("DELETE FROM ApiKeys WHERE id='$id'");
+        $stmt = $this->db->prepare("DELETE FROM ApiKeys WHERE id=:id");
+        $stmt->bindValue(':id', $id, SQLITE3_TEXT);
+        $stmt->execute();
     }
 
 
@@ -589,7 +641,9 @@ class DatabaseConnection {
             } else {
                 $logEntry = $date . ": " . sanitizeString($log);
             }
-            $this->db->exec("INSERT INTO BarcodeLogs(log) VALUES('" . $logEntry . "')");
+            $stmt = $this->db->prepare("INSERT INTO BarcodeLogs(log) VALUES(:log)");
+            $stmt->bindValue(':log', $logEntry, SQLITE3_TEXT);
+            $stmt->execute();
         }
     }
 
@@ -602,7 +656,9 @@ class DatabaseConnection {
      * @return void
      */
     public function deleteBarcode(string $id): void {
-        $this->db->exec("DELETE FROM Barcodes WHERE id='$id'");
+        $stmt = $this->db->prepare("DELETE FROM Barcodes WHERE id=:id");
+        $stmt->bindValue(':id', $id, SQLITE3_TEXT);
+        $stmt->execute();
     }
 
 
@@ -649,7 +705,10 @@ class DatabaseConnection {
         if (in_array($key, self::DB_INT_VALUES)) {
             checkIfNumeric($value);
         }
-        $this->db->exec("UPDATE BBConfig SET value='" . $value . "' WHERE data='$key'");
+        $stmt = $this->db->prepare("UPDATE BBConfig SET value=:value WHERE data=:key");
+        $stmt->bindValue(':value', $value, $value === null ? SQLITE3_NULL : SQLITE3_TEXT);
+        $stmt->bindValue(':key', $key, SQLITE3_TEXT);
+        $stmt->execute();
         BBConfig::getInstance()[$key] = $value;
     }
 

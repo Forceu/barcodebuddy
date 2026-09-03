@@ -43,8 +43,10 @@ function createSqlFile(): void {
 
 function changeUserName(string $newName): void {
 	global $CONFIG;
-    $db = new SQLite3($CONFIG->AUTHDB_PATH);
-    $db->exec("UPDATE users SET username='$newName'");
+    $db   = new SQLite3($CONFIG->AUTHDB_PATH);
+    $stmt = $db->prepare("UPDATE users SET username=:username");
+    $stmt->bindValue(':username', $newName, SQLITE3_TEXT);
+    $stmt->execute();
 }
 
 function getInitialSetupSql(): string {

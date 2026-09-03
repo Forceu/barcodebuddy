@@ -31,7 +31,9 @@ class QuantityManager {
     public static function getStoredQuantityForBarcode(string $barcode, bool $deleteAfterCompletion = false, ?SQLite3 $db = null): float {
         if ($db == null)
             $db = DatabaseConnection::getInstance()->getDatabaseReference();
-        $res = $db->query("SELECT * FROM Quantities WHERE barcode='$barcode'");
+        $stmt = $db->prepare("SELECT * FROM Quantities WHERE barcode=:barcode");
+        $stmt->bindValue(':barcode', $barcode, SQLITE3_TEXT);
+        $res = $stmt->execute();
         if ($row = $res->fetchArray()) {
             $entry = new Quantity($row);
             if ($deleteAfterCompletion)
@@ -98,9 +100,16 @@ class QuantityManager {
     public static function addUpdateEntry(string $barcode, float $amount, ?string $product = null): void {
         $db = DatabaseConnection::getInstance()->getDatabaseReference();
         if ($product == null) {
-            $db->exec("REPLACE INTO Quantities(barcode, quantity) VALUES ('$barcode', $amount)");
+            $stmt = $db->prepare("REPLACE INTO Quantities(barcode, quantity) VALUES (:barcode, :amount)");
+            $stmt->bindValue(':barcode', $barcode, SQLITE3_TEXT);
+            $stmt->bindValue(':amount', $amount);
+            $stmt->execute();
         } else {
-            $db->exec("REPLACE INTO Quantities(barcode, quantity, product) VALUES ('$barcode', $amount, '$product')");
+            $stmt = $db->prepare("REPLACE INTO Quantities(barcode, quantity, product) VALUES (:barcode, :amount, :product)");
+            $stmt->bindValue(':barcode', $barcode, SQLITE3_TEXT);
+            $stmt->bindValue(':amount', $amount);
+            $stmt->bindValue(':product', $product, SQLITE3_TEXT);
+            $stmt->execute();
         }
     }
 
@@ -117,7 +126,9 @@ class QuantityManager {
     public static function delete(int $id, ?SQLite3 $db = null): void {
         if ($db == null)
             $db = DatabaseConnection::getInstance()->getDatabaseReference();
-        $db->exec("DELETE FROM Quantities WHERE id='$id'");
+        $stmt = $db->prepare("DELETE FROM Quantities WHERE id=:id");
+        $stmt->bindValue(':id', $id, SQLITE3_INTEGER);
+        $stmt->execute();
     }
 }
 

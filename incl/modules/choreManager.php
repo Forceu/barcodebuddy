@@ -34,8 +34,12 @@ class ChoreManager {
      */
     public static function updateBarcode(int $choreId, string $choreBarcode): void {
         checkIfNumeric($choreId);
-        $db = DatabaseConnection::getInstance()->getDatabaseReference();
-        $db->exec("REPLACE INTO ChoreBarcodes(choreId, barcode) VALUES(" . $choreId . ", '" . str_replace('&#39;', "", $choreBarcode) . "')");
+        $db          = DatabaseConnection::getInstance()->getDatabaseReference();
+        $choreBarcode = str_replace('&#39;', "", $choreBarcode);
+        $stmt = $db->prepare("REPLACE INTO ChoreBarcodes(choreId, barcode) VALUES(:choreId, :barcode)");
+        $stmt->bindValue(':choreId', $choreId, SQLITE3_INTEGER);
+        $stmt->bindValue(':barcode', $choreBarcode, SQLITE3_TEXT);
+        $stmt->execute();
     }
 
 
@@ -50,8 +54,10 @@ class ChoreManager {
      */
     public static function deleteBarcode(int $id): void {
         checkIfNumeric($id);
-        $db = DatabaseConnection::getInstance()->getDatabaseReference();
-        $db->exec("DELETE FROM ChoreBarcodes WHERE choreId='$id'");
+        $db   = DatabaseConnection::getInstance()->getDatabaseReference();
+        $stmt = $db->prepare("DELETE FROM ChoreBarcodes WHERE choreId=:id");
+        $stmt->bindValue(':id', $id, SQLITE3_INTEGER);
+        $stmt->execute();
     }
 
     /**
@@ -90,8 +96,10 @@ class ChoreManager {
      * @throws DbConnectionDuringEstablishException
      */
     public static function getChoreBarcode(string $barcode): ?array {
-        $db  = DatabaseConnection::getInstance()->getDatabaseReference();
-        $res = $db->query("SELECT * FROM ChoreBarcodes WHERE barcode='$barcode'");
+        $db   = DatabaseConnection::getInstance()->getDatabaseReference();
+        $stmt = $db->prepare("SELECT * FROM ChoreBarcodes WHERE barcode=:barcode");
+        $stmt->bindValue(':barcode', $barcode, SQLITE3_TEXT);
+        $res = $stmt->execute();
         if ($row = $res->fetchArray()) {
             return $row;
         } else {

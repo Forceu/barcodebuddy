@@ -23,6 +23,7 @@ require_once __DIR__ . "/api.inc.php";
 require_once __DIR__ . "/websocketconnection.inc.php";
 require_once __DIR__ . "/configProcessing.inc.php";
 require_once __DIR__ . "/modules/tagManager.php";
+require_once __DIR__ . "/modules/productMatcher.php";
 require_once __DIR__ . "/modules/choreManager.php";
 require_once __DIR__ . "/modules/quantityManager.php";
 require_once __DIR__ . "/modules/barcodeFederation.php";
@@ -491,6 +492,9 @@ class DatabaseConnection {
         } else {
             $name     = $productname["name"];
             $match    = TagManager::getProductIdByPossibleTag($name, $this->db);
+            if ($match == 0) {
+                $match = ProductMatcher::findNearestProductMatch($name);
+            }
             $altNames = $productname["altNames"];
         }
 
@@ -524,6 +528,9 @@ class DatabaseConnection {
 
     public function updateUnrecognizedBarcodeName(string $barcode, string $name): void {
         $match = TagManager::getProductIdByPossibleTag($name, $this->db);
+        if ($match == 0) {
+            $match = ProductMatcher::findNearestProductMatch($name);
+        }
         $stmt  = $this->db->prepare("UPDATE Barcodes SET name=:name, possibleMatch=:match WHERE barcode=:barcode");
         $stmt->bindValue(':name', $name, SQLITE3_TEXT);
         $stmt->bindValue(':match', $match, SQLITE3_INTEGER);

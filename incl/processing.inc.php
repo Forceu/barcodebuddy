@@ -36,6 +36,26 @@ function processNewBarcode(string $barcodeInput, ?string $bestBeforeInDays = nul
     $config = BBConfig::getInstance();
 
     $barcode = strtoupper($barcodeInput);
+    
+   // Check if code has GS1 DataMatrix identifier, human-readable brackets, or GS1 control char (ASCII 29)
+    if ($config["GS1_PARSING_ENABLED"] && (
+	    (strpos($barcodeInput, ']d2') === 0 || strpos($barcodeInput, ']D2') === 0)
+        || (strpos($barcodeInput, '(01)') === 0)
+        || (strpos($barcodeInput, '01') === 0 && strpos($barcodeInput, chr(29)) !== false)
+        || (strpos($barcodeInput, '01') === 0 && strlen($barcodeInput) >= 16)
+	) {
+        // Try parsing as GS1
+        require_once __DIR__ . "/GS1Parser.php";
+        $parser = new GS1Parser($barcodeInput); 
+        if ($parser->isValid()) {
+            $barcode = $parser->getGtin();
+            $expDate = $parser->getExpirationDate();
+            if ($expDate != null) {
+                $bestBeforeInDays = $expDate;
+            }
+        }
+    }
+    
     if ($barcode == $config["BARCODE_C"]) {
         $db->setTransactionState(STATE_CONSUME);
         return createLogModeChange(STATE_CONSUME);

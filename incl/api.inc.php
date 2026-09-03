@@ -356,7 +356,16 @@ class API {
             else
                 $daysBestBefore = self::getDefaultBestBeforeDays($id);
         }
-        $data['best_before_date'] = self::formatBestBeforeDays($daysBestBefore);
+        
+        // Check if $daysBestBefore is a date string (YYYY-MM-DD)
+        if (preg_match("/^\d{4}-\d{2}-\d{2}$/", (string)$daysBestBefore)) {
+             $data['best_before_date'] = $daysBestBefore;
+             // We set this to a non-zero value to indicate success later
+             $daysBestBefore = 1; 
+        } else {
+             $data['best_before_date'] = self::formatBestBeforeDays((int)$daysBestBefore);
+        }
+        
         $data_json                = json_encode($data);
         $url                      = API_STOCK . "/" . $id . "/add";
 
@@ -586,11 +595,20 @@ class API {
             return self::getProductInfo(checkIfNumeric($id));
         }
         $allBarcodes = self::getAllBarcodes($ignoreCache);
-        if (!isset($allBarcodes[$barcode])) {
-            return null;
-        } else {
-            return self::getProductInfo($allBarcodes[$barcode]["id"]);
-        }
+  	// Look for the raw scanned barcode (e.g., full 14-digit GTIN)
+  	if (isset($allBarcodes[$barcode])) {
+ 	       return self::getProductInfo($allBarcodes[$barcode]["id"]);
+  	}
+
+        // Fallback check: If not found, strip leading '0' padding from GTIN-14 and retry (e.g., convert to EAN-13)
+    	if (strlen($barcode) === 14 && $barcode[0] === '0') {
+        	$unpaddedBarcode = ltrim($barcode, '0');
+		if (!empty($unpaddedBarcode) && isset($allBarcodes[$unpaddedBarcode])) {
+		    return self::getProductInfo($allBarcodes[$unpaddedBarcode]["id"]);
+		}
+    	}
+
+    return null;
     }
 
     private static function getProductIdFromGrocyCode(string $barcode): ?int {

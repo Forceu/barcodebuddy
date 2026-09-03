@@ -779,10 +779,35 @@ function generateRandomString(int $length = 30): string {
 }
 
 function getApiUrl(string $removeAfter): string {
-    $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+    // Check for standard proxy HTTPS headers first
+    $isHttps = false;
+    
+    if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') {
+        $isHttps = true;
+    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && strtolower($_SERVER['HTTP_X_FORWARDED_SSL']) === 'on') {
+        $isHttps = true;
+    } elseif ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || ($_SERVER['SERVER_PORT'] ?? null) == 443) {
+        $isHttps = true;
+    }
 
-    $url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-    return $requestedUrl = trim(substr($url, 0, strpos($url, $removeAfter))) . "api/";
+    $protocol = $isHttps ? "https://" : "http://";
+
+    // Use X-Forwarded-Host if available, otherwise fallback to HTTP_HOST
+    $host = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? $_SERVER['HTTP_HOST'] ?? 'localhost';
+    
+    // If X-Forwarded-Host contains multiple proxies (e.g. "client.com, proxy1.com"), take the first one
+    if (strpos($host, ',') !== false) {
+        $host = trim(explode(',', $host)[0]);
+    }
+
+    $url = $protocol . $host . $_SERVER['REQUEST_URI'];
+    
+    $pos = strpos($url, $removeAfter);
+    if ($pos !== false) {
+        $url = substr($url, 0, $pos);
+    }
+
+    return trim($url) . "api/";
 }
 
 /**

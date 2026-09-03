@@ -602,10 +602,10 @@ class API {
 
         // Fallback check: If not found, strip leading '0' padding from GTIN-14 and retry (e.g., convert to EAN-13)
     	if (strlen($barcode) === 14 && $barcode[0] === '0') {
-        	$unpaddedBarcode = substr($barcode, 1);
-        	if (isset($allBarcodes[$unpaddedBarcode])) {
-            	return self::getProductInfo($allBarcodes[$unpaddedBarcode]["id"]);
-        	}
+        	$unpaddedBarcode = ltrim($barcode, '0');
+		if (!empty($unpaddedBarcode) && isset($allBarcodes[$unpaddedBarcode])) {
+		    return self::getProductInfo($allBarcodes[$unpaddedBarcode]["id"]);
+		}
     	}
 
     return null;

@@ -89,10 +89,10 @@ class DatabaseConnection {
         "REVERT_TIME" => "10",
         "REVERT_SINGLE" => "1",
         "MORE_VERBOSE" => "1",
-        "GROCY_API_URL" => null,
-        "GROCY_API_KEY" => null,
-        "LAST_BARCODE" => null,
-        "LAST_PRODUCT" => null,
+        "GROCY_API_URL" => "",
+        "GROCY_API_KEY" => "",
+        "LAST_BARCODE" => "",
+        "LAST_PRODUCT" => "",
         "WS_FULLSCREEN" => "0",
         "SAVE_BARCODE_NAME" => "1",
         "SHOPPINGLIST_REMOVE" => "1",
@@ -110,14 +110,14 @@ class DatabaseConnection {
         "LOOKUP_USE_DISCOGS" => "0",
         "GS1_PARSING_ENABLED" => "1",
         "LOOKUP_USE_BBUDDY_SERVER" => "0",
-        "LOOKUP_UPC_DATABASE_KEY" => null,
-        "LOOKUP_OPENGTIN_KEY" => null,
-        "LOOKUP_DISCOGS_TOKEN" => null,
+        "LOOKUP_UPC_DATABASE_KEY" => "",
+        "LOOKUP_OPENGTIN_KEY" => "",
+        "LOOKUP_DISCOGS_TOKEN" => "",
         "USE_REDIS" => DEFAULT_USE_REDIS,
         "REDIS_IP" => "127.0.0.1",
         "REDIS_PORT" => "6379",
         "REDIS_PW" => "",
-        "BBUDDY_SERVER_UUID" => null,
+        "BBUDDY_SERVER_UUID" => "",
         "BBUDDY_SERVER_ENABLED" => "0",
         "BBUDDY_SERVER_POPUPSHOWN" => "0",
         "BBUDDY_SERVER_NEXTSYNC" => "0",
@@ -713,10 +713,10 @@ class DatabaseConnection {
             checkIfNumeric($value);
         }
         $stmt = $this->db->prepare("UPDATE BBConfig SET value=:value WHERE data=:key");
-        $stmt->bindValue(':value', $value, $value === null ? SQLITE3_NULL : SQLITE3_TEXT);
+        $stmt->bindValue(':value', $value ?? "", SQLITE3_TEXT);
         $stmt->bindValue(':key', $key, SQLITE3_TEXT);
         $stmt->execute();
-        BBConfig::getInstance()[$key] = $value;
+        BBConfig::getInstance()[$key] = $value ?? "";
     }
 
     public function getDatabaseReference(): SQLite3 {

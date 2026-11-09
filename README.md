@@ -42,6 +42,10 @@ If you are using a reverse proxy, please make sure to disable caching, see [docu
 ### Screenshots
 ![Screenshot of the web ui](https://raw.githubusercontent.com/Forceu/barcodebuddy/master/example/screenshots/FullSite_small.png)     ![Screenshot of the screen module](https://github.com/Forceu/barcodebuddy/raw/master/example/screenshots/Screen.gif)
 
+## One-Click Deploy
+
+[![Deploy on RepoCloud](https://d16t0pc4846x52.cloudfront.net/deploylobe.svg)](https://repocloud.io/details/BarcodeBuddy/)
+
 ## Translations
 
 <a href="https://hosted.weblate.org/engage/barcode-buddy/">
